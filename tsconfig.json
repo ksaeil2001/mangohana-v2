@@ -28,6 +28,8 @@
     "*.ts"
   ],
   "exclude": [
-    "apps/desktop"
+    "apps/desktop",
+    "apps/sites",
+    "packages/ai-engine"
   ]
 }

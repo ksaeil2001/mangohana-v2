@@ -1,8 +1,10 @@
 // @vitest-environment node
 import { createHash } from "node:crypto";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { characterErrors, evaluateAutomationQuality, stages, validateCorpus } from "../../scripts/evaluate-automation-quality.mjs";
@@ -335,5 +337,223 @@ describe("automation quality evaluator (synthetic fixtures only)", () => {
 
       await expect(evaluateAutomationQuality(corpus, run, directory)).rejects.toThrow("FINAL_IMAGE_NOT_PNG");
     }
+  });
+
+  describe("Stage02 additive metrics (no model execution or independent semantic/image assessment)", () => {
+    it.each([
+      { name: "normal", predictions: [{ id: "ocr-a", bbox: box, text: "AB", readingOrder: 1 }], tp: 1, fp: 0, fn: 0, precision: 1, recall: 1, f1: 1, missing: [], extra: [], errors: 0 },
+      { name: "one missing dialogue", predictions: [], tp: 0, fp: 0, fn: 1, precision: null, recall: 0, f1: 0, missing: ["region-1"], extra: [], errors: 2 },
+      { name: "one extra region", predictions: [{ id: "ocr-a", bbox: box, text: "AB", readingOrder: 1 }, { id: "extra", bbox: { ...box, x: 0.6 }, text: "X", readingOrder: 2 }], tp: 1, fp: 1, fn: 0, precision: 0.5, recall: 1, f1: 2 / 3, missing: [], extra: ["extra"], errors: 1 },
+      { name: "duplicate geometry", predictions: [{ id: "ocr-a", bbox: box, text: "AB", readingOrder: 1 }, { id: "duplicate", bbox: box, text: "AB", readingOrder: 2 }], tp: 1, fp: 1, fn: 0, precision: 0.5, recall: 1, f1: 2 / 3, missing: [], extra: ["duplicate"], errors: 2 },
+    ])("reports final OCR proposal counts and unmatched IDs: $name", async value => {
+      const { corpus, run } = await fixture();
+      await setOcr(corpus, run, value.predictions);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].ocr).toMatchObject({
+        truePositives: value.tp, falsePositives: value.fp, falseNegatives: value.fn,
+        precision: value.precision, recall: value.recall, f1: value.f1,
+        missingRegionIds: value.missing, extraRegionIds: value.extra,
+        characterErrors: value.errors, referenceCharacters: 2, characterErrorRate: value.errors / 2,
+      });
+      expect(report.pages[0].ocr.scope).toBe("FINAL_OCR_PROPOSALS_IOU_0.5_NFKC_SPACES_AND_PUNCTUATION_PRESERVED");
+    });
+
+    it("keeps geometry matching independent of prediction IDs, text and reading order", async () => {
+      const { corpus, run } = await fixture();
+      await setOcr(corpus, run, [{ id: "independently-assigned-ocr-id", bbox: box, text: "AB", readingOrder: 2 }]);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].ocr).toMatchObject({ truePositives: 1, falsePositives: 0, falseNegatives: 0, readingOrderErrors: 1, characterErrorRate: 0 });
+    });
+
+    it.each([
+      ["AB", 0, 0], ["AC", 1, 0.5], ["A", 1, 0.5], ["ABC", 1, 0.5], ["ABCDE", 3, 1.5],
+    ])("preserves page CER for recognized text %s including real zero and rates above one", async (text, errors, rate) => {
+      const { corpus, run } = await fixture();
+      await setOcr(corpus, run, [{ bbox: box, text, readingOrder: 1 }]);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].ocr).toMatchObject({ characterErrors: errors, referenceCharacters: 2, characterErrorRate: rate, unmeasuredReasons: { characterErrorRate: null } });
+      expect(report.ocrSummary).toMatchObject({ characterErrors: errors, referenceCharacters: 2, microCharacterErrorRate: rate });
+    });
+
+    it("weights corpus micro CER by reference characters and excludes unavailable pages", async () => {
+      const { corpus, run } = await fixture(3);
+      corpus.pages[1].groundTruth.regions[0].text = "ABCDEFGH";
+      corpus.pages[2].groundTruth = { status: "pending" };
+      pinCorpus(corpus, run);
+      await setOcr(corpus, run, [{ bbox: box, text: "CD", readingOrder: 1 }]);
+      run.pages[1].ocr = await ocrAsset("long-ocr.json", [{ bbox: box, text: "ABCDEFGH", readingOrder: 1 }], run.runId, corpus.pages[1].source.sha256);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.ocrSummary).toMatchObject({ measuredPages: 2, unmeasuredPages: 1, characterErrors: 2, referenceCharacters: 10, microCharacterErrorRate: 0.2, status: "PARTIAL" });
+      expect(report.summary.dev.ocr.microCharacterErrorRate).toBe(0.2);
+      expect(report.summary.dev.ocrByEvidenceKind.fixture.measuredPages).toBe(2);
+      expect(report.pages[2]).toMatchObject({ ocr: null, ocrMeasurement: { status: "NOT_MEASURED", reason: "GROUND_TRUTH_NOT_VERIFIED" } });
+    });
+
+    it("keeps split and evidence-kind micro CER separate from the descriptive corpus total", async () => {
+      const { corpus, run } = await fixture(2);
+      corpus.pages[1].split = "holdout";
+      corpus.pages[1].usedForDevelopment = false;
+      run.pages[1].evidenceKind = "reused";
+      pinCorpus(corpus, run);
+      await setOcr(corpus, run, [{ bbox: box, text: "CD", readingOrder: 1 }]);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.ocrSummary.microCharacterErrorRate).toBe(0.5);
+      expect(report.summary.dev.ocr.microCharacterErrorRate).toBe(1);
+      expect(report.summary.holdout.ocr.microCharacterErrorRate).toBe(0);
+      expect(Object.keys(report.summary.dev.ocrByEvidenceKind)).toEqual(["fixture"]);
+      expect(Object.keys(report.summary.holdout.ocrByEvidenceKind)).toEqual(["reused"]);
+    });
+
+    it.each([{ predictions: [] }, { predictions: [{ id: "extra", bbox: box, text: "X", readingOrder: 1 }] }])("keeps zero reference characters distinct from zero errors for predictions $predictions", async ({ predictions }) => {
+      const { corpus, run } = await fixture();
+      corpus.pages[0].groundTruth.regions = [];
+      pinCorpus(corpus, run);
+      await setOcr(corpus, run, predictions);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].ocr).toMatchObject({ characterErrors: predictions.length, referenceCharacters: 0, characterErrorRate: null, recall: null,
+        precision: predictions.length ? 0 : null, f1: predictions.length ? 0 : null,
+        unmeasuredReasons: { characterErrorRate: "NO_REFERENCE_CHARACTERS", recall: "NO_REFERENCE_REGIONS", precision: predictions.length ? null : "NO_PREDICTED_REGIONS", f1: predictions.length ? null : "NO_REFERENCE_OR_PREDICTED_REGIONS" } });
+      expect(report.ocrSummary).toMatchObject({ measuredPages: 1, characterErrors: predictions.length, referenceCharacters: 0, microCharacterErrorRate: null, unmeasuredReasons: { microCharacterErrorRate: "NO_REFERENCE_CHARACTERS" } });
+      expect(report.pages[0].ocrMeasurement.status).toBe(predictions.length ? "MEASURED" : "NO_TARGETS");
+    });
+
+    it.each(["missing OCR", "pending ground truth", "missing run", "explicit not_run"])("does not turn missing observations into perfect OCR: %s", async kind => {
+      const { corpus, run } = await fixture();
+      if (kind === "missing OCR") delete run.pages[0].ocr;
+      if (kind === "pending ground truth") { corpus.pages[0].groundTruth = { status: "pending" }; pinCorpus(corpus, run); }
+      if (kind === "missing run") run.pages = [];
+      if (kind === "explicit not_run") run.pages[0].evidenceKind = "not_run";
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].ocr).toBeNull();
+      expect(report.pages[0].ocrMeasurement).toMatchObject({ status: "NOT_MEASURED", reason: expect.any(String) });
+      expect(report.summary.dev.ocr).toMatchObject({ measuredPages: 0, unmeasuredPages: 1, characterErrors: null, referenceCharacters: null,
+        truePositives: null, falsePositives: null, falseNegatives: null, microCharacterErrorRate: null,
+        unmeasuredReasons: { microCharacterErrorRate: "NO_EVALUABLE_OCR_PAGES" } });
+    });
+
+    it("reports an empty corpus and empty split denominators as unavailable", async () => {
+      const { corpus, run } = await fixture(0);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.ocrSummary).toMatchObject({ measuredPages: 0, characterErrors: null, referenceCharacters: null, microCharacterErrorRate: null,
+        unmeasuredReasons: { microCharacterErrorRate: "NO_PAGES" } });
+      for (const split of [report.summary.dev, report.summary.holdout]) {
+        expect(split.automaticSuccessRate).toBeNull();
+        expect(split.evaluationDataAvailability).toEqual({ numerator: 0, denominator: 0, value: null, reason: "NO_PAGES" });
+        expect(split.qualityReviewPendingRate.value).toBeNull();
+      }
+    });
+
+    it("does not invent missing prediction IDs or use reference IDs as prediction IDs", async () => {
+      const { corpus, run } = await fixture();
+      await setOcr(corpus, run, [{ bbox: box, text: "AB", readingOrder: 1 }, { bbox: { ...box, x: 0.6 }, text: "X", readingOrder: 2 }]);
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].ocr).toMatchObject({ extraRegionIds: [null], extraRegionIndices: [1], extraRegionIdsReason: "PREDICTION_IDS_NOT_SUPPLIED" });
+    });
+
+    it.each(["", null, 7, "duplicate"])("rejects invalid or repeated supplied prediction IDs: %j", async regionId => {
+      const { corpus, run } = await fixture();
+      const predictions = [{ id: regionId, bbox: box, text: "AB", readingOrder: 1 }];
+      if (regionId === "duplicate") predictions.push({ ...predictions[0], readingOrder: 2 });
+      await setOcr(corpus, run, predictions);
+
+      await expect(evaluateAutomationQuality(corpus, run, directory)).rejects.toThrow("INVALID_OR_DUPLICATE_OCR_REGION_ID");
+    });
+
+    it("keeps legacy attestation success while refusing to certify a model execution from its label", async () => {
+      const { corpus, run } = await fixture();
+      run.pages[0].evidenceKind = "actual_product";
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0]).toMatchObject({ automaticSuccess: true, status: "PASS", executionVerification: { status: "UNVERIFIED", productExecutionVerified: false, reason: "RUNTIME_CLAIM_NOT_INDEPENDENTLY_VERIFIED" } });
+      expect(report.automaticSuccessBasis).toBe("SUPPLIED_ATTESTATIONS_ONLY_NOT_EXECUTION_PROOF");
+      expect(report.summary.dev.verifiedAutomaticSuccessRate).toEqual({ numerator: null, denominator: null, value: null, reason: "INDEPENDENT_RUNTIME_EVIDENCE_NOT_AVAILABLE" });
+    });
+
+    it.each([
+      { edits: 0, retries: 0, firstAttempt: 1, afterRetry: 0, afterManualEdits: 0 },
+      { edits: 0, retries: 1, firstAttempt: 0, afterRetry: 1, afterManualEdits: 0 },
+      { edits: 1, retries: 0, firstAttempt: 0, afterRetry: 0, afterManualEdits: 1 },
+      { edits: 1, retries: 1, firstAttempt: 0, afterRetry: 0, afterManualEdits: 1 },
+    ])("partitions supplied success attestations for edits=$edits retries=$retries", async value => {
+      const { corpus, run } = await fixture();
+      Object.assign(run.pages[0], { evidenceKind: "actual_product", manualEdits: value.edits, automaticRetries: value.retries });
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.summary.dev.attestedSuccesses).toEqual({ basis: "SUPPLIED_ATTESTATIONS_ONLY", denominator: 1, firstAttempt: value.firstAttempt, afterRetry: value.afterRetry, afterManualEdits: value.afterManualEdits });
+      expect(report.pages[0].automaticSuccess).toBe(value.firstAttempt === 1);
+    });
+
+    it.each(["missing", "pending", "mismatch", "fail", "pass"])("distinguishes supplied quality review state: %s", async kind => {
+      const { corpus, run } = await fixture();
+      if (kind === "missing") delete run.pages[0].qualityReview;
+      if (kind === "pending") run.pages[0].qualityReview.status = "pending";
+      if (kind === "mismatch") run.pages[0].qualityReview.runId = "other-run";
+      if (kind === "fail") run.pages[0].qualityReview.meaning = "fail";
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].qualityReviewStatus.status).toBe(kind.toUpperCase());
+      expect(report.pages[0].quality).toBe(kind === "pass" ? "PASS" : kind === "fail" ? "FAIL" : "PENDING");
+      expect(report.summary.dev.qualityReviewPendingRate.value).toBe(["missing", "pending", "mismatch"].includes(kind) ? 1 : 0);
+    });
+
+    it.each(["failed", "review", "blocked", "not_run", "completed"])("reports processing state independently of human quality: %s", async status => {
+      const { corpus, run } = await fixture();
+      run.pages[0].stages.TRANSLATION = status;
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0].processingStatus).toBe(status === "failed" ? "FAILED" : ["review", "blocked"].includes(status) ? "NEEDS_REVIEW" : status.toUpperCase());
+      expect(report.pages[0].quality).toBe("PASS");
+    });
+
+    it("keeps missing resource values null with reasons and preserves observed zeros", async () => {
+      const { corpus, run } = await fixture(2);
+      run.pages[1].durationMs = 0;
+      run.pages[1].peakWorkingSetBytes = 0;
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.pages[0]).toMatchObject({ durationMs: null, peakWorkingSetBytes: null, resourceMeasurementReasons: { durationMs: "NOT_REPORTED", peakWorkingSetBytes: "NOT_REPORTED" } });
+      expect(report.pages[1]).toMatchObject({ durationMs: 0, peakWorkingSetBytes: 0, resourceMeasurementReasons: { durationMs: null, peakWorkingSetBytes: null } });
+    });
+
+    it("keeps delivery, independent meaning and image-quality measurements unavailable without their input contracts", async () => {
+      const { corpus, run } = await fixture();
+      const report = await evaluateAutomationQuality(corpus, run, directory);
+
+      expect(report.summary.dev.delivery.automaticDeliveryRate).toEqual({ numerator: null, denominator: null, value: null, reason: "DELIVERY_RECORDS_NOT_SUPPLIED" });
+      expect(report.summary.dev.delivery.humanAuditErrorRate).toEqual({ numerator: null, denominator: null, value: null, reason: "DELIVERY_AND_HUMAN_AUDIT_RECORDS_NOT_SUPPLIED" });
+      expect(report.summary.dev.delivery.withheldRate.value).toBeNull();
+      expect(report.independentAssessments).toEqual({
+        semanticErrors: { value: null, reason: "INDEPENDENT_SEMANTIC_ASSESSMENT_NOT_AVAILABLE" },
+        imageSourceResidue: { value: null, reason: "INDEPENDENT_IMAGE_ASSESSMENT_NOT_AVAILABLE" },
+        artworkDamage: { value: null, reason: "INDEPENDENT_IMAGE_ASSESSMENT_NOT_AVAILABLE" },
+      });
+    });
+
+    it("preserves CLI arguments, relative asset base, summary stdout and exclusive report creation", async () => {
+      const { corpus, run } = await fixture();
+      const corpusFile = join(directory, "corpus.json"), runFile = join(directory, "run.json"), output = join(directory, "report.json");
+      await writeFile(corpusFile, JSON.stringify(corpus));
+      await writeFile(runFile, JSON.stringify(run));
+      const script = fileURLToPath(new URL("../../scripts/evaluate-automation-quality.mjs", import.meta.url));
+      const stdout = execFileSync(process.execPath, [script, corpusFile, runFile, output], { cwd: tmpdir(), encoding: "utf8", windowsHide: true });
+      const reportBytes = await readFile(output, "utf8"), report = JSON.parse(reportBytes);
+
+      expect(JSON.parse(stdout)).toEqual(report.summary);
+      expect(report).toMatchObject({ schemaVersion: 1, datasetId: corpus.datasetId, runId: run.runId, corpusSha256: run.corpusSha256, sourceIntegrityVerified: true });
+      expect(report.pages[0].ocr).toMatchObject({ characterErrorRate: 0, referenceCharacters: 2, matchedRegions: 1 });
+      const repeated = spawnSync(process.execPath, [script, corpusFile, runFile, output], { cwd: tmpdir(), encoding: "utf8", windowsHide: true });
+      expect(repeated.status).not.toBe(0);
+      expect(repeated.stderr).toContain("EEXIST");
+      expect(await readFile(output, "utf8")).toBe(reportBytes);
+    });
   });
 });

@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';
+test('a fresh server validation clears acknowledgments tied to the previous proposal SHA',async()=>{const h=await fs.readFile(new URL('../app/review-layout/route.ts',import.meta.url),'utf8'),body=h.slice(h.indexOf('async function validateCombination()'),h.indexOf("$('validateCombination').onclick"));assert.match(body,/for\(const id of\['roiAck','saveAck','layoutAck'\]\)\$\(id\)\.checked=false/);assert.match(body,/checkedCombination=null;roiReceipt=null/);});

@@ -1,0 +1,19 @@
+// Reuse existing full suites; preserve per-command exit codes and a complete source snapshot.
+import fs from 'node:fs/promises';import path from 'node:path';import {spawn} from 'node:child_process';import {createHash} from 'node:crypto';
+const root=process.cwd(),destination=path.resolve(process.argv[2]??'docs/validation/stage14r3-image-preparation-20261115/evidence');await fs.mkdir(destination,{recursive:true});
+async function snapshot(){const out={};async function walk(dir){for(const e of await fs.readdir(dir,{withFileTypes:true})){if(e.isSymbolicLink())continue;const p=path.join(dir,e.name);if(e.isDirectory()){if(!['node_modules','.next','dist','.git','__pycache__'].includes(e.name))await walk(p);}else if(/\.(mjs|cjs|[cm]?ts|tsx|json|toml|ps1|py)$/.test(e.name))out[path.relative(root,p)]=createHash('sha256').update(await fs.readFile(p)).digest('hex');}}
+ for(const dir of ['apps/engine','packages/ai-engine/quality','scripts/v2','tests/v2','apps/sites/app/api/engine','apps/sites/app/review-image','apps/sites/app/review-layout','apps/sites/checks','.codex'])await walk(path.resolve(dir));
+ for(const file of ['packages/ai-engine/vendor/trio/scripts/sites-local/engine.cjs','packages/ai-engine/vendor/trio/scripts/sites-local/engine-boundaries.cjs','packages/ai-engine/vendor/trio/scripts/sites-local/renderer.ts','packages/ai-engine/vendor/trio/scripts/local-preview/renderer.ts','packages/ai-engine/vendor/trio/src/renderer/candidateTypesettingFit.ts','packages/ai-engine/vendor/trio/src/renderer/layoutMeasurement.ts','packages/ai-engine/vendor/trio/src/shared/typesettingKoreanBreak.ts','packages/ai-engine/.build/renderer.js','packages/ai-engine/.build/layout-measurement.js'])out[file]=createHash('sha256').update(await fs.readFile(file)).digest('hex');
+ return out;}
+async function run(name,args){const chunks=[],h=await fs.open(path.join(destination,name+'.log'),'wx');let writing=Promise.resolve();const child=spawn(process.execPath,args,{cwd:root,env:process.env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+ for(const s of [child.stdout,child.stderr])s.on('data',b=>{chunks.push(b);writing=writing.then(()=>h.write(b));});
+ const exitCode=await new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',resolve);});await writing;await h.close();const transcript=Buffer.concat(chunks).toString('utf8');return {name,args,exitCode,transcript};}
+const before=await snapshot();await fs.writeFile(path.join(destination,'verification-sources-before.json'),JSON.stringify(before,null,2),{flag:'wx'});
+const results=await Promise.allSettled([
+ run('v2-all',['scripts/v2/test.mjs']),run('web-driver',['scripts/v2/test-web-isolated.mjs',destination]),
+ run('root-typecheck',['node_modules/typescript/bin/tsc','--noEmit']),run('sites-typecheck',['apps/sites/node_modules/typescript/bin/tsc','--project','apps/sites/tsconfig.json','--noEmit','--incremental','false'])
+]);
+const commands=[];for(const r of results){if(r.status==='rejected'){commands.push({status:'TOOL_FAILED',error:String(r.reason)});continue;}const {transcript,...command}=r.value;commands.push(command);if(command.name==='v2-all'){const m=transcript.match(/V2_TEST_OUTPUT=(.+)/);if(m){const v=JSON.parse(await fs.readFile(path.join(m[1].trim(),'verification.json')));await fs.writeFile(path.join(destination,'v2-verification.json'),JSON.stringify(v,null,2),{flag:'wx'});}}}
+const after=await snapshot(),changed=[...new Set([...Object.keys(before),...Object.keys(after)])].filter(k=>before[k]!==after[k]);
+const result={status:commands.every(c=>c.exitCode===0)&&!changed.length?'PASS':'FAILED',commands,sourceUnchanged:changed.length===0,changed,sourceFiles:Object.keys(before).length};
+await fs.writeFile(path.join(destination,'verification.json'),JSON.stringify(result,null,2),{flag:'wx'});console.log(JSON.stringify(result));process.exitCode=result.status==='PASS'?0:1;

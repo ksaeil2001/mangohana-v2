@@ -1,0 +1,21 @@
+'use strict';
+const fs=require('node:fs/promises'),path=require('node:path'),{pathToFileURL}=require('node:url'),{createHash}=require('node:crypto');
+const {app,protocol}=require('electron');
+protocol.registerSchemesAsPrivileged([{scheme:'trio-resource',privileges:{standard:true,secure:true,supportFetchAPI:true,corsEnabled:true}}]);
+const directory=path.resolve(process.argv[2]);app.setPath('userData',path.join(directory,'profile'));app.setPath('sessionData',path.join(directory,'session'));app.disableHardwareAcceleration();
+app.on('window-all-closed',()=>{});
+app.commandLine.appendSwitch('disable-background-networking');
+const forbiddenCalls={network:0,child:0},deny=kind=>()=>{forbiddenCalls[kind]++;throw Error('TEXT_MEASUREMENT_FORBIDDEN_'+kind);};
+globalThis.fetch=deny('network');for(const name of ['node:http','node:https'])for(const method of ['request','get'])require(name)[method]=deny('network');require('node:net').Socket.prototype.connect=deny('network');require('node:tls').connect=deny('network');require('node:dgram').createSocket=deny('network');
+for(const name of ['spawn','spawnSync','exec','execSync','execFile','execFileSync','fork'])require('node:child_process')[name]=deny('child');require('node:module').syncBuiltinESMExports();
+const sha=b=>createHash('sha256').update(b).digest('hex');
+app.whenReady().then(async()=>{let window;try{
+ const bytes=await fs.readFile(path.join(directory,'input.json')),input=JSON.parse(bytes);if(input.kind!=='LAYOUT_TEXT_MEASUREMENT'||!input.requestId||input.image||input.permit)throw Error('MEASUREMENT_INPUT_INVALID');
+ const {initializeProductionTypesetFontResource}=await import(pathToFileURL(path.join(input.config.buildRoot,'src/main/productionTypesetFontResource.js')).href),font=await initializeProductionTypesetFontResource(input.config.resourcesPath,{warn:()=>{}});if(!font.enabled)throw Error('LAYOUT_FONT_UNAVAILABLE');
+ const bundle=await fs.readFile(input.config.measurementBundle,'utf8'),{createRenderer}=require('../vendor/trio/scripts/sites-local/engine.cjs');
+ const stub="window.SitesCandidate=Object.freeze({prepare(){throw Error('IMAGE_PIPELINE_FORBIDDEN')},render(){throw Error('IMAGE_PIPELINE_FORBIDDEN')}});";
+ window=await createRenderer(font,stub+'\n'+bundle+'\nvoid 0;',new AbortController().signal);
+ const result=await window.webContents.executeJavaScript(`LayoutTextMeasurement.measureEntries(${JSON.stringify(input.measurement)})`,true);
+ if(Object.values(forbiddenCalls).some(Boolean))throw Error('TEXT_MEASUREMENT_BOUNDARY_FAILED');
+ await fs.writeFile(path.join(directory,'result.json'),JSON.stringify({version:1,kind:input.kind,requestId:input.requestId,inputSha256:sha(bytes),bundleSha256:sha(bundle),...result,forbiddenCalls}),{flag:'wx',mode:0o600});window.destroy();app.exit(0);
+ }catch(e){if(window&&!window.isDestroyed())window.destroy();await fs.writeFile(path.join(directory,'measurement-error.json'),JSON.stringify({code:e.code??'LAYOUT_MEASUREMENT_FAILED',message:e.message,stack:e.stack}),{flag:'wx',mode:0o600});app.exit(1);}});

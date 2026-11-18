@@ -1,0 +1,13 @@
+export const VERSION: string;
+export type GeneralProfile = { text?: string; writingMode?: string; shape?: string; dialogueType?: string; rotationDegrees?: number; profile?: string };
+export type InkBounds = {left:number;right:number;top:number;bottom:number};
+export type StandardInput = GeneralProfile & {text:string;lines:string[];stage?:string;fontSizePx?:number;minFontSizePx?:number;lineHeight?:number;align?:string;referenceFontSizePx?:number;sceneReferences?:Array<{fontSizePx:number}>;
+ measurement?:{completeText?:boolean;fitsBox?:boolean;linesSeparated?:boolean;inkBounds?:InkBounds[]};safety?:{safeAreaVerified?:boolean;otherRegionCollision?:boolean;protectedArtworkCollision?:boolean};glyphs?:{supported?:boolean;missingGlyphOccurrences?:number;unexpectedSubstitution?:boolean};mapping?:{expectedId?:string;actualId?:string;expectedOrder?:number;actualOrder?:number;expectedSpeaker?:string;actualSpeaker?:string};raster?:{paintedPixels:number;outsideInteriorPixels:number|null;clippedPixels?:number;canvasEdgePixels:number;otherRegionCollisionPixels?:number;overlappingInkPixels?:number}};
+export type StandardResult = {version:string;profile:string;stage?:string;status:'PASS'|'WARN'|'BLOCKED'|'NOT_APPLICABLE';hardChecks?:Record<string,string>;hardViolations:Array<{rule:string;code:string}>;softWarnings:Array<{rule:string;code:string;message:string;details?:unknown}>;pendingFinalChecks:string[];finalRasterVerified:boolean;automaticApprovalAllowed:false;readability?:ReturnType<typeof scoreKoreanReadability>;textEvidence?:ReturnType<typeof inspectKoreanText>};
+export function isGeneralKorean(input?:GeneralProfile):boolean;
+export function inspectKoreanText(source:string,lines:readonly string[]):{complete:boolean;intraWordBreaks:number|null;punctuationOnlyLines:number[];leadingDetachedPunctuation:number[];missingCharacters:number|null;extraCharacters:number|null};
+export function scoreKoreanReadability(input:Partial<StandardInput>):{warnings:StandardResult['softWarnings'];penalty:number;score:number;sizePenalty:number;characterCounts:number[];lineCount:number;semanticEvidence:string;recommendationsAreExperimental:true};
+export function evaluateKoreanTypesetting(input:StandardInput):StandardResult;
+export function breakGeneralKorean(text:string,options:{estimateWidth:(text:string)=>number;getAvailableWidth:(lineIndex:number,lineCount:number)=>number;maxLines?:number}):string[];
+export type FinalStandardEvidence={id:string;text:string;order:number;assessment:StandardResult};
+export function verifyFinalKoreanEvidence(expected:Array<{id:string;text:string;order:number}>,proofs:FinalStandardEvidence[],reviewedWarnings?:Record<string,string[]>):{version:string;status:'PASS'|'WARN';regions:number;finalRasterVerified:true};

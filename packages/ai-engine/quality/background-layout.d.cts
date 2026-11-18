@@ -1,0 +1,12 @@
+export type Box={x:number;y:number;width:number;height:number};
+export type Interior={mask:Uint8Array;left:number;top:number;width:number;height:number};
+export type BackgroundEvidence={version:number;policy:string;id:string;basis:null|'UNIFORM_BACKGROUND_INSET_RECTANGLE'|'USER_REVIEWED_PROTECTED_ROI_RECTANGLE';sourceSha256:string;cleanedSha256:string|null;maskSha256:string;bbox:Box;cleanedVerified:boolean;color?:string;minimumContrast:number|null;approvalSha256:string|null;[key:string]:unknown};
+export type Result={status:'SAFE_PIXELS_VERIFIED'|'CLEANED_PENDING'|'MANUAL_LAYOUT_REQUIRED';sourceReviewable:boolean;reasonCodes:string[];evidence:BackgroundEvidence;interior?:Interior;previewInterior?:Interior;paint?:{color:string;strokeColor:string}};
+export type SceneOptions={id:string;bbox:Box;allowedBbox?:Box;otherBoxes?:readonly {id:string;bbox:Box}[];approvalSha256?:string};
+export type ManualEntry={id:string;bbox:Box;text:string;fontSizePx:number;lineHeight:number};
+export function createBackgroundScene(input:{sourcePixels:Uint8Array|Uint8ClampedArray;cleanedPixels?:Uint8Array|Uint8ClampedArray;maskPixels:Uint8Array|Uint8ClampedArray;width:number;height:number;sourceSha256:string;cleanedSha256?:string|null;maskSha256:string}):{inspectUniform(options:SceneOptions):Result;inspectManual(options:SceneOptions):Result;whiteUpperBound(options:{bbox:Box}):{possible:boolean;maximumRectangleArea:number;requiredArea:number;logicalUpperBoundOnly:true;cleanedVerified:false}};
+export function normalizeManualEntries(entries:unknown,regions:readonly {id:string;text:string;bbox:Box;allowedBbox?:Box}[],width:number,height:number):ManualEntry[];
+export function footprintFits(interior:Interior|undefined,bounds:readonly {left:number;right:number;top:number;bottom:number}[]):boolean;
+export function layoutTextMatches(source:string,text:string):boolean;
+export function inside(a:Box,b:Box):boolean;
+export const POLICY:string;

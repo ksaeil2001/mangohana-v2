@@ -1,0 +1,31 @@
+// Stage10 evidence wrapper. Runs only the command explicitly supplied by the caller.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {spawn,execFileSync} from 'node:child_process';
+
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const [audit,name,...command]=process.argv.slice(2);
+if(!audit||!name||!command.length||!/^[-a-z0-9]+$/.test(name))throw Error('Usage: stage10-receipt.mjs <audit> <name> <executable> [args]');
+const output=path.resolve(audit,'evidence',name),cwd=process.env.STAGE10_TEST_CWD||root;
+await fs.mkdir(output,{recursive:false});
+const sha=b=>createHash('sha256').update(b).digest('hex');
+const files=[...new Set(execFileSync('git',['ls-files','-c','-o','--exclude-standard','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean))].sort();
+const fingerprint=async()=>Object.fromEntries(await Promise.all(files.map(async f=>[f,sha(await fs.readFile(path.join(root,f)))])));
+const before=await fingerprint(),startedAt=new Date().toISOString(),start=performance.now();
+const temporary=await fs.mkdtemp(path.join(os.tmpdir(),'mangohana-stage10-'));
+const env={...process.env,TEMP:temporary,TMP:temporary,NO_COLOR:'1'};delete env.FORCE_COLOR;
+const chunks=[];
+const child=spawn(command[0],command.slice(1),{cwd,env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+child.stdout.on('data',b=>chunks.push(b));child.stderr.on('data',b=>chunks.push(b));
+const result=await new Promise(resolve=>{child.once('error',error=>resolve({code:null,signal:null,error:error.code}));child.once('close',(code,signal)=>resolve({code,signal}));});
+const log=Buffer.concat(chunks),after=await fingerprint(),text=log.toString('utf8').replace(/\x1b\[[0-9;]*m/g,'');
+const changed=files.filter(f=>before[f]!==after[f]);
+const counts=Object.fromEntries(['tests','pass','fail','cancelled','skipped','todo'].map(label=>{const matches=[...text.matchAll(new RegExp('(?:ℹ |# )'+label+'\\s+(\\d+)','g'))];return[label,matches.length?Number(matches.at(-1)[1]):null];}));
+const receipt={schemaVersion:1,name,scope:'STAGE10_EXPLICIT_COMMAND_NOT_HUMAN_APPROVAL',command,cwd,node:process.version,startedAt,endedAt:new Date().toISOString(),durationMs:performance.now()-start,exitCode:result.code,signal:result.signal,error:result.error??null,sourceUnchanged:changed.length===0,changed,sourceBefore:before,sourceAfter:after,counts,logSha256:sha(log),temporary,realModelCalls:null};
+await fs.writeFile(path.join(output,'output.log'),log,{flag:'wx'});
+await fs.writeFile(path.join(output,'receipt.json'),JSON.stringify(receipt,null,2),{flag:'wx'});
+console.log(JSON.stringify({name,output,exitCode:result.code,sourceUnchanged:receipt.sourceUnchanged,counts,tail:text.slice(-1600)}));
+process.exitCode=result.code===0&&receipt.sourceUnchanged?0:1;

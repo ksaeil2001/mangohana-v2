@@ -1,3 +1,4 @@
+import {breakGeneralKorean,isGeneralKorean} from "../../../../packages/ai-engine/quality/korean-typesetting-standard.cjs";
 /**
  * YSB Translator Tool 방식 한국어 형태소/조사·어미 결합도 인식 및 줄바꿈 후보 평가기 (Candidate Evaluator)
  * W3C KLReq 조판 표준 규칙과 연동되어 자연스러운 한국어 식자 레이아웃을 생성합니다.
@@ -65,6 +66,7 @@ export function findBestSubwordBreak(word: string): number {
 }
 
 export type CandidateEvaluationOptions = {
+  preserveEojeol?: boolean;
   estimateWidth: (text: string) => number;
   getAvailableWidth: (lineIndex: number, lineCount: number) => number;
   maxLines?: number;
@@ -78,6 +80,7 @@ export function evaluateAndBreakKoreanText(
   text: string,
   options: CandidateEvaluationOptions
 ): string[] {
+  if(options.preserveEojeol!==false&&isGeneralKorean({text}))return breakGeneralKorean(text,options);
   const trimmed = text.trim().replace(/[\r\n]+/g, " ");
   if (!trimmed) return [];
 

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": ".build/compiled",
+    "rootDir": "vendor/trio",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "types": ["node"]
+  },
+  "include": [
+    "vendor/trio/src/main/productionOcrService.ts",
+    "vendor/trio/src/main/productionTypesetFontResource.ts",
+    "vendor/trio/src/main/translation/translationEngineRegistry.ts",
+    "vendor/trio/src/main/translation/adapters/localAiAdapter.ts",
+    "vendor/trio/src/shared/translation/translationPayload.ts"
+  ]
+}

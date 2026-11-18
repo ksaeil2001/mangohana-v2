@@ -1,0 +1,26 @@
+import fs from 'node:fs/promises';import path from 'node:path';import sharp from 'sharp';import {createHash} from 'node:crypto';
+const [audit,packet='visual-review',candidateName='candidate-visual']=process.argv.slice(2);
+if(!path.isAbsolute(audit??'')||![packet,candidateName].every(s=>/^[-a-z0-9]+$/.test(s)))throw Error('fresh audit output required');
+const out=path.join(audit,packet);await fs.mkdir(out,{recursive:false});
+const read=async n=>JSON.parse(await fs.readFile(path.join(audit,'evidence',n,'result.json'),'utf8'));
+const baseline=await read('baseline-visual'),candidate=await read(candidateName),escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const asset=(run,file)=>'../evidence/'+run+'/'+file,rows=[],changes=[];
+for(const c of candidate.results){const b=baseline.results.find(v=>v.id===c.id);if(!b)throw Error('baseline case missing');
+ const images=[['원본',asset('baseline-visual',b.files.original)],['cleaned',asset(candidateName,c.files.cleaned)],['기존 식자',b.files.result?asset('baseline-visual',b.files.result):null],['개선 후보',c.files.result?asset(candidateName,c.files.result):null],['안전 영역 후보/합성 정답',c.files.safe?asset(candidateName,c.files.safe):null],['실제 글리프 잉크',c.files.ink?asset(candidateName,c.files.ink):null],['충돌·경계 의심',c.files.suspects?asset(candidateName,c.files.suspects):null]];
+ rows.push(`<section id="${c.id}"><h2>${escape(c.id)} · ${escape(c.level)}</h2><p class="state">기존 ${escape(b.status)} → 후보 ${escape(c.status)} · 사람 검수 대기</p><div class="grid">${images.map(([label,p])=>`<figure><figcaption>${label}</figcaption>${p?`<a href="${p}"><img src="${p}" alt="${escape(label)}"></a>`:`<p>${escape(c.error??'미생성')}</p>`}</figure>`).join('')}</div><p>문자열(출처는 아래 JSON): <code>${escape(c.lines.map(l=>l.userTranslation??l.aiTranslation).join('\n'))}</code></p><details><summary>원문·이미지 hash·renderer·식자 파라미터·픽셀 증거</summary><pre>${escape(JSON.stringify({source:c.source,baseline:b.layoutReport,candidate:c.layoutReport,baselineMetrics:b.metrics,candidateMetrics:c.metrics},null,2))}</pre></details><label>사람 검수 메모 <textarea placeholder="아직 사람 승인 없음 — 관측한 결함과 영역을 적어 주세요."></textarea></label></section>`);
+ changes.push({id:c.id,level:c.level,before:b.status,after:c.status,beforeMetrics:b.metrics??null,afterMetrics:c.metrics??null,beforeFontPx:b.layoutReport?.map(l=>l.fontSizePx)??null,afterFontPx:c.layoutReport?.map(l=>l.fontSizePx)??null,fitStatuses:c.layoutReport?.map(l=>l.fitStatus)??null,humanReview:'pending',realQuality:null});
+}
+const html='<!doctype html><html lang="ko"><meta charset="utf-8"><title>Stage12 한국어 식자 전후 검수</title><style>body{font:16px/1.5 "Malgun Gothic",sans-serif;background:#f4f4f2;color:#151515;margin:28px}h1{font-size:26px}section{background:white;padding:20px;margin:24px 0;border:1px solid #aaa}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}figure{margin:0}figcaption{font-weight:bold}img{width:100%;max-height:540px;object-fit:contain;background:#ddd}a:focus img,a:hover img{outline:3px solid #1373d0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}code{white-space:pre-wrap}textarea{display:block;width:95%;height:80px}.state{color:#8a3500}label{display:block;margin-top:12px}</style><h1>Stage12 · 실제 제품 Canvas 식자 전후 비교</h1><p>새 OCR·번역·LaMa 실행 없이, 기존 설치 글꼴과 고정 문자열을 사용했습니다. 합성10유형·저장 원고3개 crop의 렌더 증거입니다. 사진의 녹색 내부 정답은 없으며 파란 상자는 식자 후보 범위입니다. 그림을 누르면 원래 해상도로 확대할 수 있습니다.</p><p>모든 결과는 검토용 후보입니다. AI 시각 검토와 자동 픽셀 검사는 사람의 자연스러운 식자·번역 승인과 다릅니다.</p>'+rows.join('')+'</html>';
+await fs.writeFile(path.join(out,'index.html'),html,{flag:'wx'});
+await fs.writeFile(path.join(out,'comparison.json'),JSON.stringify({baselineBuild:baseline.buildName,candidateBuild:candidate.buildName,changes,humanReview:'pending',realQuality:null},null,2),{flag:'wx'});
+const thumbs=[];let y=0;
+for(const c of candidate.results){const b=baseline.results.find(v=>v.id===c.id);if(!b.files.result||!c.files.result)continue;
+ const label=Buffer.from(`<svg width="840" height="30"><rect width="840" height="30" fill="white"/><text x="12" y="22" font-size="18" font-family="sans-serif">${c.id} : baseline / candidate (AI review, human pending)</text></svg>`);
+ thumbs.push({input:label,left:0,top:y});y+=30;
+ for(const [i,run,file]of [[0,'baseline-visual',b.files.result],[1,candidateName,c.files.result]]){const bytes=await sharp(path.join(audit,'evidence',run,file)).resize(414,340,{fit:'contain',background:'#eee'}).png().toBuffer();thumbs.push({input:bytes,left:i*420,top:y});}
+ y+=346;
+}
+await sharp({create:{width:840,height:y,channels:4,background:'#fff'}}).composite(thumbs).png().toFile(path.join(out,'contact-sheet.png'));
+const files=[];for(const name of await fs.readdir(out)){const bytes=await fs.readFile(path.join(out,name));files.push({path:name,sha256:createHash('sha256').update(bytes).digest('hex'),bytes:bytes.length});}
+await fs.writeFile(path.join(out,'packet-hashes.json'),JSON.stringify(files,null,2),{flag:'wx'});
+console.log(JSON.stringify({output:out,cases:changes.length,rendered:changes.filter(c=>c.after==='RENDERED').length,blocked:changes.filter(c=>c.after==='BLOCKED').length,fitStatuses:changes.flatMap(c=>c.fitStatuses??[]),humanReview:'pending'}));

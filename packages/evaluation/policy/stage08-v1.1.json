@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "stage08-v1.1",
+  "mode": "offline_only",
+  "status": "QUALITY_POLICY_PREPARED",
+  "runtime": {
+    "automaticDeliveryEnabled": false,
+    "automaticRetryEnabled": false,
+    "savePathConnected": false,
+    "manualReviewPreserved": true
+  },
+  "states": ["PASS", "FAIL", "NEEDS_REVIEW", "NOT_MEASURED", "BLOCKED"],
+  "dimensions": ["execution", "structure", "ocr", "translationRuleQa", "independentSemantic", "imageQuality", "typesetting", "humanReview", "userApproval"],
+  "requiredCoverage": {
+    "execution": ["current_job_attempt", "stage_completion", "storage_export_receipt"],
+    "structure": ["materialized_bytes", "identity_revision", "lineage_frames", "atomic_admission", "operation_aggregate_consistency"],
+    "translationRuleQa": ["bound_translation_input", "id_number_language_rules"],
+    "ocr": ["human_source_gt", "region_matching", "micro_cer", "line_roi_mapping"],
+    "independentSemantic": ["critical_major_meaning", "dialogue_omission", "names_titles_quantities", "context"],
+    "imageQuality": ["source_residue", "inside_artwork_damage", "outside_mask", "protected_artwork", "preserve_sfx"],
+    "typesetting": ["actual_glyphs", "actual_safe_area", "clipping", "minimum_size", "human_legibility"],
+    "humanReview": ["semantic", "image", "typesetting"],
+    "userApproval": ["explicit_user_action"]
+  },
+  "unsupportedAutomaticChecks": [
+    "independent_semantic_correctness",
+    "single_japanese_residue",
+    "inside_mask_artwork_damage",
+    "actual_korean_glyph_coverage",
+    "human_readability"
+  ],
+  "severity": {
+    "Critical": {"decision": "FAIL", "requiresIndependentEvidence": true, "scopeAndImpactRequired": true},
+    "Major": {"decision": "FAIL", "requiresIndependentEvidence": true, "scopeAndImpactRequired": true},
+    "Minor": {"decision": "NEEDS_REVIEW", "requiresIndependentEvidence": true, "scopeAndImpactRequired": true},
+    "Uncertain": {"decision": "NEEDS_REVIEW", "severityMustRemainNull": true}
+  },
+  "metrics": {
+    "precision": {"numerator": [["TP",1]], "denominator": [["TP",1],["FP",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "recall": {"numerator": [["TP",1]], "denominator": [["TP",1],["FN",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "f1": {"numerator": [["TP",2]], "denominator": [["TP",2],["FP",1],["FN",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "micro_cer": {"numerator": [["characterErrors",1]], "denominator": [["referenceCharacters",1]], "bounded": false, "population": "pooled_measurable_ocr_counts"},
+    "false_positive": {"numerator": [["FP",1]], "denominator": [["FP",1],["TN",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "false_discovery": {"numerator": [["FP",1]], "denominator": [["TP",1],["FP",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "defect_escape": {"numerator": [["FN",1]], "denominator": [["TP",1],["FN",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "defective_among_accepted": {"numerator": [["FN",1]], "denominator": [["FN",1],["TN",1]], "bounded": true, "population": "binary_independent_oracle"},
+    "automatic_delivery": {"numerator": [["automaticDelivered",1]], "denominator": [["eligiblePages",1]], "bounded": true, "population": "preregistered_eligible_cohort"},
+    "automatic_delivery_audit_error": {"numerator": [["auditedMajorCritical",1]], "denominator": [["auditedAutomaticDelivered",1]], "bounded": true, "population": "independently_human_audited_automatic_deliveries"},
+    "first_correct_automatic": {"numerator": [["firstCorrectAutomatic",1]], "denominator": [["eligiblePages",1]], "bounded": true, "population": "preregistered_eligible_cohort"},
+    "retry_success": {"numerator": [["verifiedRetrySuccess",1]], "denominator": [["eligibleRetriedPages",1]], "bounded": true, "population": "actually_retried_pages_without_manual_edits"},
+    "review_hold": {"numerator": [["reviewHeld",1]], "denominator": [["eligiblePages",1]], "bounded": true, "population": "preregistered_eligible_cohort"},
+    "evaluation_availability": {"numerator": [["evaluablePages",1]], "denominator": [["eligiblePages",1]], "bounded": true, "population": "preregistered_eligible_cohort"},
+    "unmeasured": {"numerator": [["unmeasuredPages",1]], "denominator": [["eligiblePages",1]], "bounded": true, "population": "single_declared_dimension_in_eligible_cohort"},
+    "synthetic_detection_coverage": {"numerator": [["detectedSyntheticDefects",1]], "denominator": [["oracleSyntheticDefects",1]], "bounded": true, "population": "all_independent_synthetic_defects_including_unsupported"},
+    "real_detection_coverage": {"numerator": [["detectedRealDefects",1]], "denominator": [["oracleRealDefects",1]], "bounded": true, "population": "independently_human_adjudicated_real_defects"},
+    "delivered_defective": {"numerator": [["defectiveDelivered",1]], "denominator": [["allDelivered",1]], "bounded": true, "population": "complete_human_census_of_all_delivered_results"}
+  },
+  "legacyMetricInterpretation": {
+    "stage07.falseAcceptRate": "defective_among_accepted",
+    "stage07.defectEscapeRate": "defect_escape",
+    "rawStage07Rewritten": false,
+    "oldResultsAreProductDeliveryRates": false
+  },
+  "targets": [
+    {"id":"major_dialogue_recall","classification":"INITIAL_NUMERIC_CANDIDATE","operator":">=","value":0.99,"achieved":null},
+    {"id":"major_dialogue_precision","classification":"INITIAL_NUMERIC_CANDIDATE","operator":">=","value":0.98,"achieved":null},
+    {"id":"micro_cer","classification":"INITIAL_NUMERIC_CANDIDATE","operator":"<=","value":0.02,"achieved":null},
+    {"id":"id_loss_duplicate","classification":"STRUCTURAL_INVARIANT","operator":"=","value":0,"achieved":null},
+    {"id":"wrong_bubble_mapping","classification":"HUMAN_CALIBRATION_REQUIRED","operator":"=","value":0,"achieved":null},
+    {"id":"confirmed_critical_major_semantic_errors","classification":"CONFIRMED_ERROR_ZERO_TOLERANCE","operator":"=","value":0,"achieved":null},
+    {"id":"missing_major_dialogue","classification":"CONFIRMED_ERROR_ZERO_TOLERANCE","operator":"=","value":0,"achieved":null},
+    {"id":"major_name_title_quantity_mismatch","classification":"CONFIRMED_ERROR_ZERO_TOLERANCE","operator":"=","value":0,"achieved":null},
+    {"id":"confirmed_removal_target_residue","classification":"CONFIRMED_ERROR_ZERO_TOLERANCE","operator":"=","value":0,"achieved":null},
+    {"id":"outside_authorized_mask_changed_pixels","classification":"STRUCTURAL_INVARIANT","operator":"=","value":0,"achieved":null},
+    {"id":"protected_artwork_major_damage","classification":"CONFIRMED_ERROR_ZERO_TOLERANCE","operator":"=","value":0,"achieved":null},
+    {"id":"unauthorized_preserved_sfx_removal","classification":"CONFIRMED_ERROR_ZERO_TOLERANCE","operator":"=","value":0,"achieved":null},
+    {"id":"actual_missing_glyphs","classification":"HUMAN_CALIBRATION_REQUIRED","operator":"=","value":0,"achieved":null},
+    {"id":"actual_safe_area_overflow","classification":"HUMAN_CALIBRATION_REQUIRED","operator":"=","value":0,"achieved":null},
+    {"id":"minimum_display_px","classification":"HUMAN_CALIBRATION_REQUIRED","operator":">=","value":10,"achieved":null},
+    {"id":"minimum_adoption_effect","classification":"INSUFFICIENT_REAL_DATA","operator":null,"value":null,"achieved":null},
+    {"id":"minor_error_tolerance","classification":"INSUFFICIENT_REAL_DATA","operator":null,"value":null,"achieved":null}
+  ],
+  "safeguards": {"ocrQuadCoverage":0.75,"minimumFreeHostMiB":512,"minimumReportedFontPx":10},
+  "reprocessing": {
+    "applied": false,
+    "classification": "PROVISIONAL_NOT_RUNTIME",
+    "correctionAttempts": 2,
+    "modelFallbacks": 1,
+    "fallbackIncludedInCorrections": true,
+    "stopOnRepeatedRootCause": true,
+    "preserveBetterPreviousCandidate": true,
+    "preserveUserConfirmedValues": true,
+    "unknownCompletionNeverAutoRetried": true,
+    "pageLimits": {"maxRequests":null,"maxTokens":null,"maxDurationMs":null,"maxMoney":null,"maxGpuBytes":null}
+  },
+  "datasetStates": ["DATASET_PREPARED","HUMAN_GT_BLOCKED","HOLDOUT_BLOCKED"],
+  "datasetCounts": {"dev":10,"unassigned":10,"professionalReferences":10,"humanVerified":0,"holdout":0},
+  "preregistrationRequired": ["work_split_and_exposure","source_and_gt_hashes","ocr_normalization","matching_unit_and_iou","error_taxonomy_and_severity","evaluator_and_policy_version","model_adapter_prompt_font_versions","environment_and_sampling","approval_policy","primary_metric_and_minimum_effect","noninferiority_margins","resource_caps_and_stop_rules","blind_randomized_human_review","holdout_freeze"],
+  "finalEvaluation": {"unseenWorkRequired":true,"developmentWorkExcluded":true,"postOutcomeThresholdChangesForbidden":true,"criteriaFreeze":null},
+  "modelComparison": {"executed":false,"baselinePreserved":true,"maximumNewCandidates":1,"requiredConditions":8,"memoryFailureIsSemanticError":false},
+  "completionStates": ["QUALITY_POLICY_PREPARED","METRIC_DEFINITIONS_VERIFIED","QUALITY_GATES_VALIDATED_OFFLINE","NUMERIC_TARGETS_PROVISIONAL","HUMAN_GT_BLOCKED","HOLDOUT_BLOCKED","REAL_PRODUCT_QUALITY_NOT_MEASURED","STAGE09_PREREQUISITES_DOCUMENTED"]
+}

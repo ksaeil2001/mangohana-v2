@@ -1,0 +1,506 @@
+{
+  "contractVersion": 1,
+  "identity": {
+    "ownerScope": {
+      "kind": "owner",
+      "id": "synthetic-owner"
+    },
+    "projectId": "project-1",
+    "workId": "work-1",
+    "pageId": "page-1",
+    "jobId": "job-1",
+    "sourceRevision": 1,
+    "editRevision": 2,
+    "contextRevision": 3,
+    "processingGeneration": 4,
+    "storageRevision": 5
+  },
+  "images": [
+    {
+      "imageId": "original-image",
+      "kind": "uploaded_original",
+      "artifactId": "original",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "width": 100,
+      "height": 200,
+      "exifOrientation": null,
+      "rotationDegrees": null
+    },
+    {
+      "imageId": "normalized-image",
+      "kind": "normalized",
+      "artifactId": "normalized",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "width": 100,
+      "height": 200,
+      "exifOrientation": null,
+      "rotationDegrees": null
+    }
+  ],
+  "frames": [
+    {
+      "frameId": "original-px",
+      "kind": "original_px",
+      "imageId": "original-image",
+      "width": 100,
+      "height": 200,
+      "parentFrameId": null,
+      "toParent": null,
+      "crop": null
+    },
+    {
+      "frameId": "page-px",
+      "kind": "normalized_px",
+      "imageId": "normalized-image",
+      "width": 100,
+      "height": 200,
+      "parentFrameId": "original-px",
+      "toParent": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "crop": null
+    }
+  ],
+  "observations": [
+    {
+      "lineId": "line-1",
+      "kind": "source_detection",
+      "frameId": "page-px",
+      "polygon": [
+        [
+          10,
+          10
+        ],
+        [
+          30,
+          10
+        ],
+        [
+          30,
+          50
+        ],
+        [
+          10,
+          50
+        ]
+      ],
+      "quad": [
+        [
+          10,
+          10
+        ],
+        [
+          30,
+          10
+        ],
+        [
+          30,
+          50
+        ],
+        [
+          10,
+          50
+        ]
+      ],
+      "rawText": "SYNTHETIC_RAW",
+      "normalizedText": "SYNTHETIC_NORMALIZED",
+      "uncertainty": "unknown",
+      "detectionConfidence": {
+        "value": 0.95,
+        "unit": "ratio",
+        "reason": null
+      },
+      "recognitionConfidence": {
+        "value": null,
+        "unit": "ratio",
+        "reason": "NOT_REPORTED"
+      },
+      "model": {
+        "id": "synthetic-detector",
+        "revision": "fixture-v1",
+        "weightsSha256": null,
+        "configSha256": null
+      },
+      "originArtifactId": "raw"
+    }
+  ],
+  "groups": [
+    {
+      "groupId": "group-1",
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "orientation": "vertical",
+      "readingOrder": 1,
+      "speakerId": null
+    }
+  ],
+  "regions": [
+    {
+      "regionId": "region-1",
+      "frameId": "page-px",
+      "polygon": [
+        [
+          10,
+          10
+        ],
+        [
+          30,
+          10
+        ],
+        [
+          30,
+          50
+        ],
+        [
+          10,
+          50
+        ]
+      ],
+      "classification": "dialogue",
+      "confidence": {
+        "value": 0.9,
+        "unit": "ratio",
+        "reason": null
+      }
+    }
+  ],
+  "mappings": [
+    {
+      "sourceLineId": "line-1",
+      "groupId": "group-1",
+      "regionIds": [
+        "region-1"
+      ],
+      "redetectedLineIds": [],
+      "disposition": "translate",
+      "reason": "EXPLICIT_DIALOGUE",
+      "targetId": "target-1"
+    }
+  ],
+  "refinements": [],
+  "targets": [
+    {
+      "targetId": "target-1",
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "regionIds": [
+        "region-1"
+      ],
+      "contextSnapshotId": null,
+      "contextSnapshotSha256": null,
+      "text": {
+        "rawOcr": "SYNTHETIC_RAW",
+        "normalizedOcr": "SYNTHETIC_NORMALIZED",
+        "aiSourceInterpretation": null,
+        "aiCandidates": [
+          {
+            "id": "candidate-1",
+            "text": "AI_CANDIDATE"
+          }
+        ],
+        "userModified": null,
+        "userConfirmed": null
+      }
+    }
+  ],
+  "translations": [
+    {
+      "requestId": "request-1",
+      "scope": "line",
+      "targetIds": [
+        "target-1"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "contextSnapshotId": null,
+      "contextSnapshotSha256": null,
+      "inputSha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "outputSha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "status": "proposed"
+    }
+  ],
+  "typesetting": [
+    {
+      "typesetId": "typeset-1",
+      "targetId": "target-1",
+      "requestId": "request-1",
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "frameId": "page-px",
+      "polygon": [
+        [
+          10,
+          10
+        ],
+        [
+          30,
+          10
+        ],
+        [
+          30,
+          50
+        ],
+        [
+          10,
+          50
+        ]
+      ],
+      "fontVersion": "synthetic-font-v1",
+      "overlayArtifactId": "overlay"
+    }
+  ],
+  "context": null,
+  "artifacts": [
+    {
+      "artifactId": "original",
+      "kind": "uploaded_original",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "frameId": "original-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "normalized",
+      "kind": "normalized",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "original"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "raw",
+      "kind": "raw_ocr",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "normalized"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "glyphs",
+      "kind": "source_text_regions",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "raw"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "remove",
+      "kind": "removal_mask",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "glyphs"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": "studio_inverse_alpha"
+    },
+    {
+      "artifactId": "protect",
+      "kind": "protection_mask",
+      "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "glyphs"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": "binary255_active_protect"
+    },
+    {
+      "artifactId": "pre",
+      "kind": "pre_lama",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "normalized",
+        "remove",
+        "protect"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "restored",
+      "kind": "restored_image",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "pre"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "overlay",
+      "kind": "korean_overlay",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "raw"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "final",
+      "kind": "final_png",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "restored",
+        "overlay"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    },
+    {
+      "artifactId": "trio",
+      "kind": "trio_project",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "frameId": "page-px",
+      "version": "fixture-v1",
+      "producerStage": "synthetic",
+      "parentArtifactIds": [
+        "final"
+      ],
+      "sourceLineIds": [
+        "line-1"
+      ],
+      "materialization": "materialized",
+      "unmeasuredReason": null,
+      "maskSemantics": null
+    }
+  ],
+  "quality": {
+    "execution": "unknown",
+    "ruleQa": {
+      "status": "not_measured",
+      "actor": null,
+      "evidenceId": null,
+      "subjectArtifactId": null,
+      "subjectSha256": null,
+      "identity": null
+    },
+    "ocrValidation": {
+      "status": "not_measured",
+      "actor": null,
+      "evidenceId": null,
+      "subjectArtifactId": null,
+      "subjectSha256": null,
+      "identity": null
+    },
+    "semanticReview": {
+      "status": "not_measured",
+      "actor": null,
+      "evidenceId": null,
+      "subjectArtifactId": null,
+      "subjectSha256": null,
+      "identity": null
+    },
+    "imageReview": {
+      "status": "not_measured",
+      "actor": null,
+      "evidenceId": null,
+      "subjectArtifactId": null,
+      "subjectSha256": null,
+      "identity": null
+    },
+    "humanReview": {
+      "status": "not_measured",
+      "actor": null,
+      "evidenceId": null,
+      "subjectArtifactId": null,
+      "subjectSha256": null,
+      "identity": null
+    },
+    "userApproval": {
+      "status": "not_measured",
+      "actor": null,
+      "evidenceId": null,
+      "subjectArtifactId": null,
+      "subjectSha256": null,
+      "identity": null
+    },
+    "delivery": "unknown"
+  },
+  "executionEvidence": [],
+  "receipt": null
+}

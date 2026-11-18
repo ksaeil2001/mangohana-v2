@@ -1,0 +1,96 @@
+// Final reports from captured receipts. A status never advances merely because a file exists.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+const audit=process.argv[2],read=p=>fs.readFile(p,'utf8').then(JSON.parse);
+const baseline=await read(path.join(audit,'evidence/baseline.json')),summary=await read(path.join(audit,'evidence/runtime-summary.json')),pre=await read(path.join(audit,'evidence/runtime-preflight.json'));
+const historical=await read(path.join(audit,'evidence/historical-warm-replay.json'));
+const realCheckpoint=await read(path.join(audit,'evidence/current-real-checkpoint-replay.json'));
+const responseAnalysis=realCheckpoint.translationResponseAnalysis;
+const full=await read(path.join(audit,'evidence/preflight-v2/receipt.json'));
+const validE2b=summary.runs.find(r=>r.e2b?.status==='E2B_STRUCTURED_RESPONSE_VERIFIED'&&r.e2b.actualInferenceCalls===1&&r.e2b.cleanupConfirmed&&r.controller?.job?.kernelCleanupConfirmed);
+const single=summary.runs.find(r=>r.controller?.mode==='single-page'&&r.page),two=summary.runs.find(r=>r.controller?.mode==='two-page'&&r.page);
+const page=single?.page?.rows?.[0],artifacts=page?.artifacts??[],events=page?.runtimeEvents??[];
+const has=n=>artifacts.some(a=>a.name===n),ocrComplete=events.find(e=>e.phase==='ocr_recognition_complete');
+const singleComplete=page?.status==='completed'&&single?.page?.cleanupConfirmed&&single?.controller?.job?.kernelCleanupConfirmed;
+const evidence=(state,value,level,reason)=>({state,value,evidenceLevel:level,reason});
+const states=[
+ evidence('MODEL_RUNTIME_PREFLIGHT_VERIFIED','VERIFIED','A,D','Pinned installed models, actual native help/version and E2B load; OCR result is separate'),
+ evidence('E2B_STRUCTURED_RESPONSE_VERIFIED',validE2b?'VERIFIED':'BLOCKED',validE2b?'D':'A','Stage11 text adapter, one short request; page-image request compatibility is separate'),
+ evidence('REAL_SINGLE_PAGE_OCR_VERIFIED',ocrComplete?'VERIFIED':'BLOCKED',ocrComplete?'D':'A',ocrComplete?'Actual page OCR ran; line/ROI acceptance and human source truth remain separate':'No completed actual OCR event'),
+ evidence('REAL_SINGLE_PAGE_TRANSLATION_VERIFIED',singleComplete&&has('translations.json')?'VERIFIED':'BLOCKED',singleComplete?'E':'D',page?.errorCode??single?.page?.failure??'No completed single-page translation'),
+ evidence('REAL_SINGLE_PAGE_INPAINT_VERIFIED',singleComplete&&has('cleaned.png')?'VERIFIED':'BLOCKED',singleComplete?'E':'A','Requires actual accepted page and LaMa output'),
+ evidence('REAL_SINGLE_PAGE_RENDER_VERIFIED',singleComplete?'VERIFIED':'BLOCKED',singleComplete?'E':'A,D','Actual renderer prepare only; final typeset/candidate PNG and completed receipt not reached'),
+ evidence('REAL_TWO_PAGE_WARM_RUN_VERIFIED',two?.page?.rows?.length===2&&two.page.rows.every(p=>p.status==='completed')?'VERIFIED':'BLOCKED',two?'F':'A','Current single-page completion/resource gate is required; historical partial warm run is C'),
+ evidence('MEMORY_GUARDS_VERIFIED','PARTIAL','A,B,D','512MiB available host RAM and 128MiB free VRAM guards preserved; current actual pressure crossing and full two-page retention not demonstrated'),
+ evidence('RESOURCE_REUSE_AND_RELEASE_VERIFIED','PARTIAL','B,D','Actual E2B same-PID health-only warm borrow and close; complete cross-page OCR/Gemma/LaMa reuse/release not demonstrated'),
+ evidence('CHECKPOINT_REUSE_VERIFIED','PARTIAL','A,B,C','Current actual OCR checkpoint restored 13 groups, six identity/integrity rejections, zero additional inference; translation/cleaned actual recovery not run'),
+ evidence('STALE_RESULT_AND_ATOMIC_PROTECTION_VERIFIED','VERIFIED','A,B','Current 646 tests include real disk/OS processes with synthetic providers; not actual two-page recovery or browser E2E'),
+ evidence('ACTUAL_RUNTIME_RECOVERY_VERIFIED','NOT_RUN',null,'Actual E2B lease use/close is separate from model timeout/crash/restart recovery of a page'),
+ evidence('EXISTING_V2_REGRESSION_PASSED',full.exitCode===0&&full.counts.pass===646&&full.counts.fail===0?'PASSED':'PARTIAL','B','Fresh full V2 run; post-run owning-source fingerprints must also match'),
+ evidence('BROWSER_END_TO_END_VERIFIED','NOT_RUN',null,'No full browser upload/edit/save/download or IndexedDB restart'),
+ evidence('HUMAN_GT_PENDING','PENDING',null,'Human semantic/source/artwork/typography ground truth: 0 pages'),
+ evidence('REAL_OUTPUT_QUALITY_MEASURED','NOT_MEASURED',null,'No human quality certification; model execution or two pages cannot certify quality'),
+ evidence('STAGE15_PREREQUISITES_DOCUMENTED','DOCUMENTED','A','Conditions only; Stage15 not started'),
+];
+const header='#TITLE#\n\n2026-11-13 KST · 14단계만 수행. 원인 분석·실제 제품 경로 검증과 감사 실행기 보강이다. 제품 OCR/번역/마스크/식자/복구 알고리즘은 변경하지 않았다. 사람 GT0, 제품 전체 품질 승인 없음.\n\n';
+const write=(name,title,body)=>fs.writeFile(path.join(audit,name),header.replace('#TITLE#','# '+title)+body+'\n',{flag:'wx'});
+const table=(heads,rows)=>'|'+heads.join('|')+'|\n|'+heads.map(()=> '---').join('|')+'|\n'+rows.map(r=>'|'+r.map(v=>String(v??'null').replaceAll('|','/').replaceAll('\n',' ')).join('|')+'|').join('\n')+'\n';
+const n=x=>Number.isFinite(x)?x.toFixed(3):'null';
+const resources=summary.runs.filter(r=>r.e2b||r.page);
+await write('Stage14_Runtime_And_Model_Preflight.md','Stage14 — 실제 모델·자원 사전 점검',
+ `감사: ${audit}\n출력: ${baseline.runRoot}\nHEAD: ${baseline.git.head}\n브랜치: ${baseline.git.branch}\n기존 dirty·모델/설정·E: profile·원본·PNG/TRIO·과거 감사를 기준선에 포함했다. 보호 항목 ${baseline.protectedFiles.length}, Stage13 대비 사전 drift ${baseline.inheritedStage13ProtectedDrift.length}. 최종 불변 여부는 manifest/preservation-final.json을 따른다.\n\n`+
+ table(['항목','실제 확인'],[['RAM 총량 MiB',pre.hostMemory.totalMiB],['시작 가용 RAM MiB',pre.hostMemory.availableMiB],['GPU/NVML',pre.gpu??pre.gpuError],['초기 외부 모델 프로세스',pre.system.existingModelProcesses.length],['Python/패키지',typeof pre.python==='string'?pre.python:JSON.stringify(pre.python)],['llama 실행기','native-version-8be72299: 0.3.0-dev / build10621 / c1d0e7a00 / Clang20.1.8'],['Gemma 양자화',pre.quantization],['renderer/폰트','기존 Stage12 renderer.js + PretendardVariable 1.3.9 / hash pinned'],['자동 재시도/모델 폴백','0 / 0'],['과금/토큰','null / 직접 측정 가능한 제품 ledger 별도']])+
+ '\n'+table(['리소스','bytes','SHA-256'],pre.pins.map(p=>[p.key,p.bytes,p.sha256]))+
+ '\n실행기 DLL/모델 패키지 파일은 baseline과 최종 full SHA 비교에 포함했다. runtime-summary.json의 runtimePins가 실제 DLL 경로를 연결한다. 기존 E2B 및 설치 리소스를 그대로 사용했고 다운로드/외부 추론은 없다.\n\n'+
+ '무추론 A: 전체 V2 646/646·fail/skip/cancel/todo0, exit0. Stage09 75%·Stage10 보호·Stage11 응답·Stage12 renderer·Stage13 checkpoint/lease·Stage08 stage08-v1.1 정책을 보존했다. 초기 버전20초/도움말30초 probe timeout 및 하네스 env 오류는 실패 영수증을 보존했다. 제품의 기존 도움말90초를 확인해 같은 한도로 실행한 native help/version은 정상 종료했다. 이 차이를 제품 메모리 결함이나 모델 호환성 실패로 바꾸지 않는다.\n\n'+
+ '공통 OneDrive 원본 경로는 현재 부재다. 기존 docs/reference 사본과 현재 V2 플랜을 사용했다. 원고는 source-manifest의 기존 개발 PNG 그대로이며 과거 AVIF→PNG provenance와 현재 PNG SHA를 구분한다. 권리/작품명/스토리 순서/사람 GT 확인으로 승격하지 않았다.');
+await write('Stage14_Real_E2B_Compatibility.md','Stage14 — 실제 E2B 구조화 응답',validE2b?
+ `판정: E2B_STRUCTURED_RESPONSE_VERIFIED (D, 텍스트 최소 요청 범위).\n\n실행: ${validE2b.directory}\n실제 기존 compiled Stage11 텍스트 adapter, prompt stage11-text-v1, temperature0.3·기본4096 context·GPU99층·parallel1을 사용했다. source/owner/work/page/context revision과 snapshot hash를 결합한 자체 작성 일본어 한 문장 요청이다.\n\n`+
+ table(['측정','값'],[['실제 추론 HTTP 요청',validE2b.e2b.actualInferenceCalls],['Gemma 적재 ms',validE2b.e2b.loadMs],['adapter+JSON parse 관측 ms',validE2b.observed.actualAdapterAndParseMs],['내부 전체 ms',validE2b.e2b.elapsedMs],['동일 PID warm health borrow',validE2b.e2b.result.samePid],['추가 추론 요청',validE2b.e2b.result.reuse.additionalInferenceCalls],['lease 최종 상태',validE2b.e2b.lease.state],['소유 자식 종료',validE2b.e2b.cleanupConfirmed],['커널 Job 종료',validE2b.controller.job.kernelCleanupConfirmed],['토큰/비용','null / adapter는 raw 문자열만 반환; 비용 직접 미측정']])+
+ '\n실제 JSON은 raw-adapter-response.json, ID·필드·누락/중복 검증 결과는 e2b-receipt.json, 원문 계약은 translation-input.json, 실제 launch 인수는 launch.json에 있다. 추론 결과를 맞추기 위한 프롬프트/샘플링/모델 변경은 없다. 처음 하네스의 speaker 객체→제품 payload 문자열 변환 누락은 호출0에서 실패했으며 제품 변환에 맞춘 뒤 실제 요청1회를 실행했다. NVML 환경 누락 표본도 null/원인으로 남겼다.\n\n이 성공은 짧은 텍스트 JSON 호환성이다. 페이지 이미지/mmproj 경로의 실제 구조화 요청, 전체 페이지 번역 의미·자연스러움·사람 정답은 별도 미검증이다.':
+ '판정: BLOCKED. 실제 요청/실패/정리 범위는 runtime-summary.json과 각 e2b-receipt.json을 따른다. 형식 실패를 합격으로 바꾸지 않았다.');
+await write('Stage14_Single_Page_E2E.md','Stage14 — 실제 단일 페이지',
+ `판정: ${singleComplete?'REAL_PAGE_COMPLETED':'BLOCKED'}\n실행: ${single?.directory??'NOT_RUN'}\n입력 PNG SHA: ${page?.sourceSha256??'null'}\n실제 job: ${page?.jobId??'null'}\n오류/보류: ${page?.errorCode??single?.page?.failure??'null'}\n\n`+
+ table(['단계','확인 범위'],[['원본','기존 개발 PNG의 새 bytes 복사; 강제 저해상도/수동 번역 보정 없음'],['실제 OCR',ocrComplete?`recognition_complete, ${ocrComplete.speechRegions} speech regions, ${ocrComplete.durationMs}ms`:'완료 이벤트 없음'],['OCR·ROI 승인',has('ocr-review.json')?'needs_review 보존; 강제 통과 없음':has('ocr.json')?'기계 계약 통과; 사람 검수 아님':'미확인'],['페이지 Gemma',has('translations.json')?'translations 파일/호출 ledger 별도 확인':'BLOCKED / 후보 번역 완료 없음'],['LaMa',has('cleaned.png')?'실제 cleaned 산출물 별도 확인':'BLOCKED / 실제 cleaned 산출물 없음'],['한국어 렌더링',singleComplete?'완료 후보·receipt':'BLOCKED / 완료 후보 없음'],['새 PNG/TRIO',singleComplete?'완료 후보는 사람 미승인; TRIO export는 별도':'새 완료 후보/브라우저 다운로드 없음'],['소유 프로세스 정리',single?.page?.cleanupConfirmed],['커널 Job 정리',single?.controller?.job?.kernelCleanupConfirmed],['서버 디스크 재조회',single?.reopen?'store-reopen.json / read-only engine / 재추론 없음':'NOT_RUN']])+
+ '\n'+table(['산출물','bytes','SHA-256'],artifacts.map(a=>[a.name,a.bytes,a.sha256]))+
+ '\n설정은 기존 승인 warm 후보의 OCR_COLD_TRANSLATION_WARM/refinement opt-in과 E2B를 그대로 사용하고 출력/profile/owner만 격리했다. Stage09 needs_review나 refinement 오류는 보류/실패로 유지한다. OCR 실행 완료와 문자 정확도/ROI 승인/한 페이지 전체 완주는 서로 다르다.\n\n'+
+ table(['실제 페이지 응답 실패 근거','관측'],[['finish_reason',responseAnalysis.finishReason],['현재 제품 max_tokens',responseAnalysis.sourceMaxTokens],['현재 제품 page temperature',responseAnalysis.sourceTemperature],['직접 기록된 prompt/completion/total tokens',`${responseAnalysis.usage?.prompt_tokens} / ${responseAnalysis.usage?.completion_tokens} / ${responseAnalysis.usage?.total_tokens}`],['JSON parser',responseAnalysis.jsonError?.message],['제품 parser',responseAnalysis.parseError?.code],['자동 재시도/부분 반영','false / false'],['원시 응답 SHA',responseAnalysis.rawResponseSha256]])+
+ '\n실제 최종 content는0바이트, reasoning_content는7970바이트이며 completion2400/finish_reason=length다. 요청은 image+strict schema/enable_thinking:false와 기존 --reasoning off 설정을 사용했다. native 서버는 요청을 수락하고 생성했으나 최종13-ID JSON은 반환되지 않았다. 응답 채널/템플릿/구조화 출력과 예산의 정합성은 해결되지 않았고, max_tokens만 높이면 해결된다는 근거는 없다. 프롬프트/샘플링/출력 한도 변경·재시도·부분반영은 하지 않았다. 페이지 응답5433토큰은 이 요청의 직접 측정치이며 B adapter 토큰은 null이라 단계 전체 토큰 합계는 null이다.');
+await write('Stage14_Two_Page_Warm_Run.md','Stage14 — 연속 두 페이지',
+ `현재 판정: ${two?'실행 영수증 개별 확인':'BLOCKED / NOT_RUN'}\n단일 페이지 상태: ${page?.status??'NOT_RUN'} / ${page?.errorCode??single?.page?.failure??'null'}\n단일 페이지의 안전한 완주 선행 조건을 충족하지 않으면 연속 두 페이지 실행을 시작하지 않는다. 검토 조건/512MiB/모델·품질 게이트를 낮추지 않았다.\n\n`+
+ 'C 수준의 과거 실제 두 페이지 기록은 별도로 replay했다. 원래 run 7ea75d17은 page1 완료, page2 inpaint 부근 HOST_MEMORY_PRESSURE, 전체503496ms다. 두 번째 durable state INTERRUPTED와 outer memory failure는 다른 범위다. 현재의 F 수준 완료 증거가 아니다.\n\n'+
+ table(['과거 페이지','실행 상태','현재 보존'],historical.historical.pages.map(p=>[p.ordinal,p.status+' / durable '+p.stateStatus,historical.replay.originalsUnchanged]))+
+ `\n과거 최소 가용 RAM: ${historical.historical.minHostAvailableSample.osAvailableMiB}MiB. 측정 대상은 시스템 전체 가용 물리 RAM이다. 과거 first-page 정상 파일 전부와 실패 페이지 원본/OCR/번역을 현재 SHA로 대조했다. 현 단계에서 두 번째 실제 실패 뒤 첫 새 완료 결과가 보존됐다는 주장이나 두 페이지 품질 합격은 하지 않는다.`);
+await write('Stage14_Memory_And_Resource_Profile.md','Stage14 — 메모리·실행 시간',
+ table(['실행','가용RAM 시작/최소/종료 MiB','GPU used 관측최대 MiB','Node RSS/heap used 관측최대 MiB','표본'],resources.map(r=>[path.basename(r.directory),[r.observed.hostStartAvailableMiB,r.observed.hostMinimumAvailableMiB,r.observed.hostEndAvailableMiB].map(n).join(' / '),n(r.observed.gpuMaxUsedMiB),[r.observed.nodeMaxRssMiB,r.observed.nodeMaxHeapUsedMiB].map(n).join(' / '),r.observed.sampleCount]))+
+ '\n'+table(['실행/PID/시각','프로세스','RSS 관측최대 MiB','private bytes 관측최대 MiB','관측수'],resources.flatMap(r=>r.observed.perProcess.filter(p=>!/^(?:powershell|conhost|nvidia-smi)\.exe$/i.test(p.name)).map(p=>[path.basename(r.directory)+' / '+p.pid+' / '+p.createdAt,p.name,n(p.maxRssMiB),n(p.maxPrivateMiB),p.observedSamples])))+
+ '\n2초 간격을 예약한 표본이며 실제 간격 지연과 PROBE_IN_FLIGHT 누락이 있다. 순간 peak/안정 최대/여러 번 평균이 아니다. 각 PID+생성시각을 한 번만 요약하고 공유 모델 메모리를 페이지마다 소비한 것처럼 합산하지 않았다. 시스템 가용 RAM과 VRAM은 별도다. 다른 앱·감사 관측기의 부하가 포함되며 모델 전용 GPU 사용량은 null/미측정이다. Node heap은 관측기 Node/Electron main 값이며 Python heap은 아니다. 관측 실패/누락은 resource-samples.jsonl에서 null과 사유로 보존한다. 별도 controller의 host2초 guard와 내부 GPU/RSS 표본을 구분하며, 표본 사이의 순간 압박은 인증하지 않는다.\n\n'+
+ `과거 497.730MiB는 verify-warm-pages.mjs의 os.freemem() 표본이다. 기존 hostAbortBelowMiB512, VRAM free128을 보존했다. 현재 실제 메모리 기준 접근/초과나 반복적 누수를 재현했다고 하지 않는다. 실제 한 번의 낮은 최소값/두 번의 모델 적재 비교로 누수·메모리 개선·평균을 판정하지 않았다.\n\n`+
+ '단일 페이지의 preparing 구간은 체크포인트용 설치 리소스 content fingerprint를 포함한다. 준비 I/O 원시 누적 카운터와 소유 main 메모리를 preparing-io-observation.json에 기록했다. phase 내부 정확한 hash-only 시간/처리율은 계측하지 않아 null이다. 모델 적재·인식 이벤트 durationMs와 preparing/전체 elapsed는 분리한다.\n\n'+
+ table(['실제 페이지 runtime event','durationMs'],events.filter(e=>Number.isFinite(e.durationMs)).map(e=>[e.phase,e.durationMs])));
+await write('Stage14_Checkpoint_And_Recovery.md','Stage14 — 체크포인트·저장 복구',
+ table(['검사','증거 수준/결과'],[['현재 실제 페이지 checkpoints',JSON.stringify(page?.state?.checkpoints??null)],['현재 디스크 재시작',single?.reopen?'실제 store close/reopen / model engine stub / 추론0 / 원본 모델 재시작 아님':'NOT_RUN'],['과거 완료본 current store replay',`${historical.replay.restoredStatus} / ${historical.replay.restoredErrorCode} / resultReturned=${historical.replay.resultReturned}`],['과거 추가 모델 호출',historical.replay.additionalModelCalls],['과거 원본 결과 SHA 불변',historical.replay.originalsUnchanged],['실제 모델 장애 후 checkpoint 재개','NOT_RUN'],['유효/손상/설정/owner/work/page/source/context 불일치','A+B / 기존 전체 V2 Stage13 cache/engine/store 검증'],['렌더러 checkpoint','독립 재사용 checkpoint 없음; upstream 재사용 후 새 render와 완료 receipt 검증'],['ROI 단위 OCR 재개','미구현 / 임시 기능 추가 없음']])+
+ '\n현재 실제 OCR checkpoint를 제품 loader로 직접 replay(C)해13그룹을 복원했다. 추가 모델 호출0, 원본 checkpoint SHA 불변이다. 다른 source/owner/work/page/모델configuration 및 손상 사본 총6조건을 거부했다. 실제 엔진 전체를 재시도하거나 모델 서버를 다시 적재한 검사가 아니며 ACTUAL_RUNTIME_RECOVERY로 승격하지 않는다. evidence/current-real-checkpoint-replay.json을 따른다.\n\n'+
+ '\nStage13 durable checkpoint는 whole OCR/translation/cleaned다. scope는 owner/work/page/source/normalized/language/page, identity는 실제 코드·설정·모델·prompt/context fingerprint, payload/asset SHA와 store receipt를 확인한다. renderer 결과/PNG는 저장 receipt와 실제 bytes 검증 대상이며 별도 renderer checkpoint와 혼동하지 않는다.\n\n'+
+ '과거 실제 완료본은 Stage13 이전이라 새 receipt/checkpoint가 없다. 원본 폴더를 건드리지 않고 사본만 current store에 열었다. 현재 검증이 거부한 옛 결과를 복구 성공으로 승격하거나 receipt를 새로 날조하지 않았다. 기존 synthetic provider의 유효 checkpoint 재개(새 모델 호출0), 손상·모델/문맥 변경 거부는 그대로 B 수준이다. 실제 OCR 검토/실패가 상위 단계 완료를 막으면 번역/cleaned/render checkpoint나 실제 전체 복구는 BLOCKED/NOT_RUN이다. 브라우저 IndexedDB는 미실행이다.');
+await write('Stage14_Process_Lease_And_Cancellation.md','Stage14 — 소유권·lease·취소',
+ 'native 실행은 기존 warm-job private Windows Job의 suspended root/retained HANDLE/PID+생성시각/Job membership/RESUME gate를 재사용했다. 새 profile과 임의 loopback 포트·세션 env 인증을 사용했다. 외부 사용자 소유 모델/프로세스는 종료하지 않았다. 초기 모델 프로세스0은 관측 시점의 결과다.\n\n'+
+ table(['검사','실제 근거'],[['E2B 최초 load',validE2b?`${validE2b.e2b.loadMs}ms / actual adapter request1`:'BLOCKED'],['E2B 재사용',validE2b?`동일 PID ${validE2b.e2b.result.pid}, generation1, 두번째 health-only borrow, 추론추가0`:'NOT_RUN'],['E2B lease 반환',validE2b?JSON.stringify(validE2b.e2b.lease):'NOT_RUN'],['OCR worker 시작/종료',single?JSON.stringify(single.page.children.filter(c=>c.role==='OCR_RUNTIME').map(c=>({pid:c.pid,closed:c.closed,code:c.code}))):'NOT_RUN'],['LaMa worker',single?JSON.stringify(single.page.children.filter(c=>c.role==='INPAINT').map(c=>({pid:c.pid,closed:c.closed,code:c.code}))):'NOT_RUN'],['소유 native 강제종료', '무추론 help30초 lifetime timeout에서 실제 TerminateJobObject/exit87/active0 확인; 실제 추론 중 강제종료와 별개'],['정상 사용자 취소/늦은 응답/미확인 정리 차단','A+B 기존 Stage13/lease real OS synthetic tests; 실제 모델 취소·timeout recovery NOT_RUN'],['소유권 불명 프로세스 종료','수행하지 않음']])+
+ '\n각 controller-receipt.json/job-control-receipt.json, child-lifecycle.jsonl, e2b-receipt.json이 실제 종료 근거다. native CLI의 Job 종료를 실제 OCR/Gemma/LaMa 장애 복구로 부르지 않는다. 현재 실제 model retry/late response/destructive crash 시험은 별도 미실행이다. unknown cleanup을 자동 해제하거나 다음 작업을 강행하는 코드는 추가하지 않았다.');
+await write('Stage14_Regression_Results.md','Stage14 — 회귀·증거 경계',
+ table(['검사','결과','증거'],[['현재 전체 V2',`${full.counts.pass}/${full.counts.tests}, fail${full.counts.fail}, skip${full.counts.skipped}, cancel${full.counts.cancelled}, exit${full.exitCode}`,'evidence/preflight-v2/receipt.json + output.log'],['Stage13 웹96·사이트 typecheck','기존 owning source가 불변인 영수증 재사용; 새 실행으로 집계하지 않음','Stage13_Regression_Results.md + manifest SHA'],['새 감사 실행기','native/E2B/실제 페이지의 성공·실패 로그와 node --check; 제품 테스트 수에 가산하지 않음','각 Stage14 command receipt'],['Legacy147·PG·DOM10','미재실행/과거 한계 유지','전체 저장소 합격 아님'],['실제 두 페이지/브라우저/사람GT','상태표에 따름 / 사람GT0','합성646은 실제 E2E가 아님']])+
+ '\n필수 실패 사례의 B 근거는 전체646에 포함된 stage13-store/client/cache, engine-runtime-reuse, runtime-lease/owned-runtime, warm-job/verify-warm, source/mask/typesetting/result 테스트다. 정상/실패2페이지·첫 완료 보존·duplicate/stale·retry budget3·cache owner/source/config mismatch·unknown cleanup/owned OS crash·renderer/LaMa/translation timeout 등은 각 테스트의 원시 이름으로 확인한다. 실제 두 페이지·실제 model timeout/LaMa 취소·메모리 기준 횡단·실제 checkpoint 재개까지 검증했다고 하지 않는다.\n\n'+
+ '제품 결함 최소 수정은 0건이다. 이번에 고친 것은 감사 하네스의 허용 env, 도움말 한도, Stage11 speaker 변환, NVML Windows 디렉터리 전달이다. 실패 선행 영수증은 보존했으며 첫 유효 model inference 호출은1회다. 모델 응답 실패를 숨긴 자동 재시도는 없다. 전체 회귀 후 관련 제품 소스 drift는 최종 delivery verification에서 검사한다.');
+await write('Stage14_Next_Steps.md','Stage14 — 독립 판정·남은 조건',
+ table(['상태','판정','수준','범위'],states.map(s=>[s.state,s.value,s.evidenceLevel,s.reason]))+
+ '\nA 정적/계약, B 합성·결정적 및 소유 OS process, C 과거 저장 실제 결과 replay, D 실제 모델 단일 단계, E 실제 한 페이지 전체, F 실제 연속 두 페이지, G 독립 사람 검수로 구분한다. 범위 사이 자동 승격 없음.\n\n'+
+ '다음 승인된 작업에 필요한 조건:\n\n'+
+ '1. 실제13영역 요청에서 최종 content0/별도 reasoning_content7970바이트/finish_reason=length/completion2400이 관측됐다. 응답 채널·템플릿·구조화 출력과 출력 예산의 정합성을 후속 승인 범위에서 검토한다. 한도 상향만의 해결 효과는 미검증이다. 이번에는 한도·프롬프트·모델·샘플링을 변경하거나 재시도하지 않았다. 실제 OCR 원문·글줄/ROI·refinement의 사람 검수도 필요하다.\n'+
+ '2. 현재 E2B page-image structured response·마스크/LaMa·한국어 renderer의 실제 전체 단일 페이지 완료 후에만 같은 설정의 서로 다른 두 페이지 warm run을 실행한다.\n'+
+ '3. 유효한 실제 Stage13 checkpoint와 완료 receipt를 만든 뒤 timeout/취소/전용 process crash/재시작·추가 호출0·첫 정상 PNG 불변을 확인한다. ROI 단위 재개는 현재 없다.\n'+
+ '4. 반복 실행의 실제 모델/프로세스 RSS·가용 RAM·VRAM 표본과 초기화 비용을 분리해 누수/최적화 여부를 평가한다. 현재 preparing hash 비용의 별도 세부 계측도 필요하다.\n'+
+ '5. 의미·원문 잔상·마스크 내부 작화·식자에 대한 사람 GT/검수와 실제 브라우저 업로드→편집→저장→PNG/TRIO 다운로드/IndexedDB 복원은 별도다.\n\n'+
+ '이 조건을 문서화하고 14단계에서 종료한다. Stage15/16·11M·새 Goal·모델 다운로드·외부 유료 API·commit/push·배포는 시작하지 않았다.');
+await fs.writeFile(path.join(audit,'evidence/stage14-states.json'),JSON.stringify(states,null,2),{flag:'wx'});
+console.log(JSON.stringify({reports:9,states:states.map(s=>({state:s.state,value:s.value})),productEdits:0,automaticStage15:false}));

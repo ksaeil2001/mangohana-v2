@@ -7,7 +7,13 @@
     "node": ">=24.11.1 <25"
   },
   "scripts": {
-    "dev": "tsx scripts/dev.ts",
+    "dev": "node scripts/v2/start.mjs",
+    "dev:legacy": "tsx scripts/dev.ts",
+    "dev:v2": "node scripts/v2/start.mjs",
+    "prepare:v2": "node scripts/v2/prepare.mjs",
+    "resources:v2": "node scripts/v2/resources.mjs",
+    "test:v2": "node scripts/v2/test.mjs",
+    "build:v2": "node scripts/v2/build-sites.mjs",
     "dev:api": "tsx apps/api/src/main.ts",
     "dev:web": "vite build --watch --config apps/web/vite.config.ts",
     "worker": "tsx apps/worker/src/main.ts",

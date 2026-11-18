@@ -1,4 +1,6 @@
 import type { DialogueLine } from "../shared/projectTypes.js";
+import {isGeneralKorean,inspectKoreanText,verifyFinalKoreanEvidence,type FinalStandardEvidence} from "../../../../packages/ai-engine/quality/korean-typesetting-standard.cjs";
+import {measureCandidateFit} from "../../../../packages/ai-engine/vendor/trio/src/renderer/candidateTypesettingFit.js";
 import {
   autoFitFontSizeForBubbleShape,
   calculateContrastStroke,
@@ -12,11 +14,14 @@ import {
  * render-ready image implicitly.
  */
 export function getResolvedDialogueText(line: DialogueLine): string {
+  if(isGeneralKorean({text:line.userTranslation??'',dialogueType:line.dialogueType,...line.typesetting}))return (line.userTranslation??'').replace(/\r\n?/g,'\n');
   const text = line.userTranslation?.trim() ?? "";
   return text.replace(/[\r\n\t]+/g, " ").trim();
 }
 
 export type RenderBurnInOptions = {
+  validateFinalKorean?:(canvas:HTMLCanvasElement,lines:readonly DialogueLine[])=>Promise<FinalStandardEvidence[]>|FinalStandardEvidence[];
+  reviewedKoreanWarnings?:Record<string,string[]>;
   defaultFontFamily?: string;
   defaultTextColor?: string;
   enableStroke?: boolean;
@@ -63,15 +68,19 @@ export function renderTypesettingToCanvas(
 
     // Calculate layout using shape chords
     const boxAspectRatio = writingMode === "vertical-rl" ? 1 : pixelWidth / pixelHeight;
-    const layout = ts?.fontSizeRatio
+    const general=isGeneralKorean({text,dialogueType:line.dialogueType,...ts});
+    const measured=general?measureCandidateFit(ctx,text,{...ts,bbox,writingMode},canvasWidth,canvasHeight,{dialogueType:line.dialogueType}):undefined;
+    if(measured?.standard?.status==='BLOCKED')throw Object.assign(Error('TYPESETTING_HARD_RULE_BLOCKED'),{code:'TYPESETTING_HARD_RULE_BLOCKED',standard:measured.standard});
+    const layout = measured?.layout ?? (ts?.fontSizeRatio
       ? layoutTextForBubbleShape(text, {
           shape,
           boxAspectRatio,
-          fontSizeRatio: ts.fontSizeRatio
+          fontSizeRatio: ts.fontSizeRatio,lineHeight:ts.lineHeight,preserveEojeol:general
         })
-      : autoFitFontSizeForBubbleShape(text, { shape, boxAspectRatio });
+      : autoFitFontSizeForBubbleShape(text, { shape, boxAspectRatio,preserveEojeol:general }));
 
     const fontPx = Math.max(10, Math.round(layout.fontSizeRatio * pixelHeight));
+    if(general){const check=inspectKoreanText(text,layout.lines.map(l=>l.text));if(!check.complete||check.intraWordBreaks!==0||check.punctuationOnlyLines.length||check.leadingDetachedPunctuation.length||fontPx<13)throw Object.assign(Error('TYPESETTING_HARD_RULE_BLOCKED'),{code:'TYPESETTING_HARD_RULE_BLOCKED'});}
     const fontChain = getRecommendedFontFallbackChain("ko", ts?.fontFamily || defaultFontFamily);
 
     const contrast = calculateContrastStroke({
@@ -80,7 +89,7 @@ export function renderTypesettingToCanvas(
       fontSizeRatio: layout.fontSizeRatio
     });
     const strokeColor = ts?.strokeColor || contrast.strokeColor;
-    const strokeWidth = ts?.strokeWidth ?? contrast.strokeWidth;
+    const strokeWidth = ts?.strokeWidth ?? measured?.strokeWidthPx ?? contrast.strokeWidth;
 
     ctx.save();
 
@@ -166,6 +175,8 @@ export async function burnTypesettingToBlob(
   const width = imageSource.naturalWidth || imageSource.width;
   const height = imageSource.naturalHeight || imageSource.height;
   options.beforeRender?.({ width, height });
+  const generalLines=lines.filter(line=>isGeneralKorean({text:options.textResolver?.(line)??getResolvedDialogueText(line),dialogueType:line.dialogueType,...line.typesetting}));
+  if(generalLines.length&&!options.validateFinalKorean)throw Object.assign(Error('TYPESETTING_FINAL_VALIDATION_REQUIRED'),{code:'TYPESETTING_FINAL_VALIDATION_REQUIRED'});
 
   const canvas = document.createElement("canvas");
   canvas.width = width;
@@ -181,6 +192,7 @@ export async function burnTypesettingToBlob(
 
   // Render dialogue typesetting
   renderTypesettingToCanvas(ctx, lines, width, height, options);
+  if(generalLines.length)verifyFinalKoreanEvidence(generalLines.map((l,i)=>({id:l.id,text:options.textResolver?.(l)??getResolvedDialogueText(l),order:l.order??i})),await options.validateFinalKorean!(canvas,generalLines),options.reviewedKoreanWarnings);
 
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(

@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import * as store from '../../apps/engine/store.mjs';
+test('fixed saved source loads all thirteen selections without promoting offline checks or invoking an engine',async()=>{
+ assert.equal(typeof store.loadStage14ReviewCatalog,'function','missing pinned saved-source loader');
+ const c=await store.loadStage14ReviewCatalog('stage14r3');assert.equal(c.regions.length,13);assert.equal(c.regions[3].selectedUserTranslation,'히로 군의 설명은');assert.equal(c.regions[5].selectedUserTranslation,'나도 공부를 좀 더 봐줬으면 하는데');assert.equal(c.regions[5].originalConfirmedByHuman,false);assert.equal(c.regions[5].selectionOrigin,'USER_EDIT');assert.equal(c.regions.filter(r=>r.riskSignals.length).length,3);assert.equal(c.regions.flatMap(r=>r.riskSignals).length,4);assert.equal(c.sourceScope.pageId,'stage14-page-1');assert.equal(c.originalCheckpointSha256,'84c2afe09511c9d37d3b571e02572a02b7b0f62b662bf73abaf67ce599a2aaf8');
+});
+test('browser catalog names cannot choose a filesystem path',async()=>{assert.equal(typeof store.loadStage14ReviewCatalog,'function');for(const id of ['../stage14r3','another-work','C:/secret'])await assert.rejects(store.loadStage14ReviewCatalog(id));});

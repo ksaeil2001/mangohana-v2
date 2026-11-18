@@ -4,6 +4,7 @@ import { resolve, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const stages = ['DETECTION', 'GROUPING', 'CROP', 'RECOGNITION', 'READING_ORDER', 'TRANSLATION', 'MASK', 'INPAINT', 'TYPESETTING'];
+const evidenceKinds = ['actual_product', 'actual_component', 'reused', 'fixture', 'not_run'];
 const qualityChecks = ['meaning', 'omissionsAndDuplicates', 'sourceTextRemoval', 'artworkPreservation', 'typesettingReadability'];
 const hash = value => createHash('sha256').update(value).digest('hex');
 const requireValue = (condition, reason) => { if (!condition) throw new Error(reason); };
@@ -116,6 +117,40 @@ async function pinnedAsset(asset, base) {
   return bytes;
 }
 
+const ratio = (numerator, denominator, reason) => ({ numerator, denominator,
+  value: denominator > 0 ? numerator / denominator : null, reason: denominator > 0 ? null : reason });
+const unavailable = reason => ratio(null, null, reason);
+
+/** Detection here means final OCR proposals matched by the existing IoU assignment. */
+function regionMetrics(truePositives, falsePositives, falseNegatives, unavailableReason = null) {
+  const precision = ratio(truePositives, unavailableReason ? null : truePositives + falsePositives, unavailableReason ?? 'NO_PREDICTED_REGIONS');
+  const recall = ratio(truePositives, unavailableReason ? null : truePositives + falseNegatives, unavailableReason ?? 'NO_REFERENCE_REGIONS');
+  const f1 = ratio(unavailableReason ? null : 2 * truePositives, unavailableReason ? null : 2 * truePositives + falsePositives + falseNegatives, unavailableReason ?? 'NO_REFERENCE_OR_PREDICTED_REGIONS');
+  return { truePositives, falsePositives, falseNegatives, precision: precision.value, recall: recall.value, f1: f1.value,
+    unmeasuredReasons: { precision: precision.reason, recall: recall.reason, f1: f1.reason } };
+}
+
+function summarizeOcr(selected) {
+  const measured = selected.filter(row => row.ocr !== null);
+  const unavailableReason = selected.length === 0 ? 'NO_PAGES' : measured.length === 0 ? 'NO_EVALUABLE_OCR_PAGES' : null;
+  const sum = key => measured.length ? measured.reduce((total, row) => total + row.ocr[key], 0) : null;
+  const counts = regionMetrics(sum('truePositives'), sum('falsePositives'), sum('falseNegatives'), unavailableReason);
+  const characterErrors = sum('characterErrors'), referenceCharacters = sum('referenceCharacters');
+  const cer = ratio(characterErrors, referenceCharacters, unavailableReason ?? 'NO_REFERENCE_CHARACTERS');
+  return { measuredPages: measured.length, unmeasuredPages: selected.length - measured.length,
+    status: unavailableReason ? 'NOT_MEASURED' : measured.length < selected.length ? 'PARTIAL'
+      : sum('referenceRegions') + sum('predictedRegions') === 0 ? 'NO_TARGETS' : 'MEASURED',
+    ...counts, characterErrors, referenceCharacters, microCharacterErrorRate: cer.value,
+    unmeasuredReasons: { ...counts.unmeasuredReasons, microCharacterErrorRate: cer.reason },
+    scope: 'FINAL_OCR_PROPOSALS_NOT_RAW_DETECTOR_ACCURACY' };
+}
+
+function executionVerification(kind) {
+  return { status: kind === 'not_run' ? 'NOT_RUN' : kind === 'fixture' ? 'FIXTURE' : 'UNVERIFIED',
+    productExecutionVerified: false,
+    reason: kind === 'not_run' ? 'NO_RUN_EVIDENCE' : kind === 'fixture' ? 'SYNTHETIC_EVIDENCE' : 'RUNTIME_CLAIM_NOT_INDEPENDENTLY_VERIFIED' };
+}
+
 /** Reads evidence only. Never invokes providers or writes product/project data. */
 export async function evaluateAutomationQuality(corpus, run, baseDirectory) {
   validateCorpus(corpus);
@@ -125,7 +160,7 @@ export async function evaluateAutomationQuality(corpus, run, baseDirectory) {
   const byId = new Map();
   for (const page of run.pages) {
     requireValue(object(page) && corpus.pages.some(item => item.id === page.pageId) && !byId.has(page.pageId), 'UNKNOWN_OR_DUPLICATE_RUN_PAGE');
-    requireValue(['actual_product', 'actual_component', 'reused', 'fixture', 'not_run'].includes(page.evidenceKind), 'INVALID_EVIDENCE_KIND');
+    requireValue(evidenceKinds.includes(page.evidenceKind), 'INVALID_EVIDENCE_KIND');
     requireValue(object(page.stages) && stages.every(stage => ['completed', 'failed', 'review', 'blocked', 'not_run'].includes(page.stages[stage])), 'INVALID_STAGE_STATUS');
     requireValue((page.durationMs === null || (Number.isFinite(page.durationMs) && page.durationMs >= 0))
       && (page.peakWorkingSetBytes === null || (Number.isFinite(page.peakWorkingSetBytes) && page.peakWorkingSetBytes >= 0)), 'INVALID_RESOURCE_MEASUREMENT');
@@ -137,19 +172,29 @@ export async function evaluateAutomationQuality(corpus, run, baseDirectory) {
     await pinnedAsset(page.source, baseDirectory);
     const evidence = byId.get(page.id);
     if (!evidence) {
-      rows.push({ pageId: page.id, split: page.split, evidenceKind: 'not_run', status: 'NOT_RUN', automaticSuccess: false, ocr: null, quality: 'PENDING', durationMs: null, peakWorkingSetBytes: null });
+      rows.push({ pageId: page.id, split: page.split, evidenceKind: 'not_run', status: 'NOT_RUN', automaticSuccess: false, ocr: null, quality: 'PENDING', durationMs: null, peakWorkingSetBytes: null,
+        ocrMeasurement: { status: 'NOT_MEASURED', reason: 'NO_RUN_EVIDENCE' }, processingStatus: 'NOT_RUN',
+        qualityReviewStatus: { status: 'MISSING', reason: 'QUALITY_REVIEW_NOT_SUPPLIED' }, executionVerification: executionVerification('not_run'),
+        attestedOutcome: 'NOT_QUALIFIED', resourceMeasurementReasons: { durationMs: 'NO_RUN_EVIDENCE', peakWorkingSetBytes: 'NO_RUN_EVIDENCE' } });
       continue;
     }
     let ocr = null;
     let result;
     if (evidence.ocr) {
       result = JSON.parse((await pinnedAsset(evidence.ocr, baseDirectory)).toString('utf8'));
-      requireValue(object(result) && Array.isArray(result.speechBubbles) && result.speechBubbles.every(region => validBox(region.bbox) && typeof region.text === 'string' && Number.isSafeInteger(region.readingOrder)), 'INVALID_OCR_EVIDENCE');
+      requireValue(object(result) && Array.isArray(result.speechBubbles) && result.speechBubbles.every(region => object(region) && validBox(region.bbox) && typeof region.text === 'string' && Number.isSafeInteger(region.readingOrder)), 'INVALID_OCR_EVIDENCE');
+      const regionIds = new Set();
+      for (const region of result.speechBubbles) {
+        // Legacy evidence may omit IDs; never manufacture IDs from geometry or GT.
+        if (region.id === undefined) continue;
+        requireValue(id(region.id) && !regionIds.has(region.id), 'INVALID_OR_DUPLICATE_OCR_REGION_ID');
+        regionIds.add(region.id);
+      }
       const provenance = JSON.parse((await pinnedAsset(evidence.ocr.provenance, baseDirectory)).toString('utf8'));
       requireValue(object(provenance) && provenance.runId === run.runId && provenance.sourceSha256 === page.source.sha256
         && provenance.ocrSha256 === evidence.ocr.sha256, 'OCR_PROVENANCE_MISMATCH');
     }
-    if (result && reviewed(page.groundTruth)) {
+    if (result && reviewed(page.groundTruth) && evidence.evidenceKind !== 'not_run') {
       const pairs = matchRegions(page.groundTruth.regions, result.speechBubbles);
       let errors = 0, characters = 0, orderErrors = 0;
       const matched = new Set();
@@ -164,8 +209,15 @@ export async function evaluateAutomationQuality(corpus, run, baseDirectory) {
       page.groundTruth.regions.forEach((region, index) => { if (!matched.has(index)) { const n = [...region.text.normalize('NFKC')].length; errors += n; characters += n; } });
       const matchedActual = new Set(pairs.map(pair => pair.actualIndex));
       result.speechBubbles.forEach((region, index) => { if (!matchedActual.has(index)) errors += [...region.text.normalize('NFKC')].length; });
+      const missingRegionIds = page.groundTruth.regions.filter((_, index) => !matched.has(index)).map(region => region.id);
+      const extraRegionIndices = result.speechBubbles.flatMap((_, index) => matchedActual.has(index) ? [] : [index]);
+      const extraRegionIds = extraRegionIndices.map(index => result.speechBubbles[index].id ?? null);
+      const counts = regionMetrics(pairs.length, extraRegionIndices.length, missingRegionIds.length);
       ocr = { matchedRegions: pairs.length, referenceRegions: page.groundTruth.regions.length, predictedRegions: result.speechBubbles.length, characterErrors: errors,
         referenceCharacters: characters, characterErrorRate: characters ? errors / characters : null, readingOrderErrors: orderErrors,
+        ...counts, missingRegionIds, extraRegionIds, extraRegionIndices,
+        extraRegionIdsReason: extraRegionIds.includes(null) ? 'PREDICTION_IDS_NOT_SUPPLIED' : null,
+        unmeasuredReasons: { ...counts.unmeasuredReasons, characterErrorRate: characters ? null : 'NO_REFERENCE_CHARACTERS' },
         scope: 'FINAL_OCR_PROPOSALS_IOU_0.5_NFKC_SPACES_AND_PUNCTUATION_PRESERVED' };
     }
     const human = evidence.qualityReview;
@@ -173,6 +225,11 @@ export async function evaluateAutomationQuality(corpus, run, baseDirectory) {
       && object(evidence.finalImage) && human.finalImageSha256 === evidence.finalImage.sha256;
     const quality = reviewMatchesResult && qualityChecks.every(key => ['pass', 'fail'].includes(human[key]))
       ? qualityChecks.every(key => human[key] === 'pass') ? 'PASS' : 'FAIL' : 'PENDING';
+    const qualityReviewStatus = !human ? { status: 'MISSING', reason: 'QUALITY_REVIEW_NOT_SUPPLIED' }
+      : !reviewed(human) ? { status: 'PENDING', reason: 'QUALITY_REVIEW_NOT_VERIFIED' }
+      : !reviewMatchesResult ? { status: 'MISMATCH', reason: 'QUALITY_REVIEW_RESULT_BINDING_MISMATCH' }
+      : quality === 'PENDING' ? { status: 'PENDING', reason: 'QUALITY_REVIEW_CHECKS_INCOMPLETE' }
+      : { status: quality, reason: quality === 'FAIL' ? 'HUMAN_REPORTED_QUALITY_FAILURE' : null };
     let finalSaved = false;
     if (evidence.finalImage) {
       const bytes = await pinnedAsset(evidence.finalImage, baseDirectory);
@@ -181,22 +238,48 @@ export async function evaluateAutomationQuality(corpus, run, baseDirectory) {
       finalSaved = evidence.savedAndReopened === true;
     }
     const allStages = stages.every(stage => evidence.stages[stage] === 'completed');
-    const automaticSuccess = evidence.evidenceKind === 'actual_product' && result !== undefined && reviewed(page.groundTruth) && allStages && finalSaved && quality === 'PASS'
-      && evidence.manualEdits === 0 && evidence.automaticRetries === 0;
+    // Preserve the legacy attestation predicate. This is not proof of execution.
+    const acceptedProductAttestation = evidence.evidenceKind === 'actual_product' && result !== undefined && reviewed(page.groundTruth) && allStages && finalSaved && quality === 'PASS';
+    const automaticSuccess = acceptedProductAttestation && evidence.manualEdits === 0 && evidence.automaticRetries === 0;
+    const attestedOutcome = !acceptedProductAttestation ? 'NOT_QUALIFIED' : evidence.manualEdits > 0 ? 'AFTER_MANUAL_EDITS'
+      : evidence.automaticRetries > 0 ? 'AFTER_RETRY' : 'FIRST_ATTEMPT';
+    const processingStatus = evidence.evidenceKind === 'not_run' ? 'NOT_RUN' : stages.some(stage => evidence.stages[stage] === 'failed') ? 'FAILED'
+      : stages.some(stage => ['review', 'blocked'].includes(evidence.stages[stage])) ? 'NEEDS_REVIEW' : allStages ? 'COMPLETED' : 'NOT_RUN';
     rows.push({ pageId: page.id, split: page.split, evidenceKind: evidence.evidenceKind, automaticSuccess,
       status: automaticSuccess ? 'PASS' : 'NOT_QUALIFIED', stages: evidence.stages, quality, ocr,
+      ocrMeasurement: ocr ? { status: ocr.referenceRegions + ocr.predictedRegions ? 'MEASURED' : 'NO_TARGETS', reason: ocr.referenceRegions + ocr.predictedRegions ? null : 'NO_REFERENCE_OR_PREDICTED_REGIONS' }
+        : { status: 'NOT_MEASURED', reason: evidence.evidenceKind === 'not_run' ? 'NO_RUN_EVIDENCE' : !result ? 'OCR_EVIDENCE_NOT_SUPPLIED' : 'GROUND_TRUTH_NOT_VERIFIED' },
+      processingStatus, qualityReviewStatus, executionVerification: executionVerification(evidence.evidenceKind), attestedOutcome,
       firstNonCompletedStage: stages.find(stage => evidence.stages[stage] !== 'completed') ?? null,
+      resourceMeasurementReasons: { durationMs: evidence.durationMs === null ? 'NOT_REPORTED' : null, peakWorkingSetBytes: evidence.peakWorkingSetBytes === null ? 'NOT_REPORTED' : null },
       durationMs: evidence.durationMs, peakWorkingSetBytes: evidence.peakWorkingSetBytes });
   }
   const summarize = selected => ({ pages: selected.length, actualProductRuns: selected.filter(row => row.evidenceKind === 'actual_product').length,
     automaticSuccesses: selected.filter(row => row.automaticSuccess).length,
     automaticSuccessRate: selected.length ? selected.filter(row => row.automaticSuccess).length / selected.length : null,
+    automaticSuccessRateReason: selected.length ? null : 'NO_PAGES',
     humanQualityPending: selected.filter(row => row.quality === 'PENDING').length,
-    notRun: selected.filter(row => row.evidenceKind === 'not_run').length });
+    notRun: selected.filter(row => row.evidenceKind === 'not_run').length,
+    ocr: summarizeOcr(selected),
+    ocrByEvidenceKind: Object.fromEntries(evidenceKinds.filter(kind => selected.some(row => row.evidenceKind === kind))
+      .map(kind => [kind, summarizeOcr(selected.filter(row => row.evidenceKind === kind))])),
+    attestedSuccesses: { basis: 'SUPPLIED_ATTESTATIONS_ONLY', denominator: selected.length,
+      firstAttempt: selected.filter(row => row.attestedOutcome === 'FIRST_ATTEMPT').length,
+      afterRetry: selected.filter(row => row.attestedOutcome === 'AFTER_RETRY').length,
+      afterManualEdits: selected.filter(row => row.attestedOutcome === 'AFTER_MANUAL_EDITS').length },
+    verifiedAutomaticSuccessRate: unavailable(selected.length ? 'INDEPENDENT_RUNTIME_EVIDENCE_NOT_AVAILABLE' : 'NO_PAGES'),
+    evaluationDataAvailability: ratio(selected.filter(row => row.ocr !== null && row.quality !== 'PENDING').length, selected.length, 'NO_PAGES'),
+    qualityReviewPendingRate: ratio(selected.filter(row => row.quality === 'PENDING').length, selected.length, 'NO_PAGES'),
+    delivery: { automaticDeliveryRate: unavailable('DELIVERY_RECORDS_NOT_SUPPLIED'),
+      humanAuditErrorRate: unavailable('DELIVERY_AND_HUMAN_AUDIT_RECORDS_NOT_SUPPLIED'), withheldRate: unavailable('DELIVERY_DECISIONS_NOT_SUPPLIED') } });
   return { schemaVersion: 1, datasetId: corpus.datasetId, runId: run.runId, corpusSha256: run.corpusSha256,
     codeIdentity: run.codeIdentity, models: run.models, sourceIntegrityVerified: true,
     groundTruthPending: corpus.pages.filter(page => !reviewed(page.groundTruth)).length,
     summary: { dev: summarize(rows.filter(row => row.split === 'dev')), holdout: summarize(rows.filter(row => row.split === 'holdout')) }, pages: rows,
+    ocrSummary: { ...summarizeOcr(rows), aggregationScope: 'DESCRIPTIVE_ALL_SPLITS_AND_EVIDENCE_KINDS_SEE_SPLIT_SUMMARIES' },
+    automaticSuccessBasis: 'SUPPLIED_ATTESTATIONS_ONLY_NOT_EXECUTION_PROOF',
+    independentAssessments: { semanticErrors: { value: null, reason: 'INDEPENDENT_SEMANTIC_ASSESSMENT_NOT_AVAILABLE' },
+      imageSourceResidue: { value: null, reason: 'INDEPENDENT_IMAGE_ASSESSMENT_NOT_AVAILABLE' }, artworkDamage: { value: null, reason: 'INDEPENDENT_IMAGE_ASSESSMENT_NOT_AVAILABLE' } },
     limitation: 'Human review and runtime claims are supplied attestations. This evaluator does not verify reviewer identity, full PNG decoding, model execution, or the absence of undeclared manual edits. No claim of raw detector accuracy is made.' };
 }
 

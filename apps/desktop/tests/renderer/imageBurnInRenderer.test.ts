@@ -5,6 +5,8 @@ import {
 } from "../../src/renderer/imageBurnInRenderer.js";
 import { autoFitFontSizeForBubbleShape } from "../../src/renderer/typesettingGeometry.js";
 import type { DialogueLine } from "../../src/shared/projectTypes.js";
+import {estimateTextWidth} from "../../src/shared/typesettingGeometry.js";
+function measureTextMock(this:CanvasRenderingContext2D,text:string){const size=Number(this.font?.match(/([\d.]+)px/)?.[1]??20),width=estimateTextWidth(text,size);return{width,actualBoundingBoxLeft:width/2,actualBoundingBoxRight:width/2,actualBoundingBoxAscent:size*.45,actualBoundingBoxDescent:size*.45};}
 
 describe("imageBurnInRenderer", () => {
   it("resolves only the explicitly user-applied translation for final output", () => {
@@ -57,7 +59,7 @@ describe("imageBurnInRenderer", () => {
     const fillTextMock = vi.fn();
 
     const mockCtx = {
-      save: saveMock,
+      save: saveMock,measureText:measureTextMock,
       restore: restoreMock,
       translate: translateMock,
       rotate: rotateMock,
@@ -112,7 +114,7 @@ describe("imageBurnInRenderer", () => {
     const fillTextMock = vi.fn();
     const strokeTextMock = vi.fn();
     const mockCtx = {
-      save: vi.fn(),
+      save: vi.fn(),measureText:measureTextMock,
       restore: vi.fn(),
       translate: vi.fn(),
       rotate: vi.fn(),
@@ -155,7 +157,7 @@ describe("imageBurnInRenderer", () => {
     const fillTextMock = vi.fn();
     const strokeTextMock = vi.fn();
     const mockCtx = {
-      save: vi.fn(),
+      save: vi.fn(),measureText:measureTextMock,
       restore: vi.fn(),
       translate: vi.fn(),
       rotate: vi.fn(),
@@ -176,33 +178,35 @@ describe("imageBurnInRenderer", () => {
         bbox: { x: 0.2, y: 0.2, width: 0.4, height: 0.3 },
         writingMode: "horizontal-tb",
         shape: "rectangle",
-        fontSizeRatio: layout.fontSizeRatio
+        fontSizeRatio: layout.fontSizeRatio,lineHeight:1.3
       }
     };
 
     expect(layout.lines.length).toBeGreaterThan(1);
     renderTypesettingToCanvas(mockCtx, [line], 1000, 1500);
 
-    expect(fillTextMock).toHaveBeenCalledTimes(layout.lines.length);
-    expect(fillTextMock.mock.calls.map(([text]) => text)).toEqual(layout.lines.map(({ text }) => text));
+    expect(fillTextMock.mock.calls.length).toBeGreaterThan(1);
+    expect(fillTextMock.mock.calls.map(([text]) => text).join(' ').replace(/\s/g,'')).toBe(userTranslation.replace(/\s/g,''));
     expect(strokeTextMock.mock.calls).toEqual(fillTextMock.mock.calls);
     const renderedYs = fillTextMock.mock.calls.map(([, , y]) => y as number);
-    const lineStep = layout.fontSizeRatio * 1.25 * 450;
+    const lineStep = Math.round(layout.fontSizeRatio*450) * 1.3;
     for (let index = 1; index < renderedYs.length; index += 1) {
-      expect(renderedYs[index]! - renderedYs[index - 1]!).toBeCloseTo(lineStep);
+      // Geometry retains subpixel ratios while the Canvas font rounds to an
+      // integer pixel. The spacing must preserve 1.3 within that rounding bound.
+      expect(Math.abs(renderedYs[index]! - renderedYs[index - 1]! - lineStep)).toBeLessThanOrEqual(1.3 / 2 + 1e-8);
     }
     expect(renderedYs.reduce((sum, y) => sum + y, 0) / renderedYs.length).toBeCloseTo(0);
   });
 
   it.each([
-    { label: "80x400 OCR box with a user font", width: 80, height: 400, fontSizeRatio: 0.075, userTranslation: "가나다라", expectedLines: ["가나", "다라"], minFontPx: 30, maxFontPx: 30 },
+    { label: "80x400 OCR box with a user font", width: 80, height: 400, fontSizeRatio: 0.075, userTranslation: "가나다라", expectedLines: ["가나다라"], minFontPx: 30, maxFontPx: 30,blocked:true },
     { label: "600x100 caption with a user font", width: 600, height: 100, fontSizeRatio: 0.3, userTranslation: "가나다라마바사아자차카타", expectedLines: ["가나다라마바사아자차카타"], minFontPx: 30, maxFontPx: 30 },
-    { label: "80x400 OCR box with auto-fit", width: 80, height: 400, fontSizeRatio: undefined, userTranslation: "가나다라", expectedLines: ["가나", "다라"], minFontPx: 16, maxFontPx: 36 },
+    { label: "80x400 OCR box with auto-fit", width: 80, height: 400, fontSizeRatio: undefined, userTranslation: "가나다라", expectedLines: ["가나다라"], minFontPx: 13, maxFontPx: 18 },
     { label: "600x100 caption with auto-fit", width: 600, height: 100, fontSizeRatio: undefined, userTranslation: "가나다라마바사아자차카타", expectedLines: ["가나다라마바사아자차카타"], minFontPx: 30, maxFontPx: 35 }
-  ])("uses the physical aspect ratio for $label without mutating user data", ({ width, height, fontSizeRatio, userTranslation, expectedLines, minFontPx, maxFontPx }) => {
+  ])("uses the physical aspect ratio for $label without mutating user data", ({ width, height, fontSizeRatio, userTranslation, expectedLines, minFontPx, maxFontPx,blocked }) => {
     const fillTextMock = vi.fn();
     const mockCtx = {
-      save: vi.fn(),
+      save: vi.fn(),measureText:measureTextMock,
       restore: vi.fn(),
       translate: vi.fn(),
       rotate: vi.fn(),
@@ -228,6 +232,7 @@ describe("imageBurnInRenderer", () => {
       })
     });
 
+    if(blocked){expect(()=>renderTypesettingToCanvas(mockCtx,Object.freeze([line]),1000,1000)).toThrow('TYPESETTING_HARD_RULE_BLOCKED');expect(fillTextMock).not.toHaveBeenCalled();expect(line.typesetting?.fontSizeRatio).toBe(fontSizeRatio);return;}
     renderTypesettingToCanvas(mockCtx, Object.freeze([line]), 1000, 1000);
 
     expect(fillTextMock.mock.calls.map(([text]) => text)).toEqual(expectedLines);

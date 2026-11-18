@@ -181,7 +181,7 @@ describe("typesettingGeometry", () => {
   });
 
   it.each([
-    { label: "80x400 OCR box", width: 80, height: 400, fontSizeRatio: 0.075, text: "가나다라", expectedLines: ["가나", "다라"] },
+    { label: "80x400 OCR box", width: 80, height: 400, fontSizeRatio: 0.075, text: "가나다라", expectedLines: ["가나다라"] },
     { label: "600x100 caption", width: 600, height: 100, fontSizeRatio: 0.3, text: "가나다라마바사아자차카타", expectedLines: ["가나다라마바사아자차카타"] }
   ])("lays out $label using physical glyph widths without changing the requested font ratio", ({ width, height, fontSizeRatio, text, expectedLines }) => {
     const options = Object.freeze({ shape: "rectangle" as const, fontSizeRatio, boxAspectRatio: width / height });
@@ -191,12 +191,13 @@ describe("typesettingGeometry", () => {
     expect(result.lines.map((line) => line.text)).toEqual(expectedLines);
     for (const line of result.lines) {
       // These fixtures contain only full-width Hangul glyphs.
+      if(width===80){expect(hasTypesettingTextOverflow(text,options)).toBe(true);continue;}
       expect(line.text.length * fontSizeRatio * height).toBeLessThanOrEqual(line.width * width);
     }
   });
 
   it.each([
-    { label: "80x400 OCR box", width: 80, height: 400, text: "가나다라", expectedLineCount: 2, minFontSizeRatio: 0.04, maxFontSizeRatio: 0.091 },
+    { label: "80x400 OCR box", width: 80, height: 400, text: "가나다라", expectedLineCount: 1, minFontSizeRatio: 0.04, maxFontSizeRatio: 0.046 },
     { label: "600x100 caption", width: 600, height: 100, text: "가나다라마바사아자차카타", expectedLineCount: 1, minFontSizeRatio: 0.3, maxFontSizeRatio: 0.35 }
   ])("auto-fits $label against its physical width", ({ width, height, text, expectedLineCount, minFontSizeRatio, maxFontSizeRatio }) => {
     const options = Object.freeze({ shape: "rectangle" as const, boxAspectRatio: width / height });

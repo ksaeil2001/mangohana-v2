@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createRequire} from 'node:module';import {createHash} from 'node:crypto';
+const require=createRequire(import.meta.url),sha=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');let api={};try{api=require('../../packages/ai-engine/quality/imported-layout-background.cjs');}catch(e){if(e.code!=='MODULE_NOT_FOUND')throw e;}
+const none=()=>({version:1,layoutRevision:0,state:'UNREVIEWED',entries:[],source:null,planSha256:null});
+test('default layout snapshot is bound into the one-use execution identity',()=>{const layoutReview=none();assert.equal(typeof api.checkLayoutBinding,'function');assert.doesNotThrow(()=>api.checkLayoutBinding({layoutReview},{binding:{layoutReviewSha256:sha(layoutReview),layoutRevision:0}}));});
+for(const kind of ['dropped','changed','draft','forged approval'])test('layout execution rejects '+kind+' before image work',()=>{
+ const layout=none(),p={binding:{layoutReviewSha256:sha(layout),layoutRevision:0}};let inputs={layoutReview:layout};if(kind==='dropped')inputs={};if(kind==='changed')inputs.layoutReview.layoutRevision=1;if(kind==='draft'){layout.state='DRAFT';p.binding.layoutReviewSha256=sha(layout);}if(kind==='forged approval'){layout.state='APPROVED_SOURCE_LAYOUT_CLEANED_PENDING';layout.layoutRevision=2;layout.entries=[{id:'r1'}];p.binding.layoutReviewSha256=sha(layout);p.binding.layoutRevision=2;}assert.throws(()=>api.checkLayoutBinding(inputs,p));
+});
+test('legacy synthetic inputs remain bound to absence rather than an implicit layout approval',()=>{assert.doesNotThrow(()=>api.checkLayoutBinding({}, {binding:{}}));});

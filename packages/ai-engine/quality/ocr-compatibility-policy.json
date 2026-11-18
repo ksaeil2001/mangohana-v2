@@ -1,0 +1,38 @@
+{
+  "version": "stage14r3-ocr-compatibility-v1",
+  "legacyEngineSha256": "7e24058f6756df7c1c03ece7110590003a798713e045458f1f76e468fc146ec3",
+  "currentEngineSha256": "4534a04e17e731b809dc6a60af375df802085037086699ce009a65a3e0148289",
+  "compatibilityModuleSha256": "b19bd2039eaae056463a6f7f275ea89db52d11475bf6193d73bf8f04390e2235",
+  "policyRelativePath": "packages/ai-engine/quality/ocr-compatibility-policy.json",
+  "allowedNonOcrChanges": [
+    {
+      "path": "packages/ai-engine/quality/page-translation.cjs",
+      "sha256": "e117f035049156264075cba7385e321847d8cf706fa2314ccbef10d007a28aa1"
+    },
+    {
+      "path": "packages/ai-engine/quality/translation-contract.cjs",
+      "sha256": "884059ebd1618f7378ecb72878e9f26cae52b881dc9d9073e7d78d071f559c49"
+    },
+    {
+      "path": "packages/ai-engine/quality/korean-output.cjs",
+      "sha256": "3e0a1506bd02595ea3602cf1aaf3aedbb024463d23ff5e4da0d644c3bf6fe09b"
+    },
+    {
+      "path": "packages/ai-engine/quality/human-translation-review.cjs",
+      "sha256": "5588e6dac58dce94cac6fae164ea348e128ddb8e10d60605110ebf7a39dcece7"
+    },
+    {
+      "path": "packages/ai-engine/quality/ocr-checkpoint-compatibility.cjs",
+      "sha256": "b19bd2039eaae056463a6f7f275ea89db52d11475bf6193d73bf8f04390e2235"
+    },
+    {
+      "path": "packages/ai-engine/quality/recovery-checkpoint.cjs",
+      "sha256": "1aff650b45a2bd09eff7ed2e87336d73db8b4d94519607be99247767eed6398a"
+    },
+    {
+      "path": "packages/ai-engine/quality/imported-page-input.cjs",
+      "sha256": "8b1bf0bbe4e88b834739c76edc89bea1917c54d9cf4f9190fbb507597861bd36"
+    }
+  ],
+  "justification": "Audited source version pair: original OCR acquisition/refinement/selection program and 75% guard unchanged. Current engine adds reviewed translation projection, an explicit compatibility read hook and output-free input inspection. Only these exact translation/control source versions may differ; every OCR worker/model/compiled/resource/configuration dependency remains bound by original reconstruction and full current comparison. Applies to any matching owned checkpoint, never a hardcoded manga page. The exact Stage13 load/save/key functions are unchanged; fingerprintFiles gains an optional copy-only metadata capture. One freshly content-hashed dependency snapshot is used for both version views, with source-copy hashes and all file/directory identity/size/mtime/link anchors revalidated before acceptance. Directory entry names are also reread and compared; Windows directory timestamps alone never establish snapshot freshness. Imported-page input inspection version: exact removal comparison preserves every existing engine statement; added method and dependency are separately pinned and audited in docs/validation/stage14r3-imported-adapter-20261115/evidence/ocr-version-audit.json. Original and imported owner/revision/generation remain separate. Original strict loader and current compatibility policy both apply; no identity, receipt, fingerprint, checkpoint or source ownership is rewritten."
+}

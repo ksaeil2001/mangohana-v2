@@ -44,6 +44,7 @@ export default defineConfig({
     maxWorkers: 2
   },
   build: {
+    commonjsOptions:{include:[/node_modules/,/quality[\\/](?:korean-typesetting-standard|korean-utterance)\.cjs$/]},
     outDir: "dist-renderer",
     emptyOutDir: false,
     rollupOptions: {

@@ -1,0 +1,473 @@
+{
+  "sourceRepository": "ksaeil2001/laptop-dev-backup-20261109",
+  "branch": "codex/preformat-20261109",
+  "snapshot": "trio-desktop",
+  "files": [
+    {
+      "path": "resources/font_ko_fallback/pretendard-1.3.9/LICENSE.txt",
+      "bytes": 4419,
+      "sha256": "b04538c9abec39a3db75108cf0af0fd9c77032fe8aa2cf38345b4d250e98e38e"
+    },
+    {
+      "path": "resources/font_ko_fallback/pretendard-1.3.9/PretendardVariable.ttf",
+      "bytes": 6739336,
+      "sha256": "3090ccde0442bb347aa7685d9ba8b17436a60682df6e8f92a9a670de14056e22"
+    },
+    {
+      "path": "resources/font_ko_fallback/pretendard-1.3.9/resource-manifest.json",
+      "bytes": 558,
+      "sha256": "27efedd0315cc2e77e54d2f3c86b1dd321a570c33e9dabcac1682354fd2e1628"
+    },
+    {
+      "path": "resources/font_ko_fallback/pretendard-1.3.9/resource-manifest.p7s",
+      "bytes": 1887,
+      "sha256": "a355207148493c20a1a46ed521dd12d057d2d8b0b74e41f36351599c336f01c3"
+    },
+    {
+      "path": "resources/font_ko_fallback/pretendard-1.3.9/source-manifest.json",
+      "bytes": 1242,
+      "sha256": "5d4ee3c179e1708f021dbbb7c6df0a0c75ac72d015c46f4a067cda6f03de9007"
+    },
+    {
+      "path": "resources/managed-ocr/manga_ocr.py",
+      "bytes": 18747,
+      "sha256": "4c75af666a0c24faea84ea132047c0615f74fb6bad5bd56dd217ab5f7266594d"
+    },
+    {
+      "path": "resources/managed-ocr/recognize.py",
+      "bytes": 6996,
+      "sha256": "3b0b1754c53393cef827503f39ecdfcfd75a815c889af6539d1e8490122ce444"
+    },
+    {
+      "path": "resources/managed-ocr/text_evidence.py",
+      "bytes": 10434,
+      "sha256": "fd7028d5016450254f46d9f446789fa3f987a9414ac3084bca20302ae1b1c689"
+    },
+    {
+      "path": "resources/managed-ocr/verify_runtime.py",
+      "bytes": 16838,
+      "sha256": "7726f52deb71001c3bfc6325420308b075fddda8d8cdad0ea9f6a71e4284b7e9"
+    },
+    {
+      "path": "resources/pipeline-resources/README.md",
+      "bytes": 2340,
+      "sha256": "ec52a5e6cbd88445e1460c581f4de312979cf3c6ab547f4f5ef4f0ea3fd2f54d"
+    },
+    {
+      "path": "resources/pipeline-resources/font-publisher-allowlist.json",
+      "bytes": 83,
+      "sha256": "f53f3a389e752e78d389836c84360d933cd2ec0c2a4d4d12c1eaa5b70e535436"
+    },
+    {
+      "path": "resources/pipeline-resources/ocr-publisher-allowlist.json",
+      "bytes": 84,
+      "sha256": "f0a4ac164035a69f18bbe9202ab5e28ad6f780a240848600a001db1e9b87ff67"
+    },
+    {
+      "path": "resources/pipeline-resources/pipeline-resource-lock.json",
+      "bytes": 1125,
+      "sha256": "1514cf4098eb01297bf3e4dbdf760293930295e3b9788ff399c47cc3ebbe409b"
+    },
+    {
+      "path": "scripts/local-preview/lama_cuda.py",
+      "bytes": 5557,
+      "sha256": "4a54b0733800573e9287f4051afd4070f55824d3f1a83f8151f395dceac01ade"
+    },
+    {
+      "path": "scripts/local-preview/lama_http.py",
+      "bytes": 20232,
+      "sha256": "9b989d2efe0a57abfd9547678736bf871f81d973f6ed23fa22e3aa9289c1e539"
+    },
+    {
+      "path": "scripts/local-preview/lama_worker.py",
+      "bytes": 2736,
+      "sha256": "2175ea345ff1bee29494804776a8bca6fff038493edae5051395243717847ea5"
+    },
+    {
+      "path": "scripts/local-preview/renderer.ts",
+      "bytes": 22673,
+      "sha256": "26f2d225d6ae929b47bf539fe68241b1de6cf79fb64c927a53e66e56eb06398e"
+    },
+    {
+      "path": "scripts/sites-local/engine-boundaries.cjs",
+      "bytes": 14827,
+      "sha256": "ac703a9a64cafb17765c5340f1f6b4fb2ada3dd0c863add015c46f2f68005fa9"
+    },
+    {
+      "path": "scripts/sites-local/engine.cjs",
+      "bytes": 33407,
+      "sha256": "fc1b9b05c4a4f84b45c6351153b1926bfe07517148bc5135a43027c080ff1dbf"
+    },
+    {
+      "path": "scripts/sites-local/lama-stdio.py",
+      "bytes": 4715,
+      "sha256": "f30344ace3d8a611a325f1f1361824b17f47840bfc3128a80a148253c93e6fe3"
+    },
+    {
+      "path": "scripts/sites-local/renderer.ts",
+      "bytes": 3152,
+      "sha256": "a491d16c764c96a5807ec50b250106c11ffc93bc40b1b7ab2beae3f14aff1f1a"
+    },
+    {
+      "path": "src/main/abortSignals.ts",
+      "bytes": 1006,
+      "sha256": "7fd62a3198c9791b7d2f91d21d803b03efe8d9524a7f36f4d240d236224e6e8d"
+    },
+    {
+      "path": "src/main/cleanedAssetReview.ts",
+      "bytes": 1283,
+      "sha256": "d9083107582d3eee3dbedb72eadaf307e643044bbfc0a8b71135c71b059fcde9"
+    },
+    {
+      "path": "src/main/cmsSignatureVerifier.ts",
+      "bytes": 7936,
+      "sha256": "52dc5a7a0cc2dfc20308de2447f1e198cc7c6df70f684e369026baa63f359db1"
+    },
+    {
+      "path": "src/main/imageCrop.ts",
+      "bytes": 1791,
+      "sha256": "012f41c7f86d6f9b5bc6ce6a8e806b9e24be0e7a60b5e18dbd2baae7fe16088a"
+    },
+    {
+      "path": "src/main/inpaintingAssets.ts",
+      "bytes": 7373,
+      "sha256": "45fe37417e84e894dd0a8f2427734b593dcc7f7b262f9e015969cb28d637f3c1"
+    },
+    {
+      "path": "src/main/localAiClient.ts",
+      "bytes": 11211,
+      "sha256": "44176a73846d651d1f965fe8263b1e4bcf28e15772267ba983f56cb1dede760a"
+    },
+    {
+      "path": "src/main/ocr/detection/mangaAssistedOcrDetector.ts",
+      "bytes": 13673,
+      "sha256": "6b673b87aa3e85f38569e61cfdd3ce136dacdb76f664fb935e146f12babe7c4f"
+    },
+    {
+      "path": "src/main/ocr/detection/productionDetectorParser.ts",
+      "bytes": 4155,
+      "sha256": "441d098f3627dcf81f031df238f8c8a8d022e715e1688ae917010c38e5e6b8a4"
+    },
+    {
+      "path": "src/main/ocr/detection/productionOcrDetailDetector.ts",
+      "bytes": 15737,
+      "sha256": "85629adc73645a4091c8ce4d4bb6cb6763b3a3d16e593231a4302534feba6561"
+    },
+    {
+      "path": "src/main/ocr/grouping/productionRegionGrouping.ts",
+      "bytes": 11947,
+      "sha256": "6c985e0f7b68a6c174d1780ba0a167d925048f9f7b2c86d6c0f5661759c8648c"
+    },
+    {
+      "path": "src/main/ocr/grouping/productionRegionSeparators.ts",
+      "bytes": 4454,
+      "sha256": "951e94ea46ec3348e6e3fc31a255d7a668551deaaf84f9ab9cc4f90333483ed8"
+    },
+    {
+      "path": "src/main/ocr/pipeline/productionOcrPipeline.ts",
+      "bytes": 7463,
+      "sha256": "e0a9026168013d9bcbc223600e620964bbefaae015b71f252d12647a5f9f96da"
+    },
+    {
+      "path": "src/main/ocr/runtime/mangaOcrManifest.ts",
+      "bytes": 12505,
+      "sha256": "451ccf2f3fd4d64f102db6e41134f79e37a12b506ef79e7501ef893ed5436b16"
+    },
+    {
+      "path": "src/main/ocr/runtime/mangaOcrRuntime.ts",
+      "bytes": 15493,
+      "sha256": "383abe357aca925f5cf80896eac05d0fcd7cbb24f59dd8e8f3542a14289ddbda"
+    },
+    {
+      "path": "src/main/ocr/runtime/productionOcrResource.ts",
+      "bytes": 1663,
+      "sha256": "aa41e573ca8c1d95255626c196c7840c9ac08d2a22559c9ec39112dd6bfb79b0"
+    },
+    {
+      "path": "src/main/ocr/runtime/productionOcrSidecarClient.ts",
+      "bytes": 3679,
+      "sha256": "0edcd36daf5d6fd2fdb66fbdb9fead1dab321b62c276fefe44f51b962e598c37"
+    },
+    {
+      "path": "src/main/ocr/runtime/productionOcrSidecarTransport.ts",
+      "bytes": 6947,
+      "sha256": "f64e019b8008a7ccacce62d361ccf64388416f4de269e071d56faa3a278e6364"
+    },
+    {
+      "path": "src/main/pipelinePathSecurity.ts",
+      "bytes": 2527,
+      "sha256": "b80115051de60aec49643cd2fb792564937744a0c3b7c55b792b283e7c2a4d36"
+    },
+    {
+      "path": "src/main/productionOcrService.ts",
+      "bytes": 15695,
+      "sha256": "46ff82d7a295e7d97dfcda54ff717051321670cc3cc2b89ed8eeda3bd5f0766c"
+    },
+    {
+      "path": "src/main/productionTypesetFontResource.ts",
+      "bytes": 10805,
+      "sha256": "01f2a7aa1b77b1eacf7e069c5a95808fa10c740ff588652ed10137829a5b84c7"
+    },
+    {
+      "path": "src/main/projectAssetRead.ts",
+      "bytes": 1945,
+      "sha256": "738f579416ac67b23b732624cf970c9bb4b9b3f5779760d9f8fbcbc5f5c26bf8"
+    },
+    {
+      "path": "src/main/projectImageExport.ts",
+      "bytes": 26589,
+      "sha256": "a585caa30fbe00582772bbb6f5d915885631e94e4515b8b099134826fffeb221"
+    },
+    {
+      "path": "src/main/resourcePackArchive.ts",
+      "bytes": 31372,
+      "sha256": "e33ab69ab53b0c165cb4ebd562263f71378f8cffbd72310d6dadea3472ca67dd"
+    },
+    {
+      "path": "src/main/resourcePackDownloader.ts",
+      "bytes": 15675,
+      "sha256": "fe01c9b650b6780c9f66cd910e216e3e9887795d2d8c2e0a74c8c23927895892"
+    },
+    {
+      "path": "src/main/resourcePackInstaller.ts",
+      "bytes": 27376,
+      "sha256": "71917daa634733c51cbdebee6325de52ad29cc464cf3973653cb493beec7f378"
+    },
+    {
+      "path": "src/main/resourcePreflight.ts",
+      "bytes": 8255,
+      "sha256": "e06eb636f8aeb320c6397fbcda49a13b880b0137b09b96093e4fb20dcce9b381"
+    },
+    {
+      "path": "src/main/translation/adapters/localAiAdapter.ts",
+      "bytes": 4339,
+      "sha256": "8618891599ee0272a162c0efd166138eeafce2ff7661318385b622a096a48855"
+    },
+    {
+      "path": "src/main/translation/translationEngineRegistry.ts",
+      "bytes": 3904,
+      "sha256": "321c316d39c2c1f6e4fe48c3bd9563110812ed0e6f78bda5e336e24495c8e365"
+    },
+    {
+      "path": "src/renderer/candidateTypesettingFit.ts",
+      "bytes": 7090,
+      "sha256": "346a56c3246d1d0f2c1f0ad34e9899a3decdb5b60fb4567216025739564d17a6"
+    },
+    {
+      "path": "src/renderer/electronApi.ts",
+      "bytes": 10901,
+      "sha256": "e06647de2519b2cfa08da6bbadc1e68d0eeab83bdea7ca7ceadbacc39ad952e8"
+    },
+    {
+      "path": "src/renderer/imageBurnInRenderer.ts",
+      "bytes": 7741,
+      "sha256": "0772d21e5b9dca42f6914d7e1ed6b5e7b885288f9ef0cf460e9c2178ba2b4270"
+    },
+    {
+      "path": "src/renderer/productionTypesetFont.ts",
+      "bytes": 4065,
+      "sha256": "b7246530dd24e85a3fc9132f2a509dfe387b37ec4b92cf36489f9e289efb1deb"
+    },
+    {
+      "path": "src/renderer/typesettingGeometry.ts",
+      "bytes": 9253,
+      "sha256": "c27ebf3eb509a284bec2d1194a3eca50bed09126de0c5a76ab0c952fd66ac3e5"
+    },
+    {
+      "path": "src/shared/approvedCleanedAsset.ts",
+      "bytes": 2891,
+      "sha256": "64fcb84fc079198e7c8dfc37cbb01a84686f51a08e7ac1e033f857cf67102623"
+    },
+    {
+      "path": "src/shared/autoUpdateStatus.ts",
+      "bytes": 799,
+      "sha256": "8f3d73e75f99cfc22e60e4f26f2f4d8454fa80ac86ee9bfa8d6195f8c8ea4953"
+    },
+    {
+      "path": "src/shared/backgroundSupportedGlyphs.ts",
+      "bytes": 4054,
+      "sha256": "8ab93d7dcaa6d0b8af842a905ea785ba6f9f3cbabae993418a7435a82fca7db4"
+    },
+    {
+      "path": "src/shared/batchAutomation.ts",
+      "bytes": 8494,
+      "sha256": "e5fe95b5ac846f4b49c3f7bc37e5d1754cae07bcdff6f5e6a657394df74c64f6"
+    },
+    {
+      "path": "src/shared/environmentPreparation.ts",
+      "bytes": 5166,
+      "sha256": "79d826292e090550c014d1cbde3718cb933e8a9f08bc505847e2a74f9c25f9b6"
+    },
+    {
+      "path": "src/shared/geminiApiKey.ts",
+      "bytes": 327,
+      "sha256": "1fd73139fcb044598082da40844653e1bcd4560bb4394ef7ae3f45b7abe01782"
+    },
+    {
+      "path": "src/shared/imageCropGeometry.ts",
+      "bytes": 5243,
+      "sha256": "e7da6189b80b0e78e8a947769ea6ea306d5475d08d014e44713fb98670b80516"
+    },
+    {
+      "path": "src/shared/inpainting.ts",
+      "bytes": 6256,
+      "sha256": "5df4383050f3f9b9a7e8521a1810febf8e3c7c42930980bd989b63de7ee195c3"
+    },
+    {
+      "path": "src/shared/inpaintingQa.ts",
+      "bytes": 4189,
+      "sha256": "53d88d2c4cbb74eeefc28a323cf679ec6dfbba1240eeab5a6ab68096a93b500d"
+    },
+    {
+      "path": "src/shared/linkedSourceOutline.ts",
+      "bytes": 13234,
+      "sha256": "0703f6e1680036b6b9ecd1bc92f32b85ca127531f9e1d24629f0e09ce3415afc"
+    },
+    {
+      "path": "src/shared/maskMorphology.ts",
+      "bytes": 5221,
+      "sha256": "50023d0f35e8a92115e28d9c1cc20b96de5aaede1b27269a89634d221f24192f"
+    },
+    {
+      "path": "src/shared/pipelineResources.ts",
+      "bytes": 10720,
+      "sha256": "e97fe8b7c1a9d45bc7e64d1e3b45b315c18a8fa1572540276251a1f53288863e"
+    },
+    {
+      "path": "src/shared/processingQueue.ts",
+      "bytes": 15565,
+      "sha256": "725350baab1e6d700d322e355ee784b6d6c297e185dcb2eb4361f6ff26aabf6f"
+    },
+    {
+      "path": "src/shared/productionOcr.ts",
+      "bytes": 6260,
+      "sha256": "850a4a38cb60189077d9c1e28d4aba17dc1b760f85ea48a53bde54ec375748eb"
+    },
+    {
+      "path": "src/shared/productionOcrResource.ts",
+      "bytes": 4295,
+      "sha256": "d3ab2bd30e246f2b06999fa03bc6183cf8f73100b81940ab32c65ff4477e0f87"
+    },
+    {
+      "path": "src/shared/productionOcrValidation.ts",
+      "bytes": 9392,
+      "sha256": "b2f98b8ce689f8e7a498c1b4d580023dc344a82ba4510fd58715080192170933"
+    },
+    {
+      "path": "src/shared/productionTypesetFontResource.ts",
+      "bytes": 576,
+      "sha256": "84d18ceffa3554b07a8509a5ad283fc6c5b6d2a837e9953131d196067b39b7f8"
+    },
+    {
+      "path": "src/shared/projectChanges.ts",
+      "bytes": 3517,
+      "sha256": "cebc4a3ed4434799afa0d70cbcf0c4a32f46be944cced985c9fa5fad1ee16983"
+    },
+    {
+      "path": "src/shared/projectChunkTypes.ts",
+      "bytes": 1855,
+      "sha256": "d7f84f7dc65e6a11eb88ff52ad0e301d6476891cb3f3bdba2a8f8295997ffd9b"
+    },
+    {
+      "path": "src/shared/projectSessionTypes.ts",
+      "bytes": 3574,
+      "sha256": "dc1dd4d67868790284ec792fb62b27f36a763a8e7d830eb2b6eb8eff5b33bb39"
+    },
+    {
+      "path": "src/shared/projectTypes.ts",
+      "bytes": 8089,
+      "sha256": "5091dde25f584283bd53b6cd7ea075fcec1697877eeb7712ae9625752150432c"
+    },
+    {
+      "path": "src/shared/providerSettings.ts",
+      "bytes": 9103,
+      "sha256": "decfe56e009b6eb8a69461c2466e58c31810c4f83b61682e6d335e5ac1555522"
+    },
+    {
+      "path": "src/shared/renderReadiness.ts",
+      "bytes": 9396,
+      "sha256": "f5e014c5936637a92d54c5375d905dd7e841d5d5edaffe0a6633decffb9a44ae"
+    },
+    {
+      "path": "src/shared/sourceOutlineFringe.ts",
+      "bytes": 4360,
+      "sha256": "98b9071691638c570ee154ce83bc5cbfacf0b5034f795953c525ffb003fe1eaa"
+    },
+    {
+      "path": "src/shared/sourceTextMask.ts",
+      "bytes": 29029,
+      "sha256": "24b3965788005fcd1358432998145ff1e1c9e0705c0bf9895e11a301048c52c7"
+    },
+    {
+      "path": "src/shared/sourceTextMaskCompletion.ts",
+      "bytes": 6794,
+      "sha256": "1d0bc651049335f526e49cf46cf40749d291c8ddd66e8fbc8bb244aa9dae2638"
+    },
+    {
+      "path": "src/shared/speechBubbleExtraction.ts",
+      "bytes": 21271,
+      "sha256": "31d75a01b1b0b10765f9aa99efbc377bafa7bd04304d5bda168f28340ab25877"
+    },
+    {
+      "path": "src/shared/speechBubbleReocr.ts",
+      "bytes": 5235,
+      "sha256": "18a896c4a3e08673dd80efc99eccf0833f67bca9e1d1a87ba7c9feb16853d259"
+    },
+    {
+      "path": "src/shared/translation/contextSelector.ts",
+      "bytes": 6332,
+      "sha256": "369973dce6efc58dee9fa665668389eb4842dd29313279bdf2a6ae651b21a09b"
+    },
+    {
+      "path": "src/shared/translation/fuzzyMatcher.ts",
+      "bytes": 4267,
+      "sha256": "08384ff8088d069056659f728dfaa05c7b2e8e7549fcf54c744276c48b372bf3"
+    },
+    {
+      "path": "src/shared/translation/translationMemory.ts",
+      "bytes": 4311,
+      "sha256": "b0bff2945f47c690b31e7d9d1a7c5251fbc8f0f2d88288555160bfe8bbf35577"
+    },
+    {
+      "path": "src/shared/translation/translationPayload.ts",
+      "bytes": 6402,
+      "sha256": "7372f3697e6f3508f728fc7348ca582047c828d541437096550894ced6156c75"
+    },
+    {
+      "path": "src/shared/translation/translationQa.ts",
+      "bytes": 7363,
+      "sha256": "f7f4aef85962b149768cec8aba80bcff53747c57896644faca6fb505f8e04ed8"
+    },
+    {
+      "path": "src/shared/translationContext.ts",
+      "bytes": 13082,
+      "sha256": "328a4d098d6d9d7a4b0359a22e7ded2e7a156166e34bd86af1be82abd39b430c"
+    },
+    {
+      "path": "src/shared/typesettingGeometry.ts",
+      "bytes": 11307,
+      "sha256": "b4fcde5b638012ddc832234b63a1f70f2d8a3c2b2653a99d2c99419d1b01534e"
+    },
+    {
+      "path": "src/shared/typesettingKlreq.ts",
+      "bytes": 4283,
+      "sha256": "479456b47fe0cc3e49e335f76b87d192808e1708027792bcb7f0db2a7faf340f"
+    },
+    {
+      "path": "src/shared/typesettingKoreanBreak.ts",
+      "bytes": 5470,
+      "sha256": "9654b67f310eb72a09c6908f9a16bcf56d83a0684ade0a5ce62afb0e64055aba"
+    },
+    {
+      "path": "src/shared/typesettingShape.ts",
+      "bytes": 3888,
+      "sha256": "0ba5ffe35611554ef04bc8da782e53959657ffffc312d76ed10aed870db00f5b"
+    },
+    {
+      "path": "resources/managed-inpainting/lama_onnx.py",
+      "bytes": 13040,
+      "sha256": "5247c3b8ba54f87d0b9783a329d02032b4d0379439d0dbb65a8646e2997090dc",
+      "sourceSnapshot": "mangohana-onedrive/apps/desktop"
+    }
+  ]
+}

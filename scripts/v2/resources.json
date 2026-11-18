@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "roots": {
+    "models": "E:/Dev/Models",
+    "downloads": "E:/Dev/Downloads/MangohanaV2",
+    "cache": "E:/Dev/Cache",
+    "outputs": "E:/Dev/Outputs/MangohanaV2"
+  },
+  "resources": [
+    {
+      "id": "gemma-e2b",
+      "root": "models",
+      "fileName": "gemma-4-E2B-it-Q4_K_M-0314792d.gguf",
+      "url": "https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF/resolve/0314792d7f1f7e229411f620751375812bb9faf2/gemma-4-E2B-it-Q4_K_M.gguf",
+      "bytes": 3106738272,
+      "sha256": "740185b21d22ceb83a11c3aa62ad5842ef32c70f6096d756bbee85a1e4ec34b8",
+      "source": "https://huggingface.co/unsloth/gemma-4-E2B-it-GGUF/commit/0314792d7f1f7e229411f620751375812bb9faf2"
+    },
+    {
+      "id": "lama-fp32",
+      "root": "models",
+      "fileName": "lama_fp32.onnx",
+      "url": "https://huggingface.co/Carve/LaMa-ONNX/resolve/a3ee2fca54baebec351b8fa7786154ffa7555aa6/lama_fp32.onnx",
+      "bytes": 208044816,
+      "sha256": "1faef5301d78db7dda502fe59966957ec4b79dd64e16f03ed96913c7a4eb68d6",
+      "source": "https://huggingface.co/Carve/LaMa-ONNX/blob/a3ee2fca54baebec351b8fa7786154ffa7555aa6/lama_fp32.onnx"
+    },
+    {
+      "id": "ocr-pack",
+      "root": "downloads",
+      "fileName": "trio-production-ocr-win32-x64-1.0.0.zip",
+      "url": "https://github.com/ksaeil2001/trio-plus/releases/download/ocr-production-v1.0.0/trio-production-ocr-win32-x64-1.0.0.zip",
+      "bytes": 482330498,
+      "sha256": "6d2ccc534c0eeb5ab8cdc1d20d3349ee3805c27dbad13905dfeb79ddf29e60ff",
+      "source": "https://api.github.com/repos/ksaeil2001/trio-plus/releases/tags/ocr-production-v1.0.0"
+    },
+    {
+      "id": "ocr-manifest",
+      "root": "downloads",
+      "fileName": "resource-manifest.json",
+      "url": "https://github.com/ksaeil2001/trio-plus/releases/download/ocr-production-v1.0.0/resource-manifest.json",
+      "bytes": 3831849,
+      "sha256": "c40f832a9b372dc2d45a529ab69d57c2dc45eefeb4d28d59e94a4e32619a15c0",
+      "source": "https://api.github.com/repos/ksaeil2001/trio-plus/releases/tags/ocr-production-v1.0.0"
+    },
+    {
+      "id": "ocr-signature",
+      "root": "downloads",
+      "fileName": "resource-manifest.p7s",
+      "url": "https://github.com/ksaeil2001/trio-plus/releases/download/ocr-production-v1.0.0/resource-manifest.p7s",
+      "bytes": 1647,
+      "sha256": "fd2a81a1c7349f330f916ce2aadfc9d037fc90f5a90fd4230a8e8dbb3b370909",
+      "source": "https://api.github.com/repos/ksaeil2001/trio-plus/releases/tags/ocr-production-v1.0.0"
+    },
+    {
+      "id": "llama-cuda12",
+      "root": "downloads",
+      "fileName": "llama-b10621-bin-win-cuda-12.4-x64.zip",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b10621/llama-b10621-bin-win-cuda-12.4-x64.zip",
+      "bytes": 250464283,
+      "sha256": "81c2ff62e14b549cd5c766ccdd5c61f09e821a171655c3047bdccfddc2d1a1e2",
+      "source": "https://api.github.com/repos/ggml-org/llama.cpp/releases/tags/b10621"
+    },
+    {
+      "id": "cudart12",
+      "root": "downloads",
+      "fileName": "cudart-llama-bin-win-cuda-12.4-x64.zip",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b10621/cudart-llama-bin-win-cuda-12.4-x64.zip",
+      "bytes": 391443627,
+      "sha256": "8c79a9b226de4b3cacfd1f83d24f962d0773be79f1e7b75c6af4ded7e32ae1d6",
+      "source": "https://api.github.com/repos/ggml-org/llama.cpp/releases/tags/b10621"
+    }
+  ]
+}

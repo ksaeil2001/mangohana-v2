@@ -1,0 +1,25 @@
+// Receipt wrapper around existing project commands, without model execution.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {spawn,execFileSync} from 'node:child_process';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),[suite,output]=process.argv.slice(2);
+if(!['v2','legacy','stage02'].includes(suite)||!output)throw new Error('Usage: verify-stage09.mjs v2|legacy|stage02 <fresh receipt directory>');
+await fs.mkdir(output,{recursive:false});
+const files=[...new Set(execFileSync('git',['ls-files','-c','-o','--exclude-standard','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean))].sort();
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const hashes=async()=>Object.fromEntries(await Promise.all(files.map(async f=>[f,sha(await fs.readFile(path.join(root,f)))])));
+const before=await hashes(),args=suite==='v2'?['scripts/v2/test.mjs']:suite==='legacy'?['--import','tsx','scripts/test-all.ts']:['node_modules/vitest/vitest.mjs','run','--config','C:/dev/Projects/_audits/MangoHana_02_20261112_134418/vitest.audit.config.mjs','--reporter=json','--outputFile',path.resolve(output,'vitest.json')];
+const env={...process.env,NO_COLOR:'1'};delete env.FORCE_COLOR;
+const chunks=[],startedAt=new Date().toISOString(),start=performance.now();
+const child=spawn(process.execPath,args,{cwd:root,env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+child.stdout.on('data',b=>chunks.push(b));child.stderr.on('data',b=>chunks.push(b));
+let startError=null;const result=await new Promise(resolve=>{child.once('error',e=>{startError=e.code??e.name;resolve({code:null,signal:null});});child.once('close',(code,signal)=>resolve({code,signal}));});
+const log=Buffer.concat(chunks),after=await hashes();await fs.writeFile(path.join(output,'output.log'),log,{flag:'wx'});
+const transcript=log.toString('utf8').replace(/\x1b\[[0-9;]*m/g,'');
+const counts=Object.fromEntries(['tests','pass','fail','cancelled','skipped','todo'].map(label=>{const m=[...transcript.matchAll(new RegExp('ℹ '+label+'\\s+(\\d+)','g'))];return [label,m.length?Number(m.at(-1)[1]):null];}));
+const receipt={suite,scope:'EXISTING_SYNTHETIC_OR_ISOLATED_PROJECT_TESTS_NO_AI',startedAt,endedAt:new Date().toISOString(),durationMs:performance.now()-start,node:process.version,cwd:root,command:[process.execPath,...args],exitCode:result.code,signal:result.signal,startError,sourceUnchanged:JSON.stringify(before)===JSON.stringify(after),sourceHashes:before,sourceAfter:after,counts,logSha256:sha(log),realModelCalls:0};
+await fs.writeFile(path.join(output,'receipt.json'),JSON.stringify(receipt,null,2),{flag:'wx'});
+console.log(JSON.stringify({suite,output,exitCode:result.code,sourceUnchanged:receipt.sourceUnchanged,counts,tail:transcript.slice(-1800)}));
+process.exitCode=result.code===0&&receipt.sourceUnchanged?0:1;

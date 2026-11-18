@@ -6,6 +6,7 @@ import {
   type ShapePadding
 } from "./typesettingShape.js";
 import { evaluateAndBreakKoreanText } from "./typesettingKoreanBreak.js";
+import {isGeneralKorean} from "../../../../packages/ai-engine/quality/korean-typesetting-standard.cjs";
 
 export type TypesettingWritingMode = "horizontal-tb" | "vertical-rl";
 
@@ -138,6 +139,8 @@ export function isValidTypesettingBbox(value: unknown): value is NormalizedBbox 
 }
 
 export type TextLayoutOptions = {
+  preserveEojeol?: boolean;
+  measureTextWidth?: (text:string,fontSizeRatio:number)=>number;
   shape?: BubbleShape;
   fontSizeRatio?: number; // relative to bbox height
   boxAspectRatio?: number; // bbox width / height; defaults to 1
@@ -194,10 +197,12 @@ export function layoutTextForBubbleShape(
   const lineStep = fontSizeRatio * lineHeight;
 
   // Split text by explicit newlines first
-  const rawParagraphs = text.split("\n").map((p) => p.trim()).filter((p) => p.length > 0);
+  const general=options.preserveEojeol??isGeneralKorean({text,shape});
+  const rawParagraphs = general?text.replace(/\r\n?/g,'\n').split('\n'):text.split("\n").map((p) => p.trim()).filter((p) => p.length > 0);
   const brokenLines: string[] = [];
 
   for (const paragraph of rawParagraphs) {
+    if(general&&!paragraph.trim()){brokenLines.push('');continue;}
     // Estimate total lines needed for this paragraph
     const approxCharsPerLine = Math.max(2, Math.floor(0.8 / Math.max(0.01, fontWidthRatio)));
     const estimatedLineCount = Math.max(1, Math.ceil(paragraph.length / approxCharsPerLine));
@@ -205,11 +210,15 @@ export function layoutTextForBubbleShape(
     const startY = Math.max(0.05, 0.5 - estimatedTotalHeight / 2 + lineStep / 2);
 
     const paraLines = evaluateAndBreakKoreanText(paragraph, {
-      estimateWidth: (t) => estimateTextWidth(t, fontWidthRatio),
-      getAvailableWidth: (lineIdx) => {
-        const y = startY + (brokenLines.length + lineIdx) * lineStep;
+      preserveEojeol:general,
+      estimateWidth: (t) => options.measureTextWidth?.(t,fontSizeRatio)??estimateTextWidth(t, fontWidthRatio),
+      getAvailableWidth: (lineIdx,lineCount) => {
+        const candidateStart=general?Math.max(.05,.5-(brokenLines.length+lineCount)*lineStep/2+lineStep/2):startY;
+        const y = candidateStart + (brokenLines.length + lineIdx) * lineStep;
         const span = getAvailableSpanAtY(shape, y, padding);
-        return span.width > 0 ? span.width : 0.8;
+        // Keep actual-metrics line search consistent with the existing fit
+        // acceptance; independent ink/mask bounds remain unchanged.
+        return (span.width > 0 ? span.width : 0.8)*(general&&options.measureTextWidth?1.08:1);
       },
       maxLines: Math.max(1, Math.floor(0.9 / lineStep))
     });
