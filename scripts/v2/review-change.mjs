@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {compareUsage,reviewChange,summarizeUsage,weeklyUsage} from '../../packages/evaluation/stage18-operations.mjs';
+const [mode,...args]=process.argv.slice(2);
+const file=async f=>JSON.parse(await readFile(f,'utf8'));
+let result;
+if(mode==='change'&&args.length===2)result=reviewChange(await file(args[0]),await file(args[1]));
+else if(mode==='usage'&&args.length===1)result=summarizeUsage(await file(args[0]));
+else if(mode==='week'&&args.length===2)result=weeklyUsage(await file(args[0]),args[1]);
+else if(mode==='compare'&&(args.length===2||args.length===3))result=compareUsage(...await Promise.all(args.map(file)));
+else throw Error('Usage: review-change.mjs change RECORD PINS | usage ARM | week ARM START_WITH_OFFSET | compare BEFORE AFTER [PINS]');
+console.log(JSON.stringify(result,null,2));
+if(['HOLD','ROLLBACK'].includes(result.decision)||result.comparable===false)process.exitCode=2;

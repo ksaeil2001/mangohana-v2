@@ -1,0 +1,28 @@
+{
+  "questions": {
+    "semanticFidelity": "어느 쪽이 원문과 문맥의 의미를 더 충실하게 전달하나요?",
+    "naturalness": "어느 쪽의 한국어가 더 자연스럽게 읽히나요?"
+  },
+  "choices": [
+    "A",
+    "B",
+    "tie",
+    "cannot_assess"
+  ],
+  "items": [
+    {
+      "assignmentId": "4f869ab267c4fb6dcfa76520e38148b0c24db542353579beabf3b3fce3ccf389",
+      "sourceRef": "d0abdb66fdb700c5f49e22d21a65475a3a72b3d749a963909693e2acbe72f580",
+      "contextRef": "a82c753bee5d6c8b68abc822e0646e38e0620c616207487b136b53686883a6e7",
+      "A": "1c28412b48096dc908f2359566ae16aae6a8145c90f13fce90b988deed2b527d",
+      "B": "25e8d300bdf4c7446934dbf7e7976413970707cfac298c4577dc99ad93e0fe23"
+    },
+    {
+      "assignmentId": "6546efedebd73cd5f37d79799fb53edfdc8ede62e780c648f5df33dd516cec2a",
+      "sourceRef": "b9a4254d56191d1881b90e600feec74ea8e9dd24920593e9421a9d8b324bd032",
+      "contextRef": "988d46fe48041c9ed714a0ffc199506b89d1357689a21a939e6c8d28c4c18bd7",
+      "A": "86d36204cf72bee1514562dba44060404680f3596553b60aebfd34792ee9d3fd",
+      "B": "eedc19b7f4d8dde7ff5e1f930ba5222197e855a2dadb0cc3009a15a71b7128e4"
+    }
+  ]
+}

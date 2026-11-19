@@ -25,13 +25,14 @@ function png(bytes, width, height) {
   return 'data:image/png;base64,' + bytes.toString('base64');
 }
 
-function pageRequestProofs(report, translations) {
+function pageRequestProofs(report, translations, stage15) {
   const requests = report.translationRequests ?? [];
   requireValue(Array.isArray(requests) && requests.length <= 128, '페이지 번역 요청 기록이 올바르지 않습니다.');
   const byId = new Map();
   for (const request of requests) {
     requireValue(typeof request?.requestId === 'string' && request.requestId.length > 0 && request.requestId.length <= 200 && !byId.has(request.requestId), '페이지 번역 요청 식별자가 중복되거나 누락됐습니다.');
-    requireValue(request.scope === 'page' && request.httpRequests === 1 && request.usedImageContext === true &&
+    const synthetic = stage15 && request.requestId === stage15.publication.executionId && request.contextFingerprint === stage15.publication.inputFingerprint;
+    requireValue(request.scope === 'page' && (synthetic ? request.httpRequests === 0 && request.usedImageContext === false : request.httpRequests === 1 && request.usedImageContext === true) &&
       /^[a-f0-9]{64}$/.test(request.contextFingerprint) && /^[a-f0-9]{64}$/.test(request.imageSha256) &&
       request.imageSha256 === report.hashes.normalized, '실제 페이지 그림·문맥 번역 실행 기록이 필요합니다.');
     requireValue(Array.isArray(request.regionIds) && request.regionIds.length > 0 && request.regionIds.length <= 128 &&
@@ -53,7 +54,8 @@ function pageRequestProofs(report, translations) {
 }
 
 /** Convert only a trusted, integrity-checked engine report; this does not approve translation quality. */
-export function reportToStudioResult(report, { cleanedPng, candidatePng }) {
+export function reportToStudioResult(report, { cleanedPng, candidatePng, verifiedStage15 }) {
+  requireValue(Boolean(report?.stage15) === Boolean(verifiedStage15), '합성 번역 게시 서명을 확인해 주세요.');
   requireValue(report?.version === 1 && report.evidenceKind === 'LOCAL_ENGINE_CANDIDATE' && report.originalPreserved === true && report.userApproved === false, '실제 엔진의 원본 보존 보고서가 필요합니다.');
   requireValue(!report.regionSelection?.decisions?.some(d=>d.action==='needs_review') && !report.ocrRefinement?.reviews?.length &&
     !report.ocr?.speechBubbles?.some(g=>g.ocrReview?.status==='needs_review'), '미확정 대사가 남아 있어 원문·OCR 후보 검토가 필요합니다.');
@@ -65,7 +67,7 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng }) {
   requireValue(digest(cleanedPng) === report.hashes?.cleaned && digest(candidatePng) === report.hashes?.candidate, '저장된 결과의 해시가 엔진 보고서와 다릅니다.');
   const lines = indexed(report.lines,'대사');
   const translations = indexed(report.translations,'번역');
-  const pageRequests = pageRequestProofs(report, translations);
+  const pageRequests = pageRequestProofs(report, translations, verifiedStage15);
   const layouts = indexed(report.typesetting?.layoutReport,'식자');
   const stage12 = [...layouts.values()].some(l=>l.contractVersion==='stage12-layout-v1');
   const typesettingIdentity = report.typesetting?.inputIdentity;
@@ -88,7 +90,9 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng }) {
       ? pageRequests.has(translation.requestId)
       : translation.requestScope === undefined && Number.isInteger(translation.modelHttpRequests) && translation.modelHttpRequests > 0;
     const reviewed=humanReview&&translation.engine==='human_review'&&translation.modelHttpRequests===0&&translation.rawModelTranslation===line.aiTranslation&&translation.humanReviewReceiptSha256===humanReview.receiptSha256;
-    requireValue(((translation.engine === 'local_ai' && actualRequest&&!humanReview)||reviewed) && translation.usedExactTm === false && Array.isArray(translation.qaReport?.issues), '실제 번역 요청과 대사별 대응 기록이 누락됐습니다.');
+    const synthetic = verifiedStage15 && !humanReview && translation.engine === 'stage15_synthetic' && actualRequest &&
+      translation.requestId === verifiedStage15.publication.executionId && translation.modelHttpRequests === 0;
+    requireValue(((translation.engine === 'local_ai' && actualRequest&&!humanReview&&!verifiedStage15)||reviewed||synthetic) && translation.usedExactTm === false && Array.isArray(translation.qaReport?.issues), '실제 번역 요청과 대사별 대응 기록이 누락됐습니다.');
     const effectiveText=reviewed?line.userTranslation:line.aiTranslation;
     if(report.translationInput?.version==='stage11-input-v1'){
       const semantic=translation.semantic;
@@ -114,6 +118,12 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng }) {
   return {
     clean_image:png(cleanedPng,width,height), final_image:png(candidatePng,width,height), blocks,
     evidence:{ kind:report.evidenceKind, quality_status:'pending', semantic_review:report.quality?.semanticReview ?? 'pending', residual_source_text:report.quality?.residualSourceText ?? 'not_measured', source_preserved:true,
+      ...(Array.isArray(report.ocr.nonSpeechText)?{sound_effects:{
+        preserved:report.ocr.nonSpeechText.filter(region=>region?.type==='sound_effect').length,
+        translated:blocks.filter(block=>ocr.get(block.id).type==='sound_effect').length,
+      }}:{}),
+      ...(verifiedStage15 ? {translation_transport:'SYNTHETIC', translation_execution_id:verifiedStage15.publication.executionId,
+        translation_artifact_sha256:verifiedStage15.publication.artifact.sha256} : {}),
       ...(humanReview?{human_translation_review:structuredClone(humanReview),manual_translation_selections:humanReview.selections.length}:{}),
       ...(report.translationInput?.version==='stage11-input-v1'?{automatic_quality_approval:false,translation_semantics:[...translations.values()].map(t=>({id:t.id,...t.semantic}))}:{}),
       ...(stage12?{typesetting_input_identity:structuredClone(typesettingIdentity),typesetting_layouts:structuredClone([...layouts.values()])}:{}) },

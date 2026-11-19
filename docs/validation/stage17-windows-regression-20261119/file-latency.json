@@ -1,0 +1,465 @@
+{
+  "scope": "Independent first-file observation only",
+  "roots": {
+    "E": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-file-latency-6Fq3pT",
+    "C": "C:\\Users\\ksaei\\AppData\\Local\\Temp\\stage17-file-latency-9WvlLB"
+  },
+  "rows": [
+    {
+      "index": 0,
+      "arm": "E-new",
+      "setupMs": 0.0046999999995023245,
+      "requested": "2026-11-18T21:42:32.782Z",
+      "childPid": 26004,
+      "elapsedMs": 1950.2201999999997,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:34.719Z",
+        "openMs": 1.6265999999999998,
+        "writeMs": 0.05010000000000048,
+        "closeMs": 2.3755999999999986,
+        "totalMs": 4.052299999999999
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 1,
+      "arm": "C-existing",
+      "setupMs": 0.18630000000030122,
+      "requested": "2026-11-18T21:42:34.733Z",
+      "childPid": 24144,
+      "elapsedMs": 56.22159999999985,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:34.780Z",
+        "openMs": 0.7158000000000015,
+        "writeMs": 0.07069999999999865,
+        "closeMs": 0.04840000000000089,
+        "totalMs": 0.8349000000000011
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 2,
+      "arm": "C-new",
+      "setupMs": 0.0009999999992942321,
+      "requested": "2026-11-18T21:42:34.789Z",
+      "childPid": 5672,
+      "elapsedMs": 56.58359999999993,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:34.833Z",
+        "openMs": 0.7573000000000008,
+        "writeMs": 0.06709999999999994,
+        "closeMs": 0.04820000000000135,
+        "totalMs": 0.872600000000002
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 3,
+      "arm": "E-existing",
+      "setupMs": 1.8503000000000611,
+      "requested": "2026-11-18T21:42:34.944Z",
+      "childPid": 15976,
+      "elapsedMs": 66.58179999999993,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:34.995Z",
+        "openMs": 0.5975999999999999,
+        "writeMs": 0.05109999999999815,
+        "closeMs": 2.441300000000002,
+        "totalMs": 3.09
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 4,
+      "arm": "E-existing",
+      "setupMs": 1.8036000000001877,
+      "requested": "2026-11-18T21:42:35.039Z",
+      "childPid": 25844,
+      "elapsedMs": 56.8721000000005,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:35.084Z",
+        "openMs": 0.6001999999999974,
+        "writeMs": 0.05790000000000006,
+        "closeMs": 2.6178000000000026,
+        "totalMs": 3.2759
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 5,
+      "arm": "C-new",
+      "setupMs": 0.000699999999596912,
+      "requested": "2026-11-18T21:42:35.096Z",
+      "childPid": 21828,
+      "elapsedMs": 56.96550000000025,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:35.145Z",
+        "openMs": 0.7425999999999995,
+        "writeMs": 0.0625,
+        "closeMs": 0.04720000000000013,
+        "totalMs": 0.8522999999999996
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 6,
+      "arm": "C-existing",
+      "setupMs": 0.1499999999996362,
+      "requested": "2026-11-18T21:42:35.154Z",
+      "childPid": 2764,
+      "elapsedMs": 2318.8297000000002,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:35.199Z",
+        "openMs": 2264.5231,
+        "writeMs": 0.16130000000021028,
+        "closeMs": 0.0567999999998392,
+        "totalMs": 2264.7412
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 7,
+      "arm": "E-new",
+      "setupMs": 0.0014000000010128133,
+      "requested": "2026-11-18T21:42:37.933Z",
+      "childPid": 512,
+      "elapsedMs": 559.6400999999987,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:37.987Z",
+        "openMs": 495.96639999999996,
+        "writeMs": 0.0786000000000513,
+        "closeMs": 2.502499999999941,
+        "totalMs": 498.54749999999996
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 8,
+      "arm": "C-new",
+      "setupMs": 0.0005999999993946403,
+      "requested": "2026-11-18T21:42:38.493Z",
+      "childPid": 24816,
+      "elapsedMs": 10297.416000000001,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:38.543Z",
+        "openMs": 10238.8822,
+        "writeMs": 0.15929999999934807,
+        "closeMs": 0.08330000000023574,
+        "totalMs": 10239.1248
+      },
+      "confirmed": true,
+      "overFiveSeconds": true
+    },
+    {
+      "index": 9,
+      "arm": "E-existing",
+      "setupMs": 2.203699999998207,
+      "requested": "2026-11-18T21:42:49.151Z",
+      "childPid": 36872,
+      "elapsedMs": 3799.8680999999997,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:49.214Z",
+        "openMs": 3567.8379,
+        "writeMs": 1.9213999999997213,
+        "closeMs": 158.44050000000016,
+        "totalMs": 3728.1998
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 10,
+      "arm": "E-new",
+      "setupMs": 0.013500000000931323,
+      "requested": "2026-11-18T21:42:53.516Z",
+      "childPid": 18896,
+      "elapsedMs": 171.9966999999997,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:53.574Z",
+        "openMs": 103.6491,
+        "writeMs": 0.0648999999999944,
+        "closeMs": 2.5349000000000075,
+        "totalMs": 106.2489
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 11,
+      "arm": "C-existing",
+      "setupMs": 0.21420000000216532,
+      "requested": "2026-11-18T21:42:53.689Z",
+      "childPid": 22108,
+      "elapsedMs": 308.72249999999985,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:53.740Z",
+        "openMs": 249.8585,
+        "writeMs": 0.14140000000003283,
+        "closeMs": 0.055900000000008276,
+        "totalMs": 250.05580000000003
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 12,
+      "arm": "C-existing",
+      "setupMs": 0.2327999999979511,
+      "requested": "2026-11-18T21:42:53.999Z",
+      "childPid": 5824,
+      "elapsedMs": 1514.3156999999992,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:54.051Z",
+        "openMs": 1454.0071,
+        "writeMs": 0.08339999999998327,
+        "closeMs": 0.05809999999996762,
+        "totalMs": 1454.1486
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 13,
+      "arm": "C-new",
+      "setupMs": 0.0011999999987892807,
+      "requested": "2026-11-18T21:42:55.514Z",
+      "childPid": 6520,
+      "elapsedMs": 522.911500000002,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:55.565Z",
+        "openMs": 463.5952,
+        "writeMs": 0.06730000000004566,
+        "closeMs": 0.04480000000000928,
+        "totalMs": 463.70730000000003
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 14,
+      "arm": "E-existing",
+      "setupMs": 1.8905000000013388,
+      "requested": "2026-11-18T21:42:56.705Z",
+      "childPid": 9236,
+      "elapsedMs": 4187.894799999998,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:42:56.757Z",
+        "openMs": 4122.594,
+        "writeMs": 2.0479999999997744,
+        "closeMs": 2.380199999999604,
+        "totalMs": 4127.022199999999
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 15,
+      "arm": "E-new",
+      "setupMs": 0.001799999998183921,
+      "requested": "2026-11-18T21:43:00.983Z",
+      "childPid": 19488,
+      "elapsedMs": 1396.5678000000044,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:01.037Z",
+        "openMs": 1331.1090000000002,
+        "writeMs": 0.05919999999991887,
+        "closeMs": 2.481700000000046,
+        "totalMs": 1333.6499000000001
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 16,
+      "arm": "E-existing",
+      "setupMs": 1.7409000000043306,
+      "requested": "2026-11-18T21:43:02.660Z",
+      "childPid": 21012,
+      "elapsedMs": 1151.2595999999976,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:02.713Z",
+        "openMs": 1087.2881,
+        "writeMs": 0.9605999999998858,
+        "closeMs": 2.941000000000031,
+        "totalMs": 1091.1897
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 17,
+      "arm": "C-new",
+      "setupMs": 0.0008999999990919605,
+      "requested": "2026-11-18T21:43:03.812Z",
+      "childPid": 38808,
+      "elapsedMs": 772.211000000003,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:03.860Z",
+        "openMs": 716.3079,
+        "writeMs": 0.07609999999999673,
+        "closeMs": 0.044399999999996,
+        "totalMs": 716.4284
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 18,
+      "arm": "C-existing",
+      "setupMs": 0.16969999999855645,
+      "requested": "2026-11-18T21:43:04.585Z",
+      "childPid": 22340,
+      "elapsedMs": 3382.506999999998,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:04.631Z",
+        "openMs": 3327.7486,
+        "writeMs": 0.09279999999989741,
+        "closeMs": 0.051899999999932334,
+        "totalMs": 3327.8932999999997
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 19,
+      "arm": "E-new",
+      "setupMs": 0.0013000000035390258,
+      "requested": "2026-11-18T21:43:08.069Z",
+      "childPid": 4652,
+      "elapsedMs": 3027.4445999999953,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:08.131Z",
+        "openMs": 2954.4231,
+        "writeMs": 0.05960000000004584,
+        "closeMs": 2.349899999999707,
+        "totalMs": 2956.8325999999997
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 20,
+      "arm": "E-new",
+      "setupMs": 0.0011000000013154931,
+      "requested": "2026-11-18T21:43:11.106Z",
+      "childPid": 34540,
+      "elapsedMs": 555.6096000000034,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:11.157Z",
+        "openMs": 495.0148,
+        "writeMs": 0.11649999999997362,
+        "closeMs": 2.4599000000000615,
+        "totalMs": 497.5912
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 21,
+      "arm": "C-existing",
+      "setupMs": 0.16569999999774154,
+      "requested": "2026-11-18T21:43:11.663Z",
+      "childPid": 10916,
+      "elapsedMs": 1133.1866999999984,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:11.716Z",
+        "openMs": 1070.0791000000002,
+        "writeMs": 0.2076999999999316,
+        "closeMs": 0.2883999999999105,
+        "totalMs": 1070.5752
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 22,
+      "arm": "C-new",
+      "setupMs": 0.0006999999968684278,
+      "requested": "2026-11-18T21:43:12.797Z",
+      "childPid": 21300,
+      "elapsedMs": 1782.4941000000035,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:12.845Z",
+        "openMs": 1725.3726,
+        "writeMs": 0.11809999999991305,
+        "closeMs": 0.039700000000038926,
+        "totalMs": 1725.5303999999999
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    },
+    {
+      "index": 23,
+      "arm": "E-existing",
+      "setupMs": 1.8546999999962281,
+      "requested": "2026-11-18T21:43:15.057Z",
+      "childPid": 37332,
+      "elapsedMs": 535.2522000000026,
+      "code": 0,
+      "signal": null,
+      "entry": {
+        "utc": "2026-11-18T21:43:15.106Z",
+        "openMs": 475.3127,
+        "writeMs": 0.8045999999999935,
+        "closeMs": 2.428099999999972,
+        "totalMs": 478.5454
+      },
+      "confirmed": true,
+      "overFiveSeconds": false
+    }
+  ]
+}

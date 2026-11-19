@@ -1,0 +1,56 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "executable": "C:/Program Files/WindowsApps/OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt/dependencies/node/bin/node.exe",
+      "args": [
+        "--check",
+        "scripts/v2/warm-job.mjs"
+      ],
+      "exitCode": 0,
+      "output": []
+    },
+    {
+      "executable": "C:/Program Files/WindowsApps/OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt/dependencies/node/bin/node.exe",
+      "args": [
+        "--check",
+        "scripts/v2/typesetting-only-worker.cjs"
+      ],
+      "exitCode": 0,
+      "output": []
+    },
+    {
+      "executable": "C:/Program Files/WindowsApps/OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt/dependencies/node/bin/node.exe",
+      "args": [
+        "packages/ai-engine/node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "-p",
+        "packages/ai-engine/tsconfig.json"
+      ],
+      "exitCode": 0,
+      "output": []
+    },
+    {
+      "executable": "git",
+      "args": [
+        "diff",
+        "--check",
+        "--",
+        "scripts/v2/warm-job.mjs",
+        "scripts/v2/warm-job.ps1",
+        "scripts/v2/typesetting-only-worker.cjs",
+        "packages/ai-engine/package.json",
+        "packages/ai-engine/package-lock.json"
+      ],
+      "exitCode": 0,
+      "output": [
+        "warning: in the working copy of 'packages/ai-engine/package-lock.json', LF will be replaced by CRLF the next time Git touches it",
+        "warning: in the working copy of 'packages/ai-engine/package.json', LF will be replaced by CRLF the next time Git touches it",
+        "warning: in the working copy of 'scripts/v2/typesetting-only-worker.cjs', LF will be replaced by CRLF the next time Git touches it",
+        "warning: in the working copy of 'scripts/v2/warm-job.mjs', LF will be replaced by CRLF the next time Git touches it",
+        "warning: in the working copy of 'scripts/v2/warm-job.ps1', LF will be replaced by CRLF the next time Git touches it"
+      ]
+    }
+  ],
+  "powershellParseErrors": []
+}

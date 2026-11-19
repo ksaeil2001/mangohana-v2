@@ -1,0 +1,965 @@
+{
+  "varySource": true,
+  "fixtureSha256": "40f6346b225c55bec21d4e8b81ff176b0038e48c274ddd7f5a952efcba0a025a",
+  "ed": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-file-probe-k1lYph",
+  "cd": "C:\\Users\\ksaei\\AppData\\Local\\Temp\\mangohana-stage17-file-probe-MECagW",
+  "runs": [
+    {
+      "index": 0,
+      "volume": "E",
+      "requested": "2026-11-18T20:01:55.377Z",
+      "elapsedMs": 2759,
+      "pair": true,
+      "events": [
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 42.65809999999965,
+          "at": "2026-11-18T20:01:58.125Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:01:55.420Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:01:58.085Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:01:58.099Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:01:58.108Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:01:58.110Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:01:58.115Z",
+          "elapsedMs": 4.844299999999748
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:01:58.115Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:01:58.115Z",
+          "elapsedMs": 0.08960000000024593
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:01:58.117Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:01:58.122Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:01:58.122Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:01:58.124Z",
+          "elapsedMs": 2.155699999999797
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:01:58.125Z"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "volume": "C",
+      "requested": "2026-11-18T20:01:58.313Z",
+      "elapsedMs": 849,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:58.314Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:58.523Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:58.727Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:58.931Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 13.662000000000262,
+          "at": "2026-11-18T20:01:59.149Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:01:58.361Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:01:58.997Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:01:59.009Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:01:59.137Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:01:59.139Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:01:59.142Z",
+          "elapsedMs": 3.3647999999999456
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:01:59.143Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:01:59.143Z",
+          "elapsedMs": 0.084699999999998
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:01:59.144Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:01:59.145Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:01:59.145Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:01:59.147Z",
+          "elapsedMs": 2.119100000000003
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:01:59.148Z"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "volume": "C",
+      "requested": "2026-11-18T20:01:59.211Z",
+      "elapsedMs": 3721,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:59.212Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:59.420Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:59.623Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:01:59.830Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:00.036Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:00.241Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:00.446Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:00.651Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:00.856Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:01.061Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:01.266Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:01.471Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:01.676Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:01.881Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:02.084Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:02.288Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:02.491Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:02.697Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.516899999998714,
+          "at": "2026-11-18T20:02:02.921Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:01:59.254Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:02:02.780Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:02:02.793Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:02.909Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:02.910Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:02.915Z",
+          "elapsedMs": 4.78859999999986
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:02:02.916Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:02:02.916Z",
+          "elapsedMs": 0.08019999999987704
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:02.917Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:02.918Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:02.918Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:02.921Z",
+          "elapsedMs": 2.2627000000002226
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:02.921Z"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "volume": "E",
+      "requested": "2026-11-18T20:02:03.020Z",
+      "elapsedMs": 231,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:03.021Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 15.363000000001193,
+          "at": "2026-11-18T20:02:03.240Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:02:03.064Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:02:03.067Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:02:03.077Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:03.227Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:03.229Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:03.232Z",
+          "elapsedMs": 3.3471999999999866
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:02:03.233Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:02:03.233Z",
+          "elapsedMs": 0.09250000000000114
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:03.234Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:03.236Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:03.236Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:03.239Z",
+          "elapsedMs": 2.351699999999994
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:03.239Z"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "volume": "E",
+      "requested": "2026-11-18T20:02:03.300Z",
+      "elapsedMs": 1877,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:03.301Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:03.507Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:03.711Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:03.919Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:04.124Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:04.330Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:04.532Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:04.739Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:04.944Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.649999999999636,
+          "at": "2026-11-18T20:02:05.166Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:02:03.344Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:02:05.025Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:02:05.035Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:05.154Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:05.156Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:05.159Z",
+          "elapsedMs": 3.775500000000193
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:02:05.160Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:02:05.160Z",
+          "elapsedMs": 0.094300000000203
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:05.161Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:05.162Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:05.162Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:05.165Z",
+          "elapsedMs": 2.640100000000075
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:05.165Z"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "volume": "C",
+      "requested": "2026-11-18T20:02:05.265Z",
+      "elapsedMs": 6022,
+      "pair": false,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:05.266Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:05.482Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:05.688Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:05.893Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:06.097Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:06.301Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:06.506Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:06.712Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:06.918Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:07.122Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:07.337Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:07.548Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:07.752Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:07.955Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:08.161Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:08.367Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:08.570Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:08.773Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:08.979Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:09.184Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:09.388Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:09.590Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:09.794Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:09.998Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:10.205Z"
+        }
+      ],
+      "worker": []
+    },
+    {
+      "index": 6,
+      "volume": "C",
+      "requested": "2026-11-18T20:02:11.394Z",
+      "elapsedMs": 4963,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:11.396Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:11.609Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:11.814Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:12.019Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:12.223Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:12.431Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:12.639Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:12.843Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:13.050Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:13.257Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:13.461Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:13.668Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:13.872Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:14.075Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:14.278Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:14.483Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:14.690Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:14.894Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:15.100Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:15.303Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:15.507Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:15.710Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:15.916Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:16.120Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.819999999999709,
+          "at": "2026-11-18T20:02:16.347Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:02:11.444Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:02:16.228Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:02:16.242Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:16.335Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:16.337Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:16.342Z",
+          "elapsedMs": 4.718899999999849
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:02:16.342Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:02:16.342Z",
+          "elapsedMs": 0.09469999999964784
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:16.343Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:16.344Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:16.344Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:16.347Z",
+          "elapsedMs": 2.23240000000078
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:16.347Z"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "volume": "E",
+      "requested": "2026-11-18T20:02:16.367Z",
+      "elapsedMs": 1880,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:16.367Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:16.570Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:16.773Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:16.976Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:17.183Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:17.387Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:17.591Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:17.796Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T20:02:18.001Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 30.209399999999732,
+          "at": "2026-11-18T20:02:18.236Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T20:02:16.411Z"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T20:02:18.162Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T20:02:18.172Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:18.208Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:18.210Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:18.231Z",
+          "elapsedMs": 20.74259999999981
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T20:02:18.231Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T20:02:18.231Z",
+          "elapsedMs": 0.08170000000018263
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:18.232Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T20:02:18.233Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T20:02:18.233Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T20:02:18.235Z",
+          "elapsedMs": 2.177500000000009
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T20:02:18.236Z"
+        }
+      ]
+    }
+  ]
+}

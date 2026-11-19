@@ -2,12 +2,12 @@
 import {useCallback,useEffect,useLayoutEffect,useMemo,useReducer,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 import {flushSync} from 'react-dom';
 import {AlignCenter,AlignLeft,AlignRight,ArrowDownToLine,ArrowLeft,ArrowUpRight,Check,ChevronDown,ChevronLeft,ChevronRight,CircleCheck,Copy,Download,FileArchive,FileImage,FolderOpen,ImagePlus,Info,Keyboard,Layers,LoaderCircle,Maximize,Minus,MousePointer2,Plus,Redo2,Sparkles,SquareDashed,Trash2,Type,Undo2,Upload,WandSparkles,X,AlertTriangle} from 'lucide-react';
-import {canUseFinalImage,clamp,emptyProject,fitBlock,FONT_NAMES,FONTS,makeBlock,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
+import {canUseFinalImage,clamp,emptyProject,fitBlock,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
 import {canExportPage,exportAvailability,pageActivity,type ExportFormat} from '@/lib/studio-presentation';
 import {resolveStudioShortcut} from '@/lib/studio-shortcuts';
 import {type SavedWorkspace} from '@/lib/studio-storage';
 import {useStudioPersistence} from '@/hooks/use-studio-persistence';
-import {activityTransition,applyTextStyle,bindProjectBatch,canApplyPageResult,canEditPage,createTextEditTarget,createWorkspaceState,getRunTargets,panelTransition,restoreGeometry,restoreText,transitionPage,workspaceReducer,type ActiveOperation,type ActivityEvent,type ActivityState,type PageEvent,type BlockRestoreTarget} from '@/lib/studio-state';
+import {activityTransition,applyTextStyle,bindProjectBatch,canApplyPageResult,canEditPage,createTextEditTarget,createWorkspaceState,getRunTargets,moveStudioPage,panelTransition,restoreGeometry,restoreText,transitionPage,workspaceReducer,type ActiveOperation,type ActivityEvent,type ActivityState,type PageEvent,type BlockRestoreTarget} from '@/lib/studio-state';
 import CanvasProjectPath from '@/components/canvas-project-path';
 import CanvasBrowser,{CanvasBrowserControls} from '@/components/canvas-browser';
 import ProjectOverview from '@/components/project-overview';
@@ -15,7 +15,7 @@ import type {CanvasLocation,ProjectSort} from '@/lib/studio-browser';
 import StudioContextDialog from '@/components/studio-context-dialog';
 import StudioTranslationReviewDialog from '@/components/studio-translation-review-dialog';
 import type {ContextScope} from '@/lib/studio-context';
-import {canResumeJob,DEFAULT_ENGINE_ENDPOINT,endpointURL,processPage,RETIRED_JOB_NOTICE,TerminalJobError} from '@/lib/studio-engine';
+import {DEFAULT_ENGINE_ENDPOINT,localStudioEndpoint,processPage,RETIRED_JOB_NOTICE,TerminalJobError} from '@/lib/studio-engine';
 import {download,downloadPages,extractImages,fileDataURL,fileToPage,renderPage} from '@/lib/studio-files';
 import {captureReadingAnchor,readingSelection,ReadingViewportSession,type ReadingAnchor,type ReadingPatch,type ReadingView} from '@/lib/studio-reading';
 import {BatchPendingError,getBatchRunTargets,processProjectBatch,requestPagePriority,type BatchJobBinding} from '@/lib/studio-batch-engine';
@@ -82,7 +82,9 @@ export default function Studio(){
  const contextScope=modal&&typeof modal==='object'&&modal.kind==='context'?modal.scope:undefined;
  const lastDeletedProject=workspace.deletedProjects.at(-1);
  const page=project.pages.find(p=>p.id===pageId)||project.pages[0];
- const retiredJob=!!page?.jobId&&!canResumeJob(page);
+ const retiredJob=!!page?.jobId&&!localStudioEndpoint(page);
+ const issues=useMemo(()=>page?getIssues(page):[],[page]);
+ const effects=page?.engineReview?.soundEffects;
  const selected=canvasLocation==='editor'?page?.blocks.find(b=>b.id===selectedId):undefined;
  const pageIndex=page?project.pages.findIndex(p=>p.id===page.id):0;
  const scale=page?Math.min((stageSize.width-(view==='compare'?96:84))/(page.width*(view==='compare'?2:1)),(stageSize.height-64)/page.height)*zoom:1;
@@ -299,9 +301,9 @@ export default function Studio(){
   if(!project.pages.length||!canMutate||activityRef.current.kind!=='idle')return;
   if(project.sample){notify('샘플은 편집용이에요. 새 프로젝트에 이미지를 추가해 처리해 주세요.');return;}
   const targets=getRunTargets(project,scope,page?.id);if(!targets.length)return;
-  const retired=targets.find(target=>target.jobId&&!canResumeJob(target));
+  const retired=targets.find(target=>!localStudioEndpoint(target));
   if(retired){selectPage(retired.id);notify(`${retired.name} · ${RETIRED_JOB_NOTICE}`,true);return;}
-  let endpoint='';try{if(targets.some(pg=>!pg.jobId||!pg.jobEndpoint))endpoint=endpointURL(endpoints.online);}catch{notify('현재 처리 엔진이 연결되어 있지 않아요. 편집과 다운로드는 계속 사용할 수 있어요.',true);return;}
+  const endpoint=DEFAULT_ENGINE_ENDPOINT;
   const operation:ActiveOperation={kind:'processing',id:uid(),projectId:project.id};if(!beginActivity(operation))return;
   const controller=new AbortController();controllerRef.current=controller;const targetProject=project;let success=0,failed=0,stopped=0;
   const settled=new Set<string>(),pendingKnown=new Set(targets.filter(page=>page.jobId||page.pendingBatch).map(page=>page.id));
@@ -330,11 +332,11 @@ export default function Studio(){
     },{currentPageId:()=>workspaceRef.current.reading?.[targetProject.id]?.pageId});
    }
    for(const target of targets.filter(page=>!batchIds.has(page.id))){
-    if(controller.signal.aborted)break;const base=target.jobId&&target.jobEndpoint?target.jobEndpoint:endpoint;
+    if(controller.signal.aborted)break;const base=endpoint;
     pageEvent(target.id,{type:'start',requestId:operation.id});sendActivity({type:'stage',id:operation.id,pageId:target.id,stage:target.jobId?'저장한 작업 조회':'엔진 연결 중'});
     // Background pages can finish while the reader stays on the chosen page.
     try{
-      const result=await processPage(target,base,targetProject.source,targetProject.target,controller.signal,async id=>{if(base===DEFAULT_ENGINE_ENDPOINT)await storeReceipt({bindings:[{pageId:target.id,jobId:id}]});else pageEvent(target.id,{type:'job',requestId:operation.id,jobId:id,endpoint:base});},stage=>sendActivity({type:'stage',id:operation.id,pageId:target.id,stage}),{projectId:targetProject.id});
+      const result=await processPage(target,base,targetProject.source,targetProject.target,controller.signal,id=>storeReceipt({bindings:[{pageId:target.id,jobId:id}]}),stage=>sendActivity({type:'stage',id:operation.id,pageId:target.id,stage}),{projectId:targetProject.id});
      if(controller.signal.aborted){pageEvent(target.id,{type:'pause',requestId:operation.id});stopped++;break;}
      if(pageEvent(target.id,{type:'result',requestId:operation.id,result},`${target.name} · OCR·번역 결과 수신`))success++;else stopped++;settled.add(target.id);
     }catch(error){
@@ -408,17 +410,17 @@ export default function Studio(){
  function openProjectBackup(){setExportFormat('project');setModal('download');}
    function renderCanvas(original=false){if(!page)return null;const showFinal=!original&&!editingId&&canUseFinalImage(page);return <div className={`manga-frame ${original?"is-original":""}`} style={{width:page.width*safeScale,height:page.height*safeScale}}>
      <img className="manga-image" src={original?page.image:showFinal?page.finalImage:(page.cleanImage||page.image)} alt={`${page.name} ${original?"원본":"식자 미리보기"}`} draggable={false}/>
-     {(!original||showOCR)&&page.blocks.map((b,index)=>{const active=b.id===selectedId&&!original;return <div key={b.id} data-block-id={b.id} data-selected={active} role="group" tabIndex={original?-1:0} aria-label={`텍스트 영역 ${index+1}`} onKeyDown={e=>{if(e.target!==e.currentTarget||original)return;if(e.key==="Enter"&&canEditCurrent){e.preventDefault();setSelectedId(b.id);beginEditing(b);}}} className={`text-block ${active?"selected":""} ${showOCR?"ocr-visible":""} ${editingId===b.id?"editing":""} ${original?"ocr-only":""}`} style={{left:b.x+"%",top:b.y+"%",width:b.w+"%",height:b.h+"%",background:!original&&!showFinal&&b.fill?"#fff":undefined,fontSize:b.size*safeScale,fontWeight:b.weight,lineHeight:b.lineHeight,fontFamily:FONTS[b.font],color:b.color,textAlign:b.align} as CSSProperties} onClick={e=>{e.stopPropagation();if(!original){setSelectedId(b.id);}}} onDoubleClick={e=>{e.stopPropagation();if(!original&&canEditCurrent){setSelectedId(b.id);beginEditing(b);}}} onPointerDown={e=>{if(!original)startDrag(e,b);}} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}>
+     {(!original||showOCR)&&page.blocks.map((b,index)=>{const active=b.id===selectedId&&(!original||showOCR), rect=original?ocrBox(b):b;return <div key={b.id} data-block-id={b.id} data-selected={active} role="group" tabIndex={original&&!showOCR?-1:0} aria-label={`텍스트 영역 ${index+1}`} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(original){if(showOCR&&e.key==="Enter"){e.preventDefault();setSelectedId(b.id);}return;}if(e.key==="Enter"&&canEditCurrent){e.preventDefault();setSelectedId(b.id);beginEditing(b);}}} className={`text-block ${active?"selected":""} ${showOCR?"ocr-visible":""} ${editingId===b.id?"editing":""} ${original?"ocr-only":""}`} style={{left:rect.x+"%",top:rect.y+"%",width:rect.w+"%",height:rect.h+"%",background:!original&&!showFinal&&b.fill?"#fff":undefined,fontSize:b.size*safeScale,fontWeight:b.weight,lineHeight:b.lineHeight,fontFamily:FONTS[b.font],color:b.color,textAlign:b.align} as CSSProperties} onClick={e=>{e.stopPropagation();if(!original||showOCR){setSelectedId(b.id);}}} onDoubleClick={e=>{e.stopPropagation();if(!original&&canEditCurrent){setSelectedId(b.id);beginEditing(b);}}} onPointerDown={e=>{if(!original)startDrag(e,b);}} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}>
       {(active||showOCR)&&<span className="block-label">{original?"OCR":"T"} {String(index+1).padStart(2,"0")}{showOCR&&b.confidence!==undefined?` · ${(b.confidence*100).toFixed(1)}%`:""}</span>}
        {!original&&(editingId===b.id?<div key={b.id+"-edit"} ref={editableRef} contentEditable="plaintext-only" onInput={e=>recordDraft(e.currentTarget)} suppressContentEditableWarning className="block-text editable" role="textbox" aria-label={`번역문 ${index+1} 직접 편집`} onPointerDown={e=>e.stopPropagation()} onBlur={e=>commitText(e.currentTarget,b)} onKeyDown={e=>{if(e.nativeEvent.isComposing)return;if(e.key==="Escape"){e.preventDefault();e.stopPropagation();cancelEditing();}if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();e.currentTarget.blur();}}}>{editingRef.current?.target.block.id===b.id?editingRef.current.target.block.text:b.text}</div>:<div className={`block-text ${!b.text?"missing-text":""}`} style={showFinal?{opacity:0}:undefined}>{b.text||"번역문 추가"}</div>)}
-      {active&&editingId!==b.id&&<><span className="handle tl"/><span className="handle tr"/><span className="handle bl"/><span className="handle br" onPointerDown={e=>{e.stopPropagation();startDrag(e,b,true);}}/></>}
+      {active&&!original&&editingId!==b.id&&<><span className="handle tl"/><span className="handle tr"/><span className="handle bl"/><span className="handle br" onPointerDown={e=>{e.stopPropagation();startDrag(e,b,true);}}/></>}
 
     </div>;})}
     {view==="compare"&&<span className="compare-caption">{original?"원본":"식자 결과"}</span>}
   </div>;}
 
   return <main className={`studio-shell ${!loaded?"loading-workspace":""}`} aria-busy={!loaded||busy} data-workspace-state={persistence.hydration.phase} data-operation={activity.kind} data-operation-id={activity.kind==='idle'?'':activity.id} data-operation-project-id={activity.kind==='idle'?'':activity.projectId} data-operation-page-id={activity.kind==='idle'?'':activity.pageId||''} data-stop-requested={activity.kind==='processing'&&!!activity.stopRequested} data-modal={modalName||'closed'} data-deleted-project-count={workspace.deletedProjects.length} data-inspector-view="text" data-canvas-location={canvasLocation} data-save-conflict={persistence.save.phase==='error'&&!!persistence.save.conflict} data-save-state={saveState} data-project-id={activeId} data-page-id={page?.id||""} data-page-state={page?pageActivity(page):"empty"} data-mode={project.mode} data-view={view} data-tool="select" data-drawer={drawer||"closed"} data-editor-state={editingId?"editing":"idle"} data-undo-count={undoCount} data-redo-count={redoCount} data-panel-layout={compactPanels?"overlay":"docked"}>
-    <input ref={fileInput} type="file" accept=".zip,.png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif" multiple hidden onChange={e=>importFiles(e.target.files)}/>
+    <input ref={fileInput} type="file" accept=".zip,.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" multiple hidden onChange={e=>importFiles(e.target.files)}/>
     <input ref={projectInput} type="file" accept=".trio,.json" hidden onChange={e=>importProject(e.target.files?.[0])}/>
     <div className={`workspace ${!leftOpen?"left-collapsed":""} ${!rightOpen?"right-collapsed":""}`}>
       {drawer&&<button className="panel-scrim" data-drawer={drawer} aria-label="열린 패널 닫기" tabIndex={-1} onClick={()=>closeDrawer()}/>}
@@ -432,9 +434,13 @@ export default function Studio(){
           <button type="button" className="button secondary full-width" disabled={!canManageProjects} onClick={()=>setModal('translation-review')}>선택 번역 13개 저장</button>
           <div className="sidebar-tool-row" role="group" aria-label="편집 도구"><IconButton label="선택 · V" disabled={!hasActiveProject} active={true} onClick={chooseCanvasSelection}><MousePointer2 size={16}/></IconButton><IconButton label="텍스트 추가 · T" disabled={!canEditCurrent} onClick={addText}><Type size={17}/></IconButton><IconButton label="되돌리기 · Ctrl+Z" onClick={()=>{undo();if(compactPanels)closeDrawer();}} disabled={!undoCount||!canMutate||canvasLocation!=='editor'}><Undo2 size={16}/></IconButton><IconButton label="다시 실행 · Ctrl+Shift+Z" onClick={()=>{redo();if(compactPanels)closeDrawer();}} disabled={!redoCount||!canMutate||canvasLocation!=='editor'}><Redo2 size={16}/></IconButton><IconButton label="단축키 안내" onClick={()=>setModal("shortcuts")}><Keyboard size={16}/></IconButton></div>
         </section>
-        <div className="panel-heading"><h2><Layers size={13}/>페이지 <span className="count">{project.pages.length.toString().padStart(2,"0")}</span></h2></div>
+        <div className="panel-heading"><h2><Layers size={13}/>페이지 <span className="count">{project.pages.length.toString().padStart(2,"0")}</span></h2>
+          {page&&project.pages.length>1&&<div role="group" aria-label="선택한 페이지 순서">{([-1,1] as const).map(step=><IconButton key={step} label={step===-1?'선택한 페이지를 앞으로':'선택한 페이지를 뒤로'}
+            disabled={!canMutate||!project.pages[pageIndex+step]||!project.pages.every(canEditPage)} onClick={()=>{finishEditing();cancelDrag();updateProject(p=>moveStudioPage(p,page.id,step),page.name+' · 순서 변경');}}>
+            {step===-1?<ChevronLeft size={15}/>:<ChevronRight size={15}/>}</IconButton>)}</div>}
+        </div>
         <div className="page-list">{project.pages.map((p,index)=><button key={p.id} type="button" data-page-id={p.id} data-page-state={pageActivity(p)} aria-busy={pageActivity(p)==='processing'} aria-label={`${index+1}페이지 · ${p.name}`} aria-current={page?.id===p.id?"page":undefined} disabled={!ready||uploading||exporting} className={`page-card ${page?.id===p.id?"selected":""}`} onClick={()=>selectPage(p.id)}><img className="page-preview-image" src={p.cleanImage||p.image} alt="" loading="lazy" width={p.width} height={p.height}/></button>)}
-        {!project.pages.length&&<div id="page-list-empty" className="empty-pages" tabIndex={-1}><FileImage size={28}/>{hasActiveProject&&<strong className="empty-project-name" title={project.name}>{project.name}</strong>}<p>첫 페이지를 추가해 주세요.</p><span>JPG, PNG, WebP, GIF · ZIP</span></div>}
+        {!project.pages.length&&<div id="page-list-empty" className="empty-pages" tabIndex={-1}><FileImage size={28}/>{hasActiveProject&&<strong className="empty-project-name" title={project.name}>{project.name}</strong>}<p>첫 페이지를 추가해 주세요.</p><span>JPG, PNG, WebP · ZIP</span></div>}
         </div>
         </>}
         <div className={`page-upload-zone ${pageDragOver?'drag-active':''}`} data-upload-state={uploading?'importing':pageDragOver?'dragging':'idle'} onDragOver={e=>{e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect=canMutate?'copy':'none';setPageDragOver(canMutate);}} onDragLeave={e=>{if(!(e.relatedTarget instanceof Node)||!e.currentTarget.contains(e.relatedTarget))setPageDragOver(false);}} onDrop={dropFiles}><button id="page-upload-button" className="drop-small" disabled={!canMutate} onClick={()=>fileInput.current?.click()} aria-label="페이지 추가" aria-describedby="page-upload-hint">{uploading?<LoaderCircle size={17} className="spin"/>:<Plus size={18}/>}<span><strong>{uploading?'페이지 추가 중…':'페이지 추가'}</strong><small id="page-upload-hint">이미지·ZIP을 놓거나 클릭하세요</small></span></button></div>
@@ -462,6 +468,24 @@ export default function Studio(){
         <div id="inspector-panel-content" className="panel-content" inert={!rightVisible}>
         <section className="processing-controls" aria-label="처리와 다운로드"><div className="processing-actions">{(!project.sample||running)&&<div className="run-group" ref={runMenuRef}><button className="button primary" disabled={running?(activity.kind==='processing'&&!!activity.stopRequested):(!page||!canMutate)} onClick={()=>{setScopeMenu(false);running?stopRun():run(runScope);}}>{running?<LoaderCircle size={15} className="spin"/>:<Sparkles size={15}/>}<span>{running?(activity.kind==="processing"&&activity.stopRequested?"중지 중…":"조회 중지"):runScope==="all"?"전체 처리":"현재 페이지 처리"}</span></button><button className="run-current" aria-label="처리 범위 선택" aria-expanded={scopeMenu} title="처리 범위 선택" disabled={!page||!canMutate} onClick={()=>setScopeMenu(v=>!v)}><ChevronDown size={15}/></button>{scopeMenu&&<div className="run-menu"><button onClick={()=>{setRunScope("all");setScopeMenu(false);}}><Layers size={14}/>전체 페이지{runScope==="all"&&<Check size={13}/>}</button><button onClick={()=>{setRunScope("current");setScopeMenu(false);}}><FileImage size={14}/>현재 페이지{runScope==="current"&&<Check size={13}/>}</button></div>}</div>}<button className="button secondary" disabled={!canExport} onClick={()=>{if(!page)setExportFormat('project');setModal("download");}} title="다운로드"><Download size={14}/><span>다운로드</span></button></div></section>
         <div className="inspector-scroll">
+            {showOCR&&selected&&page&&<form key={JSON.stringify([page.id,selected.id,ocrBox(selected)])} className="inspector-section ocr-box-editor" aria-label="OCR 영역 수정" onSubmit={e=>{
+              e.preventDefault();
+              const fields=new FormData(e.currentTarget);
+              const box={x:Number(fields.get('x')),y:Number(fields.get('y')),w:Number(fields.get('w')),h:Number(fields.get('h'))};
+              if(box.x+box.w>100.0001||box.y+box.h>100.0001){notify('OCR 영역이 페이지를 벗어나요.',true);return;}
+              patchBlock({userSourceBox:box},page.name+' · OCR 영역 수정');
+            }}>
+              <fieldset disabled={!canEditCurrent}><legend>원본의 OCR 영역 (%)</legend><div className="field-grid">
+                {([['x','왼쪽'],['y','위쪽'],['w','너비'],['h','높이']] as const).map(([key,label])=><label key={key}>{label}<input name={key} type="number" required min={key==='w'||key==='h'?0.000001:0} max={100} step="any" defaultValue={ocrBox(selected)[key]} /></label>)}
+              </div><button type="submit" className="button secondary">OCR 영역 저장</button>
+              {selected.userSourceBox&&<button type="button" onClick={()=>patchBlock({userSourceBox:undefined},page.name+' · OCR 영역 복원')}>기존 좌표로 복원</button>}
+              </fieldset>
+            </form>}
+            {page&&(issues.length>0||page.status==='review'||effects)&&<details className="inspector-section" data-review-status={issues.length||page.status==='review'?'needs_review':'recorded'}>
+              <summary>{issues.length?`검토 필요 · 경고 ${issues.length}개`:page.status==='review'?'검토 필요':'효과음 처리 기록'}</summary>
+              {effects&&<p>효과음 처리 대상 · 원문 보존 {effects.preserved}개 · 번역 식자 {effects.translated}개</p>}
+              {issues.length>0&&<ul>{issues.map((issue,i)=><li key={i}>{issue.blockId?<button type="button" onClick={()=>{setSelectedId(issue.blockId!);setCanvasLocation('editor');closeDrawer();}}>{issue.title}</button>:issue.title}</li>)}</ul>}
+            </details>}
             <section className="inspector-section typography-section" data-expanded={typographyOpen}><div className="section-title typography-title"><h3><button type="button" className="typography-disclosure" aria-label={typographyOpen?"글꼴 스타일 접기":"글꼴 스타일 펼치기"} aria-expanded={typographyOpen} aria-controls="typography-controls" onClick={()=>setTypographyOpen(open=>!open)}><ChevronDown size={14} aria-hidden="true"/><span>글꼴 스타일</span><span className="tiny-caps" aria-hidden="true">TYPOGRAPHY</span></button></h3>{selected&&<IconButton label="선택한 텍스트 삭제" disabled={!canEditCurrent} onClick={()=>{updatePage(p=>({...p,blocks:p.blocks.filter(b=>b.id!==selected.id),reviewed:false}),`${page.name} · 텍스트 삭제`);setSelectedId(null);}}><Trash2 size={14}/></IconButton>}</div><fieldset id="typography-controls" className="style-fieldset" hidden={!typographyOpen} disabled={!selected||!canEditCurrent}><label className="field-label" htmlFor="font-select">글꼴</label><select id="font-select" className="form-select font-select" value={selected?.font||"sans"} onChange={e=>patchBlock({font:e.target.value})}>{Object.entries(FONT_NAMES).map(([k,v])=><option value={k} key={k}>{v}</option>)}</select><div className="field-grid"><div><label className="field-label" htmlFor="font-size">크기</label><div className="number-field"><Type size={13}/><input id="font-size" aria-label="글자 크기" type="number" min={10} max={160} value={selected?.size||32} onChange={e=>patchBlock({size:clamp(Number(e.target.value)||10,10,160)})}/><span>px</span></div></div><div><label className="field-label" htmlFor="font-weight">굵기</label><select id="font-weight" className="form-select" value={selected?.weight||600} onChange={e=>patchBlock({weight:Number(e.target.value)})}><option value={400}>Regular</option><option value={500}>Medium</option><option value={600}>Semi Bold</option><option value={700}>Bold</option><option value={800}>Extra Bold</option></select></div></div>
               <div className="field-grid alignment-color"><div><label className="field-label">정렬</label><div className="alignment-control">{(["left","center","right"] as const).map((a,i)=>{const Icon=[AlignLeft,AlignCenter,AlignRight][i];return <button key={a} title={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-label={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-pressed={selected?.align===a} className={selected?.align===a?"active":""} onClick={()=>patchBlock({align:a})}><Icon size={15}/></button>;})}</div></div><div><label className="field-label" htmlFor="text-color">색상</label><div className="color-field"><input id="text-color" type="color" value={selected?.color||"#202020"} onChange={e=>patchBlock({color:e.target.value})}/><span>{(selected?.color||"#202020").slice(1).toUpperCase()}</span><ChevronDown size={11}/></div></div></div>
               <div className="line-height-label"><label className="field-label" htmlFor="line-height">줄 간격</label><span>{(selected?.lineHeight||1.4).toFixed(2)}</span></div><input id="line-height" className="range-input" type="range" min={1} max={2.5} step={.05} value={selected?.lineHeight||1.4} onChange={e=>patchBlock({lineHeight:Number(e.target.value)})}/><div className="range-labels"><span>촘촘하게</span><span>여유롭게</span></div>

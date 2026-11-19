@@ -1,0 +1,1938 @@
+{
+  "varySource": false,
+  "varyEntry": false,
+  "varyVolume": false,
+  "varyCanonical": true,
+  "fixtureSha256": "40f6346b225c55bec21d4e8b81ff176b0038e48c274ddd7f5a952efcba0a025a",
+  "ed": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-file-probe-kQUZ9C",
+  "cd": "C:\\Users\\ksaei\\AppData\\Local\\Temp\\mangohana-stage17-file-probe-tlkU5D",
+  "runs": [
+    {
+      "index": 0,
+      "volume": "E",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:20.027Z",
+      "elapsedMs": 1775,
+      "pair": true,
+      "events": [
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 40.489300000000185,
+          "at": "2026-11-18T21:33:21.790Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:20.075Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:21.751Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:21.752Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:21.752Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:21.752Z",
+          "elapsedMs": 0.30749999999989086
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:21.752Z",
+          "elapsedMs": 0.5080999999997857
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:21.752Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:21.752Z",
+          "elapsedMs": 0.018499999999903594
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:21.752Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:21.752Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:21.752Z",
+          "elapsedMs": 0.0342000000000553
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:21.752Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:21.752Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:21.753Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:21.753Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:21.753Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:21.753Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:21.753Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:21.754Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:21.761Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:21.767Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:21.774Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:21.775Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:21.779Z",
+          "elapsedMs": 3.533000000000129
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:21.779Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:21.779Z",
+          "elapsedMs": 0.09040000000004511
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:21.780Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:21.786Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:21.787Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:21.789Z",
+          "elapsedMs": 2.3722000000000207
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:21.789Z"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "volume": "C",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:22.094Z",
+      "elapsedMs": 244,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:22.096Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 13.028000000000247,
+          "at": "2026-11-18T21:33:22.316Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:22.130Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:22.131Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:22.132Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:22.132Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:22.132Z",
+          "elapsedMs": 0.1579999999999977
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:22.132Z",
+          "elapsedMs": 0.30160000000000053
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:22.132Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:22.132Z",
+          "elapsedMs": 0.02319999999999922
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.132Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:22.132Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:22.132Z",
+          "elapsedMs": 0.03810000000000002
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:22.132Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.132Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.133Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.133Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.133Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.133Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.133Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:22.133Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.139Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:22.144Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:22.298Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:22.299Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:22.302Z",
+          "elapsedMs": 3.0786999999999978
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:22.303Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:22.303Z",
+          "elapsedMs": 0.08379999999999654
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:22.304Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:22.305Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:22.305Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:22.307Z",
+          "elapsedMs": 2.0948999999999955
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:22.308Z"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "volume": "C",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:22.455Z",
+      "elapsedMs": 225,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:22.456Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 12.538899999999558,
+          "at": "2026-11-18T21:33:22.670Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:22.500Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:22.501Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:22.502Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:22.502Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:22.502Z",
+          "elapsedMs": 0.1758999999999986
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:22.502Z",
+          "elapsedMs": 0.34140000000000015
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:22.502Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:22.502Z",
+          "elapsedMs": 0.02430000000000021
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.502Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:22.502Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:22.502Z",
+          "elapsedMs": 0.040099999999998914
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:22.502Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.503Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.503Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.503Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.503Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.503Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.503Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:22.504Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.510Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:22.515Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:22.656Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:22.657Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:22.660Z",
+          "elapsedMs": 3.1899999999999977
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:22.660Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:22.661Z",
+          "elapsedMs": 0.08889999999999532
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:22.662Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:22.663Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:22.663Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:22.665Z",
+          "elapsedMs": 2.1798
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:22.666Z"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "volume": "E",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:22.804Z",
+      "elapsedMs": 236,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:22.805Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 16.226599999999962,
+          "at": "2026-11-18T21:33:23.031Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:22.846Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:22.847Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:22.848Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:22.848Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:22.848Z",
+          "elapsedMs": 0.30120000000000147
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:22.848Z",
+          "elapsedMs": 0.4905000000000008
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:22.848Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:22.848Z",
+          "elapsedMs": 0.01810000000000045
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.848Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:22.848Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:22.849Z",
+          "elapsedMs": 0.03859999999999886
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:22.849Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.849Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.850Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.850Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.850Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:22.850Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.850Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:22.850Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:22.856Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:22.860Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.015Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.017Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:23.021Z",
+          "elapsedMs": 3.6715999999999838
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:23.021Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:23.021Z",
+          "elapsedMs": 0.08920000000000528
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:23.023Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.025Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.026Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:23.028Z",
+          "elapsedMs": 2.2417000000000087
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:23.028Z"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "volume": "C",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:23.164Z",
+      "elapsedMs": 238,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:23.165Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.291200000000572,
+          "at": "2026-11-18T21:33:23.391Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:23.203Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:23.204Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:23.204Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:23.204Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:23.205Z",
+          "elapsedMs": 0.1554000000000002
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:23.205Z",
+          "elapsedMs": 0.2995000000000019
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:23.205Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:23.205Z",
+          "elapsedMs": 0.0224999999999973
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.205Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:23.205Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:23.205Z",
+          "elapsedMs": 0.03859999999999886
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:23.205Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.205Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.206Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.206Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.206Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.206Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.206Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:23.206Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.212Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:23.216Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.372Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.374Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:23.377Z",
+          "elapsedMs": 3.452399999999983
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:23.378Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:23.378Z",
+          "elapsedMs": 0.12019999999998277
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:23.379Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.380Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.380Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:23.383Z",
+          "elapsedMs": 2.2575000000000216
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:23.383Z"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "volume": "E",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:23.446Z",
+      "elapsedMs": 231,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:23.447Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.329199999999219,
+          "at": "2026-11-18T21:33:23.668Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:23.478Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:23.479Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:23.479Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:23.479Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:23.480Z",
+          "elapsedMs": 0.2984999999999971
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:23.480Z",
+          "elapsedMs": 0.5422000000000011
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:23.480Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:23.480Z",
+          "elapsedMs": 0.08419999999999916
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.480Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:23.480Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:23.480Z",
+          "elapsedMs": 0.03470000000000084
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:23.480Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.480Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.481Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.481Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.481Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.481Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.481Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:23.482Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.488Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:23.492Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.642Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.643Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:23.649Z",
+          "elapsedMs": 5.564999999999998
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:23.649Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:23.649Z",
+          "elapsedMs": 0.10589999999999122
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:23.651Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.651Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.652Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:23.654Z",
+          "elapsedMs": 2.1111999999999966
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:23.654Z"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "volume": "E",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:23.806Z",
+      "elapsedMs": 232,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:23.807Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 13.719700000001467,
+          "at": "2026-11-18T21:33:24.023Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:23.842Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:23.843Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:23.844Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:23.844Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:23.844Z",
+          "elapsedMs": 0.3048000000000002
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:23.844Z",
+          "elapsedMs": 0.529799999999998
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:23.844Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:23.844Z",
+          "elapsedMs": 0.017900000000000915
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.844Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:23.844Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:23.844Z",
+          "elapsedMs": 0.03689999999999927
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:23.844Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.845Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.845Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.845Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.845Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:23.845Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.845Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:23.846Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:23.852Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:23.856Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:23.998Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:23.999Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.002Z",
+          "elapsedMs": 3.557299999999998
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:24.003Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:24.003Z",
+          "elapsedMs": 0.09940000000000282
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.004Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.006Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.006Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.008Z",
+          "elapsedMs": 2.2723000000000013
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.009Z"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "volume": "C",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:24.150Z",
+      "elapsedMs": 231,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:24.151Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.420100000001185,
+          "at": "2026-11-18T21:33:24.371Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:24.198Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:24.199Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:24.200Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:24.200Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:24.200Z",
+          "elapsedMs": 0.17680000000000007
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:24.200Z",
+          "elapsedMs": 0.3403999999999989
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:24.200Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:24.200Z",
+          "elapsedMs": 0.022000000000002018
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.200Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:24.200Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:24.200Z",
+          "elapsedMs": 0.04169999999999874
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:24.201Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.201Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.202Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.202Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.202Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.202Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.202Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:24.202Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.208Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:24.213Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.357Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.358Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.361Z",
+          "elapsedMs": 3.4399999999999977
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:24.362Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:24.362Z",
+          "elapsedMs": 0.08230000000000359
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.363Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.365Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.366Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.368Z",
+          "elapsedMs": 2.0996999999999844
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.368Z"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "volume": "E",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:24.429Z",
+      "elapsedMs": 227,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:24.430Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.699800000000323,
+          "at": "2026-11-18T21:33:24.646Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:24.467Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:24.468Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:24.468Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:24.469Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:24.469Z",
+          "elapsedMs": 0.3035000000000032
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:24.469Z",
+          "elapsedMs": 0.4974999999999987
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:24.469Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:24.469Z",
+          "elapsedMs": 0.0251000000000019
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.469Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:24.469Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:24.469Z",
+          "elapsedMs": 0.03640000000000043
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:24.469Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.469Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.470Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.470Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.470Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.470Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.470Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:24.470Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.477Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:24.481Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.623Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.625Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.629Z",
+          "elapsedMs": 3.5494999999999948
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:24.629Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:24.629Z",
+          "elapsedMs": 0.08679999999998245
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.631Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.633Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.633Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.635Z",
+          "elapsedMs": 2.1761999999999944
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.635Z"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "volume": "C",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:24.770Z",
+      "elapsedMs": 230,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:24.771Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 11.804599999999482,
+          "at": "2026-11-18T21:33:24.990Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:24.805Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:24.806Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:24.807Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:24.807Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:24.807Z",
+          "elapsedMs": 0.15390000000000015
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:24.807Z",
+          "elapsedMs": 0.29669999999999774
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:24.807Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:24.807Z",
+          "elapsedMs": 0.020300000000002427
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.807Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:24.807Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:24.807Z",
+          "elapsedMs": 0.03829999999999956
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:24.807Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.807Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.808Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.808Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.808Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:24.808Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.808Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:24.809Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:24.817Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:24.821Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.969Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.970Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.973Z",
+          "elapsedMs": 3.0874999999999773
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:24.974Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:24.974Z",
+          "elapsedMs": 0.084699999999998
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.975Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:24.976Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:24.976Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:24.978Z",
+          "elapsedMs": 2.127600000000001
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:24.978Z"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "volume": "C",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:25.120Z",
+      "elapsedMs": 233,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:25.121Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 11.822899999999208,
+          "at": "2026-11-18T21:33:25.344Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:25.163Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:25.164Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:25.165Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:25.165Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:25.165Z",
+          "elapsedMs": 0.1600999999999999
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:25.165Z",
+          "elapsedMs": 0.3078000000000003
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:25.165Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:25.165Z",
+          "elapsedMs": 0.021599999999999397
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.165Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:25.165Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:25.165Z",
+          "elapsedMs": 0.03750000000000142
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:25.166Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.166Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.167Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.167Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.167Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.167Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.167Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:25.167Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.173Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:25.178Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:25.333Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:25.335Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:25.338Z",
+          "elapsedMs": 3.081299999999999
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:25.338Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:25.338Z",
+          "elapsedMs": 0.088799999999992
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:25.339Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:25.340Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:25.341Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:25.343Z",
+          "elapsedMs": 2.0863999999999976
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:25.343Z"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "volume": "E",
+      "entryType": "file",
+      "requested": "2026-11-18T21:33:25.470Z",
+      "elapsedMs": 241,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T21:33:25.471Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 14.123499999999694,
+          "at": "2026-11-18T21:33:25.701Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T21:33:25.506Z"
+        },
+        {
+          "phase": "preloader_ready",
+          "utc": "2026-11-18T21:33:25.507Z"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:25.507Z"
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:25.507Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:25.508Z",
+          "elapsedMs": 0.3188999999999993
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:25.508Z",
+          "elapsedMs": 0.515500000000003
+        },
+        {
+          "phase": "main_realpath_start",
+          "utc": "2026-11-18T21:33:25.508Z"
+        },
+        {
+          "phase": "main_realpath_end",
+          "utc": "2026-11-18T21:33:25.508Z",
+          "elapsedMs": 0.022400000000001086
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.508Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "main_lookup_start",
+          "utc": "2026-11-18T21:33:25.508Z"
+        },
+        {
+          "phase": "main_lookup_end",
+          "utc": "2026-11-18T21:33:25.508Z",
+          "elapsedMs": 0.03750000000000142
+        },
+        {
+          "phase": "source_compilation",
+          "utc": "2026-11-18T21:33:25.508Z"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.508Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.509Z",
+          "id": "node:http"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.509Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.509Z",
+          "id": "node:fs"
+        },
+        {
+          "phase": "module_load_start",
+          "utc": "2026-11-18T21:33:25.509Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.509Z",
+          "id": "node:path"
+        },
+        {
+          "phase": "listen_called",
+          "utc": "2026-11-18T21:33:25.509Z"
+        },
+        {
+          "phase": "module_load_end",
+          "utc": "2026-11-18T21:33:25.515Z",
+          "id": "fixture"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T21:33:25.520Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:25.680Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:25.681Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:25.684Z",
+          "elapsedMs": 3.473899999999986
+        },
+        {
+          "phase": "model_lookup_begin",
+          "utc": "2026-11-18T21:33:25.685Z"
+        },
+        {
+          "phase": "model_lookup_end",
+          "utc": "2026-11-18T21:33:25.685Z",
+          "elapsedMs": 0.08729999999999905
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:25.686Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T21:33:25.689Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T21:33:25.689Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T21:33:25.691Z",
+          "elapsedMs": 2.1380000000000052
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T21:33:25.691Z"
+        }
+      ]
+    }
+  ]
+}

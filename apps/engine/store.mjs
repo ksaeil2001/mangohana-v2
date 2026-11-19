@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdir, lstat, realpath, open, readdir, rename, writeFile } from 'node:fs/promises';
+import { renameSync } from 'node:fs';
+import { mkdir, lstat, realpath, open, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { reportToStudioResult } from './result.mjs';
 import recoveryPolicy from '../../packages/ai-engine/quality/recovery-policy.cjs';
@@ -95,11 +96,19 @@ async function boundedFile(file, maximum) {
     return bytes;
   } finally { await handle.close(); }
 }
-export async function atomicState(directory, value, fileName = 'state.json') {
+export async function atomicState(directory, value, fileName = 'state.json', beforeInstall) {
   const temporary = path.join(directory, `.state-${randomUUID()}.tmp`);
   const handle = await open(temporary, 'wx', 0o600);
   try { await handle.writeFile(JSON.stringify(value, null, 2)); await handle.sync(); } finally { await handle.close(); }
-  await rename(temporary, path.join(directory, fileName));
+  const destination = path.join(directory,fileName);
+  if (!beforeInstall) return rename(temporary,destination);
+  try {
+    beforeInstall();
+    renameSync(temporary,destination);
+  } catch (error) {
+    await rm(temporary, {force:true});
+    throw error;
+  }
 }
 /** Translation-only storage never enters the job queue or invokes engine.run. */
 export async function createTranslationReviewStore(options) {
@@ -122,12 +131,14 @@ function publicJob(record) {
     pageNumber: state.pageNumber ?? null, batchId: state.batchId ?? null, retryOf: state.retryOf ?? null, usage: state.usage ?? null,
     error: state.error ?? null, errorCode: state.errorCode ?? null, warnings: [...(state.warnings ?? [])],
     processingGeneration:state.sequence,resultRevision:state.resultReceipt?.revision??null,recovery:state.recovery??null,
+    ...(state.stage15Attempts ? {stage15Attempts:structuredClone(state.stage15Attempts)} : {}),
     cancellation:state.cancelRequestedAt?{requestedAt:state.cancelRequestedAt,confirmedAt:state.cancelledAt??null}:null,
     reviewStatus: state.recovery?.type==='needs_review'?'needs_review':'unreviewed', downloadAvailable: state.status === 'completed' };
 }
 function validateStoredState(state, id) {
   requireValue(state && state.version === 1 && state.id === id && uuid.test(id) && typeof state.owner==='string'&&shaPattern.test(state.owner) && typeof state.idempotencyKey==='string'&&keyPattern.test(state.idempotencyKey) &&
-    shaPattern.test(state.fingerprint) && shaPattern.test(state.sourceSha256) && ['queued', 'running', 'completed', 'failed','cancelled'].includes(state.status) &&
+    shaPattern.test(state.fingerprint) && shaPattern.test(state.sourceSha256) && ['queued', 'running', 'completed', 'failed','cancelled','result_unknown'].includes(state.status) &&
+    (state.stage15 === undefined || state.stage15 === true) && (state.status !== 'result_unknown' || state.stage15 === true) &&
     ['ja', 'auto'].includes(state.sourceLanguage) && Object.hasOwn(sourceExtensions, state.mime) && validDimensions(state) &&
     [state.projectId,state.pageId].every(value=>value===null||typeof value==='string'&&idPattern.test(value)) &&
     Number.isSafeInteger(state.sequence) && state.sequence > 0 && typeof state.name === 'string' && state.name.length <= 180 &&
@@ -155,6 +166,7 @@ function preparedInput(input) {
 function validateBatchState(state, id) {
   requireValue(state?.version === 1 && state.id === id && uuid.test(id) && typeof state.owner==='string'&&shaPattern.test(state.owner) && typeof state.idempotencyKey==='string'&&keyPattern.test(state.idempotencyKey) && shaPattern.test(state.fingerprint) &&
     typeof state.projectId==='string'&&idPattern.test(state.projectId) && ['ja', 'auto'].includes(state.sourceLanguage) && ['preparing', 'accepted', 'failed'].includes(state.status) &&
+    (state.stage15ContextRevision === undefined || Number.isSafeInteger(state.stage15ContextRevision) && state.stage15ContextRevision >= 0) &&
     Number.isFinite(Date.parse(state.createdAt)) && Number.isFinite(Date.parse(state.updatedAt)) && Array.isArray(state.pages) && state.pages.length > 0 && state.pages.length <= BATCH_LIMITS.pages &&
     new Set(state.pages.map(page => page?.key)).size === state.pages.length && new Set(state.pages.map(page => page?.pageId)).size === state.pages.length &&
     state.pages.every(page => page&&typeof page.key === 'string' && page.key.length <= 400 && uuid.test(page.jobId) && typeof page.pageId==='string'&&idPattern.test(page.pageId) &&
@@ -165,7 +177,7 @@ function validateBatchState(state, id) {
 }
 
 /** Server-owned durable jobs. Queue entries contain metadata and disk paths, never upload buffers. */
-export async function createJobStore({ root, engine, contextStore }) {
+export async function createJobStore({ root, engine, contextStore, stage15, readBatchUsage }) {
   requireValue(typeof root === 'string' && path.isAbsolute(root) && engine && ['health', 'inspectImage', 'run', 'close'].every(name => typeof engine[name] === 'function'), 503, 'STORE_CONFIG_INVALID', '작업 서버 설정을 확인해 주세요.');
   requireValue(contextStore===undefined||contextStore&&['get','apply','snapshot'].every(name=>typeof contextStore[name]==='function'),503,'STORE_CONFIG_INVALID','작품 문맥 저장소 설정을 확인해 주세요.');
   const directory = path.resolve(root), rootKey = process.platform === 'win32' ? directory.toLowerCase() : directory;
@@ -220,7 +232,7 @@ export async function createJobStore({ root, engine, contextStore }) {
       indexes.forEach((index, offset) => { queue[index] = items[offset]; });
     }
   }
-  function batchView(record) {
+  async function batchView(record) {
     const state = record.state;
     const pages = state.pages.map(page => {
       const job = latest(records.get(page.jobId));
@@ -228,9 +240,23 @@ export async function createJobStore({ root, engine, contextStore }) {
         status: job?.state.status ?? 'failed', errorCode: job?.state.errorCode ?? (state.status === 'accepted' ? null : 'BATCH_INCOMPLETE') };
     });
     const completedPages = pages.filter(page => page.status === 'completed').length, failedPages = pages.filter(page => ['failed','cancelled'].includes(page.status)).length;
+    const unknownPages = pages.filter(page => page.status === 'result_unknown').length;
+    const cancelledPages = pages.filter(page => page.status === 'cancelled').length;
     const status = state.status !== 'accepted' ? 'failed' : completedPages === pages.length ? 'completed'
-      : completedPages + failedPages === pages.length ? (completedPages ? 'partial' : 'failed') : pages.some(page => page.status === 'running') ? 'running' : 'queued';
-    return { id: state.id, projectId: state.projectId, sourceLanguage: state.sourceLanguage, status, totalPages: pages.length, completedPages, failedPages,
+      : unknownPages === pages.length ? 'result_unknown' : completedPages + failedPages + unknownPages === pages.length ? (completedPages || unknownPages ? 'partial' : 'failed')
+      : pages.some(page => page.status === 'running') ? 'running' : 'queued';
+    let accounting, usageErrorCode;
+    if (state.stage15ContextRevision !== undefined) {
+      // A corrupt or unavailable journal blocks accounting, not access to sibling job receipts.
+      try { accounting = await readBatchUsage(state,pages); }
+      catch { usageErrorCode = 'STAGE15_BATCH_EVIDENCE_UNAVAILABLE'; }
+      for (const p of pages) {
+        p.reused = Boolean(p.job && p.job.batchId !== state.id);
+        p.providerUsage = p.reused ? null : accounting?.byJob.get(p.jobId) ?? null;
+      }
+    }
+    return { id: state.id, projectId: state.projectId, sourceLanguage: state.sourceLanguage, status, totalPages: pages.length, completedPages, failedPages, unknownPages, cancelledPages,
+      ...(state.stage15ContextRevision !== undefined ? {usage:accounting?.usage ?? null,...(usageErrorCode?{usageErrorCode}:{})} : {}),
       createdAt: state.createdAt, updatedAt: pages.reduce((latest,page)=>page.job?.updatedAt>latest?page.job.updatedAt:latest,state.updatedAt), ignoredFiles: state.ignoredFiles ?? [], pages };
   }
   function recordFor(prepared, dimensions, extra = {}) {
@@ -299,6 +325,7 @@ export async function createJobStore({ root, engine, contextStore }) {
   async function verify(record) {
     await regularDirectory(record.directory);
     const state = record.state;
+    if (state.stage15 && !stage15) throw failure(503,'STAGE15_VERIFIER_UNAVAILABLE','이 번역의 서명을 검증할 host가 필요합니다.');
     const source = await boundedFile(path.join(record.directory, 'source' + sourceExtensions[state.mime]), JOB_LIMITS.inputBytes);
     requireValue(sha(source) === state.sourceSha256 && imageMime(source) === state.mime, 502, 'OUTPUT_INVALID', '원본 파일이 입력 기록과 일치하지 않습니다.');
     await inspect(source, state.mime, state);
@@ -339,13 +366,18 @@ export async function createJobStore({ root, engine, contextStore }) {
     // evidence describe the same regions. Apply the public result contract before
     // either publishing completion or restoring/serving a previously completed job.
     let result;
-    try { result = reportToStudioResult(report, { cleanedPng: buffers.cleaned, candidatePng: buffers.candidate }); }
+    try {
+      requireValue(Boolean(report.stage15) === (state.stage15 === true), 502, 'OUTPUT_INVALID', '번역 실행 출처가 다릅니다.');
+      const verifiedStage15 = state.stage15 ? stage15.verifyReport(report,state) : undefined;
+      result = reportToStudioResult(report, { cleanedPng: buffers.cleaned, candidatePng: buffers.candidate, verifiedStage15 });
+    }
     catch { throw failure(502, 'OUTPUT_INVALID', '대사·번역·식자의 영역과 글꼴 증거가 일치하지 않습니다.'); }
     return { report, result };
   }
   async function checkedCompletion(record) {
     try { return await verify(record); }
-    catch { await serial(() => markFailed(record, 'INTEGRITY_FAILED', '저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.'));
+    catch (error) { if (error.code === 'STAGE15_VERIFIER_UNAVAILABLE') throw error;
+      await serial(() => markFailed(record, 'INTEGRITY_FAILED', '저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.'));
       throw failure(409, 'INTEGRITY_FAILED', '저장한 결과를 확인해 주세요.'); }
   }
   async function captureTranslationContext(record){
@@ -365,7 +397,14 @@ export async function createJobStore({ root, engine, contextStore }) {
     const numberCounts=new Map();for(const candidate of eligible)numberCounts.set(candidate.state.pageNumber,(numberCounts.get(candidate.state.pageNumber)??0)+1);
     const prior=eligible.filter(candidate=>numberCounts.get(candidate.state.pageNumber)===1).sort(compareProjectPages).slice(-4);
     for(const candidate of prior){
-      let verified;try{verified=await checkedCompletion(candidate);}catch{excludedPriorPages.push({jobId:candidate.state.id,reason:'INTEGRITY_FAILED'});continue;}
+      let verified;
+      try{
+        verified=state.stage15 ? await verify(candidate) : await checkedCompletion(candidate);
+        if(state.stage15){
+          requireValue(verified.report.stage15?.binding.contextRevision===saved.glossaryRevision,409,'CONTEXT_REEVALUATION_REQUIRED','이전 페이지의 번역 문맥이 다릅니다.');
+          stage15.assertApplicable(verified.report.stage15);
+        }
+      }catch(error){excludedPriorPages.push({jobId:candidate.state.id,reason:error.code ?? 'INTEGRITY_FAILED'});continue;}
       const value=candidate.state;
       previousPages.push({jobId:value.id,pageId:value.pageId,pageNumber:value.pageNumber,sourceSha256:value.sourceSha256,reportSha256:value.reportSha256,status:'AI_PROPOSED'});
       for(const line of [...verified.report.lines].sort((a,b)=>(a.order??0)-(b.order??0))){
@@ -392,7 +431,35 @@ export async function createJobStore({ root, engine, contextStore }) {
       requireValue(sha(await boundedFile(inputPath, JOB_LIMITS.inputBytes)) === state.sourceSha256, 502, 'OUTPUT_INVALID', '원본 파일이 입력 기록과 다릅니다.');
       const translationContext=await captureTranslationContext(record);controller.signal.throwIfAborted();
       const previous=state.retryOf?records.get(state.retryOf):undefined;
+      let assertPublication;
+      const isCurrent = () => !closed && record.state === state && state.status === 'running' && !state.cancelRequestedAt && currentPage(record);
+      const withFence = install => contextStore.withRevision(state.owner,state.projectId,translationContext.glossaryRevision,async () => {
+        requireValue(isCurrent() && sha(await boundedFile(inputPath,JOB_LIMITS.inputBytes)) === state.sourceSha256,
+          409, 'STALE_RESULT', '원본 또는 현재 페이지가 변경되었습니다.');
+        return install();
+      });
+      const batch = state.batchId ? batches.get(state.batchId)?.state : null;
+      if (state.stage15 || stage15) {
+        requireValue(stage15 && state.stage15 && !previous && translationContext && state.pageId && state.pageNumber,
+          409,'STAGE15_ADMISSION_DENIED','승인된 페이지 번역 범위를 확인해 주세요.');
+        if (state.batchId) requireValue(batch?.status === 'accepted' && batch.owner === state.owner && batch.projectId === state.projectId &&
+          batch.stage15ContextRevision === translationContext.glossaryRevision && batch.pages.some(p => p.jobId === state.id &&
+            p.pageId === state.pageId && p.pageNumber === state.pageNumber && p.sourceSha256 === state.sourceSha256),
+          409,'STALE_RESULT','접수한 배치의 페이지 또는 작품 문맥이 변경되었습니다.');
+      }
       const value = await engine.run({ jobId: state.id, inputPath, outputDirectory: record.directory, sourceLanguage: state.sourceLanguage,
+        ...(state.stage15 ? {translateStage:(stage,timeoutMs) => stage15.translate({scope:{ownerScope:{kind:'session',id:state.owner}, projectId:state.projectId,
+          pageId:state.pageId,pageNumber:state.pageNumber,requestId:state.id,generation:state.sequence,editRevision:0,layoutRevision:0,
+          contextRevision:translationContext.glossaryRevision,sourceSha256:state.sourceSha256,mode:'FULL_IMAGE',
+          ...(batch ? {batchId:batch.id,batchManifestSha256:batch.fingerprint} : {})}, signal:controller.signal, timeoutMs,
+          isCurrent, withFence, knownBatchAttempts:()=>batch?.pages.flatMap(p=>{
+            const peer=records.get(p.jobId)?.state;
+            return peer?.batchId===batch.id ? peer.stage15Attempts ?? [] : [];
+          }) ?? [], onPublication:assertCurrent => { assertPublication = assertCurrent; },
+          onObservation:attempts => serial(async () => {
+            state.stage15Attempts = attempts;
+            try { await persist(record); } catch { throw failure(503,'RESULT_UNKNOWN','번역 시도 기록의 저장 여부가 미확정입니다.'); }
+          })},stage)} : {}),
         ...(previous?.state.checkpoints?{resumeFrom:{directory:previous.directory,jobId:previous.state.id,checkpoints:structuredClone(previous.state.checkpoints)}}:{}),
         onCheckpoint:receipt=>serial(async()=>{
           controller.signal.throwIfAborted();requireValue(record.state===state&&state.status==='running'&&['ocr','translation','cleaned'].includes(receipt?.stage)&&shaPattern.test(receipt.sha256),502,'OUTPUT_INVALID','중간 결과 영수증을 확인하지 못했습니다.');
@@ -427,14 +494,31 @@ export async function createJobStore({ root, engine, contextStore }) {
           usage:usageFromReport(verified.report,Math.round(performance.now()-started)),
           warnings:Array.isArray(verified.report.warnings)?verified.report.warnings.filter(v=>typeof v==='string').slice(0,50).map(v=>v.slice(0,300)):[],
           resultReceipt:{revision:1,jobId:state.id,processingGeneration:state.sequence,sourceSha256:state.sourceSha256,reportSha256:state.reportSha256,candidateSha256:verified.report.hashes.candidate}};
-        await persist({directory:record.directory,state:next});record.state=next;
+        if (state.stage15) {
+          requireValue(typeof assertPublication === 'function', 409, 'STALE_RESULT', '번역 게시 근거를 확인하지 못했습니다.');
+          next.updatedAt = new Date().toISOString();
+          await withFence(() => atomicState(record.directory,next,'state.json',assertPublication));
+        } else await persist({directory:record.directory,state:next});
+        record.state=next;
       });
     } catch (error) {
       state.usage = { processingMs: Math.round(performance.now()-started), localModelRequests:null, modelRequestMs:null, tokenUsage:null, engineMeasuredMs:null, monetaryCost:null };
       await serial(async()=>{
-        const recovery=classifyFailure(error);record.state.recovery={...recovery,attempt:attempt(record),failedStage:state.stage};
+        if (state.stage15 && error.code === 'RESULT_UNKNOWN') {
+          Object.assign(state,{status:'result_unknown',stage:'result_unknown',errorCode:'RESULT_UNKNOWN',message:'번역 실행 결과 또는 정산을 확인하지 못했습니다.',
+            recovery:{code:'RESULT_UNKNOWN',type:'unsafe_to_repeat',automaticRetry:false,manuallyRetryable:false,monetaryCost:null}});
+          if (state.batchId && state.stage15Attempts?.some(a=>a.resourceReleaseUnconfirmed)) {
+            state.recovery.type='cleanup_unknown';state.stage='cleanup_unconfirmed';runtimeBlocked=true;
+          }
+          await persist(record);return;
+        }
+        const recovery=classifyFailure(error);
+        if (state.stage15 && recovery.code === 'PROCESSING_FAILED' && /^STAGE15_|^(AUTHORITY_MISMATCH|AUTHORITY_EXPIRED|PROVIDER_PIN_MISMATCH|FALLBACK_CONSUMED|FALLBACK_INELIGIBLE|REVIEW_REVISION_CONFLICT)$/.test(error.code)) {
+          Object.assign(recovery,{code:error.code,manuallyRetryable:false});
+        }
+        record.state.recovery={...recovery,attempt:attempt(record),failedStage:state.stage};
         if(recovery.type==='cleanup_unknown')runtimeBlocked=true;
-        if(state.cancelRequestedAt&&recovery.type!=='cleanup_unknown'){
+        if((state.cancelRequestedAt || (state.stage15 && error.code === 'CANCELLED')) && recovery.type!=='cleanup_unknown'){
           record.state.recovery={...classifyFailure({code:'CANCELLED'}),attempt:attempt(record),failedStage:state.stage};
           record.state.status='cancelled';record.state.stage='cancelled';record.state.cancelledAt=new Date().toISOString();record.state.errorCode='CANCELLED';record.state.message='작업 중단과 자원 반환을 확인했습니다.';await persist(record);
         }else{
@@ -513,10 +597,14 @@ export async function createJobStore({ root, engine, contextStore }) {
       }
       if(state.status==='queued'&&state.stage==='retry_acceptance_unknown'){state.stage='queued';state.message='서버에서 처리를 기다리고 있습니다.';delete state.error;delete state.errorCode;}
       if(state.status==='running'){
-        if(state.cancelRequestedAt){state.recovery=classifyFailure({code:'CLEANUP_FAILED'});state.stage='cleanup_unconfirmed';state.status='failed';state.errorCode='CLEANUP_FAILED';runtimeBlocked=true;await persist(record);}
+        if(state.stage15){
+          Object.assign(state,{status:'result_unknown',stage:'cleanup_unconfirmed',errorCode:'RESULT_UNKNOWN',message:'중단된 번역 시도의 실행 결과와 정리를 확인하지 못했습니다.',
+            recovery:{...classifyFailure({code:'CLEANUP_FAILED'}),code:'RESULT_UNKNOWN'}});
+          runtimeBlocked=true;await persist(record);
+        } else if(state.cancelRequestedAt){state.recovery=classifyFailure({code:'CLEANUP_FAILED'});state.stage='cleanup_unconfirmed';state.status='failed';state.errorCode='CLEANUP_FAILED';runtimeBlocked=true;await persist(record);}
         else {state.recovery=classifyFailure({code:'CLEANUP_FAILED'});runtimeBlocked=true;await markFailed(record,'INTERRUPTED','서버 재시작으로 이전 실행과 자원 정리를 확인하지 못했습니다. 자동으로 다시 실행하지 않습니다.');state.stage='cleanup_unconfirmed';await persist(record);}
       }
-      if(state.status==='completed'){try{await verify(record);}catch{await markFailed(record,'INTEGRITY_FAILED','저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.');}}
+      if(state.status==='completed'){try{await verify(record);}catch(error){if(error.code!=='STAGE15_VERIFIER_UNAVAILABLE')await markFailed(record,'INTEGRITY_FAILED','저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.');}}
       if(state.status==='queued')queue.push(record);
     }
     for(const record of batches.values())if(record.state.status==='preparing'){record.state.status='failed';await persistBatch(record);}
@@ -536,7 +624,7 @@ export async function createJobStore({ root, engine, contextStore }) {
         if (prior) { requireValue(prior.state.fingerprint === fingerprint, 409, 'IDEMPOTENCY_CONFLICT', '같은 작업 요청의 입력이 변경되었습니다.'); return publicJob(prior); }
         requireValue(records.size < JOB_LIMITS.jobs, 429, 'JOB_LIMIT', '보관할 수 있는 작업 수를 초과했습니다.');
         let dimensions; try { dimensions = await inspect(bytes, mime); } catch { throw failure(422, 'INVALID_IMAGE', '이미지 파일의 완전성과 크기를 확인해 주세요.'); }
-        const record=recordFor(prepared,dimensions);await writeRecord(record);register(record);queue.push(record);applyPriorities();schedule();return publicJob(record);
+        const record=recordFor(prepared,dimensions,stage15?{stage15:true}:{});await writeRecord(record);register(record);queue.push(record);applyPriorities();schedule();return publicJob(record);
       });
     },
     async submitBatch(input) {
@@ -559,18 +647,33 @@ export async function createJobStore({ root, engine, contextStore }) {
       const fingerprint=sha(JSON.stringify({owner,idempotencyKey:input.idempotencyKey,projectId,sourceLanguage,
         pages:prepared.map(page=>({key:page.key,name:page.metadata.name,pageId:page.requestedPageId??null,pageNumber:page.requestedPageNumber??null,sourceSha256:page.sourceSha256}))}));
       return serial(async()=>{
-        available();const key=owner+':'+input.idempotencyKey,prior=batchRequests.get(key);
+        const key=owner+':'+input.idempotencyKey,prior=batchRequests.get(key);
         if(prior){requireValue(prior.state.fingerprint===fingerprint,409,'IDEMPOTENCY_CONFLICT','같은 배치 요청의 입력이 변경되었습니다.');return batchView(prior);}
+        available();
         requireValue(batches.size<BATCH_LIMITS.batches,429,'BATCH_LIMIT','보관할 수 있는 배치 수를 초과했습니다.');
         // Decode every page before persisting or admitting any new work.
         for(const page of prepared){try{page.dimensions=await inspect(page.bytes,page.mime);}catch{throw failure(422,'INVALID_IMAGE','배치의 이미지 완전성·프레임·크기를 확인해 주세요.');}}
         const id=randomUUID(),newRecords=[],pages=[],numberUpgrades=[];
+        const batchContext = stage15 ? await contextStore.snapshot(owner,projectId) : null;
         let nextNumber=Math.max(0,...[...records.values()].filter(record=>record.state.owner===owner&&record.state.projectId===projectId).map(record=>record.state.pageNumber??0));
         for(const page of prepared){
           let existing=page.requestedPageId?[...records.values()].filter(record=>record.state.owner===owner&&record.state.projectId===projectId&&record.state.pageId===page.requestedPageId&&committed(record)).sort((a,b)=>b.state.sequence-a.state.sequence)[0]:undefined;
           if(existing){existing=latest(existing);requireValue(existing.state.sourceSha256===page.sourceSha256,409,'PAGE_SOURCE_CONFLICT','기존 페이지의 원본이 다릅니다. 새 페이지로 추가해 주세요.');
             requireValue(page.requestedPageNumber===undefined||existing.state.pageNumber===undefined||existing.state.pageNumber===page.requestedPageNumber,409,'PAGE_NUMBER_CONFLICT','기존 페이지의 순서가 다릅니다.');
-            if(existing.state.status==='completed'){try{await verify(existing);}catch{await markFailed(existing,'INTEGRITY_FAILED','저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.');}}
+            if(batchContext)requireValue(existing.state.status==='completed',409,'STAGE15_PAGE_ALREADY_BOUND','이 페이지의 기존 배치와 시도 기록을 확인해 주세요.');
+            if(existing.state.status==='completed'){
+              let verified;
+              try{verified=await verify(existing);}catch(error){
+                if(error.code==='STAGE15_VERIFIER_UNAVAILABLE')throw error;
+                if(batchContext)throw failure(409,'STAGE15_REUSE_UNVERIFIED','이전 페이지의 결과를 확인할 수 없어 새 배치에서의 재사용을 보류했습니다.');
+                await markFailed(existing,'INTEGRITY_FAILED','저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.');
+              }
+              if(verified && batchContext){
+                requireValue(existing.state.stage15 && verified.report.stage15?.binding.contextRevision===batchContext.glossaryRevision,
+                  409,'CONTEXT_REEVALUATION_REQUIRED','저장한 후보의 승인과 현재 문맥을 확인해 주세요.');
+                stage15.assertApplicable(verified.report.stage15);
+              }
+            }
           }
           const number=existing?.state.pageNumber??page.requestedPageNumber??++nextNumber;
           requireValue(Number.isSafeInteger(number)&&number>0&&number<=100000,422,'PAGE_NUMBER_LIMIT','작품의 지원 페이지 번호 한도를 초과했습니다.');
@@ -578,7 +681,7 @@ export async function createJobStore({ root, engine, contextStore }) {
             !pages.some(value=>value.pageNumber===number),409,'PAGE_NUMBER_CONFLICT','같은 작품에 페이지 순서가 중복됩니다.');
           nextNumber=Math.max(nextNumber,number);
           let record=existing;
-          if(!record){page.metadata={...page.metadata,pageId:page.requestedPageId??randomUUID(),pageNumber:number};page.fingerprint=sha(JSON.stringify({...page.metadata,sourceSha256:page.sourceSha256}));record=recordFor(page,page.dimensions,{batchId:id,requestNamespace:'batch-page'});newRecords.push(record);}
+          if(!record){page.metadata={...page.metadata,pageId:page.requestedPageId??randomUUID(),pageNumber:number};page.fingerprint=sha(JSON.stringify({...page.metadata,sourceSha256:page.sourceSha256}));record=recordFor(page,page.dimensions,{batchId:id,requestNamespace:'batch-page',...(stage15?{stage15:true}:{})});newRecords.push(record);}
           else if(record.state.pageNumber===undefined)numberUpgrades.push({record,number});
           pages.push({key:page.key,name:page.metadata.name,pageId:record.state.pageId,pageNumber:number,jobId:record.state.id,sourceSha256:page.sourceSha256});
         }
@@ -586,7 +689,7 @@ export async function createJobStore({ root, engine, contextStore }) {
         const now=new Date().toISOString(),priority=input.currentPageId?{owner,projectId,pageId:input.currentPageId,updatedAt:now}:undefined;
         const batch={directory:path.join(batchDirectory,id),state:{version:1,id,owner,idempotencyKey:input.idempotencyKey,fingerprint,projectId,sourceLanguage,status:'preparing',pages,createdAt:now,updatedAt:now,
       ignoredFiles:Array.isArray(input.ignoredFiles)?input.ignoredFiles.filter(value=>typeof value?.name==='string'&&value.name.length<=400&&value.reason==='macos_metadata').slice(0,300):[],
-      archiveStats:input.archiveStats??null,...(priority?{priority}:{})}};
+      archiveStats:input.archiveStats??null,...(batchContext?{stage15ContextRevision:batchContext.glossaryRevision}:{}),...(priority?{priority}:{})}};
         await mkdir(batchDirectory,{recursive:true,mode:0o700});await regularDirectory(batchDirectory);
         await mkdir(batch.directory,{mode:0o700});await persistBatch(batch);batches.set(id,batch);batchRequests.set(key,batch);
         try{
@@ -627,9 +730,11 @@ export async function createJobStore({ root, engine, contextStore }) {
         const requestFingerprint=sha(JSON.stringify({retryRequestOf:id,owner,idempotencyKey}));
         if(prior){requireValue(prior.state.fingerprint===requestFingerprint,409,'IDEMPOTENCY_CONFLICT','같은 재시도 요청의 대상이 다릅니다.');return prior.state.retryOf&&!committed(prior)?admitRetry(prior):publicJob(prior);}
         const previous=latest(original);
+        if(previous.state.stage15 && ['failed','result_unknown'].includes(previous.state.status))
+          throw failure(409,'RETRY_UNSAFE','이 번역의 기존 시도와 승인 범위를 확인해 주세요.');
         requireValue(![...records.values()].some(record=>record.state.retryOf===previous.state.id&&!committed(record)),503,'RETRY_COMMIT_UNKNOWN','수락 여부를 확인하지 못한 재시도가 있습니다. 이전 요청 식별자로 확인해 주세요.');
         if(previous.state.status!=='failed'){
-          if(previous.state.status==='completed'){try{await verify(previous);}catch{await markFailed(previous,'INTEGRITY_FAILED','저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.');}}
+          if(previous.state.status==='completed'){try{await verify(previous);}catch(error){if(error.code==='STAGE15_VERIFIER_UNAVAILABLE')throw error;await markFailed(previous,'INTEGRITY_FAILED','저장한 결과의 무결성을 확인하지 못했습니다. 원본은 보존했습니다.');}}
           if(previous.state.status!=='failed')return publicJob(previous);
         }
         requireValue(attempt(previous)<MAX_ATTEMPTS,409,'RETRY_BUDGET_EXHAUSTED','동일 작업의 재시도 한도를 사용했습니다. 원인과 입력을 검토해 주세요.');
@@ -649,7 +754,7 @@ export async function createJobStore({ root, engine, contextStore }) {
       // settled; callers can reconnect immediately after receiving this view.
       await mutations;
       const record = owned(owner, id);
-      if (record.state.status === 'completed') { try { await checkedCompletion(record); } catch { /* Return the persisted integrity failure. */ } }
+      if (record.state.status === 'completed') { try { await checkedCompletion(record); } catch (error) { if(error.code==='STAGE15_VERIFIER_UNAVAILABLE')throw error; } }
       return publicJob(record);
     },
     async list(owner) {
@@ -658,7 +763,7 @@ export async function createJobStore({ root, engine, contextStore }) {
     },
     async cancel(owner,id){
       return serial(async()=>{
-        const record=owned(owner,id),state=record.state;if(['completed','failed','cancelled'].includes(state.status)||state.cancelRequestedAt)return publicJob(record);
+        const record=owned(owner,id),state=record.state;if(['completed','failed','cancelled','result_unknown'].includes(state.status)||state.cancelRequestedAt)return publicJob(record);
         state.cancelRequestedAt=new Date().toISOString();state.stage='cancel_requested';state.message='작업 중단과 자원 반환을 확인하고 있습니다.';await persist(record);
         if(state.status==='queued'){const index=queue.indexOf(record);if(index>=0)queue.splice(index,1);state.status='cancelled';state.stage='cancelled';state.cancelledAt=new Date().toISOString();state.errorCode='CANCELLED';await persist(record);}
         else record.controller?.abort(Object.assign(new Error('Cancelled'),{code:'CANCELLED'}));
@@ -669,6 +774,7 @@ export async function createJobStore({ root, engine, contextStore }) {
       await mutations;
       const record = owned(owner, id); requireValue(record.state.status === 'completed', 409, 'RESULT_NOT_READY', '완료된 결과가 아직 없습니다.');
       const verified=await checkedCompletion(record);
+      if(record.state.stage15)stage15.assertApplicable(verified.report.stage15);
       if(record.state.contextSha256!==undefined){
         const context=JSON.parse((await boundedFile(path.join(record.directory,'translation-context.json'),1024*1024)).toString('utf8'));
         let current;try{current=await contextStore.snapshot(owner,record.state.projectId);}catch{throw failure(409,'CONTEXT_FRESHNESS_UNKNOWN','최신 작품 문맥을 확인하지 못했습니다. 후보와 기존 결과는 보존했습니다.');}

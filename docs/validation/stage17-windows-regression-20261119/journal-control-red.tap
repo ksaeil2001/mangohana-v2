@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: the synthetic journal records every real request without reopening its path in model readiness
+not ok 1 - the synthetic journal records every real request without reopening its path in model readiness
+  ---
+  duration_ms: 10788.8792
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\journal-guard.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: '전용 로컬 번역 모델 적재 시간이 초과되었습니다.'
+  code: 'LLM_START_TIMEOUT'
+  stack: |-
+    failure (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine-boundaries.cjs:19:24)
+    startTranslationServer (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:1064:11)
+    async C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:517:29
+    async deadline (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine-boundaries.cjs:213:19)
+    async executeJob (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:434:7)
+    async C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:687:24
+    async Object.run (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:717:12)
+    async TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/docs/validation/stage17-windows-regression-20261119/journal-guard.test.mjs:34:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: a slow model still expires at the original readiness deadline before any translation
+ok 2 - a slow model still expires at the original readiness deadline before any translation
+  ---
+  duration_ms: 5937.8046
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19785.1865

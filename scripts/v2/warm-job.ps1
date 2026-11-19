@@ -88,8 +88,8 @@ public static class MangohanaWarmJob {
       }
     } finally {Marshal.FreeHGlobal(buffer);}
   }
-  public static int Run(string runId,string directory,string executable,string[] args,string cwd,int cleanupMs,int maxLifetimeMs) {
-    IntPtr job=IntPtr.Zero,attributes=IntPtr.Zero,jobValue=IntPtr.Zero,handleValue=IntPtr.Zero,environment=IntPtr.Zero,stdout=IntPtr.Zero,stderr=IntPtr.Zero;PROCESS_INFORMATION process=new PROCESS_INFORMATION();bool attributesInitialized=false,ready=false,resumed=false,identity=false,terminated=false,confirmed=false;string reason="startup_failed",failure=null;long created=0;uint rootCode=259,activeAfter=UInt32.MaxValue;var members=new Dictionary<string,Member>();var clock=Stopwatch.StartNew();
+  public static int Run(string runId,string directory,string executable,string[] args,string cwd,int cleanupMs,int maxLifetimeMs,long compileStarted,long compileEnded) {
+    IntPtr job=IntPtr.Zero,attributes=IntPtr.Zero,jobValue=IntPtr.Zero,handleValue=IntPtr.Zero,environment=IntPtr.Zero,stdout=IntPtr.Zero,stderr=IntPtr.Zero;PROCESS_INFORMATION process=new PROCESS_INFORMATION();bool attributesInitialized=false,ready=false,resumed=false,identity=false,terminated=false,confirmed=false;string reason="startup_failed",failure=null;long created=0,exitedAt=0;uint rootCode=259,activeAfter=UInt32.MaxValue;var members=new Dictionary<string,Member>();var clock=Stopwatch.StartNew();
     try {
       if(IntPtr.Size!=8||Marshal.SizeOf(typeof(STARTUPINFOEX))!=112||Marshal.SizeOf(typeof(EXTENDED_LIMIT))!=144||Marshal.SizeOf(typeof(ACCOUNTING))!=48)throw new InvalidOperationException("JOB_X64_LAYOUT_REQUIRED");
       job=CreateJobObjectW(IntPtr.Zero,null);Check(job!=IntPtr.Zero,"JOB_CREATE_FAILED");var limit=new EXTENDED_LIMIT();limit.BasicLimitInformation.LimitFlags=KILL_ON_JOB_CLOSE;Check(SetInformationJobObject(job,9,ref limit,(uint)Marshal.SizeOf(limit)),"JOB_LIMIT_FAILED");
@@ -123,6 +123,10 @@ public static class MangohanaWarmJob {
           Check(GetExitCodeProcess(process.hProcess,out rootCode),"JOB_EXIT_CODE_FAILED");
           bool allExited=true;foreach(var member in members.Values){bool memberIdentity=Creation(member.Handle,member.Pid)==member.Created;bool exited=WaitForSingleObject(member.Handle,0)==WAIT_OBJECT_0;allExited=allExited&&memberIdentity&&exited;rows.Add(Row("pid",member.Pid,"creationTime100ns",member.Created.ToString(),"identityConfirmed",memberIdentity,"exited",exited));}
           confirmed=identity&&activeAfter==0&&WaitForSingleObject(process.hProcess,0)==WAIT_OBJECT_0&&allExited;
+          if(identity&&WaitForSingleObject(process.hProcess,0)==WAIT_OBJECT_0) {
+            long sameCreation,exitTime,kernel,user;
+            if(GetProcessTimes(process.hProcess,out sameCreation,out exitTime,out kernel,out user)&&sameCreation==created&&exitTime>0)exitedAt=exitTime;
+          }
         }
       } catch(Exception error) {failure=failure??(error.Message.StartsWith("JOB_")?error.Message.Split(':')[0]:"JOB_CLEANUP_FAILED");confirmed=false;}
       // Last private handle close also kills descendants if the normal query/terminate path failed.
@@ -130,6 +134,11 @@ public static class MangohanaWarmJob {
       if(process.hThread!=IntPtr.Zero)CloseHandle(process.hThread);if(process.hProcess!=IntPtr.Zero)CloseHandle(process.hProcess);foreach(var member in members.Values)CloseHandle(member.Handle);
       if(stdout!=IntPtr.Zero)CloseHandle(stdout);if(stderr!=IntPtr.Zero)CloseHandle(stderr);if(environment!=IntPtr.Zero)Marshal.FreeHGlobal(environment);if(attributesInitialized)DeleteProcThreadAttributeList(attributes);if(attributes!=IntPtr.Zero)Marshal.FreeHGlobal(attributes);if(jobValue!=IntPtr.Zero)Marshal.FreeHGlobal(jobValue);if(handleValue!=IntPtr.Zero)Marshal.FreeHGlobal(handleValue);
       var receipt=Row("phase","complete","runId",runId,"supervisorPid",Process.GetCurrentProcess().Id,"rootPid",process.dwProcessId,"rootCreationTime100ns",created.ToString(),"rootExitCode",rootCode,"reason",reason,"failure",failure,"ready",ready,"resumed",resumed,"terminationRequested",terminated,"kernelCleanupConfirmed",confirmed,"activeProcessesAfter",activeAfter==UInt32.MaxValue?(object)null:activeAfter,"members",rows,"elapsedMs",clock.ElapsedMilliseconds,"scope","OWNED_KERNEL_JOB_ONLY_NO_AI_CLAIM");
+      receipt["rootExitTime100ns"]=exitedAt>0?exitedAt.ToString():null;
+      long supervisorCreated,ignoredExit,ignoredKernel,ignoredUser;
+      receipt["supervisorCreationTime100ns"]=GetProcessTimes(GetCurrentProcess(),out supervisorCreated,out ignoredExit,out ignoredKernel,out ignoredUser)?supervisorCreated.ToString():null;
+      receipt["helperCompileStartTime100ns"]=compileStarted.ToString();
+      receipt["helperCompileEndTime100ns"]=compileEnded.ToString();
       try{using(var file=new FileStream(Path.Combine(directory,"job-control-receipt.json"),FileMode.CreateNew,FileAccess.Write,FileShare.Read)){byte[] body=new UTF8Encoding(false).GetBytes(Json.Serialize(receipt));file.Write(body,0,body.Length);file.Flush(true);}}catch{confirmed=false;receipt["kernelCleanupConfirmed"]=false;receipt["failure"]="JOB_RECEIPT_WRITE_FAILED";}
       Emit(receipt);
     }
@@ -138,12 +147,14 @@ public static class MangohanaWarmJob {
 }
 '@
 try {
+  $compileStarted = [DateTime]::UtcNow.ToFileTimeUtc()
   Add-Type -TypeDefinition $definition -ReferencedAssemblies @('System.dll','System.Core.dll','System.Web.Extensions.dll')
+  $compileEnded = [DateTime]::UtcNow.ToFileTimeUtc()
   $line = [Console]::In.ReadLine()
   if ($null -eq $line -or $line.Length -gt 65536) { exit 83 }
   $spec = $line | ConvertFrom-Json
   if ($spec.runId -notmatch '^[-A-Za-z0-9._]{1,128}$' -or -not [IO.Path]::IsPathRooted($spec.executable) -or -not [IO.Path]::IsPathRooted($spec.cwd) -or $spec.cleanupMs -lt 100 -or $spec.cleanupMs -gt 60000 -or $spec.maxLifetimeMs -lt 1000 -or $spec.maxLifetimeMs -gt 3600000) { exit 84 }
-  $result = [MangohanaWarmJob]::Run([string]$spec.runId,$ControlRoot,[string]$spec.executable,[string[]]$spec.args,[string]$spec.cwd,[int]$spec.cleanupMs,[int]$spec.maxLifetimeMs)
+  $result = [MangohanaWarmJob]::Run([string]$spec.runId,$ControlRoot,[string]$spec.executable,[string[]]$spec.args,[string]$spec.cwd,[int]$spec.cleanupMs,[int]$spec.maxLifetimeMs,$compileStarted,$compileEnded)
   exit $result
 } catch {
   # Do not serialize exception details: input/options/environment may contain private data.

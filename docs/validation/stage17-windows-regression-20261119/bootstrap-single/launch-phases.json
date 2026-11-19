@@ -1,0 +1,28 @@
+{
+  "pass": true,
+  "expected": 1,
+  "measured": 1,
+  "rows": [
+    {
+      "kind": "bootstrap-positive",
+      "runId": "e7eb2e48-ff2a-440f-bd24-df7b4409a6ce",
+      "supervisorPid": 37152,
+      "rootPid": 38756,
+      "sameIdentity": true,
+      "measured": true,
+      "supervisorCreatedUtc": "2026-11-18T22:16:38.482Z",
+      "compileStartedUtc": "2026-11-18T22:16:49.267Z",
+      "compileCompletedUtc": "2026-11-18T22:16:50.413Z",
+      "rootCreatedUtc": "2026-11-18T22:16:50.481Z",
+      "rootExitedUtc": "2026-11-18T22:16:54.495Z",
+      "beforeCompileMs": 10785,
+      "compileMs": 1146,
+      "afterCompileUntilRootMs": 68,
+      "workerMs": 4014,
+      "rootExitCode": 87,
+      "reason": "lifetime_timeout",
+      "clean": true,
+      "activeAfter": 0
+    }
+  ]
+}

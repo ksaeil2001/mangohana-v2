@@ -1,0 +1,631 @@
+{
+  "fixtureSha256": "40f6346b225c55bec21d4e8b81ff176b0038e48c274ddd7f5a952efcba0a025a",
+  "ed": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-file-probe-ocybLC",
+  "cd": "C:\\Users\\ksaei\\AppData\\Local\\Temp\\mangohana-stage17-file-probe-N762yx",
+  "runs": [
+    {
+      "index": 0,
+      "volume": "E",
+      "requested": "2026-11-18T19:54:21.749Z",
+      "elapsedMs": 581,
+      "pair": true,
+      "events": [
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 36.76500000000033,
+          "at": "2026-11-18T19:54:22.317Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:21.800Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:22.295Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:22.304Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:22.305Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:22.309Z",
+          "elapsedMs": 3.390299999999911
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:22.310Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:22.315Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:22.315Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:22.317Z",
+          "elapsedMs": 2.0381999999999607
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:22.317Z"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "volume": "C",
+      "requested": "2026-11-18T19:54:22.331Z",
+      "elapsedMs": 1058,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:22.333Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:22.547Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:22.754Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:22.959Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:23.164Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 7.7224999999998545,
+          "at": "2026-11-18T19:54:23.376Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:22.375Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:23.353Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:23.372Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:23.373Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:23.374Z",
+          "elapsedMs": 0.5224999999999227
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:23.375Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:23.376Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:23.377Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:23.377Z",
+          "elapsedMs": 0.28539999999998145
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:23.377Z"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "volume": "C",
+      "requested": "2026-11-18T19:54:23.388Z",
+      "elapsedMs": 221,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:23.389Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 7.206600000000435,
+          "at": "2026-11-18T19:54:23.598Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:23.427Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:23.439Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:23.590Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:23.592Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:23.592Z",
+          "elapsedMs": 0.4435000000000002
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:23.593Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:23.594Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:23.594Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:23.595Z",
+          "elapsedMs": 0.27299999999999613
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:23.595Z"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "volume": "E",
+      "requested": "2026-11-18T19:54:24.211Z",
+      "elapsedMs": 242,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:24.212Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 18.883199999999306,
+          "at": "2026-11-18T19:54:24.444Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:24.257Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:24.269Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:24.428Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:24.429Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:24.433Z",
+          "elapsedMs": 3.1791000000000054
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:24.434Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:24.435Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:24.435Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:24.444Z",
+          "elapsedMs": 8.87809999999999
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:24.444Z"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "volume": "E",
+      "requested": "2026-11-18T19:54:24.815Z",
+      "elapsedMs": 229,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:24.816Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 13.72860000000037,
+          "at": "2026-11-18T19:54:25.031Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:24.862Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:24.874Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:25.021Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:25.023Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:25.026Z",
+          "elapsedMs": 3.1428999999999974
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:25.028Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:25.029Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:25.029Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:25.031Z",
+          "elapsedMs": 2.1380000000000052
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:25.032Z"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "volume": "C",
+      "requested": "2026-11-18T19:54:25.043Z",
+      "elapsedMs": 229,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:25.044Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 7.5416000000004715,
+          "at": "2026-11-18T19:54:25.261Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:25.083Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:25.096Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:25.253Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:25.254Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:25.255Z",
+          "elapsedMs": 0.4294999999999902
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:25.256Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:25.257Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:25.257Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:25.257Z",
+          "elapsedMs": 0.27439999999998577
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:25.258Z"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "volume": "C",
+      "requested": "2026-11-18T19:54:25.271Z",
+      "elapsedMs": 3910,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:25.272Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:25.475Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:25.680Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:25.885Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:26.090Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:26.294Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:26.498Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:26.704Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:26.909Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:27.113Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:27.319Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:27.524Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:27.729Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:27.934Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:28.139Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:28.344Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:28.550Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:28.754Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:28.960Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 7.547599999999875,
+          "at": "2026-11-18T19:54:29.171Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:25.314Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:29.146Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:29.167Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:29.168Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:29.169Z",
+          "elapsedMs": 0.4257999999999811
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:29.170Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:29.171Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:29.171Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:29.172Z",
+          "elapsedMs": 0.3043999999999869
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:29.172Z"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "volume": "E",
+      "requested": "2026-11-18T19:54:29.397Z",
+      "elapsedMs": 850,
+      "pair": true,
+      "events": [
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:29.398Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:29.607Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:29.813Z"
+        },
+        {
+          "kind": "request_error",
+          "error": "ECONNREFUSED",
+          "at": "2026-11-18T19:54:30.015Z"
+        },
+        {
+          "kind": "verified_pair",
+          "elapsedMs": 12.367699999998877,
+          "at": "2026-11-18T19:54:30.232Z"
+        }
+      ],
+      "worker": [
+        {
+          "phase": "node_entry",
+          "utc": "2026-11-18T19:54:29.444Z"
+        },
+        {
+          "phase": "listening",
+          "utc": "2026-11-18T19:54:30.156Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:30.223Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:30.225Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:30.228Z",
+          "elapsedMs": 3.400099999999952
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:30.230Z"
+        },
+        {
+          "phase": "server_request_start",
+          "utc": "2026-11-18T19:54:30.231Z"
+        },
+        {
+          "phase": "diary_begin",
+          "utc": "2026-11-18T19:54:30.231Z"
+        },
+        {
+          "phase": "diary_end",
+          "utc": "2026-11-18T19:54:30.233Z",
+          "elapsedMs": 2.1807999999999765
+        },
+        {
+          "phase": "response_finished",
+          "utc": "2026-11-18T19:54:30.233Z"
+        }
+      ]
+    }
+  ]
+}

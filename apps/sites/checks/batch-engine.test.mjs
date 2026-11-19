@@ -21,6 +21,30 @@ function completed(binding,p){return {id:binding.jobId,projectId:p.id,pageId:bin
 const callbacks=overrides=>({onIntent:async()=>{},onJobs:async()=>{},onResult:()=>{},onError:()=>{},onStage:()=>{},...overrides});
 const options=current=>({currentPageId:()=>current,concurrency:3,pollIntervalMs:0});
 
+test('a partial batch receipt preserves both bindings, applies its completed page and pauses only the unknown page',async()=>{
+ const p=project(2),results=[],errors=[],bindings=[],posts=[];let receipt;
+ globalThis.fetch=async(url,init={})=>{
+  if(String(url).startsWith('data:'))return originalFetch(url,init);
+  if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
+  if(init.method==='POST'){
+   posts.push(String(url));
+   receipt=await batchResponse(init.body,p);receipt.status='partial';
+   for(const [i,status] of ['completed','result_unknown'].entries()){receipt.pages[i].status=status;receipt.pages[i].job.status=status;}
+   return Response.json(receipt);
+  }
+  const entry=receipt.pages.find(item=>String(url).endsWith(item.jobId));assert.ok(entry);
+  return Response.json(entry.status==='completed'?completed(entry,p):{...entry.job,stage:'result_unknown'});
+ };
+ try{
+  const summary=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,
+   callbacks({onJobs:items=>bindings.push(...items),onResult:id=>results.push(id),onError:(id,error,terminal,retryable)=>errors.push([id,error,terminal,retryable])}),options('page-1'));
+  assert.deepEqual(summary,{completed:1,failed:0,paused:1});assert.deepEqual(results,['page-1']);
+  assert.equal(bindings.length,2);assert.deepEqual(posts,['/api/engine/batches']);
+  assert.equal(errors.length,1);assert.equal(errors[0][0],'page-2');assert.ok(errors[0][1] instanceof batch.BatchPendingError);
+  assert.match(errors[0][1].message,/미확정/);assert.deepEqual(errors[0].slice(2),[false,false]);
+ }finally{globalThis.fetch=originalFetch;}
+});
+
 test('ten pages use one durable multipart submission then bounded current+next-two polling',async()=>{
  required();const p=project(),calls=[],results=[],intents=[];let response,durable=false,active=0,maximum=0;
  globalThis.fetch=async(url,init={})=>{

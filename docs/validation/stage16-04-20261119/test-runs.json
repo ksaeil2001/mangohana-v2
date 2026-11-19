@@ -1,0 +1,171 @@
+{
+  "stage": "S16-04",
+  "dateKst": "2026-11-19",
+  "scope": "Offline synthetic blind assignment and return collection",
+  "runtime": {
+    "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+    "version": "v24.22.1",
+    "sha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+    "branch": "codex/mangohana-v2-sites-20261111",
+    "head": "4a87e02020a62b3a8925c6568925477e8b063b78"
+  },
+  "verification": {
+    "entry": "run-allowed.mjs",
+    "preload": "../stage16-03-20261119/metadata-only.mjs",
+    "command": "& $runtime.executable docs/validation/stage16-04-20261119/run-allowed.mjs <red|returns|focused|regression>",
+    "firstRun": "Explicit file and exact allowed test names, metadata-only preload and Node permissions active before the first test body. No unguarded test runs.",
+    "selection": "Exact-name registration filter and anchored CLI filter. Executed TAP names checked against the full allowlist after each file; checked skip, cancel, TODO and guard results.",
+    "access": "Only allowlisted source, installed JS dependencies, schemas and selected test inputs are readable. No filesystem write, child, worker, or native addon grant in the test process. Image library calls, listed codecs, listed network imports and fetch are blocked.",
+    "redReplay": "The red-only preload redirects the S16-04 test import to red-baseline.mjs. Focused, returns and regression suites use the product modules.",
+    "countsAre": "Executed test cases; no image generation, product model call or human review is a test result."
+  },
+  "runs": [
+    {
+      "log": "red-contract.log",
+      "suite": "red",
+      "exitCode": 1,
+      "scope": "before implementation, unblinded S16-03 projection and single-answer collection",
+      "sha256": "63912c203e66d02d955c08863ecc7ad183bda2b417bea10b8908db5971fe76d2",
+      "counts": {
+        "tests": 7,
+        "pass": 0,
+        "fail": 7,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "log": "focused.log",
+      "suite": "focused",
+      "exitCode": 0,
+      "scope": "first implementation, 16 named cases at the time of this run",
+      "sha256": "37d7b7a45c75b5d170545ab91cbfa5e1234fb4ea5a82dc2f1a2ed424f8d28f06",
+      "counts": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "log": "red-returns.log",
+      "suite": "returns",
+      "exitCode": 1,
+      "scope": "public-form echo, submitted blanks and envelope attribution before the return-contract fix",
+      "sha256": "a350086098bf3247a8653fe6ed7c2b3ee8010f80c168709c8d8332e9fc7c47c1",
+      "counts": {
+        "tests": 3,
+        "pass": 0,
+        "fail": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "log": "final-focused.log",
+      "suite": "focused",
+      "exitCode": 0,
+      "scope": "final S16-04 code, including anonymous packet round trip and complete synthetic recovery",
+      "sha256": "7884df2d495bdfb6e1f281649252aef22a4d0ae6b6f2748322a5b01b647156bb",
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "log": "final-regression.log",
+      "suite": "regression",
+      "exitCode": 0,
+      "scope": "S16-01 (3), S16-02 (4), S16-03 (7), Stage05 (6), Stage08 (3)",
+      "sha256": "7b93338408dcebc90fefb06330676679f21c64a332c3f4bfe10d1c1996f99d60",
+      "counts": {
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    }
+  ],
+  "beforeAfter": {
+    "numberOfFiles": 42,
+    "changed": []
+  },
+  "finalSourceSha256": {
+    "packages/evaluation/stage16-blind-review.mjs": "d0b8947a11798d1b6fd8be6bc5f12cd32008c85c844e95c1fd6725198c893205",
+    "packages/evaluation/dataset-contract.mjs": "b49657d3130b164d338501d4982cead673cd52b1e72ff018e83c763fbe70d9e9",
+    "packages/evaluation/image-fingerprint.mjs": "cb20b21331331041aa9b836c4bbd2e2fe568dec0c0f6a3cd1f582d838f883c92",
+    "packages/evaluation/stage16-execution-observations.mjs": "36b0fc743619e225b7051e1aca641d85210eadb264c5e98ce30012389ad74825",
+    "packages/evaluation/stage16-experiment-lock.mjs": "d73967a3638310ec9c9d0d07fff4f68b34ee2c99af4baa0f2077086dcd4872b1",
+    "packages/evaluation/stage16-condition-matrix.mjs": "8f15aaa851463dc92829d7bb71b58917b7cfbaad5228b6a9330a4c52a9b8b1c1",
+    "packages/evaluation/dataset-v1.schema.json": "f876f683041cd30af1b0030f6783d55be0ccaeca77ed934c72609c0bf2c10d57",
+    "packages/evaluation/annotation-v1.schema.json": "539beff79d96465bc8546e19075c0255bccd17272db508e52551afb5abfa268e",
+    "packages/evaluation/policy/policy.mjs": "fb5252de43cfbc5be14d35bfd0ece4c5b00e362b8a2b15837fd4b9cb5b093b8b",
+    "packages/evaluation/policy/stage08-v1.1.json": "5d8e5f5f75244fe138772e9865c255a5d7c0e5e7db97e851a350f67f9922f1d9",
+    "packages/contracts/src/v2-common-contract.mjs": "e2fd1e616d874365097363c4228d5794bcdb9e13ddcb184e6cadae9d7a3c2def",
+    "packages/contracts/schemas/v2-common-contract-v1.schema.json": "994b8a6a6a23568cc4e5c5170a2991c553c19a16a873d68e17e81dbfacc85c25",
+    "apps/engine/stage15-provider-adapter.mjs": "5ff8b985052f62853540fc4b64672ec99600e013bf84e95a488da391a5767f39",
+    "apps/engine/stage15-batch-accounting.mjs": "fa437387ea1465029b188c8b7661d3be29419d8bbf444424fc92bd489bd94a0e",
+    "apps/engine/store.mjs": "0f63a6773a507c0385666d117cf83d5ba13cec0a8980fb95fe3eed024cdbfc39",
+    "apps/engine/result.mjs": "7d59ecc39be9347645b05c62405d5126fc7302cdb897ee498878bf174a202b7f",
+    "apps/desktop/scripts/evaluate-automation-quality.mjs": "3738adef1f4e5d4bc5a25006b263453359555efec0139770ce23b3efd0492f61",
+    "packages/ai-engine/quality/human-translation-review.cjs": "5588e6dac58dce94cac6fae164ea348e128ddb8e10d60605110ebf7a39dcece7",
+    "packages/ai-engine/quality/recovery-checkpoint.cjs": "1aff650b45a2bd09eff7ed2e87336d73db8b4d94519607be99247767eed6398a",
+    "packages/ai-engine/quality/recovery-policy.cjs": "161a708dae946d67f3a8f0fa215c18f6a63ac84af85279842b1d61f81300d812",
+    "packages/ai-engine/quality/stage15-quality-decision.cjs": "902de5c4875328bbe96d506535fb3d4cae7d1ebdab7fd94f1bb1cbbbc56323a2",
+    "packages/ai-engine/quality/stage15-stage-graph.cjs": "b9f91574ab7c57c037f03b4707b01824d6d6b15c340bbb40cd2c7f737ce93ca2",
+    "tests/v2/fixtures/stage16-experiment.mjs": "d56b694b30b101ea993997457cbf09a12be1c62db095fd7158ea4478d7190fe9",
+    "tests/v2/fixtures/stage16-observations.mjs": "7f9cad3c2d254ed4a00947a2e12d75371b729de9401afa0913bbb36a9998c215",
+    "tests/v2/fixtures/stage16-blind-review.mjs": "98452cacd0fbdb83c13dc82bb7daeadfc8e54f621feeff617bd9af4e75a031f8",
+    "tests/v2/stage16-blind-review.test.mjs": "27b189a055d2a3af372bfc229ada03e8249e703cbaf84ea9fe22006c93b30354",
+    "tests/v2/stage16-execution-observations.test.mjs": "3884dd68b287dff185fcb6fc785383b3c9caead56be1ca18110f2b29882bce83",
+    "tests/v2/stage16-experiment-lock.test.mjs": "9034be288020c71e4c0f7473feda6c5aba8a5b16ad76e8e8854fdfde3dabd043",
+    "tests/v2/stage16-condition-matrix.test.mjs": "18f4ab82a45cd49fda98a3825f0966fc06c47ff68fbadeb87377d5c09a623dd2",
+    "tests/v2/evaluation-dataset.test.mjs": "5bc93a48928b1fe5cc592c3814235b31524b466b8036ff01b0e74cac1d0fae7e",
+    "tests/v2/quality-policy.test.mjs": "fb0747c3430af3dc7144ab563a981af63bc612d739005ac15e1e7e8563495308",
+    "docs/validation/stage16-04-20261119/run-allowed.mjs": "5e9137af27bf1f3b3b79cccafb8566be15b892d6bd6fc5052dd91a8d41a2b897",
+    "docs/validation/stage16-04-20261119/red-baseline.mjs": "ea455b80bf98554fb90793c8f8fa847327c9eceb773262cab177054696576ad5",
+    "docs/validation/stage16-03-20261119/metadata-only.mjs": "b4d79f00abd1397b48b6a79ee25fd0404e99db1068271648782a8a76278f91ef",
+    "packages/evaluation/offline/v2-adapter.mjs": "2c8a709d27d66fa20d4f68edd68a731b078987824e5cc6dd2e7568e6fb9227db",
+    "packages/evaluation/offline/report.mjs": "0c5fc1996b8ed91d21ba5086ebd34112b1fd73d6d162a79b8c9c54b76bca439f",
+    "packages/evaluation/offline/quality.mjs": "10ecf14ac5ccb6f6519084b8aae80997d68910ced4dac574c7aa7b833c3fb9cf",
+    "packages/evaluation/offline/operations.mjs": "dbb47223f29e5149ed88188d4a2cebd65494dbf15bb9566595c32bb6e8bbf337",
+    "packages/evaluation/offline/ocr.mjs": "6d72b8904d84d4588f8ce8c5bc6ae8e49329da9543711889f6507a1c2ee2cc9e",
+    "packages/evaluation/offline/evidence.mjs": "5bd92d9d98f3c3682bb544ec56dab9909bd79f55326366249f49e1c2ff2ef27a",
+    "packages/evaluation/offline/evaluator.mjs": "4dd5ee73c81b2e5729f9996bbc15ccd0ca45407a586a62d84b12ba64f6e65ad3",
+    "packages/evaluation/offline/contract.mjs": "57ed99788a463908814690984f3263a802133ed5f52cec92f888476b462f1c66"
+  },
+  "artifacts": {
+    "synthetic-coordinator.json": "0dbfee1305e0b9f853f4750b8733d47c7cded258a04f27e2ca1a431ae3a9792c",
+    "synthetic-form-1.json": "de5a978292729482b26e192a39e9d069f87659fbdc19f014b339293838a74a64",
+    "synthetic-form-2.json": "f81012c0cb34941492e899c8575ade9487adfbf867fde8d203387c4f34474663",
+    "synthetic-recovery.json": "8631664106b55e47c28051305667fd8a2ec9191cbb4463c8964dcf2b6eb8923a"
+  },
+  "independentCheck": {
+    "role": "test_verifier",
+    "model": "GPT-6 Luna (low), role configuration",
+    "subagents": 1,
+    "scope": "Offline hand calculation only; no tests, files, images, or human ratings.",
+    "agreement": "4 planned pairs, 6 assigned, 5 issued. Fidelity has 3 answered/2 missing among issued; naturalness has 2 answered/3 missing. The remaining assignment was not issued. The double review disagrees only on fidelity.",
+    "correction": "The hand calculation's state list said 1 unanswered, leaving only 5 of 6 assignments accounted for. The overlap pair's second reader and the issued single pair both gave no reply. Final ledger: answered 2, partial 1, unanswered 2, unavailable 1."
+  },
+  "executionScope": {
+    "testInputs": "Synthetic Stage05/16 metadata and Stage03 receipt fingerprints",
+    "productModelInvocations": 0,
+    "realMaterialUsed": false,
+    "imageProcessing": 0,
+    "permitIssuedOrConsumed": 0,
+    "actualHumanRatings": 0,
+    "humanIdentityAuthenticated": false,
+    "nextStageStarted": false
+  }
+}

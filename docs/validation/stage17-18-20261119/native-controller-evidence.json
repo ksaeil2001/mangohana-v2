@@ -1,0 +1,59 @@
+{
+  "source": "Six explicit typesetting fixture directories named by the two V2 TAP logs. Only controller.json was read.",
+  "rows": [
+    {
+      "fixture": "mangohana-release-v2-xyIVkd/typesetting-native-juhQp8",
+      "sha256": "69cca288afc99ed1989837d97296f9545207806b9386b5931bffca467117a7e1",
+      "rootExitCode": 2147483651,
+      "kernelCleanupConfirmed": true,
+      "supervisorExitCode": 0,
+      "failure": null,
+      "supervisorClosed": true
+    },
+    {
+      "fixture": "mangohana-release-v2-xyIVkd/typesetting-native-KaNzGd",
+      "sha256": "8d3d30db5ed6a4875faa45dadce7f5c5e13f095c2e7c159f063762b4533449c6",
+      "rootExitCode": 0,
+      "kernelCleanupConfirmed": true,
+      "supervisorExitCode": 0,
+      "failure": null,
+      "supervisorClosed": true
+    },
+    {
+      "fixture": "mangohana-release-v2-xyIVkd/typesetting-native-p3ZTta",
+      "sha256": "0a4509dd971c42613f48f92b1888a008c3f3e281058675118707a8157997f8ab",
+      "rootExitCode": 1,
+      "kernelCleanupConfirmed": true,
+      "supervisorExitCode": 0,
+      "failure": null,
+      "supervisorClosed": true
+    },
+    {
+      "fixture": "mangohana-release-v2-4qB0VG/typesetting-native-2IW2cq",
+      "sha256": "257ebd86d41d2e1d70fd2d1840a57abdf5ee55dc57fc96cd81d24a7c4c18a232",
+      "rootExitCode": 0,
+      "kernelCleanupConfirmed": true,
+      "supervisorExitCode": 0,
+      "failure": null,
+      "supervisorClosed": true
+    },
+    {
+      "fixture": "mangohana-release-v2-4qB0VG/typesetting-native-YtphJa",
+      "sha256": "2469b707e039c1adf6659473d515b85f5d9110b5adb21dfe3906ca782f06297f",
+      "rootExitCode": 2147483651,
+      "kernelCleanupConfirmed": true,
+      "supervisorExitCode": 0,
+      "failure": null,
+      "supervisorClosed": true
+    },
+    {
+      "fixture": "mangohana-release-v2-4qB0VG/typesetting-native-PDCSjN",
+      "sha256": "31918935165c0db18d6704bb2bfc906891d4194beeca91c8f95195cbbe10852c",
+      "rootExitCode": 1,
+      "kernelCleanupConfirmed": true,
+      "supervisorExitCode": 0,
+      "failure": null,
+      "supervisorClosed": true
+    }
+  ]
+}

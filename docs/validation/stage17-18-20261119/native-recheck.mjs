@@ -1,0 +1,22 @@
+import {createHash} from 'node:crypto';
+import {readFileSync,mkdirSync,mkdtempSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const root=fileURLToPath(new URL('../../../',import.meta.url)),dir=fileURLToPath(new URL('.',import.meta.url));
+const names=['engine-ocr-refinement','engine-runtime-reuse','imported-font-bootstrap','typesetting-only-native','warm-electron-entry'];
+const files=names.map(n=>'tests/v2/'+n+'.test.mjs');
+const full=JSON.parse(readFileSync(path.join(dir,'v2-current.json')));
+const pins=JSON.parse(readFileSync(path.join(dir,full.sources)));
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+if(sha(readFileSync(path.join(dir,'v2-current.log')))!==full.logSha256)throw Error('Full run log changed');
+for(const f of files)if(pins[f]!==sha(readFileSync(path.join(root,f))))throw Error('Full-run test input has changed: '+f);
+const temp=mkdtempSync('E:/Dev/Outputs/MangohanaV2-20261111/tests/mangohana-release-native-');
+const owned=path.join(temp,'owned'),lease=path.join(temp,'lease');mkdirSync(owned);mkdirSync(lease);
+const env={...process.env,TEMP:temp,TMP:temp,MANGOHANA_OWNED_RUNTIME_TEST_DIR:owned,MANGOHANA_LEASE_TEST_DIR:lease,NO_COLOR:'1'};
+const args=['--test','--test-reporter=tap','--test-concurrency=1',...files];
+console.log('FULL_FILE_RECHECK '+JSON.stringify({temp,owned,lease,args,original:full.logSha256,purpose:'Repeat the five affected unchanged synthetic suites, preserving original timeouts'}));
+const run=spawnSync(process.execPath,args,{cwd:root,env,stdio:'inherit',windowsHide:true});
+if(run.error)throw run.error;
+process.exitCode=run.status??2;

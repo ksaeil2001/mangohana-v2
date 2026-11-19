@@ -121,7 +121,7 @@ export function connectionIsReady(state:ConnectionState,endpoint:string) {
 }
 
 export type PageEvent={type:'start';requestId:string}|{type:'job';requestId:string;jobId:string;endpoint:string;pageNumber?:number}|{type:'batch';requestId:string;intent:PendingBatch}|
- {type:'result';requestId:string;result:{blocks:TextBlock[];cleanImage?:string}}|
+ {type:'result';requestId:string;result:Pick<StudioPage,'blocks'|'cleanImage'|'finalImage'|'finalImageSignature'|'engineReview'>}|
  {type:'failure';requestId:string;error:string;terminal:boolean;retryableJob?:boolean}|{type:'pause';requestId:string;error?:string}|{type:'continue-editing'};
 // Runtime tickets never become persisted editor revisions or cross-project cache values.
 const pageInputs=new WeakMap<StudioPage,{image:string;content:string;generation:number;manual:boolean}>();
@@ -133,7 +133,7 @@ export function transitionPage(page:StudioPage,event:PageEvent):StudioPage {
   if(page.status==='processing'&&page.requestId&&page.requestId!==event.requestId)return page;
   if(page.status==='processing'&&page.requestId===event.requestId)return page;
   const next={...page,status:'processing' as const,requestId:event.requestId,error:undefined};
-  pageInputs.set(next,{image:page.image,content:pageContent(page),generation:page.engineGeneration??0,manual:page.reviewed||page.blocks.length>0&&page.finalImageSignature!==blockVisualSignature(page.blocks)});return next;
+  pageInputs.set(next,{image:page.image,content:pageContent(page),generation:page.engineGeneration??0,manual:page.reviewed||page.blocks.some(b=>b.userSourceBox!==undefined)||page.blocks.length>0&&page.finalImageSignature!==blockVisualSignature(page.blocks)});return next;
  }
  if(page.requestId!==event.requestId)return page;
  if(event.type==='batch'||event.type==='job'){
@@ -142,7 +142,7 @@ export function transitionPage(page:StudioPage,event:PageEvent):StudioPage {
  }
  if(event.type==='result'){
   if(!canApplyPageResult(page))return {...page,status:'review',requestId:undefined,error:'최신 사용자 수정과 확정값을 보존했어요. 이전 AI 후보는 적용하지 않았어요.'};
-  return {...page,...event.result,status:'review',reviewed:false,processed:true,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
+  return {...page,...event.result,engineReview:event.result.engineReview,status:'review',reviewed:false,processed:true,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
  }
  if(event.type==='failure')return {...page,status:'failed',requestId:undefined,error:event.error,...(event.terminal&&!event.retryableJob?{jobId:undefined,jobEndpoint:undefined}:{})};
  if(event.type==='pause'){
@@ -152,6 +152,14 @@ export function transitionPage(page:StudioPage,event:PageEvent):StudioPage {
  return page;
 }
 export function canEditPage(page:StudioPage|undefined) {return !!page&&!page.jobId&&!page.pendingBatch&&page.status!=='processing'&&page.status!=='paused';}
+
+export function moveStudioPage(project:Project,pageId:string,direction:-1|1):Project {
+ const from=project.pages.findIndex(page=>page.id===pageId), to=from+direction;
+ if(from<0||to<0||to>=project.pages.length||!project.pages.every(canEditPage))return project;
+ const pages=[...project.pages];
+ [pages[from],pages[to]]=[pages[to],pages[from]];
+ return {...project,pages};
+}
 /** Validate the entire receipt before attaching any ID; manual content stays on its existing objects. */
 export function bindProjectBatch(project:Project,baseline:StudioPage[],requestId:string,change:{intent?:PendingBatch;bindings?:readonly {pageId:string;jobId:string;pageNumber?:number;batchKey?:string;generation?:number;sourceSha256?:string}[];pollPageIds:readonly string[]}):Project {
  const bindings=change.bindings||[],ids=change.intent?change.intent.members.map(member=>member.pageId):bindings.map(binding=>binding.pageId),poll=new Set(change.pollPageIds);

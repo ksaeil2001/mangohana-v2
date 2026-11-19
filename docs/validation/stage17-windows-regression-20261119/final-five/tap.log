@@ -1,0 +1,274 @@
+TAP version 13
+# Subtest: refinement executes three service.execute crop requests inside one cold lifetime, preserving raw evidence and refined mask protection
+ok 1 - refinement executes three service.execute crop requests inside one cold lifetime, preserving raw evidence and refined mask protection
+  ---
+  duration_ms: 1070.5524
+  type: 'test'
+  ...
+# Subtest: default and explicit false retain full OCR lifetime with no crop inference and explicitly hold unresolved connected dialogue
+ok 2 - default and explicit false retain full OCR lifetime with no crop inference and explicitly hold unresolved connected dialogue
+  ---
+  duration_ms: 1169.1772
+  type: 'test'
+  ...
+# Subtest: cached full and crop OCR keep a separate owner across jobs without status or lazy-child restarts
+ok 3 - cached full and crop OCR keep a separate owner across jobs without status or lazy-child restarts
+  ---
+  duration_ms: 1498.6997
+  type: 'test'
+  ...
+# Subtest: a crop lazy respawn is denied before creating a child and never replays full OCR
+ok 4 - a crop lazy respawn is denied before creating a child and never replays full OCR
+  ---
+  duration_ms: 1149.0538
+  type: 'test'
+  ...
+# Subtest: empty crop OCR or a dead retained child preserves raw/source evidence and cannot reach translation
+ok 5 - empty crop OCR or a dead retained child preserves raw/source evidence and cannot reach translation
+  ---
+  duration_ms: 2162.6439
+  type: 'test'
+  ...
+# Subtest: cancellation during crop OCR drains the same owner and never publishes a refined page
+ok 6 - cancellation during crop OCR drains the same owner and never publishes a refined page
+  ---
+  duration_ms: 849.6019
+  type: 'test'
+  ...
+# Subtest: foreign crop shape and existing refinement artifacts fail before extra inference without overwriting anything
+ok 7 - foreign crop shape and existing refinement artifacts fail before extra inference without overwriting anything
+  ---
+  duration_ms: 1131.0359
+  type: 'test'
+  ...
+# Subtest: refinement is an explicit boolean requiring a learned region detector; invalid options create no work
+ok 8 - refinement is an explicit boolean requiring a learned region detector; invalid options create no work
+  ---
+  duration_ms: 1072.306
+  type: 'test'
+  ...
+# Subtest: margin correspondence reaches renderer drafts and learned mask IDs while leaving glyph quality pending
+ok 9 - margin correspondence reaches renderer drafts and learned mask IDs while leaving glyph quality pending
+  ---
+  duration_ms: 731.3583
+  type: 'test'
+  ...
+# Subtest: uncertain connected dialogue stops before masks and translation with a durable review packet
+ok 10 - uncertain connected dialogue stops before masks and translation with a durable review packet
+  ---
+  duration_ms: 1760.6444
+  type: 'test'
+  ...
+# Subtest: default false keeps per-job cold lifecycle, authenticated model identity and original quality guards
+ok 11 - default false keeps per-job cold lifecycle, authenticated model identity and original quality guards
+  ---
+  duration_ms: 1735.362
+  type: 'test'
+  ...
+# Subtest: Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request
+ok 12 - Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request
+  ---
+  duration_ms: 2783.3035
+  type: 'test'
+  ...
+# Subtest: Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening
+ok 13 - Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening
+  ---
+  duration_ms: 4584.7445
+  type: 'test'
+  ...
+# Subtest: Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved
+ok 14 - Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved
+  ---
+  duration_ms: 1094.8177
+  type: 'test'
+  ...
+# Subtest: Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved
+ok 15 - Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved
+  ---
+  duration_ms: 1138.9965
+  type: 'test'
+  ...
+# Subtest: health advertises saved terminology consumption for both page and Stage11 text paths
+ok 16 - health advertises saved terminology consumption for both page and Stage11 text paths
+  ---
+  duration_ms: 5678.3919
+  type: 'test'
+  ...
+# Subtest: Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft
+ok 17 - Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft
+  ---
+  duration_ms: 3938.6671
+  type: 'test'
+  ...
+# Subtest: Stage11 text partial response cannot publish, erase source, or replace a last normal PNG
+ok 18 - Stage11 text partial response cannot publish, erase source, or replace a last normal PNG
+  ---
+  duration_ms: 4028.3503
+  type: 'test'
+  ...
+# Subtest: Stage11 page partial response cannot publish, erase source, or replace a last normal PNG
+ok 19 - Stage11 page partial response cannot publish, erase source, or replace a last normal PNG
+  ---
+  duration_ms: 845.5026
+  type: 'test'
+  ...
+# Subtest: Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report
+ok 20 - Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report
+  ---
+  duration_ms: 1270.1432
+  type: 'test'
+  ...
+# Subtest: a page request binds the server snapshot and records actual glossary/context consumption
+ok 21 - a page request binds the server snapshot and records actual glossary/context consumption
+  ---
+  duration_ms: 1066.038
+  type: 'test'
+  ...
+# Subtest: selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs
+ok 22 - selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs
+  ---
+  duration_ms: 1809.3195
+  type: 'test'
+  ...
+# Subtest: a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation
+ok 23 - a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation
+  ---
+  duration_ms: 1571.287
+  type: 'test'
+  ...
+# Subtest: engine close cancels active synthetic translation, drains job and caches, then releases hooks
+ok 24 - engine close cancels active synthetic translation, drains job and caches, then releases hooks
+  ---
+  duration_ms: 885.9471
+  type: 'test'
+  ...
+# Subtest: a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation
+ok 25 - a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation
+  ---
+  duration_ms: 2470.4768
+  type: 'test'
+  ...
+# Subtest: recognition failure records bounded private diagnostics before generic public error without model work
+ok 26 - recognition failure records bounded private diagnostics before generic public error without model work
+  ---
+  duration_ms: 750.7415
+  type: 'test'
+  ...
+# Subtest: cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments
+ok 27 - cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments
+  ---
+  duration_ms: 1977.097
+  type: 'test'
+  ...
+# Subtest: unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job
+ok 28 - unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job
+  ---
+  duration_ms: 963.733
+  type: 'test'
+  ...
+# Subtest: worker bootstrap loads the signed production font without image execution
+ok 29 - worker bootstrap loads the signed production font without image execution
+  ---
+  duration_ms: 4650.7042
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-final-five-TmWK3k\\font-bootstrap-k2EjiP\\probe-summary.json
+# Subtest: worker font failure stays closed with a stack before any image pipeline
+ok 30 - worker font failure stays closed with a stack before any image pipeline
+  ---
+  duration_ms: 6002.528
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-final-five-TmWK3k\\font-bootstrap-BG7LZj\\probe-summary.json
+# Subtest: worker persists bound per-region layout diagnostics without an image execution
+ok 31 - worker persists bound per-region layout diagnostics without an image execution
+  ---
+  duration_ms: 3356.095
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-final-five-TmWK3k\\font-bootstrap-5RU6zF\\probe-summary.json
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+not ok 32 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+  ---
+  duration_ms: 20752.3845
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\typesetting-only-native.test.mjs:5:160'
+  failureType: 'testCodeFailure'
+  error: |-
+    
+    PostQueuedCompletionStatus: (6) �ڵ��� �߸��Ǿ����ϴ�.
+    
+    
+    2147483651 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 2147483651
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/tests/v2/typesetting-only-native.test.mjs:13:2694)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-final-five-TmWK3k\\typesetting-native-PZ59d3
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion
+ok 33 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion
+  ---
+  duration_ms: 14280.7266
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-final-five-TmWK3k\\typesetting-native-hjSXlT
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval
+ok 34 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval
+  ---
+  duration_ms: 13784.175
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-final-five-TmWK3k\\typesetting-native-6vD1da
+# Subtest: entry detection uses the normalized entry argv path and remains false for source-only imports
+ok 35 - entry detection uses the normalized entry argv path and remains false for source-only imports
+  ---
+  duration_ms: 0.8524
+  type: 'test'
+  ...
+# Subtest: startup diagnostics preserve only a safe error code and a known bootstrap stage
+ok 36 - startup diagnostics preserve only a safe error code and a known bootstrap stage
+  ---
+  duration_ms: 0.7992
+  type: 'test'
+  ...
+# Subtest: real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly
+ok 37 - real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly
+  ---
+  duration_ms: 737.5935
+  type: 'test'
+  ...
+# Subtest: real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle
+ok 38 - real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle
+  ---
+  duration_ms: 1662.6545
+  type: 'test'
+  ...
+# Subtest: real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result
+ok 39 - real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result
+  ---
+  duration_ms: 3705.6949
+  type: 'test'
+  ...
+# Subtest: real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result
+ok 40 - real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result
+  ---
+  duration_ms: 2794.0554
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 39
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 123318.2908

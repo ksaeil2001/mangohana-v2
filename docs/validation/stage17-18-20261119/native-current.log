@@ -1,0 +1,309 @@
+FULL_FILE_RECHECK {"temp":"E:/Dev/Outputs/MangohanaV2-20261111/tests/mangohana-release-native-22CRqH","owned":"E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\owned","lease":"E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\lease","args":["--test","--test-reporter=tap","--test-concurrency=1","tests/v2/engine-ocr-refinement.test.mjs","tests/v2/engine-runtime-reuse.test.mjs","tests/v2/imported-font-bootstrap.test.mjs","tests/v2/typesetting-only-native.test.mjs","tests/v2/warm-electron-entry.test.mjs"],"original":"c489a7e2f60dd966e94a2ccde2addd230643f00b843e1112df80a64892c9b8f9","purpose":"Repeat the five affected unchanged synthetic suites, preserving original timeouts"}
+TAP version 13
+# Subtest: refinement executes three service.execute crop requests inside one cold lifetime, preserving raw evidence and refined mask protection
+ok 1 - refinement executes three service.execute crop requests inside one cold lifetime, preserving raw evidence and refined mask protection
+  ---
+  duration_ms: 825.8797
+  type: 'test'
+  ...
+# Subtest: default and explicit false retain full OCR lifetime with no crop inference and explicitly hold unresolved connected dialogue
+ok 2 - default and explicit false retain full OCR lifetime with no crop inference and explicitly hold unresolved connected dialogue
+  ---
+  duration_ms: 1210.2513
+  type: 'test'
+  ...
+# Subtest: cached full and crop OCR keep a separate owner across jobs without status or lazy-child restarts
+ok 3 - cached full and crop OCR keep a separate owner across jobs without status or lazy-child restarts
+  ---
+  duration_ms: 1403.3184
+  type: 'test'
+  ...
+# Subtest: a crop lazy respawn is denied before creating a child and never replays full OCR
+ok 4 - a crop lazy respawn is denied before creating a child and never replays full OCR
+  ---
+  duration_ms: 1503.9844
+  type: 'test'
+  ...
+# Subtest: empty crop OCR or a dead retained child preserves raw/source evidence and cannot reach translation
+ok 5 - empty crop OCR or a dead retained child preserves raw/source evidence and cannot reach translation
+  ---
+  duration_ms: 2133.1739
+  type: 'test'
+  ...
+# Subtest: cancellation during crop OCR drains the same owner and never publishes a refined page
+ok 6 - cancellation during crop OCR drains the same owner and never publishes a refined page
+  ---
+  duration_ms: 849.6171
+  type: 'test'
+  ...
+# Subtest: foreign crop shape and existing refinement artifacts fail before extra inference without overwriting anything
+ok 7 - foreign crop shape and existing refinement artifacts fail before extra inference without overwriting anything
+  ---
+  duration_ms: 1371.5732
+  type: 'test'
+  ...
+# Subtest: refinement is an explicit boolean requiring a learned region detector; invalid options create no work
+ok 8 - refinement is an explicit boolean requiring a learned region detector; invalid options create no work
+  ---
+  duration_ms: 1073.5744
+  type: 'test'
+  ...
+# Subtest: margin correspondence reaches renderer drafts and learned mask IDs while leaving glyph quality pending
+ok 9 - margin correspondence reaches renderer drafts and learned mask IDs while leaving glyph quality pending
+  ---
+  duration_ms: 949.065
+  type: 'test'
+  ...
+# Subtest: uncertain connected dialogue stops before masks and translation with a durable review packet
+ok 10 - uncertain connected dialogue stops before masks and translation with a durable review packet
+  ---
+  duration_ms: 1210.7286
+  type: 'test'
+  ...
+# Subtest: default false keeps per-job cold lifecycle, authenticated model identity and original quality guards
+ok 11 - default false keeps per-job cold lifecycle, authenticated model identity and original quality guards
+  ---
+  duration_ms: 6900.5408
+  type: 'test'
+  ...
+# Subtest: Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request
+ok 12 - Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request
+  ---
+  duration_ms: 4877.1834
+  type: 'test'
+  ...
+# Subtest: Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening
+not ok 13 - Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening
+  ---
+  duration_ms: 10659.4553
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\engine-runtime-reuse.test.mjs:29:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'sha256')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/tests/v2/engine-runtime-reuse.test.mjs:33:126)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved
+ok 14 - Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved
+  ---
+  duration_ms: 5704.3357
+  type: 'test'
+  ...
+# Subtest: Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved
+not ok 15 - Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved
+  ---
+  duration_ms: 13877.0588
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\engine-runtime-reuse.test.mjs:42:75'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    Error: 생성한 프로세스의 종료 확인에 실패했습니다. 엔진을 다시 시작해야 합니다.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/tests/v2/engine-runtime-reuse.test.mjs:44:2)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: health advertises saved terminology consumption for both page and Stage11 text paths
+ok 16 - health advertises saved terminology consumption for both page and Stage11 text paths
+  ---
+  duration_ms: 4841.6139
+  type: 'test'
+  ...
+# Subtest: Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft
+ok 17 - Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft
+  ---
+  duration_ms: 6743.8949
+  type: 'test'
+  ...
+# Subtest: Stage11 text partial response cannot publish, erase source, or replace a last normal PNG
+ok 18 - Stage11 text partial response cannot publish, erase source, or replace a last normal PNG
+  ---
+  duration_ms: 4477.114
+  type: 'test'
+  ...
+# Subtest: Stage11 page partial response cannot publish, erase source, or replace a last normal PNG
+ok 19 - Stage11 page partial response cannot publish, erase source, or replace a last normal PNG
+  ---
+  duration_ms: 1351.3032
+  type: 'test'
+  ...
+# Subtest: Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report
+ok 20 - Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report
+  ---
+  duration_ms: 2789.8373
+  type: 'test'
+  ...
+# Subtest: a page request binds the server snapshot and records actual glossary/context consumption
+ok 21 - a page request binds the server snapshot and records actual glossary/context consumption
+  ---
+  duration_ms: 5758.2159
+  type: 'test'
+  ...
+# Subtest: selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs
+not ok 22 - selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs
+  ---
+  duration_ms: 6261.2043
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\engine-runtime-reuse.test.mjs:103:1'
+  failureType: 'testCodeFailure'
+  error: '전용 로컬 번역 모델 적재 시간이 초과되었습니다.'
+  code: 'LLM_START_TIMEOUT'
+  stack: |-
+    failure (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine-boundaries.cjs:19:24)
+    startTranslationServer (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:1064:11)
+    async create (C:\dev\Projects\mangohana\packages\ai-engine\quality\owned-runtime.cjs:39:19)
+  ...
+# Subtest: a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation
+not ok 23 - a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation
+  ---
+  duration_ms: 7785.0524
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\engine-runtime-reuse.test.mjs:109:1'
+  failureType: 'testCodeFailure'
+  error: '전용 로컬 번역 모델 적재 시간이 초과되었습니다.'
+  code: 'LLM_START_TIMEOUT'
+  stack: |-
+    failure (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine-boundaries.cjs:19:24)
+    startTranslationServer (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:1064:11)
+    async create (C:\dev\Projects\mangohana\packages\ai-engine\quality\owned-runtime.cjs:39:19)
+  ...
+# Subtest: engine close cancels active synthetic translation, drains job and caches, then releases hooks
+ok 24 - engine close cancels active synthetic translation, drains job and caches, then releases hooks
+  ---
+  duration_ms: 5040.3851
+  type: 'test'
+  ...
+# Subtest: a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation
+ok 25 - a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation
+  ---
+  duration_ms: 2852.6457
+  type: 'test'
+  ...
+# Subtest: recognition failure records bounded private diagnostics before generic public error without model work
+ok 26 - recognition failure records bounded private diagnostics before generic public error without model work
+  ---
+  duration_ms: 604.7732
+  type: 'test'
+  ...
+# Subtest: cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments
+ok 27 - cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments
+  ---
+  duration_ms: 2373.9721
+  type: 'test'
+  ...
+# Subtest: unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job
+ok 28 - unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job
+  ---
+  duration_ms: 1020.5851
+  type: 'test'
+  ...
+# Subtest: worker bootstrap loads the signed production font without image execution
+ok 29 - worker bootstrap loads the signed production font without image execution
+  ---
+  duration_ms: 4681.8635
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\font-bootstrap-ajkg1W\\probe-summary.json
+# Subtest: worker font failure stays closed with a stack before any image pipeline
+ok 30 - worker font failure stays closed with a stack before any image pipeline
+  ---
+  duration_ms: 5208.7843
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\font-bootstrap-vYnBH4\\probe-summary.json
+# Subtest: worker persists bound per-region layout diagnostics without an image execution
+ok 31 - worker persists bound per-region layout diagnostics without an image execution
+  ---
+  duration_ms: 3377.316
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\font-bootstrap-Y6knPN\\probe-summary.json
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+ok 32 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+  ---
+  duration_ms: 11462.2802
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\typesetting-native-EpRpUo
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion
+ok 33 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion
+  ---
+  duration_ms: 28475.8277
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\mangohana-release-native-22CRqH\\typesetting-native-42S8iZ
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval
+not ok 34 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval
+  ---
+  duration_ms: 31739.0159
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\typesetting-only-native.test.mjs:5:160'
+  failureType: 'testCodeFailure'
+  error: 'WARM_JOB_START_TIMEOUT'
+  code: 'WARM_JOB_START_TIMEOUT'
+  stack: |-
+    fail (file:///C:/dev/Projects/mangohana/scripts/v2/warm-job.mjs:8:32)
+    Timeout.<anonymous> (file:///C:/dev/Projects/mangohana/scripts/v2/warm-job.mjs:27:105)
+    listOnTimeout (node:internal/timers:685:17)
+    process.processTimers (node:internal/timers:618:7)
+  ...
+# Subtest: entry detection uses the normalized entry argv path and remains false for source-only imports
+ok 35 - entry detection uses the normalized entry argv path and remains false for source-only imports
+  ---
+  duration_ms: 0.6466
+  type: 'test'
+  ...
+# Subtest: startup diagnostics preserve only a safe error code and a known bootstrap stage
+ok 36 - startup diagnostics preserve only a safe error code and a known bootstrap stage
+  ---
+  duration_ms: 0.6418
+  type: 'test'
+  ...
+# Subtest: real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly
+not ok 37 - real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly
+  ---
+  duration_ms: 15001.2401
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\warm-electron-entry.test.mjs:26:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 15000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle
+ok 38 - real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle
+  ---
+  duration_ms: 14485.6979
+  type: 'test'
+  ...
+# Subtest: real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result
+ok 39 - real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result
+  ---
+  duration_ms: 3647.8752
+  type: 'test'
+  ...
+# Subtest: real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result
+ok 40 - real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result
+  ---
+  duration_ms: 2603.4929
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 34
+# fail 5
+# cancelled 1
+# skipped 0
+# todo 0
+# duration_ms 227516.2643

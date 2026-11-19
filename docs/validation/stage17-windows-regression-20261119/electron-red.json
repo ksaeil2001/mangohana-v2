@@ -1,0 +1,1 @@
+{"pass":false,"versions":{"declared":"42.9.3","lockSpec":"42.9.3","locked":"42.9.3","installed":"42.9.3","binary":"42.9.3"},"reason":"Runtime lacks the Windows shutdown backport in 42.10.0"}

@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "kind": "stage16-cost-adjusted-success",
+  "scope": "synthetic",
+  "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+  "pairedReportSha256": "4fc775e4d44d5143d75a81110944fea504462fbe0e11baae4eb3c4ec5a8a0575",
+  "models": {
+    "A": {
+      "baseline": {
+        "plannedPairs": 2,
+        "confirmedWins": 2,
+        "missingPairs": 0,
+        "plannedJobs": 2,
+        "unsettledJobs": 0,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "winsPerUsd": {
+          "numerator": 2,
+          "denominator": 0.5,
+          "value": 4,
+          "reason": null
+        },
+        "usdPerWin": {
+          "numerator": 0.5,
+          "denominator": 2,
+          "value": 0.25,
+          "reason": null
+        }
+      },
+      "improved": {
+        "plannedPairs": 2,
+        "confirmedWins": 0,
+        "missingPairs": 0,
+        "plannedJobs": 2,
+        "unsettledJobs": 0,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "winsPerUsd": {
+          "numerator": 0,
+          "denominator": 0.5,
+          "value": 0,
+          "reason": null
+        },
+        "usdPerWin": {
+          "numerator": 0.5,
+          "denominator": 0,
+          "value": null,
+          "reason": "NO_WINS"
+        }
+      },
+      "comparison": {
+        "plannedPairs": 2,
+        "confirmedWins": 0,
+        "missingPairs": 0,
+        "plannedJobs": 4,
+        "unsettledJobs": 0,
+        "confirmedSubtotalUsd": "1",
+        "amountUsd": "1",
+        "winsPerUsd": {
+          "numerator": 0,
+          "denominator": 1,
+          "value": 0,
+          "reason": null
+        },
+        "usdPerWin": {
+          "numerator": 1,
+          "denominator": 0,
+          "value": null,
+          "reason": "NO_WINS"
+        }
+      }
+    },
+    "B": {
+      "baseline": {
+        "plannedPairs": 2,
+        "confirmedWins": 0,
+        "missingPairs": 0,
+        "plannedJobs": 2,
+        "unsettledJobs": 0,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "winsPerUsd": {
+          "numerator": 0,
+          "denominator": 0.5,
+          "value": 0,
+          "reason": null
+        },
+        "usdPerWin": {
+          "numerator": 0.5,
+          "denominator": 0,
+          "value": null,
+          "reason": "NO_WINS"
+        }
+      },
+      "improved": {
+        "plannedPairs": 2,
+        "confirmedWins": 0,
+        "missingPairs": 0,
+        "plannedJobs": 2,
+        "unsettledJobs": 0,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "winsPerUsd": {
+          "numerator": 0,
+          "denominator": 0.5,
+          "value": 0,
+          "reason": null
+        },
+        "usdPerWin": {
+          "numerator": 0.5,
+          "denominator": 0,
+          "value": null,
+          "reason": "NO_WINS"
+        }
+      },
+      "comparison": {
+        "plannedPairs": 2,
+        "confirmedWins": 0,
+        "missingPairs": 0,
+        "plannedJobs": 4,
+        "unsettledJobs": 0,
+        "confirmedSubtotalUsd": "1",
+        "amountUsd": "1",
+        "winsPerUsd": {
+          "numerator": 0,
+          "denominator": 1,
+          "value": 0,
+          "reason": null
+        },
+        "usdPerWin": {
+          "numerator": 1,
+          "denominator": 0,
+          "value": null,
+          "reason": "NO_WINS"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "comparable": true,
+  "scope": "synthetic",
+  "baseline": {
+    "scope": "synthetic",
+    "kind": "product",
+    "total": {
+      "planned": 4,
+      "receipts": 4,
+      "confirmedSubtotalUsd": "1",
+      "amountUsd": "1",
+      "tokens": null,
+      "elapsedMs": 160
+    },
+    "byModel": {
+      "A": {
+        "planned": 2,
+        "receipts": 2,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "tokens": null,
+        "elapsedMs": 80
+      },
+      "B": {
+        "planned": 2,
+        "receipts": 2,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "tokens": null,
+        "elapsedMs": 80
+      }
+    },
+    "byRole": {
+      "product-provider": {
+        "planned": 4,
+        "receipts": 4,
+        "confirmedSubtotalUsd": "1",
+        "amountUsd": "1",
+        "tokens": null,
+        "elapsedMs": 160
+      }
+    },
+    "missingIds": [],
+    "unsettledIds": []
+  },
+  "candidate": {
+    "scope": "synthetic",
+    "kind": "product",
+    "total": {
+      "planned": 4,
+      "receipts": 4,
+      "confirmedSubtotalUsd": "1",
+      "amountUsd": "1",
+      "tokens": null,
+      "elapsedMs": 160
+    },
+    "byModel": {
+      "A": {
+        "planned": 2,
+        "receipts": 2,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "tokens": null,
+        "elapsedMs": 80
+      },
+      "B": {
+        "planned": 2,
+        "receipts": 2,
+        "confirmedSubtotalUsd": "0.5",
+        "amountUsd": "0.5",
+        "tokens": null,
+        "elapsedMs": 80
+      }
+    },
+    "byRole": {
+      "product-provider": {
+        "planned": 4,
+        "receipts": 4,
+        "confirmedSubtotalUsd": "1",
+        "amountUsd": "1",
+        "tokens": null,
+        "elapsedMs": 160
+      }
+    },
+    "missingIds": [],
+    "unsettledIds": []
+  },
+  "savingsUsd": "0",
+  "actualSavingsUsd": null,
+  "tokenDifference": null,
+  "elapsedDifferenceMs": 0
+}

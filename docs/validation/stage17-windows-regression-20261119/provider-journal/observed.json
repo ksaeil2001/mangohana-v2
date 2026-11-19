@@ -1,0 +1,236 @@
+{
+  "children": 6,
+  "identities": 6,
+  "timeouts": 0,
+  "outputs": [
+    {
+      "test": "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+      "leaf": "engine-default-mdXKSk",
+      "pid": 36868,
+      "identity": true,
+      "requested": "2026-11-18T21:34:45.042Z",
+      "exit": "2026-11-18T21:34:45.528Z",
+      "firstJs": "2026-11-18T21:34:45.094Z",
+      "firstServerRequest": "2026-11-18T21:34:45.487Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "server_request_start",
+        "ms": 393
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+      "leaf": "engine-default-mdXKSk",
+      "pid": 17416,
+      "identity": true,
+      "requested": "2026-11-18T21:34:45.829Z",
+      "exit": "2026-11-18T21:34:49.965Z",
+      "firstJs": "2026-11-18T21:34:45.871Z",
+      "firstServerRequest": "2026-11-18T21:34:49.929Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "server_request_start",
+        "ms": 4058
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request",
+      "leaf": "engine-default-7oT2vA",
+      "pid": 28384,
+      "identity": true,
+      "requested": "2026-11-18T21:34:51.119Z",
+      "exit": "2026-11-18T21:34:54.181Z",
+      "firstJs": "2026-11-18T21:34:51.162Z",
+      "firstServerRequest": "2026-11-18T21:34:53.990Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 5,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "server_request_start",
+        "ms": 2828
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved",
+      "leaf": "engine-default-mPUmlV",
+      "pid": 34172,
+      "identity": true,
+      "requested": "2026-11-18T21:34:56.233Z",
+      "exit": "2026-11-18T21:34:57.110Z",
+      "firstJs": "2026-11-18T21:34:56.278Z",
+      "firstServerRequest": "2026-11-18T21:34:57.069Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "server_request_start",
+        "ms": 791
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+      "leaf": "engine-reuse-olWLtP",
+      "pid": 10424,
+      "identity": true,
+      "requested": "2026-11-18T21:34:59.061Z",
+      "exit": "2026-11-18T21:35:01.849Z",
+      "firstJs": "2026-11-18T21:34:59.110Z",
+      "firstServerRequest": "2026-11-18T21:35:01.337Z",
+      "requests": 12,
+      "responses": 12,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "server_request_start",
+        "ms": 2227
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job",
+      "leaf": "engine-reuse-FtBgjE",
+      "pid": 27148,
+      "identity": true,
+      "requested": "2026-11-18T21:35:02.906Z",
+      "exit": "2026-11-18T21:35:03.858Z",
+      "firstJs": "2026-11-18T21:35:02.954Z",
+      "firstServerRequest": "2026-11-18T21:35:03.737Z",
+      "requests": 7,
+      "responses": 7,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "server_request_start",
+        "ms": 783
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    }
+  ]
+}

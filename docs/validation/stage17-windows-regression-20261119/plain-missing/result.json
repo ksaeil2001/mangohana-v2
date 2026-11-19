@@ -1,0 +1,39 @@
+{
+  "mode": "entry",
+  "traceFlag": "normal",
+  "started": "2026-11-18T21:29:13.315Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-plain-missing-fUPTxK",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--test-name-pattern",
+    "^real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly$",
+    "tests/v2/warm-electron-entry.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-plain-missing-fUPTxK\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-plain-missing-fUPTxK\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-plain-missing-fUPTxK\\entry"
+  },
+  "finished": "2026-11-18T21:29:15.826Z",
+  "code": 0,
+  "signal": null,
+  "counts": {
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "changed": [],
+  "logSha256": "4f54ac3a87f2d6ab831f6a0237ae04b11bd3faf87c26fd58ca82fc659ba218a1",
+  "sourcesSha256": "b071869f47c32661292e7a4752b1b04259a0b99c63b35c11c1c2dfd9b2d43c29",
+  "failures": []
+}

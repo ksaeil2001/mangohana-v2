@@ -1,0 +1,39 @@
+{
+  "mode": "entry",
+  "traceFlag": "normal",
+  "started": "2026-11-18T22:12:42.930Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-journal-missing-oKnFF3",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--test-name-pattern",
+    "^real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly$",
+    "tests/v2/warm-electron-entry.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-missing-oKnFF3\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-missing-oKnFF3\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-missing-oKnFF3\\entry"
+  },
+  "finished": "2026-11-18T22:12:52.658Z",
+  "code": 0,
+  "signal": null,
+  "counts": {
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "changed": [],
+  "logSha256": "9803c0786f6a704413d5da16eceb1d97f28d0e058c5ad1016f7fed40715bd7f2",
+  "sourcesSha256": "7c88cf9e82b79e59db31bf0c1d90caf9facf392fc87ad2edb1bde2e5d69bf9e0",
+  "failures": []
+}

@@ -1,0 +1,33 @@
+{
+  "pass": true,
+  "expected": 1,
+  "measured": 1,
+  "rows": [
+    {
+      "kind": "typesetting",
+      "runId": "ddfe005b-526a-46f2-bef3-271c95e1fcdc",
+      "supervisorPid": 26588,
+      "rootPid": 13156,
+      "sameIdentity": true,
+      "measured": true,
+      "supervisorCreatedUtc": "2026-11-18T22:41:34.951Z",
+      "compileStartedUtc": "2026-11-18T22:41:35.199Z",
+      "compileCompletedUtc": "2026-11-18T22:41:35.372Z",
+      "rootCreatedUtc": "2026-11-18T22:41:35.445Z",
+      "rootExitedUtc": "2026-11-18T22:41:47.456Z",
+      "beforeCompileMs": 248,
+      "compileMs": 173,
+      "afterCompileUntilRootMs": 73,
+      "workerMs": 12011,
+      "rootExitCode": 0,
+      "reason": "root_exit",
+      "clean": true,
+      "activeAfter": 0,
+      "witness": {
+        "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+        "outputBound": true,
+        "failureBound": null
+      }
+    }
+  ]
+}

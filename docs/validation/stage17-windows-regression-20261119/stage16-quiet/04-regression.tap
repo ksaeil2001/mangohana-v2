@@ -1,0 +1,189 @@
+TAP version 13
+# Subtest: reordering equivalent JSON does not change its matrix fingerprint
+ok 1 - reordering equivalent JSON does not change its matrix fingerprint
+  ---
+  duration_ms: 1.7693
+  type: 'test'
+  ...
+# Subtest: the work, page, every shared pin and each axis pin bind the matrix identity
+ok 2 - the work, page, every shared pin and each axis pin bind the matrix identity
+  ---
+  duration_ms: 1.2817
+  type: 'test'
+  ...
+# Subtest: explicitly planning the full path has a distinct identity from fixed intermediate input
+ok 3 - explicitly planning the full path has a distinct identity from fixed intermediate input
+  ---
+  duration_ms: 0.2102
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8.5697
+TAP version 13
+# Subtest: independent evidence and frozen criteria issue a reproducible lock for the exact cohort
+ok 1 - independent evidence and frozen criteria issue a reproducible lock for the exact cohort
+  ---
+  duration_ms: 25.9717
+  type: 'test'
+  ...
+# Subtest: a conflict on the second sample blocks the whole experiment
+ok 2 - a conflict on the second sample blocks the whole experiment
+  ---
+  duration_ms: 3.0943
+  type: 'test'
+  ...
+# Subtest: one comparison cannot mix processing or shared settings between pages
+ok 3 - one comparison cannot mix processing or shared settings between pages
+  ---
+  duration_ms: 5.8044
+  type: 'test'
+  ...
+# Subtest: foreign work, source, or sealed ground truth cannot be substituted even with a valid matrix fingerprint
+ok 4 - foreign work, source, or sealed ground truth cannot be substituted even with a valid matrix fingerprint
+  ---
+  duration_ms: 4.1548
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 47.285
+TAP version 13
+# Subtest: four assigned cells retain recovered, partial, successful and missing jobs and their exact subtotal
+ok 1 - four assigned cells retain recovered, partial, successful and missing jobs and their exact subtotal
+  ---
+  duration_ms: 29.227
+  type: 'test'
+  ...
+# S16_SAMPLE {"lockId":"9494e6e92520e950b9434e2829d3dd2eeec39d51c2abf34107eed3a7a7230762","jobsSha256":"30bfea909fbf5a0bcfcb3390cfacca77dbd870f6cbeebc486a046c5fd38b05f8","plannedCells":4,"completedCells":2,"plannedJobs":4,"observedJobs":3,"completedJobs":2,"charge":{"state":"UNCONFIRMED","currency":"USD","amount":null,"confirmedSubtotal":"0.12","reason":"CHARGE_EVIDENCE_INCOMPLETE"},"cells":[{"model":"A","processing":"baseline","jobId":"page-final:A:baseline","status":"succeeded","reason":null,"charge":{"state":"CONFIRMED","currency":"USD","amount":"0.12","confirmedSubtotal":"0.12","reason":null}},{"model":"A","processing":"improved","jobId":"page-final:A:improved","status":"partial","reason":"PARTIAL","charge":{"state":"UNCONFIRMED","currency":"USD","amount":null,"confirmedSubtotal":"0","reason":"CHARGE_EVIDENCE_INCOMPLETE"}},{"model":"B","processing":"baseline","jobId":"page-final:B:baseline","status":"succeeded","reason":null,"charge":{"state":"CONFIRMED","currency":"USD","amount":"0","confirmedSubtotal":"0","reason":null}},{"model":"B","processing":"improved","jobId":"page-final:B:improved","status":"unknown","reason":"JOB_RECEIPT_MISSING","charge":{"state":"UNCONFIRMED","currency":"USD","amount":null,"confirmedSubtotal":"0","reason":"CHARGE_EVIDENCE_INCOMPLETE"}}],"recoveredTranslation":{"retryCount":0,"fallbackCount":1,"lookupCount":1,"attempts":[["failed","0.1"],["succeeded","0.02"]]}}
+# Subtest: all locked pages keep four cells and repeated jobs stay separate under the same cell
+ok 2 - all locked pages keep four cells and repeated jobs stay separate under the same cell
+  ---
+  duration_ms: 22.2622
+  type: 'test'
+  ...
+# Subtest: the saved lock, canonical matrix and independent job register must all match
+ok 3 - the saved lock, canonical matrix and independent job register must all match
+  ---
+  duration_ms: 18.3023
+  type: 'test'
+  ...
+# Subtest: missing stages and missing measurements retain specific reasons and an unknown charge
+ok 4 - missing stages and missing measurements retain specific reasons and an unknown charge
+  ---
+  duration_ms: 3.8795
+  type: 'test'
+  ...
+# Subtest: page failure and missing or foreign final artifact evidence override apparent stage success
+ok 5 - page failure and missing or foreign final artifact evidence override apparent stage success
+  ---
+  duration_ms: 15.9261
+  type: 'test'
+  ...
+# Subtest: distinct model slots cannot use one identical provider version pin, while independently equal results remain separate
+ok 6 - distinct model slots cannot use one identical provider version pin, while independently equal results remain separate
+  ---
+  duration_ms: 5.8813
+  type: 'test'
+  ...
+# Subtest: moving both journal labels to another registered cell cannot move the saved execution fingerprint
+ok 7 - moving both journal labels to another registered cell cannot move the saved execution fingerprint
+  ---
+  duration_ms: 2.6287
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 111.8223
+TAP version 13
+# Subtest: AI reviewers cannot satisfy the human review requirement
+ok 1 - AI reviewers cannot satisfy the human review requirement
+  ---
+  duration_ms: 10.4019
+  type: 'test'
+  ...
+# Subtest: human approval requires independent bilingual reviewers, evidence and timestamp
+ok 2 - human approval requires independent bilingual reviewers, evidence and timestamp
+  ---
+  duration_ms: 1.4366
+  type: 'test'
+  ...
+# Subtest: reviewed content changes invalidate the existing approval hashes
+ok 3 - reviewed content changes invalidate the existing approval hashes
+  ---
+  duration_ms: 0.7811
+  type: 'test'
+  ...
+# Subtest: open disagreements prohibit verified GT even with two approvals
+ok 4 - open disagreements prohibit verified GT even with two approvals
+  ---
+  duration_ms: 0.4564
+  type: 'test'
+  ...
+# Subtest: qualifying synthetic human submissions are distinct from actual obtained GT
+ok 5 - qualifying synthetic human submissions are distinct from actual obtained GT
+  ---
+  duration_ms: 10.1454
+  type: 'test'
+  ...
+# Subtest: approved disagreement history cannot be deleted while retaining the old human approval
+ok 6 - approved disagreement history cannot be deleted while retaining the old human approval
+  ---
+  duration_ms: 0.8804
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33.3556
+TAP version 13
+# Subtest: self QA or AI review cannot attest the current human semantic requirement
+ok 1 - self QA or AI review cannot attest the current human semantic requirement
+  ---
+  duration_ms: 2.8146
+  type: 'test'
+  ...
+# Subtest: one-person partial review cannot satisfy Stage05 human_verified
+ok 2 - one-person partial review cannot satisfy Stage05 human_verified
+  ---
+  duration_ms: 0.7338
+  type: 'test'
+  ...
+# Subtest: zero denominator, absent GT, and partial observation remain explicit unknown states
+ok 3 - zero denominator, absent GT, and partial observation remain explicit unknown states
+  ---
+  duration_ms: 1.6636
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10.9249

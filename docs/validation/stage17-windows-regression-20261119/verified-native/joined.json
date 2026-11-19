@@ -1,0 +1,44 @@
+{
+  "runtime": [],
+  "supervisors": [
+    {
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication",
+      "runId": "ecd27909-729d-4a5e-a0cb-deb8b33f5ef3",
+      "rootPid": 32856,
+      "supervisorPid": 34832,
+      "requestedUtc": "2026-11-18T21:07:31.461Z",
+      "rootCreatedUtc": "2026-11-18T21:07:31.975Z",
+      "readyObservedUtc": "2026-11-18T21:07:31.979Z",
+      "resumedObservedUtc": "2026-11-18T21:07:31.980Z",
+      "rootExitUtc": "2026-11-18T21:07:42.709Z",
+      "completionObservedUtc": "2026-11-18T21:07:42.784Z",
+      "supervisorExitedUtc": "2026-11-18T21:07:42.807Z",
+      "reason": "root_exit",
+      "failure": null,
+      "rootExitCode": 0,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 518,
+      "nativeElapsedMs": 10777
+    }
+  ],
+  "typesetting": [
+    {
+      "leaf": "typesetting-native-6i37XA",
+      "runId": "ecd27909-729d-4a5e-a0cb-deb8b33f5ef3",
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication",
+      "rootPid": 32856,
+      "identityConfirmed": true,
+      "rootExitCode": 0,
+      "reason": "root_exit",
+      "kernelCleanupConfirmed": true,
+      "activeAfter": 0,
+      "terminationRequested": false,
+      "resultBound": true,
+      "resultMatchesPng": true,
+      "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+      "failureCode": null
+    }
+  ]
+}

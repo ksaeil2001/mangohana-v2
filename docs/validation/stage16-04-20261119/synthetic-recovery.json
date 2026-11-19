@@ -1,0 +1,145 @@
+{
+  "sealSha256": "30450adb256b794b6662dc636c55ff661791d45c7af096840e0c89ade6001fd4",
+  "summary": {
+    "plannedPairs": 4,
+    "overlapPairs": 2,
+    "plannedAssignments": 6,
+    "issuedAssignments": 5,
+    "answered": 2,
+    "partial": 1,
+    "unanswered": 2,
+    "unavailable": 1
+  },
+  "pairs": [
+    {
+      "pageId": "page-final",
+      "model": "A",
+      "comparison": {
+        "semanticFidelity": "open_disagreement",
+        "naturalness": "agree"
+      },
+      "slots": [
+        {
+          "assignmentId": "4f869ab267c4fb6dcfa76520e38148b0c24db542353579beabf3b3fce3ccf389",
+          "status": "answered",
+          "evidenceKind": "synthetic",
+          "semanticFidelity": {
+            "choice": "A",
+            "preference": "improved",
+            "reason": null
+          },
+          "naturalness": {
+            "choice": "A",
+            "preference": "improved",
+            "reason": null
+          }
+        },
+        {
+          "assignmentId": "d4c04eefea00aa24f5f3539c643e86fe7e4c4a6d3e00f9292d4419095dd39f17",
+          "status": "answered",
+          "evidenceKind": "synthetic",
+          "semanticFidelity": {
+            "choice": "A",
+            "preference": "baseline",
+            "reason": null
+          },
+          "naturalness": {
+            "choice": "B",
+            "preference": "improved",
+            "reason": null
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "page-final",
+      "model": "B",
+      "comparison": {
+        "semanticFidelity": "not_comparable",
+        "naturalness": "not_comparable"
+      },
+      "slots": [
+        {
+          "assignmentId": "6546efedebd73cd5f37d79799fb53edfdc8ede62e780c648f5df33dd516cec2a",
+          "status": "partial",
+          "evidenceKind": "synthetic",
+          "semanticFidelity": {
+            "choice": "tie",
+            "preference": "tie",
+            "reason": null
+          },
+          "naturalness": {
+            "choice": null,
+            "preference": null,
+            "reason": "AXIS_UNANSWERED"
+          }
+        },
+        {
+          "assignmentId": "9b967d0e101b34652a7078f70679f20bf365f571953679bd33d5ccef3ed026f2",
+          "status": "unanswered",
+          "evidenceKind": null,
+          "semanticFidelity": {
+            "choice": null,
+            "preference": null,
+            "reason": "NO_RESPONSE"
+          },
+          "naturalness": {
+            "choice": null,
+            "preference": null,
+            "reason": "NO_RESPONSE"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "page-other",
+      "model": "A",
+      "comparison": {
+        "semanticFidelity": "not_overlapped",
+        "naturalness": "not_overlapped"
+      },
+      "slots": [
+        {
+          "assignmentId": "17e28fe5f46be4879ba1d37c53be339798abbe08fc16ea5e658826e48160fa5b",
+          "status": "unanswered",
+          "evidenceKind": null,
+          "semanticFidelity": {
+            "choice": null,
+            "preference": null,
+            "reason": "NO_RESPONSE"
+          },
+          "naturalness": {
+            "choice": null,
+            "preference": null,
+            "reason": "NO_RESPONSE"
+          }
+        }
+      ]
+    },
+    {
+      "pageId": "page-other",
+      "model": "B",
+      "comparison": {
+        "semanticFidelity": "not_overlapped",
+        "naturalness": "not_overlapped"
+      },
+      "slots": [
+        {
+          "assignmentId": "07c6f26a34c5bb39d8521fa5042eed9405e9547f6d812efa05733c7b75ff2646",
+          "status": "unavailable",
+          "evidenceKind": null,
+          "semanticFidelity": {
+            "choice": null,
+            "preference": null,
+            "reason": "RESULT_PAIR_UNAVAILABLE"
+          },
+          "naturalness": {
+            "choice": null,
+            "preference": null,
+            "reason": "RESULT_PAIR_UNAVAILABLE"
+          }
+        }
+      ]
+    }
+  ]
+}

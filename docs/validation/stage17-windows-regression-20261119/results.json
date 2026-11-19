@@ -1,0 +1,535 @@
+{
+  "scope": "Stage17 Windows V2 synthetic regression, original uninstrumented Node test command on final sources",
+  "pass": false,
+  "unchanged": true,
+  "productAndTestPinsCompared": 401,
+  "rows": [
+    {
+      "label": "plain-full",
+      "pass": false,
+      "counts": {
+        "tests": 1340,
+        "pass": 1338,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 1,
+      "started": "2026-11-18T21:13:29.779Z",
+      "finished": "2026-11-18T21:29:10.538Z",
+      "logSha256": "7e9d15de84916256f9b63cc87608d224126c8d0f96963d862e539ff60d0cfef3",
+      "sameSources": true,
+      "unchangedRunner": true,
+      "nativeWorkersMeasured": 10,
+      "outputMatches": true,
+      "missingPlanMatches": true,
+      "missingPlan": {
+        "kind": "missing-plan",
+        "runId": "bf5e2bf7-79a1-42bc-b182-b726408a62f3",
+        "supervisorPid": 31552,
+        "rootPid": 6568,
+        "sameIdentity": true,
+        "measured": true,
+        "supervisorCreatedUtc": "2026-11-18T21:28:05.085Z",
+        "compileStartedUtc": "2026-11-18T21:28:07.615Z",
+        "compileCompletedUtc": "2026-11-18T21:28:07.798Z",
+        "rootCreatedUtc": "2026-11-18T21:28:07.859Z",
+        "rootExitedUtc": "2026-11-18T21:28:07.925Z",
+        "beforeCompileMs": 2530,
+        "compileMs": 183,
+        "afterCompileUntilRootMs": 61,
+        "workerMs": 66,
+        "rootExitCode": 1,
+        "reason": "root_exit",
+        "clean": true,
+        "activeAfter": 0,
+        "witness": {
+          "events": [
+            {
+              "phase": "startup_failed",
+              "code": "WARM_STARTUP_FAILED",
+              "primaryFailureCode": "ENOENT",
+              "bootstrapStage": "plan_read",
+              "cleanupConfirmed": false
+            }
+          ],
+          "actualAiCalls": 0
+        }
+      },
+      "selectedFileResults": [
+        {
+          "file": "engine-ocr-refinement.test.mjs",
+          "tests": 10,
+          "pass": 10,
+          "unsuccessful": []
+        },
+        {
+          "file": "engine-runtime-reuse.test.mjs",
+          "tests": 18,
+          "pass": 16,
+          "unsuccessful": [
+            "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+            "Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request"
+          ]
+        },
+        {
+          "file": "imported-font-bootstrap.test.mjs",
+          "tests": 3,
+          "pass": 3,
+          "unsuccessful": []
+        },
+        {
+          "file": "typesetting-only-native.test.mjs",
+          "tests": 3,
+          "pass": 3,
+          "unsuccessful": []
+        },
+        {
+          "file": "warm-electron-entry.test.mjs",
+          "tests": 6,
+          "pass": 6,
+          "unsuccessful": []
+        }
+      ],
+      "failures": [
+        "not ok 146 - default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+        "not ok 147 - Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request"
+      ]
+    },
+    {
+      "label": "plain-five",
+      "pass": false,
+      "counts": {
+        "tests": 40,
+        "pass": 39,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 1,
+      "started": "2026-11-18T21:10:30.312Z",
+      "finished": "2026-11-18T21:13:29.300Z",
+      "logSha256": "33057d8d91d7092b6a3cfbf8c7b4c976dbb33694585b863274cd079c1d3be5fa",
+      "sameSources": true,
+      "unchangedRunner": true,
+      "nativeWorkersMeasured": 10,
+      "outputMatches": true,
+      "missingPlanMatches": true,
+      "missingPlan": {
+        "kind": "missing-plan",
+        "runId": "6baefa3d-da4c-457d-b2b7-070a780cd0b9",
+        "supervisorPid": 11332,
+        "rootPid": 6020,
+        "sameIdentity": true,
+        "measured": true,
+        "supervisorCreatedUtc": "2026-11-18T21:13:06.877Z",
+        "compileStartedUtc": "2026-11-18T21:13:07.505Z",
+        "compileCompletedUtc": "2026-11-18T21:13:08.557Z",
+        "rootCreatedUtc": "2026-11-18T21:13:08.620Z",
+        "rootExitedUtc": "2026-11-18T21:13:11.338Z",
+        "beforeCompileMs": 628,
+        "compileMs": 1052,
+        "afterCompileUntilRootMs": 63,
+        "workerMs": 2718,
+        "rootExitCode": 1,
+        "reason": "root_exit",
+        "clean": true,
+        "activeAfter": 0,
+        "witness": {
+          "events": [
+            {
+              "phase": "startup_failed",
+              "code": "WARM_STARTUP_FAILED",
+              "primaryFailureCode": "ENOENT",
+              "bootstrapStage": "plan_read",
+              "cleanupConfirmed": false
+            }
+          ],
+          "actualAiCalls": 0
+        }
+      },
+      "selectedFileResults": [
+        {
+          "file": "engine-ocr-refinement.test.mjs",
+          "tests": 10,
+          "pass": 10,
+          "unsuccessful": []
+        },
+        {
+          "file": "engine-runtime-reuse.test.mjs",
+          "tests": 18,
+          "pass": 17,
+          "unsuccessful": [
+            "Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved"
+          ]
+        },
+        {
+          "file": "imported-font-bootstrap.test.mjs",
+          "tests": 3,
+          "pass": 3,
+          "unsuccessful": []
+        },
+        {
+          "file": "typesetting-only-native.test.mjs",
+          "tests": 3,
+          "pass": 3,
+          "unsuccessful": []
+        },
+        {
+          "file": "warm-electron-entry.test.mjs",
+          "tests": 6,
+          "pass": 6,
+          "unsuccessful": []
+        }
+      ],
+      "failures": [
+        "not ok 14 - Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved"
+      ]
+    },
+    {
+      "label": "plain-missing",
+      "pass": true,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T21:29:13.315Z",
+      "finished": "2026-11-18T21:29:15.826Z",
+      "logSha256": "4f54ac3a87f2d6ab831f6a0237ae04b11bd3faf87c26fd58ca82fc659ba218a1",
+      "sameSources": true,
+      "unchangedRunner": true,
+      "nativeWorkersMeasured": 1,
+      "outputMatches": true,
+      "missingPlanMatches": true,
+      "missingPlan": {
+        "kind": "missing-plan",
+        "runId": "411ab9cf-67aa-4d52-9d6c-e204d5ba6259",
+        "supervisorPid": 34476,
+        "rootPid": 14544,
+        "sameIdentity": true,
+        "measured": true,
+        "supervisorCreatedUtc": "2026-11-18T21:29:14.687Z",
+        "compileStartedUtc": "2026-11-18T21:29:14.970Z",
+        "compileCompletedUtc": "2026-11-18T21:29:15.148Z",
+        "rootCreatedUtc": "2026-11-18T21:29:15.213Z",
+        "rootExitedUtc": "2026-11-18T21:29:15.276Z",
+        "beforeCompileMs": 283,
+        "compileMs": 178,
+        "afterCompileUntilRootMs": 65,
+        "workerMs": 63,
+        "rootExitCode": 1,
+        "reason": "root_exit",
+        "clean": true,
+        "activeAfter": 0,
+        "witness": {
+          "events": [
+            {
+              "phase": "startup_failed",
+              "code": "WARM_STARTUP_FAILED",
+              "primaryFailureCode": "ENOENT",
+              "bootstrapStage": "plan_read",
+              "cleanupConfirmed": false
+            }
+          ],
+          "actualAiCalls": 0
+        }
+      },
+      "selectedFileResults": [
+        {
+          "file": "warm-electron-entry.test.mjs",
+          "tests": 1,
+          "pass": 1,
+          "unsuccessful": []
+        }
+      ],
+      "failures": []
+    },
+    {
+      "label": "plain-native",
+      "pass": true,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T21:29:17.315Z",
+      "finished": "2026-11-18T21:29:32.977Z",
+      "logSha256": "c6cc5ed120951a6742a5c08e7980b96acf0314fc38793decb14077a926847bd0",
+      "sameSources": true,
+      "unchangedRunner": true,
+      "nativeWorkersMeasured": 1,
+      "outputMatches": true,
+      "missingPlanMatches": true,
+      "selectedFileResults": [
+        {
+          "file": "typesetting-only-native.test.mjs",
+          "tests": 1,
+          "pass": 1,
+          "unsuccessful": []
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "previousWithNodeObservers": {
+    "allPassed": false,
+    "recordingChange": [
+      "scripts/v2/warm-job.ps1"
+    ],
+    "rows": [
+      {
+        "label": "verified-full",
+        "pass": false,
+        "counts": {
+          "tests": 1340,
+          "pass": 1337,
+          "fail": 1,
+          "cancelled": 2,
+          "skipped": 0,
+          "todo": 0
+        },
+        "exitCode": 1,
+        "started": "2026-11-18T20:51:08.341Z",
+        "finished": "2026-11-18T21:07:25.473Z",
+        "logSha256": "798c49180b0730569477e5edf0d6bfd850abc17c87fd5aff2a211b626b9c2de2",
+        "sameSources": true,
+        "nativeWorkersMeasured": 10,
+        "typesetAndRefusalMatch": true,
+        "selectedFileResults": [
+          {
+            "file": "engine-ocr-refinement.test.mjs",
+            "tests": 10,
+            "pass": 10,
+            "unsuccessful": []
+          },
+          {
+            "file": "engine-runtime-reuse.test.mjs",
+            "tests": 18,
+            "pass": 18,
+            "unsuccessful": []
+          },
+          {
+            "file": "imported-font-bootstrap.test.mjs",
+            "tests": 3,
+            "pass": 3,
+            "unsuccessful": []
+          },
+          {
+            "file": "typesetting-only-native.test.mjs",
+            "tests": 3,
+            "pass": 3,
+            "unsuccessful": []
+          },
+          {
+            "file": "warm-electron-entry.test.mjs",
+            "tests": 6,
+            "pass": 3,
+            "unsuccessful": [
+              "real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly",
+              "real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result",
+              "real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result"
+            ]
+          }
+        ],
+        "missingPlan": {
+          "test": "real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly",
+          "runId": "e219f971-54d2-4de9-af83-bd0108735f3b",
+          "rootPid": 21964,
+          "supervisorPid": 35224,
+          "requestedUtc": "2026-11-18T21:06:01.613Z",
+          "rootCreatedUtc": "2026-11-18T21:06:07.521Z",
+          "readyObservedUtc": "2026-11-18T21:06:07.806Z",
+          "resumedObservedUtc": "2026-11-18T21:06:07.862Z",
+          "rootExitUtc": "2026-11-18T21:06:11.166Z",
+          "completionObservedUtc": "2026-11-18T21:06:11.323Z",
+          "supervisorExitedUtc": "2026-11-18T21:06:11.342Z",
+          "reason": "lifetime_timeout",
+          "failure": null,
+          "rootExitCode": 87,
+          "clean": true,
+          "activeAfter": 0,
+          "sameIdentity": true,
+          "supervisorWaitMs": 6193,
+          "nativeElapsedMs": 3680
+        }
+      },
+      {
+        "label": "verified-five",
+        "pass": false,
+        "counts": {
+          "tests": 40,
+          "pass": 36,
+          "fail": 3,
+          "cancelled": 1,
+          "skipped": 0,
+          "todo": 0
+        },
+        "exitCode": 1,
+        "started": "2026-11-18T20:47:26.101Z",
+        "finished": "2026-11-18T20:51:07.849Z",
+        "logSha256": "c88c91b0814a0539ff43b26ca1656f7dd675acd46c81f011b549e6bc86d1bcf9",
+        "sameSources": true,
+        "nativeWorkersMeasured": 9,
+        "typesetAndRefusalMatch": true,
+        "selectedFileResults": [
+          {
+            "file": "engine-ocr-refinement.test.mjs",
+            "tests": 10,
+            "pass": 10,
+            "unsuccessful": []
+          },
+          {
+            "file": "engine-runtime-reuse.test.mjs",
+            "tests": 18,
+            "pass": 15,
+            "unsuccessful": [
+              "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+              "a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+              "unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job"
+            ]
+          },
+          {
+            "file": "imported-font-bootstrap.test.mjs",
+            "tests": 3,
+            "pass": 3,
+            "unsuccessful": []
+          },
+          {
+            "file": "typesetting-only-native.test.mjs",
+            "tests": 3,
+            "pass": 3,
+            "unsuccessful": []
+          },
+          {
+            "file": "warm-electron-entry.test.mjs",
+            "tests": 6,
+            "pass": 5,
+            "unsuccessful": [
+              "real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle"
+            ]
+          }
+        ],
+        "missingPlan": {
+          "test": "real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly",
+          "runId": "c7b43e31-8dfc-444d-88ad-84442a090af2",
+          "rootPid": 8212,
+          "supervisorPid": 8276,
+          "requestedUtc": "2026-11-18T20:50:26.357Z",
+          "rootCreatedUtc": "2026-11-18T20:50:31.928Z",
+          "readyObservedUtc": "2026-11-18T20:50:32.164Z",
+          "resumedObservedUtc": "2026-11-18T20:50:32.164Z",
+          "rootExitUtc": "2026-11-18T20:50:33.008Z",
+          "completionObservedUtc": "2026-11-18T20:50:33.805Z",
+          "supervisorExitedUtc": "2026-11-18T20:50:33.821Z",
+          "reason": "root_exit",
+          "failure": null,
+          "rootExitCode": 1,
+          "clean": true,
+          "activeAfter": 0,
+          "sameIdentity": true,
+          "supervisorWaitMs": 5806,
+          "nativeElapsedMs": 1094
+        }
+      },
+      {
+        "label": "verified-missing",
+        "pass": true,
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "exitCode": 0,
+        "started": "2026-11-18T21:07:27.686Z",
+        "finished": "2026-11-18T21:07:29.418Z",
+        "logSha256": "1fcc1b7793643cb3d6d0cb791efb22d205acc55938717e560dba29aeed3e0f2b",
+        "sameSources": true,
+        "nativeWorkersMeasured": 1,
+        "typesetAndRefusalMatch": true,
+        "selectedFileResults": [
+          {
+            "file": "warm-electron-entry.test.mjs",
+            "tests": 1,
+            "pass": 1,
+            "unsuccessful": []
+          }
+        ],
+        "missingPlan": {
+          "test": "real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly",
+          "runId": "3b878e06-5741-4e68-8c2e-92deff46f6b0",
+          "rootPid": 29916,
+          "supervisorPid": 32304,
+          "requestedUtc": "2026-11-18T21:07:28.011Z",
+          "rootCreatedUtc": "2026-11-18T21:07:28.767Z",
+          "readyObservedUtc": "2026-11-18T21:07:29.014Z",
+          "resumedObservedUtc": "2026-11-18T21:07:29.015Z",
+          "rootExitUtc": "2026-11-18T21:07:29.078Z",
+          "completionObservedUtc": "2026-11-18T21:07:29.163Z",
+          "supervisorExitedUtc": "2026-11-18T21:07:29.179Z",
+          "reason": "root_exit",
+          "failure": null,
+          "rootExitCode": 1,
+          "clean": true,
+          "activeAfter": 0,
+          "sameIdentity": true,
+          "supervisorWaitMs": 1003,
+          "nativeElapsedMs": 351
+        }
+      },
+      {
+        "label": "verified-native",
+        "pass": true,
+        "counts": {
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0
+        },
+        "exitCode": 0,
+        "started": "2026-11-18T21:07:30.907Z",
+        "finished": "2026-11-18T21:07:43.078Z",
+        "logSha256": "8bfbd7a0d10e30dd3d154cf3823198a047a37088cfeccb0c826d5f71fd185c20",
+        "sameSources": true,
+        "nativeWorkersMeasured": 1,
+        "typesetAndRefusalMatch": true,
+        "selectedFileResults": [
+          {
+            "file": "typesetting-only-native.test.mjs",
+            "tests": 1,
+            "pass": 1,
+            "unsuccessful": []
+          }
+        ]
+      }
+    ]
+  },
+  "workerOptionMeasured": true,
+  "restoredBinaryVerified": true,
+  "stage16": {
+    "pass": true,
+    "executions": 193,
+    "distinctTestNames": 130
+  },
+  "protected": {
+    "match": true,
+    "files": 18,
+    "signed": true,
+    "permitRecords": 7
+  }
+}

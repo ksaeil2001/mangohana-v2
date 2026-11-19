@@ -1,0 +1,11 @@
+✔ the worker preserves its existing successful exit after both output files are written (3.3354ms)
+✔ a rejected worker writes its failure before preserving the explicit nonzero exit (0.887ms)
+✔ a failed diagnostic write still exits unsuccessfully (1.0916ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83.2847

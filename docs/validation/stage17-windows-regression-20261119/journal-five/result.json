@@ -1,0 +1,41 @@
+{
+  "mode": "five",
+  "traceFlag": "normal",
+  "started": "2026-11-18T21:53:00.443Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-journal-five-k4290d",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/v2/engine-ocr-refinement.test.mjs",
+    "tests/v2/engine-runtime-reuse.test.mjs",
+    "tests/v2/imported-font-bootstrap.test.mjs",
+    "tests/v2/typesetting-only-native.test.mjs",
+    "tests/v2/warm-electron-entry.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-five-k4290d\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-five-k4290d\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-five-k4290d\\entry"
+  },
+  "finished": "2026-11-18T21:55:53.007Z",
+  "code": 0,
+  "signal": null,
+  "counts": {
+    "tests": 40,
+    "pass": 40,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "changed": [],
+  "logSha256": "05f533feec1b368c0fb5c8ab91b372860cd71fc3468bd10b7cbe575b11c25deb",
+  "sourcesSha256": "7c88cf9e82b79e59db31bf0c1d90caf9facf392fc87ad2edb1bde2e5d69bf9e0",
+  "failures": []
+}

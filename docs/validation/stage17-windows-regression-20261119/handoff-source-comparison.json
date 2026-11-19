@@ -1,0 +1,23 @@
+{
+  "sharedCodeAndTests": 393,
+  "originalTestsAndFixtures": 143,
+  "unchangedTestsAndFixtures": 143,
+  "differences": [
+    {
+      "file": "scripts/v2/typesetting-only-worker.cjs",
+      "old": "94409080c3807e2038f849865e74d5cfdf7ce8ba823a5d379767a3d84f707686",
+      "current": "2c236084b924db548b9391ae6a576b86d064a2ce0926a191cb78c915ddf00ea8"
+    },
+    {
+      "file": "scripts/v2/warm-job.mjs",
+      "old": "94b112be055c1f2ff745af6fc0480ade0a747c6169615e59dbe472f6f8cb993f",
+      "current": "4697f39584d8e72b9b75d267aa71f94882137c23bec30f915df3d931a34ae66f"
+    }
+  ],
+  "supervisorFirstCapture": {
+    "file": "scripts/v2/warm-job.ps1",
+    "source": "investigate-five/sources.json",
+    "old": "baa65434493ef828918ee565120a8225a470bb1c58b261dc1056a574013e094a",
+    "current": "3557a46c6322d18e3677d671f1b0f79a7cd3c3329dfb8ec39ebb9a040a52e503"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "scope": "synthetic",
+  "decision": "ROLLBACK",
+  "reasons": [
+    "BUDGET_UNAVAILABLE",
+    "REVIEW_UNCERTAIN",
+    "MISSING_OR_STALE_NEWWORK",
+    "EXPECTED_RESULT_MISSING_REGRESSION"
+  ],
+  "retainedSha256": "58a50aebe1a772112f011da0a02c7ba5ee2069c70e8cb4689c1706404e48ab44",
+  "axes": {
+    "source": "PASS",
+    "actualAI": "NOT_RUN",
+    "browser": "PASS",
+    "human": "NOT_RUN"
+  },
+  "unverified": [
+    "independent new manuscript",
+    "human review",
+    "actual cost",
+    "region ID identifies the contract fixture; the browser used a fresh editor-generated ID",
+    "before-version PNG was not recorded"
+  ],
+  "escalationEligible": false,
+  "handoff": {
+    "question": "Does the editable OCR box remain distinct on an independently provided new work?",
+    "diff": "apps/sites/lib/studio-model.ts and apps/sites/lib/studio-state.ts",
+    "evidence": [
+      "roi-red.log",
+      "web-current.json",
+      "browser-checkpoint.log",
+      "v2-current.json"
+    ]
+  },
+  "measurements": {
+    "before": {
+      "elapsedMs": null,
+      "tokens": null,
+      "amountUsd": null
+    },
+    "after": {
+      "elapsedMs": null,
+      "tokens": null,
+      "amountUsd": null
+    }
+  },
+  "actualSavingsUsd": null
+}

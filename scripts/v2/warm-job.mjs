@@ -3,11 +3,22 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import enginePackage from '../../packages/ai-engine/package.json' with {type:'json'};
 const helper=fileURLToPath(new URL('./warm-job.ps1',import.meta.url));
+const typesettingWorker=fileURLToPath(new URL('./typesetting-only-worker.cjs',import.meta.url)).toLowerCase();
+const engineElectron=fileURLToPath(new URL('../../packages/ai-engine/node_modules/electron/dist/electron.exe',import.meta.url)).toLowerCase();
 const prefix='MANGOHANA_WARM_JOB_V1 ';
 const fail=code=>Object.assign(new Error(code),{code});
 const allowedEnv=new Set(['systemroot','windir','path','pathext','comspec','processor_architecture','number_of_processors','temp','tmp','localappdata','trio_disable_auto_update','hf_hub_offline','transformers_offline','programw6432','programfiles','programdata','allusersprofile']);
 async function bounded(promise,ms){let timer;try{return await Promise.race([promise,new Promise(resolve=>{timer=setTimeout(()=>resolve(null),ms);})]);}finally{clearTimeout(timer);}}
+
+export function windowsWorkerArguments(executable,args,version=enginePackage.dependencies.electron) {
+  if(version!=='42.9.3'||path.normalize(executable).toLowerCase()!==engineElectron||
+    path.normalize(args[0]??'').toLowerCase()!==typesettingWorker)return args;
+  if(args.some(arg=>arg==='--'||arg==='--js-flags'||arg.startsWith('--js-flags=')))return args;
+  // Electron #52956: this V8 page pool can post work after the Windows loop closes.
+  return [...args,'--js-flags=--no-memory-pool'];
+}
 
 export async function createWarmJob({directory,runId,executable,args=[],cwd,env,cleanupMs=20_000,maxLifetimeMs=30*60_000,onStdout=()=>{},onStderr=()=>{}}){
  if(process.platform!=='win32'||!/^E:[\\/]/i.test(directory)||!/^[-A-Za-z0-9._]{1,128}$/.test(runId)||!path.isAbsolute(executable)||!path.isAbsolute(cwd)||!Array.isArray(args)||args.some(value=>typeof value!=='string'||value.includes('\0'))||!env||Object.keys(env).some(key=>!allowedEnv.has(key.toLowerCase()))||!Number.isInteger(cleanupMs)||cleanupMs<100||cleanupMs>60_000||!Number.isInteger(maxLifetimeMs)||maxLifetimeMs<1000||maxLifetimeMs>3600_000)throw fail('WARM_JOB_OPTIONS');
@@ -25,7 +36,7 @@ export async function createWarmJob({directory,runId,executable,args=[],cwd,env,
  // Only this directly spawned supervisor handle is terminated on a failed startup.
  // Atomic Job assignment plus private kill-on-close covers even a suspended native root.
  const startTimer=setTimeout(()=>{failure='WARM_JOB_START_TIMEOUT';void forceClose(failure);rejectReady(fail(failure));},30_000);
- supervisor.stdin.write(JSON.stringify({runId,executable,args,cwd,cleanupMs,maxLifetimeMs})+'\n');
+ supervisor.stdin.write(JSON.stringify({runId,executable,args:windowsWorkerArguments(executable,args),cwd,cleanupMs,maxLifetimeMs})+'\n');
  let ready;try{ready=await readyPromise;clearTimeout(startTimer);}catch(error){supervisor.stdin.end();if(!await bounded(completion,cleanupMs+1000))await forceClose('WARM_JOB_START_CLEANUP_TIMEOUT');throw error;}
  lifetimeTimer=setTimeout(()=>void forceClose('WARM_JOB_CONTROLLER_LIFETIME_TIMEOUT'),maxLifetimeMs+cleanupMs+5000);
  let resumed=false,stopping;

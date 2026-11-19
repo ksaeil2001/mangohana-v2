@@ -34,6 +34,7 @@ function index(items, key) {
 }
 const equal = (a, b) => contentSha256(a) === contentSha256(b);
 const bilingualHuman = r => r?.kind === 'human' && ['ja', 'ko'].every(l => r.languages.includes(l)) && r.qualificationEvidence !== null;
+export { bilingualHuman as isBilingualHumanReviewer };
 function order(value) {
   requireValue(value.status === 'verified' ? value.value !== null && value.evidence !== null : value.value === null && value.evidence === null, 'UNVERIFIED_PAGE_ORDER');
 }

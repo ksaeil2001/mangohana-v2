@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: the known Windows typesetting runtime omits V8 page pooling at process startup
+not ok 1 - the known Windows typesetting runtime omits V8 page pooling at process startup
+  ---
+  duration_ms: 0.5621
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\worker-arguments.test.mjs:12:1'
+  failureType: 'testCodeFailure'
+  error: 'job.windowsWorkerArguments is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/docs/validation/stage17-windows-regression-20261119/worker-arguments.test.mjs:14:24)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.start (node:internal/test_runner/test:1262:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Subtest: corrected versions, other executables and other entry scripts retain the same arguments
+not ok 2 - corrected versions, other executables and other entry scripts retain the same arguments
+  ---
+  duration_ms: 0.6915
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\worker-arguments.test.mjs:17:1'
+  failureType: 'testCodeFailure'
+  error: 'job.windowsWorkerArguments is not a function'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/docs/validation/stage17-windows-regression-20261119/worker-arguments.test.mjs:18:72)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 91.5614

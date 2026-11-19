@@ -1,0 +1,33 @@
+{
+  "node": "v24.22.1",
+  "executable": "C:/Program Files/WindowsApps/OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt/dependencies/node/bin/node.exe",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-name-pattern",
+    "the same provider receipt|a change records",
+    "tests/v2/stage18-operations.test.mjs"
+  ],
+  "exitCode": 1,
+  "counts": {
+    "tests": 2,
+    "pass": 0,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "before": {
+    "tests/v2/stage18-operations.test.mjs": "f140ec7de6097c595daad9ae52efd91f40212cdf7538333a333d0b2b5b7f1a8d",
+    "packages/evaluation/stage18-operations.mjs": "f77eab4c064d1ea13c7684841464a8a596cd80e7c52d06771ceda294d9dd2385",
+    "packages/evaluation/dataset-contract.mjs": "b49657d3130b164d338501d4982cead673cd52b1e72ff018e83c763fbe70d9e9",
+    "apps/engine/stage15-batch-accounting.mjs": "fa437387ea1465029b188c8b7661d3be29419d8bbf444424fc92bd489bd94a0e"
+  },
+  "after": {
+    "tests/v2/stage18-operations.test.mjs": "f140ec7de6097c595daad9ae52efd91f40212cdf7538333a333d0b2b5b7f1a8d",
+    "packages/evaluation/stage18-operations.mjs": "f77eab4c064d1ea13c7684841464a8a596cd80e7c52d06771ceda294d9dd2385",
+    "packages/evaluation/dataset-contract.mjs": "b49657d3130b164d338501d4982cead673cd52b1e72ff018e83c763fbe70d9e9",
+    "apps/engine/stage15-batch-accounting.mjs": "fa437387ea1465029b188c8b7661d3be29419d8bbf444424fc92bd489bd94a0e"
+  },
+  "logSha256": "304f131eb786fa2b3465c040ff5c98551505a2e45e8542760b4d3854f6a2bfa5"
+}

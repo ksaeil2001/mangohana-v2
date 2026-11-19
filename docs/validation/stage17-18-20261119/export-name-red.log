@@ -1,0 +1,47 @@
+TAP version 13
+# (node:24140) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: an imported chapter label is retained in the list while result ZIP entries use leaf names
+not ok 1 - an imported chapter label is retained in the list while result ZIP entries use leaf names
+  ---
+  duration_ms: 22.2239
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\apps\\sites\\checks\\stage17-export-name.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   '001-Chapter One/표지.png',
+    +   '002-Chapter Two\\표지.png',
+    -   '001-표지.png',
+    -   '002-표지.png',
+        '페이지목록.txt'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '001-표지.png'
+    1: '002-표지.png'
+    2: '페이지목록.txt'
+  actual:
+    0: '001-Chapter One/표지.png'
+    1: '002-Chapter Two\\표지.png'
+    2: '페이지목록.txt'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/apps/sites/checks/stage17-export-name.test.mjs:26:9)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 137.79

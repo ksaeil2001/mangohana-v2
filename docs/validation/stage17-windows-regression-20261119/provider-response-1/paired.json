@@ -1,0 +1,521 @@
+{
+  "counts": {
+    "tests": 18,
+    "pass": 16,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "pids": 21,
+  "childrenWithMeasurements": 19,
+  "failed": [
+    {
+      "pid": 12708,
+      "case": "Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft",
+      "requested": "2026-11-18T22:14:33.632Z",
+      "exit": "2026-11-18T22:14:39.048Z",
+      "signal": "SIGKILL",
+      "first": null,
+      "events": 0,
+      "status": [],
+      "slow": [],
+      "failure": {
+        "code": "LLM_START_TIMEOUT",
+        "at": "2026-11-18T22:14:38.774Z",
+        "probes": 25
+      }
+    },
+    {
+      "pid": 30900,
+      "case": "Stage11 text partial response cannot publish, erase source, or replace a last normal PNG",
+      "requested": "2026-11-18T22:14:44.483Z",
+      "exit": "2026-11-18T22:14:50.366Z",
+      "signal": "SIGKILL",
+      "first": null,
+      "events": 0,
+      "status": [],
+      "slow": [],
+      "failure": {
+        "code": "LLM_START_TIMEOUT",
+        "at": "2026-11-18T22:14:49.651Z",
+        "probes": 25
+      }
+    },
+    {
+      "pid": 27516,
+      "case": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "requested": "2026-11-18T22:15:21.701Z",
+      "exit": "2026-11-18T22:15:21.932Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:21.738Z",
+      "events": 9,
+      "status": [
+        200
+      ],
+      "slow": [],
+      "failure": {
+        "code": "LLM_MODEL_ID",
+        "at": "2026-11-18T22:15:21.925Z",
+        "probes": 2
+      }
+    }
+  ],
+  "rows": [
+    {
+      "pid": 26116,
+      "case": "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+      "requested": "2026-11-18T22:14:05.665Z",
+      "exit": "2026-11-18T22:14:09.429Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:05.703Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 3684
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 33992,
+      "case": "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+      "requested": "2026-11-18T22:14:09.792Z",
+      "exit": "2026-11-18T22:14:12.951Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:09.828Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 2841
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 23460,
+      "case": "Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request",
+      "requested": "2026-11-18T22:14:14.132Z",
+      "exit": "2026-11-18T22:14:15.383Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:14.170Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 1002
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 25876,
+      "case": "Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening",
+      "requested": "2026-11-18T22:14:17.884Z",
+      "exit": "2026-11-18T22:14:18.814Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:17.919Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [],
+      "failure": null
+    },
+    {
+      "pid": 37008,
+      "case": "Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved",
+      "requested": "2026-11-18T22:14:21.846Z",
+      "exit": "2026-11-18T22:14:23.732Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:21.883Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 1814
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 34432,
+      "case": "Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved",
+      "requested": "2026-11-18T22:14:25.295Z",
+      "exit": "2026-11-18T22:14:25.738Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:25.331Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [],
+      "failure": null
+    },
+    {
+      "pid": 12708,
+      "case": "Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft",
+      "requested": "2026-11-18T22:14:33.632Z",
+      "exit": "2026-11-18T22:14:39.048Z",
+      "signal": "SIGKILL",
+      "first": null,
+      "events": 0,
+      "status": [],
+      "slow": [],
+      "failure": {
+        "code": "LLM_START_TIMEOUT",
+        "at": "2026-11-18T22:14:38.774Z",
+        "probes": 25
+      }
+    },
+    {
+      "pid": 30900,
+      "case": "Stage11 text partial response cannot publish, erase source, or replace a last normal PNG",
+      "requested": "2026-11-18T22:14:44.483Z",
+      "exit": "2026-11-18T22:14:50.366Z",
+      "signal": "SIGKILL",
+      "first": null,
+      "events": 0,
+      "status": [],
+      "slow": [],
+      "failure": {
+        "code": "LLM_START_TIMEOUT",
+        "at": "2026-11-18T22:14:49.651Z",
+        "probes": 25
+      }
+    },
+    {
+      "pid": 19996,
+      "case": "Stage11 page partial response cannot publish, erase source, or replace a last normal PNG",
+      "requested": "2026-11-18T22:14:51.000Z",
+      "exit": "2026-11-18T22:14:53.897Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:51.037Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 2831
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 16572,
+      "case": "Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report",
+      "requested": "2026-11-18T22:14:54.710Z",
+      "exit": "2026-11-18T22:14:56.190Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:54.748Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 1413
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 36736,
+      "case": "a page request binds the server snapshot and records actual glossary/context consumption",
+      "requested": "2026-11-18T22:14:57.628Z",
+      "exit": "2026-11-18T22:15:01.367Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:14:57.667Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 3671
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 10104,
+      "case": "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+      "requested": "2026-11-18T22:15:02.285Z",
+      "exit": "2026-11-18T22:15:05.027Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:02.322Z",
+      "events": 83,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 2031
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 28164,
+      "case": "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+      "requested": "2026-11-18T22:15:05.086Z",
+      "exit": "2026-11-18T22:15:08.507Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:05.125Z",
+      "events": 49,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 3263
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 36036,
+      "case": "a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+      "requested": "2026-11-18T22:15:09.281Z",
+      "exit": "2026-11-18T22:15:13.040Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:09.317Z",
+      "events": 83,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 3041
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 5104,
+      "case": "engine close cancels active synthetic translation, drains job and caches, then releases hooks",
+      "requested": "2026-11-18T22:15:13.614Z",
+      "exit": "2026-11-18T22:15:16.621Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:13.651Z",
+      "events": 32,
+      "status": [
+        200,
+        401,
+        200,
+        401
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 2635
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 18488,
+      "case": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "requested": "2026-11-18T22:15:17.443Z",
+      "exit": "2026-11-18T22:15:21.639Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:17.482Z",
+      "events": 57,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401,
+        200
+      ],
+      "slow": [
+        {
+          "from": "entered",
+          "to": "incoming",
+          "ms": 3873
+        }
+      ],
+      "failure": null
+    },
+    {
+      "pid": 27516,
+      "case": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "requested": "2026-11-18T22:15:21.701Z",
+      "exit": "2026-11-18T22:15:21.932Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:21.738Z",
+      "events": 9,
+      "status": [
+        200
+      ],
+      "slow": [],
+      "failure": {
+        "code": "LLM_MODEL_ID",
+        "at": "2026-11-18T22:15:21.925Z",
+        "probes": 2
+      }
+    },
+    {
+      "pid": 32444,
+      "case": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "requested": "2026-11-18T22:15:22.492Z",
+      "exit": "2026-11-18T22:15:22.827Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:22.529Z",
+      "events": 49,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401
+      ],
+      "slow": [],
+      "failure": null
+    },
+    {
+      "pid": 37472,
+      "case": "cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments",
+      "requested": "2026-11-18T22:15:23.993Z",
+      "exit": "2026-11-18T22:15:24.238Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:24.014Z",
+      "events": 21,
+      "status": [
+        200,
+        401,
+        200
+      ],
+      "slow": [],
+      "failure": null
+    },
+    {
+      "pid": 38716,
+      "case": "cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments",
+      "requested": "2026-11-18T22:15:25.086Z",
+      "exit": "2026-11-18T22:15:25.657Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:25.119Z",
+      "events": 83,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401
+      ],
+      "slow": [],
+      "failure": null
+    },
+    {
+      "pid": 9640,
+      "case": "unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job",
+      "requested": "2026-11-18T22:15:26.378Z",
+      "exit": "2026-11-18T22:15:26.714Z",
+      "signal": "SIGKILL",
+      "first": "2026-11-18T22:15:26.410Z",
+      "events": 49,
+      "status": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        200,
+        401
+      ],
+      "slow": [],
+      "failure": null
+    }
+  ]
+}

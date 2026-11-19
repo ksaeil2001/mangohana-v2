@@ -1,0 +1,157 @@
+{
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "checkedBaselineFiles": 186,
+  "baselineFilesChanged": [
+    "apps/engine/result.mjs",
+    "apps/sites/app/globals.css",
+    "apps/sites/components/studio.tsx",
+    "apps/sites/lib/studio-engine.ts",
+    "apps/sites/lib/studio-files.ts",
+    "apps/sites/lib/studio-model.ts",
+    "apps/sites/lib/studio-state.ts",
+    "docs/superpowers/plans/2026-11-11-mangohana-v2-sites-integration.md"
+  ],
+  "baselineFilesWithSameDigest": 178,
+  "initialStatusRows": 189,
+  "finalStatusRows": 205,
+  "rows": [
+    {
+      "file": "apps/engine/result.mjs",
+      "change": "modified",
+      "beforeSha256": "7d59ecc39be9347645b05c62405d5126fc7302cdb897ee498878bf174a202b7f",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "00144ed647fdbc72d42b107bac9552bad43ce6a12a176c0518c7e8b767c797f9"
+    },
+    {
+      "file": "apps/sites/app/globals.css",
+      "change": "modified",
+      "beforeSha256": "f748141d8f7c3448df43ce5983db086be3cc743d24441aae61a9ce8bc25f0dbf",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "cc307506ea5bd351036982e37ff20a67c39616f5066486626903efce0df4c05d"
+    },
+    {
+      "file": "apps/sites/components/studio.tsx",
+      "change": "modified",
+      "beforeSha256": "353b666e463b111330ff84d92dfde2f3609ea132299d195b6d57d924a4174fc3",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "9886671f953f1f6a37a1eafb3f8e83248aee32116fc90e85bf31ce804307510c"
+    },
+    {
+      "file": "apps/sites/lib/studio-engine.ts",
+      "change": "modified",
+      "beforeSha256": "c0c4e1524793a3736c78e1f0f2d306b810f729a3f5c8e55032a3a5adeb63fe96",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "4be9fc5765f5beeb430f375709a0465ca091d86cbd47be968d041a8267d6732d"
+    },
+    {
+      "file": "apps/sites/lib/studio-files.ts",
+      "change": "modified",
+      "beforeSha256": "c0c7d7f8fc723399d76cfbc3301d5a697bbfdf0a6f97950777a60d5ff9752414",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "b7e2e106cd6773744b2d5ab6ff3d11bbe167a8819e09013b4ab2412e805043d8"
+    },
+    {
+      "file": "apps/sites/lib/studio-model.ts",
+      "change": "modified",
+      "beforeSha256": "37960b34e780e20ba356fa05ef7c74f4e7862c6acee61411ce1b0fcc974d6522",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "065248f8c768c284ce8dddcc9854baf42dccd863109c2e7fee3e4eb8bf5370fb"
+    },
+    {
+      "file": "apps/sites/lib/studio-state.ts",
+      "change": "modified",
+      "beforeSha256": "c48bd29c5497642ba14130bfeef83eb95127a635a99108fe8c4a550d32f87701",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "0510b4dbdc683ea78d4e2ee2c10c2725d119590b79db69418c3af8fd0f057a01"
+    },
+    {
+      "file": "docs/superpowers/plans/2026-11-11-mangohana-v2-sites-integration.md",
+      "change": "modified",
+      "beforeSha256": "8e54ef1ba145706f047eac420881a995c64722376e6bdd8b363f24171a22e55c",
+      "beforeSource": "workspace snapshot",
+      "afterSha256": "12eb54236db99c08c508bf5b6e0300e9d00b5180390ee33cbc8303a4edc39b55"
+    },
+    {
+      "file": "tests/v2/result.test.mjs",
+      "change": "modified",
+      "beforeSha256": "868e133163c6b6d66c79deeb921274097a31ae96e3eef30e22741104c9bbd2f8",
+      "beforeSource": "clean tracked HEAD blob",
+      "afterSha256": "6bb32294fc198d6ba36bde5e0990eba81540f5e82fed94648a1f26a9b61b9ef8"
+    },
+    {
+      "file": "apps/sites/checks/stage17-studio.test.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "09c912aad656258fac5609d50238d304f0fb7a8f45d4a1c8d2f858057a416e3d"
+    },
+    {
+      "file": "apps/sites/checks/stage17-export-name.test.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "640d58c5d131a5aec30ff6620616e3854524bdc93a44856977d11b5ea8b0c402"
+    },
+    {
+      "file": "packages/evaluation/stage17-release.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "9a83a071a8f0c9f636e5c3ae6e2aa2c7818ccf6245e6df31460596bc6a9e6e1b"
+    },
+    {
+      "file": "packages/evaluation/stage18-operations.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "fa22dd539ecbf685feba4a0a4eba7ca083071d81ccb188970a2450504bcf3dd9"
+    },
+    {
+      "file": "scripts/v2/review-release.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "6a00b838a7fc01ce80a4bfa64c9866d6f5d42e87a897ae5a8eea6c429f84c646"
+    },
+    {
+      "file": "scripts/v2/review-change.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "01a49628d2e1cb172b7ba2be2b1547480710e5ef9e48ab36cc5bc641f4e7b5de"
+    },
+    {
+      "file": "tests/v2/stage17-release.test.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "f1cda7628d3debd71d0c92e659e60e3d86b8bf7a3f8b7c63ea9fc9d11fc36143"
+    },
+    {
+      "file": "tests/v2/stage18-operations.test.mjs",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "37edd7a944050848e770bb65967adf510ef1a94ed7c04ccc13ddacccad3bedb5"
+    },
+    {
+      "file": "docs/superpowers/plans/2026-11-19-mangohana-v2-stage17-18.md",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "f21e232be3a04e8506192129453bd6331b06e671b2779dd1840ce2ed390f55c7"
+    },
+    {
+      "file": "docs/superpowers/handoffs/2026-11-19-stage17-handoff.md",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "eb49f93cc97335f5a4e9b4768fbf45ba9c257360a1e42abe3a87b9776f900c54"
+    },
+    {
+      "file": "docs/superpowers/handoffs/2026-11-19-stage18-handoff.md",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "b59fbc1f6b5f005e1627dba61bcf2d83bdd03060c83b4461011c50815d821cae"
+    },
+    {
+      "file": "docs/validation/2026-11-19-v2-stage17-18.md",
+      "change": "added",
+      "beforeSha256": null,
+      "afterSha256": "bc127b4eea20c9d0027900ee7446902e0e496f3779071167d848928abff0f156"
+    }
+  ],
+  "evidenceDirectory": "docs/validation/stage17-18-20261119",
+  "evidenceFiles": "Command receipts carry individual input and log digests."
+}

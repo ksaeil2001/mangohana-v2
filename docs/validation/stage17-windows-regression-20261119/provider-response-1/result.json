@@ -1,0 +1,31 @@
+{
+  "started": "2026-11-18T22:14:01.491Z",
+  "finished": "2026-11-18T22:15:26.797Z",
+  "node": "v24.22.1",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "sourcePins": {
+    "tests/v2/engine-runtime-reuse.test.mjs": "b88c56d5588eb8e6b94886357e8079e67dce1a5952640514792b13cd37185a75",
+    "tests/v2/fixtures/owned-engine-runtime.mjs": "1971c6915cf1852c4fbda01bb7a28f62da7e6b20606c0650de4c6ebfc0516cd6"
+  },
+  "temp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-provider-akkL6X",
+  "args": [
+    "--test",
+    "--test-concurrency=1",
+    "--test-reporter=tap",
+    "--require",
+    "C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\trace.cjs",
+    "--require",
+    "C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\response-phases.cjs",
+    "tests/v2/engine-runtime-reuse.test.mjs"
+  ],
+  "counts": {
+    "tests": 18,
+    "pass": 16,
+    "fail": 2,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "exitCode": 1,
+  "signal": null
+}

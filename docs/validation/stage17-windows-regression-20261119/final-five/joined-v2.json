@@ -1,0 +1,1650 @@
+{
+  "runtime": [
+    {
+      "leaf": "engine-default-GbeIp2",
+      "pids": [
+        20388,
+        35304,
+        16548,
+        24248,
+        13524,
+        21540,
+        33988,
+        38672
+      ],
+      "tests": [
+        "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:17:41.253Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:17:41.310Z",
+          "durationMs": 58
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:17:41.323Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:17:41.583Z",
+          "durationMs": 259
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:17:41.788Z"
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:17:41.841Z",
+          "durationMs": 52
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:17:41.845Z"
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:17:42.260Z",
+          "durationMs": 415
+        }
+      ],
+      "requests": [
+        {
+          "pid": 16548,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 16548,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 16548,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 33988,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 33988,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 33988,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-IejBWo",
+      "pids": [
+        29504,
+        38828,
+        27356,
+        37776
+      ],
+      "tests": [
+        "Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:17:43.442Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:17:43.498Z",
+          "durationMs": 56
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:17:43.503Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:17:43.744Z",
+          "durationMs": 241
+        }
+      ],
+      "requests": [
+        {
+          "pid": 27356,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 27356,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 27356,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-9I7D1u",
+      "pids": [
+        15076,
+        12704,
+        38432,
+        33204
+      ],
+      "tests": [
+        "Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "046b68b9-e8af-42d4-a3ec-3bec6ed83555",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:17:46.537Z"
+        },
+        {
+          "page": "046b68b9-e8af-42d4-a3ec-3bec6ed83555",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:17:46.592Z",
+          "durationMs": 56
+        },
+        {
+          "page": "046b68b9-e8af-42d4-a3ec-3bec6ed83555",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:17:46.597Z"
+        },
+        {
+          "page": "046b68b9-e8af-42d4-a3ec-3bec6ed83555",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:17:47.292Z",
+          "durationMs": 695
+        }
+      ],
+      "requests": [
+        {
+          "pid": 38432,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 38432,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 38432,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-bM4RzB",
+      "pids": [
+        31776,
+        26920,
+        34236,
+        2908
+      ],
+      "tests": [
+        "Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:17:50.422Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:17:50.484Z",
+          "durationMs": 61
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:17:50.488Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:17:50.727Z",
+          "durationMs": 239
+        }
+      ],
+      "requests": [
+        {
+          "pid": 34236,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 34236,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 34236,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-0Op3jK",
+      "pids": [
+        34708,
+        36236,
+        29104,
+        21848
+      ],
+      "tests": [
+        "Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:17:51.576Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:17:51.628Z",
+          "durationMs": 52
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:17:51.632Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:17:51.868Z",
+          "durationMs": 237
+        }
+      ],
+      "requests": [
+        {
+          "pid": 29104,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 29104,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 29104,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-LSdA6F",
+      "pids": [],
+      "tests": [],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [],
+      "requests": []
+    },
+    {
+      "leaf": "engine-default-lpZV2i",
+      "pids": [],
+      "tests": [],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [],
+      "requests": []
+    },
+    {
+      "leaf": "engine-default-oxtaJc",
+      "pids": [
+        9628,
+        1736,
+        31272,
+        15924
+      ],
+      "tests": [
+        "Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:01.170Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:01.226Z",
+          "durationMs": 55
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:01.229Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:01.458Z",
+          "durationMs": 228
+        }
+      ],
+      "requests": [
+        {
+          "pid": 31272,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 31272,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 31272,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-gXjX7c",
+      "pids": [
+        24668,
+        8060,
+        29556
+      ],
+      "tests": [
+        "Stage11 text partial response cannot publish, erase source, or replace a last normal PNG"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:05.283Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:05.340Z",
+          "durationMs": 56
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:05.343Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:05.570Z",
+          "durationMs": 227
+        }
+      ],
+      "requests": [
+        {
+          "pid": 29556,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 29556,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 29556,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 29556,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-swU3tM",
+      "pids": [
+        30756,
+        31652,
+        3672
+      ],
+      "tests": [
+        "Stage11 page partial response cannot publish, erase source, or replace a last normal PNG"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:06.138Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:06.193Z",
+          "durationMs": 55
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:06.196Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:06.423Z",
+          "durationMs": 227
+        }
+      ],
+      "requests": [
+        {
+          "pid": 3672,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 3672,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 3672,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-MSohya",
+      "pids": [
+        33092,
+        19860,
+        38580
+      ],
+      "tests": [
+        "Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:07.418Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:07.468Z",
+          "durationMs": 50
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:07.471Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:07.697Z",
+          "durationMs": 226
+        }
+      ],
+      "requests": [
+        {
+          "pid": 38580,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 38580,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 38580,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-default-2HchAf",
+      "pids": [
+        35844,
+        37680,
+        32696,
+        25324
+      ],
+      "tests": [
+        "a page request binds the server snapshot and records actual glossary/context consumption"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:08.400Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:08.454Z",
+          "durationMs": 53
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:08.457Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:08.684Z",
+          "durationMs": 227
+        }
+      ],
+      "requests": [
+        {
+          "pid": 32696,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 32696,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 32696,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-4sjoPq",
+      "pids": [
+        2520,
+        35140,
+        17096,
+        14124,
+        32660,
+        18856,
+        21680,
+        9832,
+        8388
+      ],
+      "tests": [
+        "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:09.367Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:09.422Z",
+          "durationMs": 55
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:09.426Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:09.651Z",
+          "durationMs": 225
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:10.214Z"
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:10.265Z",
+          "durationMs": 51
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:10.268Z"
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:10.490Z",
+          "durationMs": 222
+        }
+      ],
+      "requests": [
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 14124,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 8388,
+          "route": "/v1/models",
+          "authorized": false
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-CmSGOl",
+      "pids": [
+        11608,
+        27164,
+        32472,
+        24288,
+        2364,
+        12340
+      ],
+      "tests": [
+        "a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:11.382Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:11.438Z",
+          "durationMs": 56
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:11.441Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:11.676Z",
+          "durationMs": 235
+        },
+        {
+          "page": "page-2",
+          "phase": "ocr_runtime_cache_failed",
+          "at": "2026-11-18T20:18:11.872Z",
+          "code": "PROCESS_RESTART_REQUIRED"
+        }
+      ],
+      "requests": [
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24288,
+          "route": "/v1/models",
+          "authorized": false
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-BqL7mD",
+      "pids": [
+        2456,
+        33364,
+        8656
+      ],
+      "tests": [
+        "engine close cancels active synthetic translation, drains job and caches, then releases hooks"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:12.709Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:12.765Z",
+          "durationMs": 56
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:12.768Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:12.991Z",
+          "durationMs": 223
+        },
+        {
+          "page": "page-1",
+          "phase": "translation_runtime_cache_failed",
+          "at": "2026-11-18T20:18:13.047Z",
+          "code": "RUNTIME_FAILED"
+        }
+      ],
+      "requests": [
+        {
+          "pid": 8656,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 8656,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 8656,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 8656,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 8656,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-4ugFyl",
+      "pids": [
+        9292,
+        12128,
+        35816,
+        36980,
+        20632,
+        36912,
+        34376,
+        16688,
+        31732
+      ],
+      "tests": [
+        "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:13.825Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:13.877Z",
+          "durationMs": 52
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:13.880Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:14.103Z",
+          "durationMs": 222
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:14.306Z"
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:14.360Z",
+          "durationMs": 54
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:14.363Z"
+        },
+        {
+          "page": "page-2",
+          "phase": "llama_load_failed",
+          "at": "2026-11-18T20:18:14.594Z",
+          "code": "LLM_MODEL_ID",
+          "exitCode": null
+        },
+        {
+          "page": "page-2",
+          "phase": "translation_runtime_cache_failed",
+          "at": "2026-11-18T20:18:14.602Z",
+          "code": "LLM_MODEL_ID"
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:15.122Z"
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:15.179Z",
+          "durationMs": 57
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:15.182Z"
+        },
+        {
+          "page": "page-3",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:15.413Z",
+          "durationMs": 231
+        }
+      ],
+      "requests": [
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 36980,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 36912,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 31732,
+          "route": "/v1/models",
+          "authorized": false
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-X5yCAP",
+      "pids": [],
+      "tests": [],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "ocr_runtime_cache_failed",
+          "at": "2026-11-18T20:18:16.276Z",
+          "code": "RUNTIME_FAILED"
+        }
+      ],
+      "requests": []
+    },
+    {
+      "leaf": "engine-default-9nPxua",
+      "pids": [
+        35848,
+        21920,
+        2764,
+        35156
+      ],
+      "tests": [
+        "cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:16.728Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:16.781Z",
+          "durationMs": 53
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:16.785Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:17.021Z",
+          "durationMs": 236
+        }
+      ],
+      "requests": [
+        {
+          "pid": 2764,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 2764,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 2764,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-f10ItB",
+      "pids": [
+        22820,
+        1764,
+        23772,
+        24332,
+        28732
+      ],
+      "tests": [
+        "cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments"
+      ],
+      "hooksReleased": true,
+      "forced": false,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:17.550Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:17.604Z",
+          "durationMs": 54
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:17.607Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:17.844Z",
+          "durationMs": 237
+        }
+      ],
+      "requests": [
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 24332,
+          "route": "/v1/models",
+          "authorized": false
+        }
+      ]
+    },
+    {
+      "leaf": "engine-reuse-Cs8yQw",
+      "pids": [
+        16548,
+        16460,
+        22264,
+        30072
+      ],
+      "tests": [
+        "unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job"
+      ],
+      "hooksReleased": false,
+      "forced": true,
+      "allChildHandlesClosed": true,
+      "stages": [
+        {
+          "page": "page-1",
+          "phase": "llama_help_start",
+          "at": "2026-11-18T20:18:18.737Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_help_ready",
+          "at": "2026-11-18T20:18:18.796Z",
+          "durationMs": 60
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_start",
+          "at": "2026-11-18T20:18:18.800Z"
+        },
+        {
+          "page": "page-1",
+          "phase": "llama_load_ready",
+          "at": "2026-11-18T20:18:19.037Z",
+          "durationMs": 237
+        }
+      ],
+      "requests": [
+        {
+          "pid": 30072,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 30072,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 30072,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 30072,
+          "route": "/v1/models",
+          "authorized": false
+        },
+        {
+          "pid": 30072,
+          "route": "/v1/chat/completions",
+          "authorized": true
+        },
+        {
+          "pid": 30072,
+          "route": "/v1/models",
+          "authorized": true
+        },
+        {
+          "pid": 30072,
+          "route": "/v1/models",
+          "authorized": false
+        }
+      ]
+    }
+  ],
+  "supervisors": [
+    {
+      "test": "worker bootstrap loads the signed production font without image execution",
+      "runId": "font-only-33eb6316-703d-4844-b404-3c239bc9b484",
+      "rootPid": 7732,
+      "supervisorPid": 25568,
+      "requestedUtc": "2026-11-18T20:18:19.437Z",
+      "rootCreatedUtc": "2026-11-18T20:18:19.921Z",
+      "readyObservedUtc": "2026-11-18T20:18:19.926Z",
+      "resumedObservedUtc": "2026-11-18T20:18:19.973Z",
+      "rootExitUtc": "2026-11-18T20:18:23.826Z",
+      "completionObservedUtc": "2026-11-18T20:18:23.908Z",
+      "supervisorExitedUtc": "2026-11-18T20:18:23.925Z",
+      "reason": "root_exit",
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 489,
+      "nativeElapsedMs": 3934
+    },
+    {
+      "test": "worker font failure stays closed with a stack before any image pipeline",
+      "runId": "font-only-416229e7-6cc6-4ce3-89ae-946728ef18bb",
+      "rootPid": 21660,
+      "supervisorPid": 10332,
+      "requestedUtc": "2026-11-18T20:18:24.177Z",
+      "rootCreatedUtc": "2026-11-18T20:18:24.638Z",
+      "readyObservedUtc": "2026-11-18T20:18:24.642Z",
+      "resumedObservedUtc": "2026-11-18T20:18:24.643Z",
+      "rootExitUtc": "2026-11-18T20:18:29.838Z",
+      "completionObservedUtc": "2026-11-18T20:18:29.916Z",
+      "supervisorExitedUtc": "2026-11-18T20:18:29.932Z",
+      "reason": "root_exit",
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 465,
+      "nativeElapsedMs": 5236
+    },
+    {
+      "test": "worker persists bound per-region layout diagnostics without an image execution",
+      "runId": "font-only-760ee0a2-1832-4a5f-9ce6-6d053ad94778",
+      "rootPid": 20208,
+      "supervisorPid": 26616,
+      "requestedUtc": "2026-11-18T20:18:30.100Z",
+      "rootCreatedUtc": "2026-11-18T20:18:30.565Z",
+      "readyObservedUtc": "2026-11-18T20:18:30.570Z",
+      "resumedObservedUtc": "2026-11-18T20:18:30.571Z",
+      "rootExitUtc": "2026-11-18T20:18:33.171Z",
+      "completionObservedUtc": "2026-11-18T20:18:33.254Z",
+      "supervisorExitedUtc": "2026-11-18T20:18:33.270Z",
+      "reason": "root_exit",
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 470,
+      "nativeElapsedMs": 2650
+    },
+    {
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication",
+      "runId": "173a4464-0663-4958-bc86-33e9a229afa6",
+      "rootPid": 13228,
+      "supervisorPid": 5300,
+      "requestedUtc": "2026-11-18T20:18:33.681Z",
+      "rootCreatedUtc": "2026-11-18T20:18:34.176Z",
+      "readyObservedUtc": "2026-11-18T20:18:34.180Z",
+      "resumedObservedUtc": "2026-11-18T20:18:34.181Z",
+      "rootExitUtc": "2026-11-18T20:18:53.164Z",
+      "completionObservedUtc": "2026-11-18T20:18:54.111Z",
+      "supervisorExitedUtc": "2026-11-18T20:18:54.126Z",
+      "reason": "root_exit",
+      "rootExitCode": 2147483651,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 499,
+      "nativeElapsedMs": 19144
+    },
+    {
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion",
+      "runId": "45a321c0-1bd7-4d2d-826a-75bace6f53a2",
+      "rootPid": 28680,
+      "supervisorPid": 7756,
+      "requestedUtc": "2026-11-18T20:18:54.480Z",
+      "rootCreatedUtc": "2026-11-18T20:18:55.035Z",
+      "readyObservedUtc": "2026-11-18T20:18:55.037Z",
+      "resumedObservedUtc": "2026-11-18T20:18:55.038Z",
+      "rootExitUtc": "2026-11-18T20:19:08.132Z",
+      "completionObservedUtc": "2026-11-18T20:19:08.390Z",
+      "supervisorExitedUtc": "2026-11-18T20:19:08.412Z",
+      "reason": "root_exit",
+      "rootExitCode": 0,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 558,
+      "nativeElapsedMs": 13137
+    },
+    {
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval",
+      "runId": "88a9d0b9-7dde-4ab9-ae3d-ea9104030b1f",
+      "rootPid": 22916,
+      "supervisorPid": 37940,
+      "requestedUtc": "2026-11-18T20:19:08.882Z",
+      "rootCreatedUtc": "2026-11-18T20:19:09.363Z",
+      "readyObservedUtc": "2026-11-18T20:19:09.367Z",
+      "resumedObservedUtc": "2026-11-18T20:19:09.368Z",
+      "rootExitUtc": "2026-11-18T20:19:22.086Z",
+      "completionObservedUtc": "2026-11-18T20:19:22.168Z",
+      "supervisorExitedUtc": "2026-11-18T20:19:22.184Z",
+      "reason": "root_exit",
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 485,
+      "nativeElapsedMs": 12775
+    },
+    {
+      "test": "real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly",
+      "runId": "8a054399-da21-463c-a1fe-af9991d70da9",
+      "rootPid": 32968,
+      "supervisorPid": 27128,
+      "requestedUtc": "2026-11-18T20:19:22.386Z",
+      "rootCreatedUtc": "2026-11-18T20:19:22.876Z",
+      "readyObservedUtc": "2026-11-18T20:19:22.880Z",
+      "resumedObservedUtc": "2026-11-18T20:19:22.881Z",
+      "rootExitUtc": "2026-11-18T20:19:22.941Z",
+      "completionObservedUtc": "2026-11-18T20:19:23.016Z",
+      "supervisorExitedUtc": "2026-11-18T20:19:23.033Z",
+      "reason": "root_exit",
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 494,
+      "nativeElapsedMs": 107
+    },
+    {
+      "test": "real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle",
+      "runId": "86091ef4-3e9a-465e-ab83-752f534e213a",
+      "rootPid": 7244,
+      "supervisorPid": 31628,
+      "requestedUtc": "2026-11-18T20:19:24.046Z",
+      "rootCreatedUtc": "2026-11-18T20:19:24.537Z",
+      "readyObservedUtc": "2026-11-18T20:19:24.541Z",
+      "resumedObservedUtc": "2026-11-18T20:19:24.542Z",
+      "rootExitUtc": "2026-11-18T20:19:24.602Z",
+      "completionObservedUtc": "2026-11-18T20:19:24.681Z",
+      "supervisorExitedUtc": "2026-11-18T20:19:24.697Z",
+      "reason": "root_exit",
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 495,
+      "nativeElapsedMs": 101
+    },
+    {
+      "test": "real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result",
+      "runId": "0c58ace3-1156-4248-ba23-3502f1572319",
+      "rootPid": 32332,
+      "supervisorPid": 24376,
+      "requestedUtc": "2026-11-18T20:19:25.916Z",
+      "rootCreatedUtc": "2026-11-18T20:19:26.395Z",
+      "readyObservedUtc": "2026-11-18T20:19:26.400Z",
+      "resumedObservedUtc": "2026-11-18T20:19:26.442Z",
+      "rootExitUtc": "2026-11-18T20:19:28.300Z",
+      "completionObservedUtc": "2026-11-18T20:19:28.376Z",
+      "supervisorExitedUtc": "2026-11-18T20:19:28.394Z",
+      "reason": "root_exit",
+      "rootExitCode": 0,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 484,
+      "nativeElapsedMs": 1950
+    },
+    {
+      "test": "real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result",
+      "runId": "b8caba07-b332-4caf-8a54-9f84f97cbfcc",
+      "rootPid": 36276,
+      "supervisorPid": 36112,
+      "requestedUtc": "2026-11-18T20:19:28.630Z",
+      "rootCreatedUtc": "2026-11-18T20:19:29.178Z",
+      "readyObservedUtc": "2026-11-18T20:19:29.183Z",
+      "resumedObservedUtc": "2026-11-18T20:19:29.231Z",
+      "rootExitUtc": "2026-11-18T20:19:31.084Z",
+      "completionObservedUtc": "2026-11-18T20:19:31.181Z",
+      "supervisorExitedUtc": "2026-11-18T20:19:31.196Z",
+      "reason": "root_exit",
+      "rootExitCode": 0,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 552,
+      "nativeElapsedMs": 1957
+    }
+  ],
+  "typesetting": [
+    {
+      "leaf": "typesetting-native-PZ59d3",
+      "runId": "173a4464-0663-4958-bc86-33e9a229afa6",
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication",
+      "rootPid": 13228,
+      "identityConfirmed": true,
+      "rootExitCode": 2147483651,
+      "reason": "root_exit",
+      "kernelCleanupConfirmed": true,
+      "activeAfter": 0,
+      "terminationRequested": false,
+      "resultBound": true,
+      "resultMatchesPng": true,
+      "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+      "failureCode": null
+    },
+    {
+      "leaf": "typesetting-native-hjSXlT",
+      "runId": "45a321c0-1bd7-4d2d-826a-75bace6f53a2",
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion",
+      "rootPid": 28680,
+      "identityConfirmed": true,
+      "rootExitCode": 0,
+      "reason": "root_exit",
+      "kernelCleanupConfirmed": true,
+      "activeAfter": 0,
+      "terminationRequested": false,
+      "resultBound": true,
+      "resultMatchesPng": true,
+      "candidateSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+      "failureCode": null
+    },
+    {
+      "leaf": "typesetting-native-6vD1da",
+      "runId": "88a9d0b9-7dde-4ab9-ae3d-ea9104030b1f",
+      "test": "dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval",
+      "rootPid": 22916,
+      "identityConfirmed": true,
+      "rootExitCode": 1,
+      "reason": "root_exit",
+      "kernelCleanupConfirmed": true,
+      "activeAfter": 0,
+      "terminationRequested": false,
+      "resultBound": null,
+      "resultMatchesPng": null,
+      "candidateSha256": null,
+      "failureCode": "MANUAL_LAYOUT_REQUIRED"
+    }
+  ]
+}

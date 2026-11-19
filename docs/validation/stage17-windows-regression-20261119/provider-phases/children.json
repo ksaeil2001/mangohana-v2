@@ -1,0 +1,1056 @@
+[
+  {
+    "leaf": "engine-reuse-vU9ukU",
+    "requested": "2026-11-18T21:07:45.671Z",
+    "events": [
+      {
+        "phase": "node_entry",
+        "utc": "2026-11-18T21:07:45.712Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:45.713Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "source_compilation",
+        "utc": "2026-11-18T21:07:45.714Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:45.714Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:45.715Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:45.715Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:45.715Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:45.715Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:45.715Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "listen_called",
+        "utc": "2026-11-18T21:07:45.715Z"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:45.722Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "listening",
+        "utc": "2026-11-18T21:07:45.726Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.892Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.894Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.897Z",
+        "elapsedMs": 3.541799999999995
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:45.897Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:45.898Z",
+        "elapsedMs": 0.08379999999999654
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.899Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.906Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.906Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.908Z",
+        "elapsedMs": 2.297099999999972
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.909Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.912Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.912Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.915Z",
+        "elapsedMs": 2.1414000000000044
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:45.915Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:45.915Z",
+        "elapsedMs": 0.06999999999999318
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.915Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.916Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.916Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.919Z",
+        "elapsedMs": 2.3680999999999983
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.919Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.932Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.933Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.935Z",
+        "elapsedMs": 2.353999999999985
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.936Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.945Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.945Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.948Z",
+        "elapsedMs": 2.5347999999999615
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:45.948Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:45.948Z",
+        "elapsedMs": 0.102800000000002
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.948Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:45.950Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:45.950Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:45.952Z",
+        "elapsedMs": 2.4413999999999874
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:45.953Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.203Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.204Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.206Z",
+        "elapsedMs": 2.223100000000045
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:46.206Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:46.206Z",
+        "elapsedMs": 0.061599999999998545
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.206Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.207Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.208Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.210Z",
+        "elapsedMs": 2.1894000000000915
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.210Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.219Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.219Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.221Z",
+        "elapsedMs": 2.3480999999999312
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.222Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.228Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.228Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.230Z",
+        "elapsedMs": 2.1253999999998996
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:46.230Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:46.230Z",
+        "elapsedMs": 0.06299999999998818
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.230Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.231Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.231Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.233Z",
+        "elapsedMs": 2.1403999999999996
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.233Z"
+      }
+    ],
+    "pid": 12760,
+    "exit": "2026-11-18T21:07:46.548Z",
+    "code": null,
+    "signal": "SIGKILL"
+  },
+  {
+    "leaf": "engine-reuse-vU9ukU",
+    "requested": "2026-11-18T21:07:46.614Z",
+    "events": [
+      {
+        "phase": "node_entry",
+        "utc": "2026-11-18T21:07:46.663Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:46.664Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "source_compilation",
+        "utc": "2026-11-18T21:07:46.664Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:46.664Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:46.665Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:46.665Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:46.665Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:46.665Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:46.665Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "listen_called",
+        "utc": "2026-11-18T21:07:46.666Z"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:46.672Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "listening",
+        "utc": "2026-11-18T21:07:46.677Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.834Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.836Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.839Z",
+        "elapsedMs": 2.703000000000003
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:46.839Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:46.839Z",
+        "elapsedMs": 0.09090000000000487
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.840Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.841Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.841Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.843Z",
+        "elapsedMs": 2.2257999999999925
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.844Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.847Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.847Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.849Z",
+        "elapsedMs": 2.1462999999999965
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:46.849Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:46.849Z",
+        "elapsedMs": 0.0695999999999799
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.849Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.850Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.850Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.852Z",
+        "elapsedMs": 2.1048999999999864
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.852Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.860Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.861Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.863Z",
+        "elapsedMs": 2.183400000000006
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.863Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.869Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.869Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.871Z",
+        "elapsedMs": 2.081099999999992
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:46.871Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:46.871Z",
+        "elapsedMs": 0.06279999999998154
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.871Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:46.872Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:46.872Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:46.874Z",
+        "elapsedMs": 2.1192000000000064
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:46.874Z"
+      }
+    ],
+    "pid": 33524,
+    "exit": "2026-11-18T21:07:46.955Z",
+    "code": null,
+    "signal": "SIGKILL"
+  },
+  {
+    "leaf": "engine-reuse-xUAfS1",
+    "requested": "2026-11-18T21:07:47.646Z",
+    "events": [
+      {
+        "phase": "node_entry",
+        "utc": "2026-11-18T21:07:47.684Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:47.685Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "source_compilation",
+        "utc": "2026-11-18T21:07:47.685Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:47.686Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:47.686Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:47.687Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:47.687Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:47.687Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:47.687Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "listen_called",
+        "utc": "2026-11-18T21:07:47.687Z"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:47.693Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "listening",
+        "utc": "2026-11-18T21:07:47.697Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.845Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.847Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.851Z",
+        "elapsedMs": 3.6045000000000016
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:47.851Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:47.851Z",
+        "elapsedMs": 0.09430000000000405
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.853Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.855Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.855Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.857Z",
+        "elapsedMs": 2.4151999999999987
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.858Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.862Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.862Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.865Z",
+        "elapsedMs": 2.1944000000000017
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:47.865Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:47.865Z",
+        "elapsedMs": 0.0671000000000106
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.865Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.865Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.866Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.868Z",
+        "elapsedMs": 2.1929999999999836
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.868Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.876Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.877Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.879Z",
+        "elapsedMs": 2.1093999999999937
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.879Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.885Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.885Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.887Z",
+        "elapsedMs": 2.0293000000000063
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:47.887Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:47.887Z",
+        "elapsedMs": 0.05150000000000432
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.887Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:47.888Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:47.888Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:47.890Z",
+        "elapsedMs": 2.1278000000000077
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:47.891Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:48.226Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:48.226Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:48.228Z",
+        "elapsedMs": 2.1189000000000533
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:48.228Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:48.228Z",
+        "elapsedMs": 0.09170000000005984
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:48.228Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:48.229Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:48.229Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:48.231Z",
+        "elapsedMs": 2.2332000000000107
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:48.232Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:48.240Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:48.241Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:48.243Z",
+        "elapsedMs": 2.12519999999995
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:48.243Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:48.249Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:48.249Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:48.251Z",
+        "elapsedMs": 2.3880000000000337
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:48.251Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:48.251Z",
+        "elapsedMs": 0.06380000000001473
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:48.252Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:48.252Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:48.252Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:48.254Z",
+        "elapsedMs": 2.0842999999999847
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:48.254Z"
+      }
+    ],
+    "pid": 22264,
+    "exit": "2026-11-18T21:07:48.348Z",
+    "code": null,
+    "signal": "SIGKILL"
+  },
+  {
+    "leaf": "engine-reuse-0YR1Bw",
+    "requested": "2026-11-18T21:07:49.094Z",
+    "events": [
+      {
+        "phase": "node_entry",
+        "utc": "2026-11-18T21:07:49.141Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:49.143Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "source_compilation",
+        "utc": "2026-11-18T21:07:49.143Z"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:49.143Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:49.144Z",
+        "id": "node:http"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:49.144Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:49.144Z",
+        "id": "node:fs"
+      },
+      {
+        "phase": "module_load_start",
+        "utc": "2026-11-18T21:07:49.144Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:49.144Z",
+        "id": "node:path"
+      },
+      {
+        "phase": "listen_called",
+        "utc": "2026-11-18T21:07:49.144Z"
+      },
+      {
+        "phase": "module_load_end",
+        "utc": "2026-11-18T21:07:49.150Z",
+        "id": "fixture"
+      },
+      {
+        "phase": "listening",
+        "utc": "2026-11-18T21:07:49.155Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.305Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.307Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.310Z",
+        "elapsedMs": 3.0867000000000075
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:49.311Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:49.311Z",
+        "elapsedMs": 0.08680000000001087
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.312Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.313Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.313Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.315Z",
+        "elapsedMs": 2.149300000000011
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.315Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.318Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.318Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.320Z",
+        "elapsedMs": 2.042500000000018
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:49.321Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:49.321Z",
+        "elapsedMs": 0.06610000000000582
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.321Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.321Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.321Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.323Z",
+        "elapsedMs": 2.0836999999999932
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.324Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.332Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.333Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.335Z",
+        "elapsedMs": 2.115000000000009
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.335Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.341Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.341Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.343Z",
+        "elapsedMs": 2.180499999999995
+      },
+      {
+        "phase": "model_lookup_begin",
+        "utc": "2026-11-18T21:07:49.344Z"
+      },
+      {
+        "phase": "model_lookup_end",
+        "utc": "2026-11-18T21:07:49.344Z",
+        "elapsedMs": 0.057899999999989404
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.344Z"
+      },
+      {
+        "phase": "server_request_start",
+        "utc": "2026-11-18T21:07:49.344Z"
+      },
+      {
+        "phase": "diary_begin",
+        "utc": "2026-11-18T21:07:49.344Z"
+      },
+      {
+        "phase": "diary_end",
+        "utc": "2026-11-18T21:07:49.347Z",
+        "elapsedMs": 2.1636000000000024
+      },
+      {
+        "phase": "response_finished",
+        "utc": "2026-11-18T21:07:49.347Z"
+      }
+    ],
+    "pid": 23340,
+    "exit": "2026-11-18T21:07:49.441Z",
+    "code": null,
+    "signal": "SIGKILL"
+  }
+]

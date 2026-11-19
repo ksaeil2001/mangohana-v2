@@ -1,0 +1,211 @@
+{
+  "pass": true,
+  "originalFixtureHash": "d612c3d056ba6e40259758c5d59bfde663bdbe69e791766654a5f88038bed213",
+  "revisedFixtureHash": "1971c6915cf1852c4fbda01bb7a28f62da7e6b20606c0650de4c6ebfc0516cd6",
+  "fixtureVerified": true,
+  "sourceKeysCompared": 401,
+  "currentSourcesVerified": true,
+  "outputHashes": {
+    "normal": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+    "expanded": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb"
+  },
+  "runs": [
+    {
+      "label": "quiet-five",
+      "counts": {
+        "tests": 40,
+        "pass": 40,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T22:25:09.585Z",
+      "finished": "2026-11-18T22:26:58.976Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "engine-ocr-refinement.test.mjs",
+          "tests": 10,
+          "passed": 10
+        },
+        {
+          "name": "engine-runtime-reuse.test.mjs",
+          "tests": 18,
+          "passed": 18
+        },
+        {
+          "name": "imported-font-bootstrap.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "typesetting-only-native.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "warm-electron-entry.test.mjs",
+          "tests": 6,
+          "passed": 6
+        }
+      ],
+      "logSha256": "dec9c43d7b4e26ac1e86916169bc0294a9ee649d2da58cae383744687e7381f0",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 10,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "missingPlanWorker": {
+        "supervisor": "2026-11-18T22:26:49.797Z",
+        "start": "2026-11-18T22:26:50.277Z",
+        "exit": "2026-11-18T22:26:50.348Z",
+        "ms": 71,
+        "exitCode": 1,
+        "clean": true,
+        "active": 0
+      },
+      "pass": true
+    },
+    {
+      "label": "quiet-full",
+      "counts": {
+        "tests": 1340,
+        "pass": 1340,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T22:26:59.788Z",
+      "finished": "2026-11-18T22:41:30.757Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "engine-ocr-refinement.test.mjs",
+          "tests": 10,
+          "passed": 10
+        },
+        {
+          "name": "engine-runtime-reuse.test.mjs",
+          "tests": 18,
+          "passed": 18
+        },
+        {
+          "name": "imported-font-bootstrap.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "typesetting-only-native.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "warm-electron-entry.test.mjs",
+          "tests": 6,
+          "passed": 6
+        }
+      ],
+      "logSha256": "521f62952b8cd9ee8ae3191b9c4bf8ce028c6e2d027f0d123099d18c9fda71a9",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 10,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "missingPlanWorker": {
+        "supervisor": "2026-11-18T22:40:38.808Z",
+        "start": "2026-11-18T22:40:50.266Z",
+        "exit": "2026-11-18T22:40:50.799Z",
+        "ms": 533,
+        "exitCode": 1,
+        "clean": true,
+        "active": 0
+      },
+      "pass": true
+    },
+    {
+      "label": "quiet-missing",
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T22:41:31.632Z",
+      "finished": "2026-11-18T22:41:33.126Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "warm-electron-entry.test.mjs",
+          "tests": 1,
+          "passed": 1
+        }
+      ],
+      "logSha256": "39be5d948b619fccaddc1c106b41fb032b78fd78b019bab25461bf890e894379",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 1,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "missingPlanWorker": {
+        "supervisor": "2026-11-18T22:41:32.244Z",
+        "start": "2026-11-18T22:41:32.726Z",
+        "exit": "2026-11-18T22:41:32.789Z",
+        "ms": 63,
+        "exitCode": 1,
+        "clean": true,
+        "active": 0
+      },
+      "pass": true
+    },
+    {
+      "label": "quiet-native",
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T22:41:34.332Z",
+      "finished": "2026-11-18T22:41:47.814Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "typesetting-only-native.test.mjs",
+          "tests": 1,
+          "passed": 1
+        }
+      ],
+      "logSha256": "ebc176bfaf11aacfeb95ef572da72aa2b238e9cdc39d75caf3b3f5f0f301e0bb",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 1,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "pass": true
+    }
+  ],
+  "stage16": {
+    "pass": true,
+    "executions": 193,
+    "distinctNames": 130
+  },
+  "protection": true
+}

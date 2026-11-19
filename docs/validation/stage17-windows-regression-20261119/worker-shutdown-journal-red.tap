@@ -1,0 +1,81 @@
+TAP version 13
+# Subtest: a completed window-owning worker schedules orderly Electron shutdown after both output files are written
+not ok 1 - a completed window-owning worker schedules orderly Electron shutdown after both output files are written
+  ---
+  duration_ms: 3.8347
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\worker-shutdown.test.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'candidate.png',
+        'result.json',
+    +   'exit_0'
+    -   'orderly_quit'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'candidate.png'
+    1: 'result.json'
+    2: 'orderly_quit'
+  actual:
+    0: 'candidate.png'
+    1: 'result.json'
+    2: 'exit_0'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/docs/validation/stage17-windows-regression-20261119/worker-shutdown.test.mjs:35:10)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: a rejected worker writes its failure before preserving the explicit nonzero exit
+ok 2 - a rejected worker writes its failure before preserving the explicit nonzero exit
+  ---
+  duration_ms: 0.7723
+  type: 'test'
+  ...
+# Subtest: a failed diagnostic write still exits unsuccessfully
+not ok 3 - a failed diagnostic write still exits unsuccessfully
+  ---
+  duration_ms: 1.2008
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\worker-shutdown.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'failure.json',
+    +   'exit_0'
+    -   'exit_1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'failure.json'
+    1: 'exit_1'
+  actual:
+    0: 'failure.json'
+    1: 'exit_0'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/docs/validation/stage17-windows-regression-20261119/worker-shutdown.test.mjs:41:10)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 1
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 79.3652

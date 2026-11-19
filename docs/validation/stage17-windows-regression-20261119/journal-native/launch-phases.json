@@ -1,0 +1,33 @@
+{
+  "pass": true,
+  "expected": 1,
+  "measured": 1,
+  "rows": [
+    {
+      "kind": "typesetting",
+      "runId": "781c9c4d-5307-4667-b791-0820b41439a3",
+      "supervisorPid": 23260,
+      "rootPid": 16124,
+      "sameIdentity": true,
+      "measured": true,
+      "supervisorCreatedUtc": "2026-11-18T22:12:56.987Z",
+      "compileStartedUtc": "2026-11-18T22:12:57.595Z",
+      "compileCompletedUtc": "2026-11-18T22:12:58.202Z",
+      "rootCreatedUtc": "2026-11-18T22:12:58.270Z",
+      "rootExitedUtc": "2026-11-18T22:13:11.922Z",
+      "beforeCompileMs": 608,
+      "compileMs": 607,
+      "afterCompileUntilRootMs": 68,
+      "workerMs": 13652,
+      "rootExitCode": 0,
+      "reason": "root_exit",
+      "clean": true,
+      "activeAfter": 0,
+      "witness": {
+        "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+        "outputBound": true,
+        "failureBound": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "count": 1,
+  "rows": [
+    {
+      "pid": 22600,
+      "leaf": "engine-reuse-xb9yYx",
+      "requested": "2026-11-18T21:40:00.297Z",
+      "file": "child-20.jsonl",
+      "created": "2026-11-18T21:40:00.3468432Z",
+      "modified": "2026-11-18T21:40:00.3468432Z",
+      "bytes": 0,
+      "connectionRefused": 25,
+      "responseHeaders": 0,
+      "firstFailure": {
+        "at": "2026-11-18T21:40:05.457Z",
+        "code": "LLM_START_TIMEOUT"
+      },
+      "exit": "2026-11-18T21:40:05.966Z",
+      "signal": "SIGKILL"
+    }
+  ]
+}

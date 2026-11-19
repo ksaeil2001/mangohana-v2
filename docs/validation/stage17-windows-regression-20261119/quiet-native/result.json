@@ -1,0 +1,39 @@
+{
+  "mode": "exit",
+  "traceFlag": "normal",
+  "started": "2026-11-18T22:41:34.332Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-quiet-native-bbtFNi",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--test-name-pattern",
+    "^dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication$",
+    "tests/v2/typesetting-only-native.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-quiet-native-bbtFNi\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-quiet-native-bbtFNi\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-quiet-native-bbtFNi\\entry"
+  },
+  "finished": "2026-11-18T22:41:47.814Z",
+  "code": 0,
+  "signal": null,
+  "counts": {
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "changed": [],
+  "logSha256": "ebc176bfaf11aacfeb95ef572da72aa2b238e9cdc39d75caf3b3f5f0f301e0bb",
+  "sourcesSha256": "9990a4d55ffb000b577142f0e6cfc68a4bfde3a38ede3c5e840b99e705755e4c",
+  "failures": []
+}

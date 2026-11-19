@@ -1,0 +1,18 @@
+TAP version 13
+# BUNDLED_INPUTS {"lib/studio-local-translation.ts":"2a39c2fa1e3061aefa234ac772639d6a70c0255722c6b8fffb97353515b98f2b","lib/studio-model.ts":"065248f8c768c284ce8dddcc9854baf42dccd863109c2e7fee3e4eb8bf5370fb","lib/studio-presentation.ts":"0102713cde53c6daf6498957fc37f1be1e16d5ead49c2894c3ca4765a59f1c7a","lib/studio-shortcuts.ts":"e09cd34733b9f2ab74a0a9d03bf30968b3f9ef5b4ff5938259da34c6c96a7291","lib/studio-persistence.ts":"584a1b462c8394239a5491948ed80768ac48e870fc6955cf9eaa5084d0c3c51d","lib/studio-reading.ts":"21406288fbccb70e3e7dff9270c861ef6f95daed64dc0a23c7810e4b561b2022","lib/studio-storage.ts":"19a350d643250de6dbe19e2048d9b39a820c569866b8feac88eb69442afa6fb1","hooks/use-studio-persistence.ts":"eb9a21205b958503b61789d7d114da6bb92890a9162dea93a43fc5120e96ab21","lib/studio-state.ts":"0510b4dbdc683ea78d4e2ee2c10c2725d119590b79db69418c3af8fd0f057a01","components/canvas-project-path.tsx":"d60308602ac5e34cc9d8c69f739d15704efe1b962dc8ff597f7f25397f657bb6","lib/studio-browser.ts":"6b81e3a22bd972da060e7cb1a1abf89c25739b97df473a345b6fca37bba237d8","components/canvas-browser.tsx":"bbce91ec82f6bcbbd32d7b2c877cfb47c5eb3bbadaea11b737eb88d690dd1037","lib/studio-project-summary.ts":"5ae8577f93c52393e6c0c042696761ed6920bb5100caefc826bdb66e21e8bbeb","components/project-overview.tsx":"a7ead3dfb7b3e0ae3e130565f4b01988ef374120b487e1370924263977e1eb15","lib/studio-context.ts":"9666fe6928809649f1ce15453cea51b9d77a60bf122cc63b73e705469b7ca838","components/studio-context-dialog.tsx":"14cf643f7fa00e561542b806e472fcbf5caf3de2b693f28beb0ee1c57d4aee5a","lib/studio-translation-review.ts":"0da15abd81a31e0e496ed0eda7e5f24ef909b8bc8ccd5c4313776db6a917a089","components/studio-translation-review-dialog.tsx":"bbf5b667552a6f156a627cfc74d9fe4c7c87f5ef9bef399169fb1be59a8753f5","lib/studio-engine.ts":"4be9fc5765f5beeb430f375709a0465ca091d86cbd47be968d041a8267d6732d","lib/studio-files.ts":"ec92c5077cddf0b98f2aabff05f9fe071dc90cb3d812b46d67295343e0ff41af","lib/studio-batch-engine.ts":"73fc7864c37ddd594bdd1fde303ea1d88b1381287aed51c02b4b0db6faf349af","components/studio.tsx":"9886671f953f1f6a37a1eafb3f8e83248aee32116fc90e85bf31ce804307510c","app/page.tsx":"6a5c7d22b5f467783c78b056a3d15c6175282261693ffe59a83f5fe7b9270ac1","app/globals.css":"cc307506ea5bd351036982e37ff20a67c39616f5066486626903efce0df4c05d"}
+# STUDIO_BROWSER_EVIDENCE {"browser":"157.0.8103.79","node":"v24.22.1","transport":"offline_route_fulfill_no_server","fixtureSha256":"4f5d70945493655be708e0b72f033cc53cbe79f1e70080be2aa4d1a0cbd7221c","downloadBeforeSha256":"ebd66ab14210f323f1c675c1d263ddb71428622d89ba0d5a14ca9750b9c9a02d","downloadAfterSha256":"ebd66ab14210f323f1c675c1d263ddb71428622d89ba0d5a14ca9750b9c9a02d","trioSha256":"324ada88ec9844002286586a15975122a4df805ef7e43ff2f1a2f3e3b7f7430e","scroll":645,"zoom":"306%","viewports":[[1440,960],[390,844]],"blocked":[],"errors":[]}
+# Subtest: offline desktop Studio imports, edits, reorders and reopens the same PNG through TRIO; the narrow viewport opens its drawer
+ok 1 - offline desktop Studio imports, edits, reorders and reopens the same PNG through TRIO; the narrow viewport opens its drawer
+  ---
+  duration_ms: 7975.0892
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9136.1416

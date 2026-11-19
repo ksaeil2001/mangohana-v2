@@ -1,0 +1,66 @@
+{
+  "scope": "synthetic",
+  "status": "synthetic_reconciled",
+  "blockers": [],
+  "start": {
+    "schemaVersion": 1,
+    "kind": "stage16-start-evidence",
+    "scope": "synthetic",
+    "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+    "jobsSha256": "781f0ffaa5274eff2f6955905163622860dcb731e248c60d113d9942cdcc5dc6",
+    "approvalSha256": "48d36dbb5cfe6e5ae8338080062a0946e11f0229aeab6e2e8448cfb316b43749"
+  },
+  "pins": {
+    "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+    "jobsSha256": "781f0ffaa5274eff2f6955905163622860dcb731e248c60d113d9942cdcc5dc6",
+    "preregistrationSha256": "9046520e837129103e8c0bf4a428eb668a05740afc062d6d5db863911150cd44",
+    "candidateSelectionSha256": "81283143e450ab38b568c6d542c59471a0fcab55fed3f27937bd2daa236a6d47",
+    "holdoutHistorySha256": "be50d125ef4fe10a1c6313c4f499d599e34b6a0bad5a0bcfe4ab986f9661ca15",
+    "approvalSha256": "48d36dbb5cfe6e5ae8338080062a0946e11f0229aeab6e2e8448cfb316b43749",
+    "startSha256": "d04df93e4d21e647543dfce9be2f615209113d4582e75b6a021536232c4774bd",
+    "observationsSha256": "93003d5591605bc5c1d110c059e00489b8a919e7d4a6e3cf24870c2a7add7664",
+    "sealSha256": "172706f70d3a93515cc75e9f51e3934d67495c2d3673003dc30a2ad04f63ce34",
+    "reviewSha256": "48151cdee00118d50e01598099b52a4395110dd1653024cd8d115174873abb2b",
+    "automaticSha256": "00f4676d4ca47778756e4dfb30d30fd34787f5757f2776e78182dd3737c7f918",
+    "reportSha256": "4fc775e4d44d5143d75a81110944fea504462fbe0e11baae4eb3c4ec5a8a0575"
+  },
+  "files": {
+    "experimentLock": "experiment-lock.json",
+    "conditionTable": "condition-table.json",
+    "humanAudit": "human-audit.json",
+    "uncertaintyPairedReport": "uncertainty-paired-report.json",
+    "costAdjustedSuccess": "cost-adjusted-success.json"
+  },
+  "artifactSha256": {
+    "experimentLock": "b85b7c4ef6a8ab2933d5bce793960fb9ce9ea7c68d855f325d912cf1557dc5f3",
+    "conditionTable": "27787c248cd26cae23176a9bb968729ae3e6ec1891c9aef652b8623d5b5f4779",
+    "humanAudit": "e1326821e7e79d27b7a9a2079985cea2413efe46264e54936dd1c88bd48c10e1",
+    "uncertaintyPairedReport": "4fc775e4d44d5143d75a81110944fea504462fbe0e11baae4eb3c4ec5a8a0575",
+    "costAdjustedSuccess": "633e1b65e45867658327f8f1c14734cac7b82d756c84f52a4d3e6afae61328f3"
+  },
+  "actualWithoutEvidence": {
+    "scope": "actual",
+    "start": {
+      "scope": "actual",
+      "status": "blocked",
+      "blockers": [
+        "UNUSED_HOLDOUT_REQUIRED",
+        "EXECUTION_APPROVAL_REQUIRED"
+      ],
+      "lock": null,
+      "record": null,
+      "startSha256": null
+    },
+    "status": "blocked",
+    "blockers": [
+      "UNUSED_HOLDOUT_REQUIRED",
+      "EXECUTION_APPROVAL_REQUIRED",
+      "START_EVIDENCE_REQUIRED",
+      "EXECUTION_RECEIPTS_REQUIRED",
+      "INDEPENDENT_REVIEW_REQUIRED",
+      "PAIRED_REPORT_REQUIRED"
+    ],
+    "artifacts": null,
+    "artifactSha256": null
+  }
+}

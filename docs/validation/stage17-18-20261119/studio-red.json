@@ -1,0 +1,29 @@
+{
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "node": "v24.22.1",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "apps/sites/checks/stage17-studio.test.mjs",
+    "tests/v2/result.test.mjs"
+  ],
+  "cwd": "C:\\dev\\Projects\\mangohana\\",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "started": "2026-11-18T17:42:48.263Z",
+  "finished": "2026-11-18T17:42:50.069Z",
+  "exitCode": 1,
+  "signal": null,
+  "counts": {
+    "tests": 15,
+    "pass": 10,
+    "fail": 5,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "sources": "sources-a728507a3c4ba1f52ac5896201060d9488f7827d4be2bbe89b7331124287c100.json",
+  "changedDuringRun": [],
+  "logSha256": "57447f38b38768dc818349ad43ae6217212ca122b424c237fe5a269f3fb5229a"
+}

@@ -1,0 +1,39 @@
+{
+  "mode": "exit",
+  "traceFlag": "normal",
+  "started": "2026-11-18T22:12:56.191Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-journal-native-gP5DiA",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--test-name-pattern",
+    "^dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication$",
+    "tests/v2/typesetting-only-native.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-native-gP5DiA\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-native-gP5DiA\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-native-gP5DiA\\entry"
+  },
+  "finished": "2026-11-18T22:13:12.656Z",
+  "code": 0,
+  "signal": null,
+  "counts": {
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "changed": [],
+  "logSha256": "509f3345b6e6c5162607f7b6301a2c11b86a8483e6ff6d55b85b87a37764d648",
+  "sourcesSha256": "7c88cf9e82b79e59db31bf0c1d90caf9facf392fc87ad2edb1bde2e5d69bf9e0",
+  "failures": []
+}

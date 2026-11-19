@@ -1,0 +1,263 @@
+TAP version 13
+# Subtest: the work, page, every shared pin and each axis pin bind the matrix identity
+ok 1 - the work, page, every shared pin and each axis pin bind the matrix identity
+  ---
+  duration_ms: 2.4984
+  type: 'test'
+  ...
+# Subtest: explicitly planning the full path has a distinct identity from fixed intermediate input
+ok 2 - explicitly planning the full path has a distinct identity from fixed intermediate input
+  ---
+  duration_ms: 0.7068
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8.4555
+TAP version 13
+# Subtest: different works and leakage groups cannot reuse a candidate-selection context SHA
+ok 1 - different works and leakage groups cannot reuse a candidate-selection context SHA
+  ---
+  duration_ms: 20.205
+  type: 'test'
+  ...
+# Subtest: an unknown candidate-selection history cannot issue a lock for an independent work
+ok 2 - an unknown candidate-selection history cannot issue a lock for an independent work
+  ---
+  duration_ms: 1.897
+  type: 'test'
+  ...
+# Subtest: independent evidence and frozen criteria issue a reproducible lock for the exact cohort
+ok 3 - independent evidence and frozen criteria issue a reproducible lock for the exact cohort
+  ---
+  duration_ms: 5.3355
+  type: 'test'
+  ...
+# Subtest: tuning after opening demotes the work and its group, preserves history and requires a fresh holdout
+ok 4 - tuning after opening demotes the work and its group, preserves history and requires a fresh holdout
+  ---
+  duration_ms: 7.7656
+  type: 'test'
+  ...
+# Subtest: a previously valid but truncated history cannot replay the pre-tuning lock against the current evidence
+ok 5 - a previously valid but truncated history cannot replay the pre-tuning lock against the current evidence
+  ---
+  duration_ms: 2.9455
+  type: 'test'
+  ...
+# Subtest: foreign work, source, or sealed ground truth cannot be substituted even with a valid matrix fingerprint
+ok 6 - foreign work, source, or sealed ground truth cannot be substituted even with a valid matrix fingerprint
+  ---
+  duration_ms: 3.3744
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 49.7678
+TAP version 13
+# Subtest: a receipt for the wrong cell is refused before it contributes a completion
+ok 1 - a receipt for the wrong cell is refused before it contributes a completion
+  ---
+  duration_ms: 16.2355
+  type: 'test'
+  ...
+# Subtest: replaying a receipt counts one job and one charge
+ok 2 - replaying a receipt counts one job and one charge
+  ---
+  duration_ms: 8.906
+  type: 'test'
+  ...
+# Subtest: a partial stage cannot complete a page that reports success
+ok 3 - a partial stage cannot complete a page that reports success
+  ---
+  duration_ms: 4.7977
+  type: 'test'
+  ...
+# Subtest: an unsettled charge is unknown even when the confirmed subtotal is zero
+ok 4 - an unsettled charge is unknown even when the confirmed subtotal is zero
+  ---
+  duration_ms: 6.7457
+  type: 'test'
+  ...
+# Subtest: four assigned cells retain recovered, partial, successful and missing jobs and their exact subtotal
+ok 5 - four assigned cells retain recovered, partial, successful and missing jobs and their exact subtotal
+  ---
+  duration_ms: 10.0013
+  type: 'test'
+  ...
+# S16_SAMPLE {"lockId":"9494e6e92520e950b9434e2829d3dd2eeec39d51c2abf34107eed3a7a7230762","jobsSha256":"30bfea909fbf5a0bcfcb3390cfacca77dbd870f6cbeebc486a046c5fd38b05f8","plannedCells":4,"completedCells":2,"plannedJobs":4,"observedJobs":3,"completedJobs":2,"charge":{"state":"UNCONFIRMED","currency":"USD","amount":null,"confirmedSubtotal":"0.12","reason":"CHARGE_EVIDENCE_INCOMPLETE"},"cells":[{"model":"A","processing":"baseline","jobId":"page-final:A:baseline","status":"succeeded","reason":null,"charge":{"state":"CONFIRMED","currency":"USD","amount":"0.12","confirmedSubtotal":"0.12","reason":null}},{"model":"A","processing":"improved","jobId":"page-final:A:improved","status":"partial","reason":"PARTIAL","charge":{"state":"UNCONFIRMED","currency":"USD","amount":null,"confirmedSubtotal":"0","reason":"CHARGE_EVIDENCE_INCOMPLETE"}},{"model":"B","processing":"baseline","jobId":"page-final:B:baseline","status":"succeeded","reason":null,"charge":{"state":"CONFIRMED","currency":"USD","amount":"0","confirmedSubtotal":"0","reason":null}},{"model":"B","processing":"improved","jobId":"page-final:B:improved","status":"unknown","reason":"JOB_RECEIPT_MISSING","charge":{"state":"UNCONFIRMED","currency":"USD","amount":null,"confirmedSubtotal":"0","reason":"CHARGE_EVIDENCE_INCOMPLETE"}}],"recoveredTranslation":{"retryCount":0,"fallbackCount":1,"lookupCount":1,"attempts":[["failed","0.1"],["succeeded","0.02"]]}}
+# Subtest: the intermediate pin and first executed stage fence the path and preserve cold and warm timings
+ok 6 - the intermediate pin and first executed stage fence the path and preserve cold and warm timings
+  ---
+  duration_ms: 8.2509
+  type: 'test'
+  ...
+# Subtest: a copied zero without matching provider settlement evidence cannot enter the confirmed total
+ok 7 - a copied zero without matching provider settlement evidence cannot enter the confirmed total
+  ---
+  duration_ms: 6.1373
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.0915
+TAP version 13
+# Subtest: one reviewer cannot supply both independent assignments
+ok 1 - one reviewer cannot supply both independent assignments
+  ---
+  duration_ms: 41.7732
+  type: 'test'
+  ...
+# Subtest: opposite fidelity and naturalness choices are recovered separately
+ok 2 - opposite fidelity and naturalness choices are recovered separately
+  ---
+  duration_ms: 26.2914
+  type: 'test'
+  ...
+# Subtest: every planned assignment survives a completely empty return
+ok 3 - every planned assignment survives a completely empty return
+  ---
+  duration_ms: 28.085
+  type: 'test'
+  ...
+# Subtest: old lock, observation, manifest, protocol, job and secret commitments reject substitutions
+ok 4 - old lock, observation, manifest, protocol, job and secret commitments reject substitutions
+  ---
+  duration_ms: 47.0748
+  type: 'test'
+  ...
+# Subtest: an overlap requires two qualified bilingual people in distinct Stage05 groups
+ok 5 - an overlap requires two qualified bilingual people in distinct Stage05 groups
+  ---
+  duration_ms: 90.9438
+  type: 'test'
+  ...
+# Subtest: unavailable and ambiguous cell results keep their planned slots and cannot be rated
+ok 6 - unavailable and ambiguous cell results keep their planned slots and cannot be rated
+  ---
+  duration_ms: 11.9328
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 252.8093
+TAP version 13
+# Subtest: the missing fifth pair stays in the denominator of confirmed improvement
+ok 1 - the missing fifth pair stays in the denominator of confirmed improvement
+  ---
+  duration_ms: 90.9519
+  type: 'test'
+  ...
+# Subtest: a tied blind preference counts as a tie and earns no win
+ok 2 - a tied blind preference counts as a tie and earns no win
+  ---
+  duration_ms: 66.1312
+  type: 'test'
+  ...
+# Subtest: exact zero event upper limits distinguish 298 and 299 independent observations
+ok 3 - exact zero event upper limits distinguish 298 and 299 independent observations
+  ---
+  duration_ms: 27.4718
+  type: 'test'
+  ...
+# Subtest: three pages from a single work can show worsening but supply no between work interval
+ok 4 - three pages from a single work can show worsening but supply no between work interval
+  ---
+  duration_ms: 15.8653
+  type: 'test'
+  ...
+# Subtest: an unsettled fee on a completed winning cell keeps the full cost unknown
+ok 5 - an unsettled fee on a completed winning cell keeps the full cost unknown
+  ---
+  duration_ms: 25.7128
+  type: 'test'
+  ...
+# Subtest: one abstention or unreturned overlap ballot leaves the pair unresolved
+ok 6 - one abstention or unreturned overlap ballot leaves the pair unresolved
+  ---
+  duration_ms: 25.3245
+  type: 'test'
+  ...
+# Subtest: substituting any independently retained pin or the registered policy blocks the report
+ok 7 - substituting any independently retained pin or the registered policy blocks the report
+  ---
+  duration_ms: 52.1464
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 311.7872
+TAP version 13
+# Subtest: zero pages yields null rates and reason
+ok 1 - zero pages yields null rates and reason
+  ---
+  duration_ms: 0.8006
+  type: 'test'
+  ...
+# Subtest: partial cost observations keep the total null and exclude Codex usage
+ok 2 - partial cost observations keep the total null and exclude Codex usage
+  ---
+  duration_ms: 0.6246
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9.71
+TAP version 13
+# Subtest: synthetic or historical claims cannot certify real product delivery
+ok 1 - synthetic or historical claims cannot certify real product delivery
+  ---
+  duration_ms: 2.9234
+  type: 'test'
+  ...
+# Subtest: zero denominator, absent GT, and partial observation remain explicit unknown states
+ok 2 - zero denominator, absent GT, and partial observation remain explicit unknown states
+  ---
+  duration_ms: 1.8139
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10.6544

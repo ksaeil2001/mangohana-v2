@@ -1,0 +1,122 @@
+{
+  "candidateSha256": "113a8938010dc616986c3ca06398fc610c42a799646eaf82a89b799c566c2d43",
+  "status": "BLOCKED",
+  "deployAuthorized": false,
+  "rows": [
+    {
+      "id": "targeted",
+      "scope": "test",
+      "status": "PASS",
+      "reason": null,
+      "artifactSha256": "81e640756f7301864848732b24103c3c8e020611d2d1008d59d4a8919908f5f2"
+    },
+    {
+      "id": "fullRegression",
+      "scope": "test",
+      "status": "FAIL",
+      "reason": "FAIL",
+      "artifactSha256": "f179aa4ec187fa3e5a9fcb65e9c1f2f1869b304a147d2963960c9c73e50ef430"
+    },
+    {
+      "id": "desktopBrowser",
+      "scope": "browser",
+      "status": "PASS",
+      "reason": null,
+      "artifactSha256": "36322364d1365b6ebb88bdf615369d3f6f49b10b74defb5f35e9319982b69533"
+    },
+    {
+      "id": "supportedDevices",
+      "scope": "device",
+      "status": "NOT_RUN",
+      "reason": "EVIDENCE_REQUIRED",
+      "artifactSha256": null
+    },
+    {
+      "id": "security",
+      "scope": "review",
+      "status": "NEEDS_REVIEW",
+      "reason": "NEEDS_REVIEW",
+      "artifactSha256": "e0dca6e41a66a2a770e4bf22ca2f69b8e7283ec50ce9eed4d69f56c3e1a0fc80"
+    },
+    {
+      "id": "performance",
+      "scope": "actual",
+      "status": "NOT_RUN",
+      "reason": "EVIDENCE_REQUIRED",
+      "artifactSha256": null
+    },
+    {
+      "id": "modelRun",
+      "scope": "actual",
+      "status": "NOT_RUN",
+      "reason": "EVIDENCE_REQUIRED",
+      "artifactSha256": null
+    },
+    {
+      "id": "pngReview",
+      "scope": "human",
+      "status": "NOT_RUN",
+      "reason": "EVIDENCE_REQUIRED",
+      "artifactSha256": null
+    },
+    {
+      "id": "holdout",
+      "scope": "actual",
+      "status": "NOT_RUN",
+      "reason": "EVIDENCE_REQUIRED",
+      "artifactSha256": null
+    },
+    {
+      "id": "rollback",
+      "scope": "rehearsal",
+      "status": "NEEDS_REVIEW",
+      "reason": "NEEDS_REVIEW",
+      "artifactSha256": "81e640756f7301864848732b24103c3c8e020611d2d1008d59d4a8919908f5f2"
+    },
+    {
+      "id": "monitoring",
+      "scope": "review",
+      "status": "NEEDS_REVIEW",
+      "reason": "NEEDS_REVIEW",
+      "artifactSha256": "6827bba85c91da56f93dd38a26f5f1970a5c38d7316f18abf42d21e84f77d8bd"
+    },
+    {
+      "id": "localHosting",
+      "scope": "review",
+      "status": "PASS",
+      "reason": null,
+      "artifactSha256": "f1b882fbf7a1b0e9ad1f8352f12cb6748ef8b2750df67497295bf1a3dd169eca"
+    },
+    {
+      "id": "deploymentApproval",
+      "scope": "operator",
+      "status": "NOT_RUN",
+      "reason": "EVIDENCE_REQUIRED",
+      "artifactSha256": null
+    }
+  ],
+  "blockers": [
+    "UNMEASURED_INDICATORS",
+    "fullRegression",
+    "supportedDevices",
+    "security",
+    "performance",
+    "modelRun",
+    "pngReview",
+    "holdout",
+    "rollback",
+    "monitoring",
+    "deploymentApproval"
+  ],
+  "stage16": {
+    "status": "blocked",
+    "blockers": [
+      "UNUSED_HOLDOUT_REQUIRED",
+      "EXECUTION_APPROVAL_REQUIRED",
+      "START_EVIDENCE_REQUIRED",
+      "EXECUTION_RECEIPTS_REQUIRED",
+      "INDEPENDENT_REVIEW_REQUIRED",
+      "PAIRED_REPORT_REQUIRED"
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "lockId": "9494e6e92520e950b9434e2829d3dd2eeec39d51c2abf34107eed3a7a7230762",
+  "jobsSha256": "30bfea909fbf5a0bcfcb3390cfacca77dbd870f6cbeebc486a046c5fd38b05f8",
+  "plannedCells": 4,
+  "completedCells": 2,
+  "plannedJobs": 4,
+  "observedJobs": 3,
+  "completedJobs": 2,
+  "charge": {
+    "state": "UNCONFIRMED",
+    "currency": "USD",
+    "amount": null,
+    "confirmedSubtotal": "0.12",
+    "reason": "CHARGE_EVIDENCE_INCOMPLETE"
+  },
+  "cells": [
+    {
+      "model": "A",
+      "processing": "baseline",
+      "jobId": "page-final:A:baseline",
+      "status": "succeeded",
+      "reason": null,
+      "charge": {
+        "state": "CONFIRMED",
+        "currency": "USD",
+        "amount": "0.12",
+        "confirmedSubtotal": "0.12",
+        "reason": null
+      }
+    },
+    {
+      "model": "A",
+      "processing": "improved",
+      "jobId": "page-final:A:improved",
+      "status": "partial",
+      "reason": "PARTIAL",
+      "charge": {
+        "state": "UNCONFIRMED",
+        "currency": "USD",
+        "amount": null,
+        "confirmedSubtotal": "0",
+        "reason": "CHARGE_EVIDENCE_INCOMPLETE"
+      }
+    },
+    {
+      "model": "B",
+      "processing": "baseline",
+      "jobId": "page-final:B:baseline",
+      "status": "succeeded",
+      "reason": null,
+      "charge": {
+        "state": "CONFIRMED",
+        "currency": "USD",
+        "amount": "0",
+        "confirmedSubtotal": "0",
+        "reason": null
+      }
+    },
+    {
+      "model": "B",
+      "processing": "improved",
+      "jobId": "page-final:B:improved",
+      "status": "unknown",
+      "reason": "JOB_RECEIPT_MISSING",
+      "charge": {
+        "state": "UNCONFIRMED",
+        "currency": "USD",
+        "amount": null,
+        "confirmedSubtotal": "0",
+        "reason": "CHARGE_EVIDENCE_INCOMPLETE"
+      }
+    }
+  ],
+  "recoveredTranslation": {
+    "retryCount": 0,
+    "fallbackCount": 1,
+    "lookupCount": 1,
+    "attempts": [
+      [
+        "failed",
+        "0.1"
+      ],
+      [
+        "succeeded",
+        "0.02"
+      ]
+    ]
+  }
+}

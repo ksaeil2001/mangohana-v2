@@ -1,0 +1,333 @@
+{
+  "seal": {
+    "schemaVersion": 1,
+    "kind": "stage16-blind-assignment",
+    "lockId": "e64506b2b55e881bd52b3e45ad18f448bb96ff133902c2bf9346b25f9938d976",
+    "observationsSha256": "8d60a6ca80c6fb35601202e723d2b423bc7902a17ea7571b079ae04340ce7969",
+    "protocolSha256": "616ddffd42f2b4f4a4dedb57dc5ecd5e9a1084d30951c96d51fdf09c94326772",
+    "reviewers": [
+      {
+        "reviewerId": "fixture-reader-one",
+        "independenceGroup": "group-fixture-reader-one"
+      },
+      {
+        "reviewerId": "fixture-reader-two",
+        "independenceGroup": "group-fixture-reader-two"
+      }
+    ],
+    "pairs": [
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "model": "A",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+        "contextSnapshotSha256": "bb3c89f92b9dd69f3f7332a7a58824e9bb75ea46c617ce8b9a10941efa12b884",
+        "results": {
+          "baseline": {
+            "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:A:baseline",
+                "receiptSha256": "b8c194ca5d5ff9bee961e6966a7c2fdc10abff554d5d8f5ff3b58638e2d0f004",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:A:improved",
+                "receiptSha256": "f2329a44e35359c8712b6b230e4f6caddae8b582c654f08e904ae7778a0ee8a0",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "reviewerId": "fixture-reader-one",
+            "assignmentId": "4f869ab267c4fb6dcfa76520e38148b0c24db542353579beabf3b3fce3ccf389",
+            "queueKey": "3210b17b36356c4f4ce853c422452ebbcded9b7904ee103747ae08f01772f139",
+            "sourceRef": "d0abdb66fdb700c5f49e22d21a65475a3a72b3d749a963909693e2acbe72f580",
+            "contextRef": "a82c753bee5d6c8b68abc822e0646e38e0620c616207487b136b53686883a6e7",
+            "A": {
+              "ref": "1c28412b48096dc908f2359566ae16aae6a8145c90f13fce90b988deed2b527d",
+              "processing": "improved"
+            },
+            "B": {
+              "ref": "25e8d300bdf4c7446934dbf7e7976413970707cfac298c4577dc99ad93e0fe23",
+              "processing": "baseline"
+            }
+          },
+          {
+            "reviewerId": "fixture-reader-two",
+            "assignmentId": "d4c04eefea00aa24f5f3539c643e86fe7e4c4a6d3e00f9292d4419095dd39f17",
+            "queueKey": "9bd0414f3bcd1994f3a3c7d2e15a63d4e63d4d702b142a5a7ec24910d3d04774",
+            "sourceRef": "85f4aa9ba471e792b1470c7e413fbfb015cbd7ffcb9d15264d5e18b5f370a3ac",
+            "contextRef": "8bd0e6d0323676ee39d8d8b7c9fd5ee0130e163ad937aabb16716f08859141ab",
+            "A": {
+              "ref": "d88f65d610fc3fff1d47d392e965fcf7d9640a5b1c698d4c4bafcef148003d7c",
+              "processing": "baseline"
+            },
+            "B": {
+              "ref": "cc8fb6a3583764a82e697521a02ba17f41302432fa488fa499dcddd9b8689571",
+              "processing": "improved"
+            }
+          }
+        ]
+      },
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "model": "B",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+        "contextSnapshotSha256": "bb3c89f92b9dd69f3f7332a7a58824e9bb75ea46c617ce8b9a10941efa12b884",
+        "results": {
+          "baseline": {
+            "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:B:baseline",
+                "receiptSha256": "d142e2d07d0988c2954c2ff96893eb906a48ff4ba46ab8e855e9dac6be037772",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:B:improved",
+                "receiptSha256": "9cffdb7ef8f8bda403eca1fe62f5e9a4dace3cf3901aa6ee86bbc3b6fd16b973",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "reviewerId": "fixture-reader-one",
+            "assignmentId": "6546efedebd73cd5f37d79799fb53edfdc8ede62e780c648f5df33dd516cec2a",
+            "queueKey": "9dbed39eafb0bf19e1acca02689ffc769381442a8f5dc9f805721912f394d96a",
+            "sourceRef": "b9a4254d56191d1881b90e600feec74ea8e9dd24920593e9421a9d8b324bd032",
+            "contextRef": "988d46fe48041c9ed714a0ffc199506b89d1357689a21a939e6c8d28c4c18bd7",
+            "A": {
+              "ref": "86d36204cf72bee1514562dba44060404680f3596553b60aebfd34792ee9d3fd",
+              "processing": "baseline"
+            },
+            "B": {
+              "ref": "eedc19b7f4d8dde7ff5e1f930ba5222197e855a2dadb0cc3009a15a71b7128e4",
+              "processing": "improved"
+            }
+          },
+          {
+            "reviewerId": "fixture-reader-two",
+            "assignmentId": "9b967d0e101b34652a7078f70679f20bf365f571953679bd33d5ccef3ed026f2",
+            "queueKey": "d275896c76fe5eef36be714eaba88162f4f7fb17903d9e5da3e1943f6696145c",
+            "sourceRef": "cf98e59064ebe12217107ee751025b5a2a690f9ededb1edc76571838ed6f639c",
+            "contextRef": "8fb2506d97f141d0b4408cf516952c0abef10966fc5925cdb75cc8890d0395fb",
+            "A": {
+              "ref": "f90bc5ecdfb95774f0a06e112ab7bfe002fe4aea9a50c2131a8b24700992859a",
+              "processing": "improved"
+            },
+            "B": {
+              "ref": "09f73ca80310fe370e6a591c937dcce6ffe1fb8e37f860ecd10e59f711e5168d",
+              "processing": "baseline"
+            }
+          }
+        ]
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "model": "A",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "sourceSha256": "a03484d60425d7b61778dff541fa128759978273312cc168ed901b56a81b8e64",
+        "contextSnapshotSha256": "7721b61743ecd3aae4bba339a734193170fa83ef4bfe8a4c85c7d4988bea2fed",
+        "results": {
+          "baseline": {
+            "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:A:baseline",
+                "receiptSha256": "8951c73aaa312072098f138f02c42bf4321b3409ab31c755b0fb791c529bc54a",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:A:improved",
+                "receiptSha256": "3550853dfdeaed58518a4638be92f58ea3496aad5dbd1927b379bc2a8d6ec2f9",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "reviewerId": "fixture-reader-two",
+            "assignmentId": "17e28fe5f46be4879ba1d37c53be339798abbe08fc16ea5e658826e48160fa5b",
+            "queueKey": "3cf7b5a97fe0c7417b39420a1c84fcb8c4368fb3498128c9f339fba44545e15d",
+            "sourceRef": "598a0569b22b6c6fb36dc3191b99c809a51c2ea1026b46bb33ced4b5220a8e92",
+            "contextRef": "40a63d598a86407250e15111047be10ef0a13f406112ef6007e40f22d539fe71",
+            "A": {
+              "ref": "3916db8b16d917ad2aaff0fdffc4ed67d815a56661395a69d03cc4e317cfdc5d",
+              "processing": "baseline"
+            },
+            "B": {
+              "ref": "7e425814260f21c86a308e81f210dc0bd5156bcaf4fba803546411e396e2c579",
+              "processing": "improved"
+            }
+          }
+        ]
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "model": "B",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "sourceSha256": "a03484d60425d7b61778dff541fa128759978273312cc168ed901b56a81b8e64",
+        "contextSnapshotSha256": "7721b61743ecd3aae4bba339a734193170fa83ef4bfe8a4c85c7d4988bea2fed",
+        "results": {
+          "baseline": {
+            "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:B:baseline",
+                "receiptSha256": "29da14ded92167849c4bc4f6fa595f5a00f57d83d22fa584b39f984ca5403302",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": null,
+            "reason": "INCOMPLETE_CELL",
+            "jobs": [
+              {
+                "jobId": "page-other:B:improved",
+                "receiptSha256": null,
+                "evidenceKind": null,
+                "status": "unknown",
+                "reason": "JOB_RECEIPT_MISSING",
+                "resultSha256": null
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "reviewerId": "fixture-reader-one",
+            "assignmentId": "07c6f26a34c5bb39d8521fa5042eed9405e9547f6d812efa05733c7b75ff2646",
+            "queueKey": "34ddda4378ea6a2a135b34703d83db968695b6715d9a63b31b213a259291e26f",
+            "sourceRef": "d4a654173fd426e37b0a815de67dde15425879f0bb48b080095161177dfb1d3f",
+            "contextRef": "5f43496dc26df20431b951f8bed71a444e226aa0c81aa7542c5bba35948a423d",
+            "A": {
+              "ref": "61b70c452fdc67303fac2e33b2e76ec882e0130df5d86674d428d847e109a5d3",
+              "processing": "improved"
+            },
+            "B": {
+              "ref": "d8945df0795156b841c30fd1131185f2d9cb29d864c2cff974beae668d4597f5",
+              "processing": "baseline"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "sealSha256": "30450adb256b794b6662dc636c55ff661791d45c7af096840e0c89ade6001fd4",
+  "envelopes": [
+    {
+      "reviewerId": "fixture-reader-two",
+      "evidenceKind": "synthetic",
+      "responses": [
+        {
+          "assignmentId": "d4c04eefea00aa24f5f3539c643e86fe7e4c4a6d3e00f9292d4419095dd39f17",
+          "sourceRef": "85f4aa9ba471e792b1470c7e413fbfb015cbd7ffcb9d15264d5e18b5f370a3ac",
+          "contextRef": "8bd0e6d0323676ee39d8d8b7c9fd5ee0130e163ad937aabb16716f08859141ab",
+          "A": "d88f65d610fc3fff1d47d392e965fcf7d9640a5b1c698d4c4bafcef148003d7c",
+          "B": "cc8fb6a3583764a82e697521a02ba17f41302432fa488fa499dcddd9b8689571",
+          "semanticFidelity": "A",
+          "naturalness": "B"
+        }
+      ]
+    },
+    {
+      "reviewerId": "fixture-reader-one",
+      "evidenceKind": "synthetic",
+      "responses": [
+        {
+          "assignmentId": "4f869ab267c4fb6dcfa76520e38148b0c24db542353579beabf3b3fce3ccf389",
+          "sourceRef": "d0abdb66fdb700c5f49e22d21a65475a3a72b3d749a963909693e2acbe72f580",
+          "contextRef": "a82c753bee5d6c8b68abc822e0646e38e0620c616207487b136b53686883a6e7",
+          "A": "1c28412b48096dc908f2359566ae16aae6a8145c90f13fce90b988deed2b527d",
+          "B": "25e8d300bdf4c7446934dbf7e7976413970707cfac298c4577dc99ad93e0fe23",
+          "semanticFidelity": "A",
+          "naturalness": "A"
+        }
+      ]
+    },
+    {
+      "reviewerId": "fixture-reader-one",
+      "evidenceKind": "synthetic",
+      "responses": [
+        {
+          "assignmentId": "6546efedebd73cd5f37d79799fb53edfdc8ede62e780c648f5df33dd516cec2a",
+          "sourceRef": "b9a4254d56191d1881b90e600feec74ea8e9dd24920593e9421a9d8b324bd032",
+          "contextRef": "988d46fe48041c9ed714a0ffc199506b89d1357689a21a939e6c8d28c4c18bd7",
+          "A": "86d36204cf72bee1514562dba44060404680f3596553b60aebfd34792ee9d3fd",
+          "B": "eedc19b7f4d8dde7ff5e1f930ba5222197e855a2dadb0cc3009a15a71b7128e4",
+          "semanticFidelity": "tie"
+        }
+      ]
+    },
+    {
+      "reviewerId": "fixture-reader-two",
+      "evidenceKind": "synthetic",
+      "responses": [
+        {
+          "assignmentId": "d4c04eefea00aa24f5f3539c643e86fe7e4c4a6d3e00f9292d4419095dd39f17",
+          "sourceRef": "85f4aa9ba471e792b1470c7e413fbfb015cbd7ffcb9d15264d5e18b5f370a3ac",
+          "contextRef": "8bd0e6d0323676ee39d8d8b7c9fd5ee0130e163ad937aabb16716f08859141ab",
+          "A": "d88f65d610fc3fff1d47d392e965fcf7d9640a5b1c698d4c4bafcef148003d7c",
+          "B": "cc8fb6a3583764a82e697521a02ba17f41302432fa488fa499dcddd9b8689571",
+          "semanticFidelity": "A",
+          "naturalness": "B"
+        }
+      ]
+    }
+  ]
+}

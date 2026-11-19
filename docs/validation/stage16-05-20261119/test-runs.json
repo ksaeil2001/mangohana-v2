@@ -1,0 +1,222 @@
+{
+  "stage": "S16-05",
+  "dateKst": "2026-11-19",
+  "scope": "Synthetic offline within-model, work-clustered paired report",
+  "runtime": {
+    "version": "v24.22.1",
+    "sha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+    "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+    "branch": "codex/mangohana-v2-sites-20261111",
+    "head": "4a87e02020a62b3a8925c6568925477e8b063b78"
+  },
+  "verification": {
+    "entry": "docs/validation/stage16-05-20261119/run-allowed.mjs",
+    "preload": "docs/validation/stage16-03-20261119/metadata-only.mjs",
+    "command": "& $rt.executable 'docs/validation/stage16-05-20261119/run-allowed.mjs' <suite>",
+    "firstRun": "red. The metadata-only guard and exact test-file/name allowlist were active before any test body. RED deliberately redirects only the new report import to a synthetic naive reduction.",
+    "guard": "No fs.write, child, worker or native addon grants in test processes. Stubbed sharp, listed image/network module imports and fetch are blocked. Only explicitly selected tests register, and the runner checks the executed TAP names and skips against each list.",
+    "replay": "The red suite replays the three original counterexamples. The cancellation suite now runs against the corrected product; red-cancellation.log is the captured failure before exact fraction aggregation.",
+    "focusedInput": "tests/v2/fixtures/stage16-paired.mjs",
+    "regressionCasesByFile": {
+      "stage16-condition-matrix": 2,
+      "stage16-experiment-lock": 3,
+      "stage16-execution-observations": 5,
+      "stage16-blind-review": 8,
+      "offline-evaluation": 3,
+      "quality-policy": 3
+    }
+  },
+  "runs": [
+    {
+      "suite": "red",
+      "exitCode": 1,
+      "log": "red-contract.log",
+      "sha256": "4564aaed8bfd985215a61da50c1632e40fa05ea97c37dfb3145849774c49cbfb",
+      "tests": 3,
+      "pass": 0,
+      "fail": 3,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "guardOrAllowlistViolation": false
+    },
+    {
+      "suite": "focused",
+      "exitCode": 0,
+      "log": "focused.log",
+      "sha256": "8ad347e1630c0b9fe79114c20cfad0eaf9489b3388bae25249c4436db4096458",
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "guardOrAllowlistViolation": false
+    },
+    {
+      "suite": "cancellation",
+      "exitCode": 1,
+      "log": "red-cancellation.log",
+      "sha256": "2b373c65b3aefe2fe0d9578296be43dd4a0d1c6e49e481480fdca8cc005fe150",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "guardOrAllowlistViolation": false
+    },
+    {
+      "suite": "focused",
+      "exitCode": 0,
+      "log": "final-focused.log",
+      "sha256": "877ed47fec9f5b762ec53b106f21198675514e9426f5d6e0439ded1058505c4a",
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "guardOrAllowlistViolation": false
+    },
+    {
+      "suite": "regression",
+      "exitCode": 0,
+      "log": "final-regression.log",
+      "sha256": "09fad173915732dbacde723c958b9abae457a7d47dd6253d5af4861e331b4d5e",
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "guardOrAllowlistViolation": false
+    }
+  ],
+  "beforeAfter": {
+    "files": 50,
+    "changed": [],
+    "changedSharedSourcesComparedToS04": [],
+    "scope": "Immediately before and after the final focused and adjacent regression runs. SHA-256 of source, schemas, fixtures, runner, guard, prior synthetic artifacts, dependency manifest and lockfile. The separately hashed Node binary also matched the S16-04 runtime."
+  },
+  "finalSourceSha256": {
+    "apps/desktop/scripts/evaluate-automation-quality.mjs": "3738adef1f4e5d4bc5a25006b263453359555efec0139770ce23b3efd0492f61",
+    "apps/engine/result.mjs": "7d59ecc39be9347645b05c62405d5126fc7302cdb897ee498878bf174a202b7f",
+    "apps/engine/stage15-batch-accounting.mjs": "fa437387ea1465029b188c8b7661d3be29419d8bbf444424fc92bd489bd94a0e",
+    "apps/engine/stage15-provider-adapter.mjs": "5ff8b985052f62853540fc4b64672ec99600e013bf84e95a488da391a5767f39",
+    "apps/engine/store.mjs": "0f63a6773a507c0385666d117cf83d5ba13cec0a8980fb95fe3eed024cdbfc39",
+    "docs/validation/stage16-03-20261119/metadata-only.mjs": "b4d79f00abd1397b48b6a79ee25fd0404e99db1068271648782a8a76278f91ef",
+    "docs/validation/stage16-04-20261119/synthetic-coordinator.json": "0dbfee1305e0b9f853f4750b8733d47c7cded258a04f27e2ca1a431ae3a9792c",
+    "docs/validation/stage16-04-20261119/synthetic-recovery.json": "8631664106b55e47c28051305667fd8a2ec9191cbb4463c8964dcf2b6eb8923a",
+    "docs/validation/stage16-05-20261119/red-baseline.mjs": "8f108c3731019f4675509b4ff63228f364be0eb549b921799b0100c9224bb33d",
+    "docs/validation/stage16-05-20261119/run-allowed.mjs": "1570eada0ff2ffb1bd556dee54aea2a54cf0f350a507b7c0f57e30fa5174ec32",
+    "package-lock.json": "cf76be31703f6ad27f8e1a03b377226608c4f54085fac55b39d3c8bc4bed9de3",
+    "package.json": "dc63a4ab47e15b28d84d4d75dd136cc687075bb377a2dac442b59aa14c11f59c",
+    "packages/ai-engine/quality/human-translation-review.cjs": "5588e6dac58dce94cac6fae164ea348e128ddb8e10d60605110ebf7a39dcece7",
+    "packages/ai-engine/quality/recovery-checkpoint.cjs": "1aff650b45a2bd09eff7ed2e87336d73db8b4d94519607be99247767eed6398a",
+    "packages/ai-engine/quality/recovery-policy.cjs": "161a708dae946d67f3a8f0fa215c18f6a63ac84af85279842b1d61f81300d812",
+    "packages/ai-engine/quality/stage15-quality-decision.cjs": "902de5c4875328bbe96d506535fb3d4cae7d1ebdab7fd94f1bb1cbbbc56323a2",
+    "packages/ai-engine/quality/stage15-stage-graph.cjs": "b9f91574ab7c57c037f03b4707b01824d6d6b15c340bbb40cd2c7f737ce93ca2",
+    "packages/contracts/schemas/v2-common-contract-v1.schema.json": "994b8a6a6a23568cc4e5c5170a2991c553c19a16a873d68e17e81dbfacc85c25",
+    "packages/contracts/src/v2-common-contract.mjs": "e2fd1e616d874365097363c4228d5794bcdb9e13ddcb184e6cadae9d7a3c2def",
+    "packages/evaluation/annotation-v1.schema.json": "539beff79d96465bc8546e19075c0255bccd17272db508e52551afb5abfa268e",
+    "packages/evaluation/dataset-contract.mjs": "b49657d3130b164d338501d4982cead673cd52b1e72ff018e83c763fbe70d9e9",
+    "packages/evaluation/dataset-v1.schema.json": "f876f683041cd30af1b0030f6783d55be0ccaeca77ed934c72609c0bf2c10d57",
+    "packages/evaluation/image-fingerprint.mjs": "cb20b21331331041aa9b836c4bbd2e2fe568dec0c0f6a3cd1f582d838f883c92",
+    "packages/evaluation/offline/contract.mjs": "57ed99788a463908814690984f3263a802133ed5f52cec92f888476b462f1c66",
+    "packages/evaluation/offline/evaluator.mjs": "4dd5ee73c81b2e5729f9996bbc15ccd0ca45407a586a62d84b12ba64f6e65ad3",
+    "packages/evaluation/offline/evidence.mjs": "5bd92d9d98f3c3682bb544ec56dab9909bd79f55326366249f49e1c2ff2ef27a",
+    "packages/evaluation/offline/ocr.mjs": "6d72b8904d84d4588f8ce8c5bc6ae8e49329da9543711889f6507a1c2ee2cc9e",
+    "packages/evaluation/offline/operations.mjs": "dbb47223f29e5149ed88188d4a2cebd65494dbf15bb9566595c32bb6e8bbf337",
+    "packages/evaluation/offline/quality.mjs": "10ecf14ac5ccb6f6519084b8aae80997d68910ced4dac574c7aa7b833c3fb9cf",
+    "packages/evaluation/offline/report.mjs": "0c5fc1996b8ed91d21ba5086ebd34112b1fd73d6d162a79b8c9c54b76bca439f",
+    "packages/evaluation/offline/v2-adapter.mjs": "2c8a709d27d66fa20d4f68edd68a731b078987824e5cc6dd2e7568e6fb9227db",
+    "packages/evaluation/policy/policy.mjs": "fb5252de43cfbc5be14d35bfd0ece4c5b00e362b8a2b15837fd4b9cb5b093b8b",
+    "packages/evaluation/policy/stage08-v1.1.json": "5d8e5f5f75244fe138772e9865c255a5d7c0e5e7db97e851a350f67f9922f1d9",
+    "packages/evaluation/stage16-blind-review.mjs": "d0b8947a11798d1b6fd8be6bc5f12cd32008c85c844e95c1fd6725198c893205",
+    "packages/evaluation/stage16-condition-matrix.mjs": "8f15aaa851463dc92829d7bb71b58917b7cfbaad5228b6a9330a4c52a9b8b1c1",
+    "packages/evaluation/stage16-execution-observations.mjs": "36b0fc743619e225b7051e1aca641d85210eadb264c5e98ce30012389ad74825",
+    "packages/evaluation/stage16-experiment-lock.mjs": "d73967a3638310ec9c9d0d07fff4f68b34ee2c99af4baa0f2077086dcd4872b1",
+    "packages/evaluation/stage16-paired-report.mjs": "236e2397a639dc9275dae67d856c73e1281aa204beedac5676191a9921229885",
+    "tests/v2/fixtures/stage16-blind-review.mjs": "98452cacd0fbdb83c13dc82bb7daeadfc8e54f621feeff617bd9af4e75a031f8",
+    "tests/v2/fixtures/stage16-experiment.mjs": "d56b694b30b101ea993997457cbf09a12be1c62db095fd7158ea4478d7190fe9",
+    "tests/v2/fixtures/stage16-observations.mjs": "7f9cad3c2d254ed4a00947a2e12d75371b729de9401afa0913bbb36a9998c215",
+    "tests/v2/fixtures/stage16-paired.mjs": "301c1d3c40d38424aa3bdabe5f3b808f27fa4e0ff445de7a01d1d28ed5087654",
+    "tests/v2/offline-evaluation-fixture.mjs": "2c129cf45f5ecd3450460e4c4ff1527fda78386723f026a60a55994069bed856",
+    "tests/v2/offline-evaluation.test.mjs": "aa9ea9ce19c8cf577edccba252328f43d9e284e6427323e8775ea8fce5a926c3",
+    "tests/v2/quality-policy.test.mjs": "fb0747c3430af3dc7144ab563a981af63bc612d739005ac15e1e7e8563495308",
+    "tests/v2/stage16-blind-review.test.mjs": "27b189a055d2a3af372bfc229ada03e8249e703cbaf84ea9fe22006c93b30354",
+    "tests/v2/stage16-condition-matrix.test.mjs": "18f4ab82a45cd49fda98a3825f0966fc06c47ff68fbadeb87377d5c09a623dd2",
+    "tests/v2/stage16-execution-observations.test.mjs": "3884dd68b287dff185fcb6fc785383b3c9caead56be1ca18110f2b29882bce83",
+    "tests/v2/stage16-experiment-lock.test.mjs": "9034be288020c71e4c0f7473feda6c5aba8a5b16ad76e8e8854fdfde3dabd043",
+    "tests/v2/stage16-paired-report.test.mjs": "c4c5f104a4939528ec8c50adfc1cc2f7897c385a4b45117c3c07fa75fb9898f4"
+  },
+  "artifacts": {
+    "docs/validation/stage16-05-20261119/synthetic-report.json": "72c47ed67d2dfcaa03e2d154df787fc266a0487a2af91fedac4c841e8f0c367e",
+    "docs/validation/2026-11-19-v2-stage16-paired-report.md": "c6b1dbe1f3eb551d9361ad00155ff58ae3ccb1422df2c43b662a8da992b4383c",
+    "docs/superpowers/handoffs/2026-11-19-stage16-s05-handoff.md": "60184015b5ee67cb476f570b40c7feda3c598da40401db96dc40b8383a851c6c"
+  },
+  "samplePins": {
+    "lockId": "6e6080c01077fd2f1c6781ded2f094dc3436ee482a7640635a0cd711bfbf3784",
+    "preregistrationSha256": "124086045ada39673a9fc2db4d8c44b88c0f65922c4212bb1d67d8f7d6dee41a",
+    "jobsSha256": "eb55b8bf9dcb7a869ae374bf46f165d0238fa5358b4bb1b2487f8ddc87e3f8b0",
+    "observationsSha256": "3c0962a3257a4d5960918b70c0a8c503237c25f1f2ea06f13dbad5a61e282d61",
+    "sealSha256": "8c1eaee9e0cadaa2165d17cdd0b722c7936af8294c30368dbd281d3b01879f09",
+    "reviewSha256": "ab447a009176a1de076b5b1ebf8e5007fa7c51b0b7dca28430e7e77d7f6bbb22",
+    "automaticSha256": "aeb6f49f1ded058d47200d0108842db776daeb222a5c08b216f4938b025dfe86",
+    "evaluatorSha256": "27f6343f980c4c0ab821d9c72d211d0eb76b0853825cefd80476a05e43cab27e"
+  },
+  "sameFirstAndFinalSamplePins": true,
+  "independentCheck": {
+    "assignment": "Arithmetic only on five signed synthetic pairs per model; no files or test execution by the verifier.",
+    "main": "Codex (GPT-6 family)",
+    "role": "test_verifier",
+    "configuredModel": "gpt-6-luna",
+    "configuredEffort": "low",
+    "runtimeIdentitySelfReported": "unverified",
+    "subagents": 1,
+    "matched": [
+      "B fidelity: pooled -1/5 versus equal-work +1/9",
+      "B mismatch counts 2/5 fidelity and 0/5 naturalness",
+      "0.05^(1/n) complement for 100, 298, 299, and 3 units",
+      "Confirmed cost subtotal across both conditions 1.50 USD per model; B improved wins 1."
+    ],
+    "reconciled": [
+      {
+        "measure": "A human fidelity signed work mean with missing fifth page",
+        "verifier": "[-1/9, +1/9]",
+        "correct": "[-4/9, +2/9]",
+        "calculation": "X = (+1+1+0)/3, Y = -1, Z in [-1,+1]. Equal weights give [(2/3-1-1)/3,(2/3-1+1)/3]."
+      },
+      {
+        "measure": "A naturalness disagreement",
+        "verifier": "1/3",
+        "correct": "0/2, three of five pairs not comparable",
+        "calculation": "Two resolved matches on p1 and p2; p3 has open human disagreement, p4 lacks an automatic improved score and p5 lacks the result pair."
+      },
+      {
+        "measure": "A secondary sign-only scratch arithmetic",
+        "verifier": "automatic fidelity range [-5/9,-1/9]; observed human naturalness mean 1/4",
+        "correct": "automatic direction-only range [-5/9,+1/9]; observed human naturalness mean 1/3",
+        "calculation": "Directions on X average +1/3, Y = -1, Z unknown; naturalness resolves 0,+1,0 on three pages. The report uses actual automatic score deltas and preserves the planned population."
+      },
+      {
+        "measure": "A comparison USD per improved win",
+        "verifier": "0.75 from partial subtotal / current confirmed wins",
+        "correct": "null",
+        "calculation": "Both final total cost and final number of resolved wins are unknown. Partial subtotal 1.50 USD and 2 confirmed wins remain available separately."
+      }
+    ]
+  },
+  "executionScope": {
+    "inputs": "in-memory synthetic metadata and two allowlisted saved S16-04 synthetic JSON artifacts only",
+    "actualMangaUsed": 0,
+    "productModelCalls": 0,
+    "permitsIssuedOrConsumed": 0,
+    "humanEvaluations": 0,
+    "imageProcessingIncludingSyntheticPng": 0,
+    "realQuality": "unverified",
+    "actualProductCost": "unmeasured",
+    "nextStage": "S16-06 not started"
+  }
+}

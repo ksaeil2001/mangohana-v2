@@ -1,0 +1,166 @@
+TAP version 13
+# Subtest: reordering equivalent JSON does not change its matrix fingerprint
+ok 1 - reordering equivalent JSON does not change its matrix fingerprint
+  ---
+  duration_ms: 1.8176
+  type: 'test'
+  ...
+# Subtest: the work, page, every shared pin and each axis pin bind the matrix identity
+ok 2 - the work, page, every shared pin and each axis pin bind the matrix identity
+  ---
+  duration_ms: 1.2318
+  type: 'test'
+  ...
+# Subtest: explicitly planning the full path has a distinct identity from fixed intermediate input
+ok 3 - explicitly planning the full path has a distinct identity from fixed intermediate input
+  ---
+  duration_ms: 0.228
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9.5679
+TAP version 13
+# Subtest: independent evidence and frozen criteria issue a reproducible lock for the exact cohort
+ok 1 - independent evidence and frozen criteria issue a reproducible lock for the exact cohort
+  ---
+  duration_ms: 27.4241
+  type: 'test'
+  ...
+# Subtest: a conflict on the second sample blocks the whole experiment
+ok 2 - a conflict on the second sample blocks the whole experiment
+  ---
+  duration_ms: 3.1685
+  type: 'test'
+  ...
+# Subtest: one comparison cannot mix processing or shared settings between pages
+ok 3 - one comparison cannot mix processing or shared settings between pages
+  ---
+  duration_ms: 5.0692
+  type: 'test'
+  ...
+# Subtest: foreign work, source, or sealed ground truth cannot be substituted even with a valid matrix fingerprint
+ok 4 - foreign work, source, or sealed ground truth cannot be substituted even with a valid matrix fingerprint
+  ---
+  duration_ms: 4.3486
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 48.3744
+TAP version 13
+# Subtest: shared translation request is counted once and unknown costs stay null
+ok 1 - shared translation request is counted once and unknown costs stay null
+  ---
+  duration_ms: 1.0776
+  type: 'test'
+  ...
+# Subtest: conflicting shared request receipts cannot be silently deduplicated
+ok 2 - conflicting shared request receipts cannot be silently deduplicated
+  ---
+  duration_ms: 0.5318
+  type: 'test'
+  ...
+# Subtest: all withheld yields delivery 0 but unaudited error rate null; retries separate
+ok 3 - all withheld yields delivery 0 but unaudited error rate null; retries separate
+  ---
+  duration_ms: 0.4544
+  type: 'test'
+  ...
+# Subtest: shared page request proof sums distributed call flags once, without multiplying duration
+ok 4 - shared page request proof sums distributed call flags once, without multiplying duration
+  ---
+  duration_ms: 0.1743
+  type: 'test'
+  ...
+# Subtest: partial cost observations keep the total null and exclude Codex usage
+ok 5 - partial cost observations keep the total null and exclude Codex usage
+  ---
+  duration_ms: 0.233
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11.7477
+TAP version 13
+# Subtest: registry and current input reject non-synthetic, stale, malformed or unsupported values before a call
+ok 1 - registry and current input reject non-synthetic, stale, malformed or unsupported values before a call
+  ---
+  duration_ms: 3.1572
+  type: 'test'
+  ...
+# Subtest: partial output accounts for all requested regions and stays incomplete
+ok 2 - partial output accounts for all requested regions and stays incomplete
+  ---
+  duration_ms: 1.8191
+  type: 'test'
+  ...
+# Subtest: provider success and unconfirmed settlement remain separate from a justified zero
+ok 3 - provider success and unconfirmed settlement remain separate from a justified zero
+  ---
+  duration_ms: 1.7006
+  type: 'test'
+  ...
+# Subtest: primary and alternate sum exact costs and wall time once per execution, including a replayed receipt
+ok 4 - primary and alternate sum exact costs and wall time once per execution, including a replayed receipt
+  ---
+  duration_ms: 1.844
+  type: 'test'
+  ...
+# Subtest: a confirmed subtotal does not erase one unknown execution or an absent duration
+ok 5 - a confirmed subtotal does not erase one unknown execution or an absent duration
+  ---
+  duration_ms: 1.0331
+  type: 'test'
+  ...
+# Subtest: an explicit lookup can add cost evidence for the same attempt without re-counting the execution
+ok 6 - an explicit lookup can add cost evidence for the same attempt without re-counting the execution
+  ---
+  duration_ms: 0.7485
+  type: 'test'
+  ...
+# Subtest: duplicate evidence identifiers with different facts or attempts cannot be summed
+ok 7 - duplicate evidence identifiers with different facts or attempts cannot be summed
+  ---
+  duration_ms: 0.8456
+  type: 'test'
+  ...
+# Subtest: usage totals are confined to one current stage input, even across distinct providers
+ok 8 - usage totals are confined to one current stage input, even across distinct providers
+  ---
+  duration_ms: 0.5772
+  type: 'test'
+  ...
+# Subtest: a changed provider model version alters the pinned evidence input even with the same profile digest
+ok 9 - a changed provider model version alters the pinned evidence input even with the same profile digest
+  ---
+  duration_ms: 1.605
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20.1729

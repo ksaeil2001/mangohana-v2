@@ -1,0 +1,1516 @@
+{
+  "schemaVersion": 1,
+  "kind": "stage16-paired-report",
+  "metric": "work_paired_score",
+  "policyVersion": "stage08-v1.1",
+  "definitions": {
+    "primaryAxis": "semanticFidelity",
+    "pairedSigns": {
+      "improved": 1,
+      "baseline": -1,
+      "tie": 0
+    },
+    "weighting": "equal_pages_within_work_then_equal_works",
+    "automaticDelta": "improved_minus_baseline_on_unit_interval",
+    "costUnit": "USD",
+    "costSuccess": "resolved_fidelity_win_on_completed_pair",
+    "comparisonCost": "all_baseline_and_improved_jobs",
+    "independentExampleAssumption": "independent_bernoulli_trials_with_common_event_probability"
+  },
+  "pins": {
+    "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+    "preregistrationSha256": "9046520e837129103e8c0bf4a428eb668a05740afc062d6d5db863911150cd44",
+    "jobsSha256": "781f0ffaa5274eff2f6955905163622860dcb731e248c60d113d9942cdcc5dc6",
+    "observationsSha256": "93003d5591605bc5c1d110c059e00489b8a919e7d4a6e3cf24870c2a7add7664",
+    "sealSha256": "172706f70d3a93515cc75e9f51e3934d67495c2d3673003dc30a2ad04f63ce34",
+    "reviewSha256": "48151cdee00118d50e01598099b52a4395110dd1653024cd8d115174873abb2b",
+    "automaticSha256": "00f4676d4ca47778756e4dfb30d30fd34787f5757f2776e78182dd3737c7f918",
+    "evaluatorSha256": "27f6343f980c4c0ab821d9c72d211d0eb76b0853825cefd80476a05e43cab27e"
+  },
+  "evidence": {
+    "executionKinds": [
+      "synthetic"
+    ],
+    "reviewKinds": [
+      "synthetic"
+    ],
+    "automaticKind": "synthetic",
+    "reviewerAuthentication": "unverified_offline_submission"
+  },
+  "independentZeroDefectExamples": [
+    {
+      "independentUnits": 100,
+      "events": 0,
+      "upper95": 0.029513049607039932
+    },
+    {
+      "independentUnits": 299,
+      "events": 0,
+      "upper95": 0.00996914679289927
+    }
+  ],
+  "models": {
+    "A": {
+      "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+      "plannedPages": 2,
+      "works": [
+        {
+          "workId": "work-final",
+          "leakageGroupId": "group-work-final",
+          "pages": [
+            {
+              "pageId": "page-final",
+              "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+              "conditions": {
+                "baseline": {
+                  "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-final:A:baseline",
+                      "receiptSha256": "21d873910c085e7933a8fe9b25f85daab8331561235f1d97e106e22a56efb099",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                },
+                "improved": {
+                  "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-final:A:improved",
+                      "receiptSha256": "4a9a54a8a7d3e43f04161b40c39ba42d4b13f780f44891fca3c698d458e515f9",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                }
+              },
+              "axes": {
+                "semanticFidelity": {
+                  "human": {
+                    "preference": "baseline",
+                    "reason": null,
+                    "comparison": "not_overlapped",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-one",
+                        "evidenceKind": "synthetic",
+                        "preference": "baseline",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 1,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": -0.5,
+                    "preference": "baseline"
+                  },
+                  "disagrees": false
+                },
+                "naturalness": {
+                  "human": {
+                    "preference": "tie",
+                    "reason": null,
+                    "comparison": "not_overlapped",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-one",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": 0,
+                    "preference": "tie"
+                  },
+                  "disagrees": false
+                }
+              }
+            }
+          ],
+          "axes": {
+            "semanticFidelity": {
+              "counts": {
+                "improved": 0,
+                "baseline": 1,
+                "tie": 0,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": -1,
+                "lower": -1,
+                "upper": -1
+              },
+              "automaticEffect": {
+                "value": -0.5,
+                "lower": -0.5,
+                "upper": -0.5
+              }
+            },
+            "naturalness": {
+              "counts": {
+                "improved": 0,
+                "baseline": 0,
+                "tie": 1,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              },
+              "automaticEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              }
+            }
+          },
+          "costAdjusted": {
+            "baseline": {
+              "plannedPairs": 1,
+              "confirmedWins": 1,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 1,
+                "denominator": 0.25,
+                "value": 4,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 1,
+                "value": 0.25,
+                "reason": null
+              }
+            },
+            "improved": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.25,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            },
+            "comparison": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 2,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.5",
+              "amountUsd": "0.5",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.5,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.5,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            }
+          }
+        },
+        {
+          "workId": "work-other",
+          "leakageGroupId": "group-work-other",
+          "pages": [
+            {
+              "pageId": "page-other",
+              "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+              "conditions": {
+                "baseline": {
+                  "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-other:A:baseline",
+                      "receiptSha256": "fdbc684bc8d5b6e92e2b7013328a4d41004673ae51b08d9780e3143d101cd17e",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                },
+                "improved": {
+                  "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-other:A:improved",
+                      "receiptSha256": "87331f525eeb365be6a629e25635b12ef933b25e8d643204a7d7242cd1ad41cf",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                }
+              },
+              "axes": {
+                "semanticFidelity": {
+                  "human": {
+                    "preference": "baseline",
+                    "reason": null,
+                    "comparison": "agree",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-one",
+                        "evidenceKind": "synthetic",
+                        "preference": "baseline",
+                        "reason": null
+                      },
+                      {
+                        "reviewerId": "fixture-reader-two",
+                        "evidenceKind": "synthetic",
+                        "preference": "baseline",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 1,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": -0.5,
+                    "preference": "baseline"
+                  },
+                  "disagrees": false
+                },
+                "naturalness": {
+                  "human": {
+                    "preference": "tie",
+                    "reason": null,
+                    "comparison": "agree",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-one",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      },
+                      {
+                        "reviewerId": "fixture-reader-two",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": 0,
+                    "preference": "tie"
+                  },
+                  "disagrees": false
+                }
+              }
+            }
+          ],
+          "axes": {
+            "semanticFidelity": {
+              "counts": {
+                "improved": 0,
+                "baseline": 1,
+                "tie": 0,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": -1,
+                "lower": -1,
+                "upper": -1
+              },
+              "automaticEffect": {
+                "value": -0.5,
+                "lower": -0.5,
+                "upper": -0.5
+              }
+            },
+            "naturalness": {
+              "counts": {
+                "improved": 0,
+                "baseline": 0,
+                "tie": 1,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              },
+              "automaticEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              }
+            }
+          },
+          "costAdjusted": {
+            "baseline": {
+              "plannedPairs": 1,
+              "confirmedWins": 1,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 1,
+                "denominator": 0.25,
+                "value": 4,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 1,
+                "value": 0.25,
+                "reason": null
+              }
+            },
+            "improved": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.25,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            },
+            "comparison": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 2,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.5",
+              "amountUsd": "0.5",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.5,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.5,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            }
+          }
+        }
+      ],
+      "axes": {
+        "semanticFidelity": {
+          "counts": {
+            "improved": 0,
+            "baseline": 2,
+            "tie": 0,
+            "missing": 0
+          },
+          "confirmedImprovedShare": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null
+          },
+          "availability": {
+            "numerator": 2,
+            "denominator": 2,
+            "value": 1,
+            "reason": null,
+            "status": "PASS",
+            "coverage": "complete",
+            "observedSubsetValue": null,
+            "population": "preregistered_eligible_cohort",
+            "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+          },
+          "disagreement": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null,
+            "plannedPairs": 2,
+            "uncompared": 0
+          },
+          "pairedEffect": {
+            "value": -1,
+            "lower": -1,
+            "upper": -1
+          },
+          "automaticEffect": {
+            "value": -0.5,
+            "lower": -0.5,
+            "upper": -0.5
+          },
+          "uncertainty": {
+            "method": "two_sided_hoeffding_independent_works",
+            "workCount": 2,
+            "completeWorks": 2,
+            "interval95": {
+              "lower": -1,
+              "upper": 0.9206455826398414
+            },
+            "halfWidth95": 1.9206455826398414,
+            "reason": null,
+            "workDisagreement": {
+              "event": "at_least_one_axis_disagreement_in_work",
+              "events": 0,
+              "unknownWorks": 0,
+              "zeroEventUpper95": 0.7763932022500211
+            }
+          }
+        },
+        "naturalness": {
+          "counts": {
+            "improved": 0,
+            "baseline": 0,
+            "tie": 2,
+            "missing": 0
+          },
+          "confirmedImprovedShare": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null
+          },
+          "availability": {
+            "numerator": 2,
+            "denominator": 2,
+            "value": 1,
+            "reason": null,
+            "status": "PASS",
+            "coverage": "complete",
+            "observedSubsetValue": null,
+            "population": "preregistered_eligible_cohort",
+            "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+          },
+          "disagreement": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null,
+            "plannedPairs": 2,
+            "uncompared": 0
+          },
+          "pairedEffect": {
+            "value": 0,
+            "lower": 0,
+            "upper": 0
+          },
+          "automaticEffect": {
+            "value": 0,
+            "lower": 0,
+            "upper": 0
+          },
+          "uncertainty": {
+            "method": "two_sided_hoeffding_independent_works",
+            "workCount": 2,
+            "completeWorks": 2,
+            "interval95": {
+              "lower": -1,
+              "upper": 1
+            },
+            "halfWidth95": 1.9206455826398414,
+            "reason": null,
+            "workDisagreement": {
+              "event": "at_least_one_axis_disagreement_in_work",
+              "events": 0,
+              "unknownWorks": 0,
+              "zeroEventUpper95": 0.7763932022500211
+            }
+          }
+        }
+      },
+      "primary": {
+        "axis": "semanticFidelity",
+        "minimumEffect": 0.04,
+        "observed": "worse",
+        "inference": "inconclusive"
+      },
+      "noninferiority": {
+        "axis": "naturalness",
+        "margin": 0.02,
+        "observedWithinMargin": true,
+        "supported": null
+      },
+      "costAdjusted": {
+        "baseline": {
+          "plannedPairs": 2,
+          "confirmedWins": 2,
+          "missingPairs": 0,
+          "plannedJobs": 2,
+          "unsettledJobs": 0,
+          "confirmedSubtotalUsd": "0.5",
+          "amountUsd": "0.5",
+          "winsPerUsd": {
+            "numerator": 2,
+            "denominator": 0.5,
+            "value": 4,
+            "reason": null
+          },
+          "usdPerWin": {
+            "numerator": 0.5,
+            "denominator": 2,
+            "value": 0.25,
+            "reason": null
+          }
+        },
+        "improved": {
+          "plannedPairs": 2,
+          "confirmedWins": 0,
+          "missingPairs": 0,
+          "plannedJobs": 2,
+          "unsettledJobs": 0,
+          "confirmedSubtotalUsd": "0.5",
+          "amountUsd": "0.5",
+          "winsPerUsd": {
+            "numerator": 0,
+            "denominator": 0.5,
+            "value": 0,
+            "reason": null
+          },
+          "usdPerWin": {
+            "numerator": 0.5,
+            "denominator": 0,
+            "value": null,
+            "reason": "NO_WINS"
+          }
+        },
+        "comparison": {
+          "plannedPairs": 2,
+          "confirmedWins": 0,
+          "missingPairs": 0,
+          "plannedJobs": 4,
+          "unsettledJobs": 0,
+          "confirmedSubtotalUsd": "1",
+          "amountUsd": "1",
+          "winsPerUsd": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0,
+            "reason": null
+          },
+          "usdPerWin": {
+            "numerator": 1,
+            "denominator": 0,
+            "value": null,
+            "reason": "NO_WINS"
+          }
+        }
+      }
+    },
+    "B": {
+      "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+      "plannedPages": 2,
+      "works": [
+        {
+          "workId": "work-final",
+          "leakageGroupId": "group-work-final",
+          "pages": [
+            {
+              "pageId": "page-final",
+              "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+              "conditions": {
+                "baseline": {
+                  "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-final:B:baseline",
+                      "receiptSha256": "e359fd6c2d647c38668debfc9c3eccbb332c88cb81a5f12496ba554462421ca9",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                },
+                "improved": {
+                  "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-final:B:improved",
+                      "receiptSha256": "6152bfe57482df2352103ca0e9739dd1cbbde6f452e96fd74dd3f269344535ec",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                }
+              },
+              "axes": {
+                "semanticFidelity": {
+                  "human": {
+                    "preference": "tie",
+                    "reason": null,
+                    "comparison": "not_overlapped",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-two",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": 0,
+                    "preference": "tie"
+                  },
+                  "disagrees": false
+                },
+                "naturalness": {
+                  "human": {
+                    "preference": "tie",
+                    "reason": null,
+                    "comparison": "not_overlapped",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-two",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": 0,
+                    "preference": "tie"
+                  },
+                  "disagrees": false
+                }
+              }
+            }
+          ],
+          "axes": {
+            "semanticFidelity": {
+              "counts": {
+                "improved": 0,
+                "baseline": 0,
+                "tie": 1,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              },
+              "automaticEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              }
+            },
+            "naturalness": {
+              "counts": {
+                "improved": 0,
+                "baseline": 0,
+                "tie": 1,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              },
+              "automaticEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              }
+            }
+          },
+          "costAdjusted": {
+            "baseline": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.25,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            },
+            "improved": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.25,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            },
+            "comparison": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 2,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.5",
+              "amountUsd": "0.5",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.5,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.5,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            }
+          }
+        },
+        {
+          "workId": "work-other",
+          "leakageGroupId": "group-work-other",
+          "pages": [
+            {
+              "pageId": "page-other",
+              "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+              "conditions": {
+                "baseline": {
+                  "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-other:B:baseline",
+                      "receiptSha256": "93a98daa824922c25a9cf2a32b47ab6557a4c9c29cfe6d857844b6f0c86bbfdd",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                },
+                "improved": {
+                  "resultSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907",
+                  "reason": null,
+                  "jobs": [
+                    {
+                      "jobId": "page-other:B:improved",
+                      "receiptSha256": "c6e69e2255e328ad77aa65d8470212fa1870334e1cecaf1f24fa1b8a0289e4b8",
+                      "status": "succeeded",
+                      "reason": null,
+                      "evidenceKind": "synthetic",
+                      "amountUsd": "0.25",
+                      "confirmedSubtotalUsd": "0.25"
+                    }
+                  ]
+                }
+              },
+              "axes": {
+                "semanticFidelity": {
+                  "human": {
+                    "preference": "tie",
+                    "reason": null,
+                    "comparison": "agree",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-one",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      },
+                      {
+                        "reviewerId": "fixture-reader-two",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": 0,
+                    "preference": "tie"
+                  },
+                  "disagrees": false
+                },
+                "naturalness": {
+                  "human": {
+                    "preference": "tie",
+                    "reason": null,
+                    "comparison": "agree",
+                    "votes": [
+                      {
+                        "reviewerId": "fixture-reader-one",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      },
+                      {
+                        "reviewerId": "fixture-reader-two",
+                        "evidenceKind": "synthetic",
+                        "preference": "tie",
+                        "reason": null
+                      }
+                    ]
+                  },
+                  "automatic": {
+                    "baseline": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "improved": {
+                      "value": 0.5,
+                      "unit": "ratio",
+                      "reason": null
+                    },
+                    "delta": 0,
+                    "preference": "tie"
+                  },
+                  "disagrees": false
+                }
+              }
+            }
+          ],
+          "axes": {
+            "semanticFidelity": {
+              "counts": {
+                "improved": 0,
+                "baseline": 0,
+                "tie": 1,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              },
+              "automaticEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              }
+            },
+            "naturalness": {
+              "counts": {
+                "improved": 0,
+                "baseline": 0,
+                "tie": 1,
+                "missing": 0
+              },
+              "confirmedImprovedShare": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null
+              },
+              "availability": {
+                "numerator": 1,
+                "denominator": 1,
+                "value": 1,
+                "reason": null,
+                "status": "PASS",
+                "coverage": "complete",
+                "observedSubsetValue": null,
+                "population": "preregistered_eligible_cohort",
+                "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+              },
+              "disagreement": {
+                "numerator": 0,
+                "denominator": 1,
+                "value": 0,
+                "reason": null,
+                "plannedPairs": 1,
+                "uncompared": 0
+              },
+              "pairedEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              },
+              "automaticEffect": {
+                "value": 0,
+                "lower": 0,
+                "upper": 0
+              }
+            }
+          },
+          "costAdjusted": {
+            "baseline": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.25,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            },
+            "improved": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 1,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.25",
+              "amountUsd": "0.25",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.25,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.25,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            },
+            "comparison": {
+              "plannedPairs": 1,
+              "confirmedWins": 0,
+              "missingPairs": 0,
+              "plannedJobs": 2,
+              "unsettledJobs": 0,
+              "confirmedSubtotalUsd": "0.5",
+              "amountUsd": "0.5",
+              "winsPerUsd": {
+                "numerator": 0,
+                "denominator": 0.5,
+                "value": 0,
+                "reason": null
+              },
+              "usdPerWin": {
+                "numerator": 0.5,
+                "denominator": 0,
+                "value": null,
+                "reason": "NO_WINS"
+              }
+            }
+          }
+        }
+      ],
+      "axes": {
+        "semanticFidelity": {
+          "counts": {
+            "improved": 0,
+            "baseline": 0,
+            "tie": 2,
+            "missing": 0
+          },
+          "confirmedImprovedShare": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null
+          },
+          "availability": {
+            "numerator": 2,
+            "denominator": 2,
+            "value": 1,
+            "reason": null,
+            "status": "PASS",
+            "coverage": "complete",
+            "observedSubsetValue": null,
+            "population": "preregistered_eligible_cohort",
+            "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+          },
+          "disagreement": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null,
+            "plannedPairs": 2,
+            "uncompared": 0
+          },
+          "pairedEffect": {
+            "value": 0,
+            "lower": 0,
+            "upper": 0
+          },
+          "automaticEffect": {
+            "value": 0,
+            "lower": 0,
+            "upper": 0
+          },
+          "uncertainty": {
+            "method": "two_sided_hoeffding_independent_works",
+            "workCount": 2,
+            "completeWorks": 2,
+            "interval95": {
+              "lower": -1,
+              "upper": 1
+            },
+            "halfWidth95": 1.9206455826398414,
+            "reason": null,
+            "workDisagreement": {
+              "event": "at_least_one_axis_disagreement_in_work",
+              "events": 0,
+              "unknownWorks": 0,
+              "zeroEventUpper95": 0.7763932022500211
+            }
+          }
+        },
+        "naturalness": {
+          "counts": {
+            "improved": 0,
+            "baseline": 0,
+            "tie": 2,
+            "missing": 0
+          },
+          "confirmedImprovedShare": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null
+          },
+          "availability": {
+            "numerator": 2,
+            "denominator": 2,
+            "value": 1,
+            "reason": null,
+            "status": "PASS",
+            "coverage": "complete",
+            "observedSubsetValue": null,
+            "population": "preregistered_eligible_cohort",
+            "meaning": "MEASUREMENT_AVAILABLE_NOT_QUALITY_TARGET_ACHIEVEMENT"
+          },
+          "disagreement": {
+            "numerator": 0,
+            "denominator": 2,
+            "value": 0,
+            "reason": null,
+            "plannedPairs": 2,
+            "uncompared": 0
+          },
+          "pairedEffect": {
+            "value": 0,
+            "lower": 0,
+            "upper": 0
+          },
+          "automaticEffect": {
+            "value": 0,
+            "lower": 0,
+            "upper": 0
+          },
+          "uncertainty": {
+            "method": "two_sided_hoeffding_independent_works",
+            "workCount": 2,
+            "completeWorks": 2,
+            "interval95": {
+              "lower": -1,
+              "upper": 1
+            },
+            "halfWidth95": 1.9206455826398414,
+            "reason": null,
+            "workDisagreement": {
+              "event": "at_least_one_axis_disagreement_in_work",
+              "events": 0,
+              "unknownWorks": 0,
+              "zeroEventUpper95": 0.7763932022500211
+            }
+          }
+        }
+      },
+      "primary": {
+        "axis": "semanticFidelity",
+        "minimumEffect": 0.04,
+        "observed": "no_difference",
+        "inference": "inconclusive"
+      },
+      "noninferiority": {
+        "axis": "naturalness",
+        "margin": 0.02,
+        "observedWithinMargin": true,
+        "supported": null
+      },
+      "costAdjusted": {
+        "baseline": {
+          "plannedPairs": 2,
+          "confirmedWins": 0,
+          "missingPairs": 0,
+          "plannedJobs": 2,
+          "unsettledJobs": 0,
+          "confirmedSubtotalUsd": "0.5",
+          "amountUsd": "0.5",
+          "winsPerUsd": {
+            "numerator": 0,
+            "denominator": 0.5,
+            "value": 0,
+            "reason": null
+          },
+          "usdPerWin": {
+            "numerator": 0.5,
+            "denominator": 0,
+            "value": null,
+            "reason": "NO_WINS"
+          }
+        },
+        "improved": {
+          "plannedPairs": 2,
+          "confirmedWins": 0,
+          "missingPairs": 0,
+          "plannedJobs": 2,
+          "unsettledJobs": 0,
+          "confirmedSubtotalUsd": "0.5",
+          "amountUsd": "0.5",
+          "winsPerUsd": {
+            "numerator": 0,
+            "denominator": 0.5,
+            "value": 0,
+            "reason": null
+          },
+          "usdPerWin": {
+            "numerator": 0.5,
+            "denominator": 0,
+            "value": null,
+            "reason": "NO_WINS"
+          }
+        },
+        "comparison": {
+          "plannedPairs": 2,
+          "confirmedWins": 0,
+          "missingPairs": 0,
+          "plannedJobs": 4,
+          "unsettledJobs": 0,
+          "confirmedSubtotalUsd": "1",
+          "amountUsd": "1",
+          "winsPerUsd": {
+            "numerator": 0,
+            "denominator": 1,
+            "value": 0,
+            "reason": null
+          },
+          "usdPerWin": {
+            "numerator": 1,
+            "denominator": 0,
+            "value": null,
+            "reason": "NO_WINS"
+          }
+        }
+      }
+    }
+  }
+}

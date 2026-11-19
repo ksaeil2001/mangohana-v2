@@ -2,14 +2,18 @@ import {normalizeLocalOcr,normalizeLocalTranslation,type LocalOcrSettings,type L
 export const DEFAULT_ENGINE_ENDPOINT = '/api/engine';
 export type Mode = "online";
 export type PageStatus = "ready" | "processing" | "paused" | "review" | "completed" | "failed";
-export type IssueKind = "missing" | "overlap" | "linebreak" | "error";
+export type IssueKind = "missing" | "overlap" | "linebreak" | "error" | "engine";
+export type EngineReview = {warnings:string[];soundEffects?:{preserved:number;translated:number}};
+export type StudioBox={x:number;y:number;w:number;h:number};
 export type TextBlock = {
+  sourceBox?:StudioBox;userSourceBox?:StudioBox;
   id: string; source: string; text: string; x: number; y: number; w: number; h: number;
   font: string; size: number; weight: number; align: "left" | "center" | "right";
   color: string; lineHeight: number; confidence?: number; fill: boolean;
 };
 export type PendingBatch={key:string;projectId:string;source:'ja'|'auto';target:'ko';phase:'prepared'|'sending';members:{pageId:string;pageNumber?:number;generation:number;sourceSha256:string;name:string}[]};
 export type StudioPage = {
+  engineReview?:EngineReview;
   id: string; name: string; image: string; cleanImage?: string; finalImage?: string; finalImageSignature?: string; width: number; height: number;
   blocks: TextBlock[]; status: PageStatus; error?: string; reviewed: boolean; jobId?: string; jobEndpoint?: string; requestId?: string; processed?: boolean; engineGeneration?: number;enginePageNumber?:number;pendingBatch?:PendingBatch;
 };
@@ -27,12 +31,19 @@ export const FONTS: Record<string, string> = {
   rounded: '"Arial Rounded MT Bold", "Noto Sans KR", sans-serif',
 };
 export const FONT_NAMES: Record<string, string> = { sans: "기본 고딕", serif: "명조", rounded: "라운드 고딕" };
-export const ISSUE_NAMES: Record<IssueKind, string> = { missing: "대사 누락", overlap: "텍스트 겹침", linebreak: "줄바꿈", error: "처리 오류" };
+export const ISSUE_NAMES: Record<IssueKind, string> = { missing: "대사 누락", overlap: "텍스트 겹침", linebreak: "줄바꿈", error: "처리 오류", engine:"엔진 검토" };
 export const STATUS_NAMES: Record<PageStatus, string> = {ready:"처리 대기", processing:"처리 중", paused:"조회 중지", review:"검토 필요", completed:"검수 완료", failed:"처리 오류"};
 export function uid() { return crypto.randomUUID(); }
 export function clamp(n: number, min: number, max: number) { return Math.min(max, Math.max(min,n)); }
 export function makeBlock(patch: Partial<TextBlock> = {}): TextBlock {
   return {id:uid(),source:"",text:"새 번역문",x:35,y:35,w:25,h:15,font:"sans",size:32,weight:600,align:"center",color:"#202020",lineHeight:1.4,fill:false,...patch};
+}
+function validOcrBox(value:StudioBox|undefined):value is StudioBox {
+  return !!value&&[value.x,value.y,value.w,value.h].every(Number.isFinite)&&value.x>=0&&value.y>=0&&value.w>0&&value.h>0&&value.x+value.w<=100.0001&&value.y+value.h<=100.0001;
+}
+export function ocrBox(block:TextBlock):StudioBox {
+  const {x,y,w,h}=validOcrBox(block.userSourceBox)?block.userSourceBox:validOcrBox(block.sourceBox)?block.sourceBox:block;
+  return {x,y,w,h};
 }
 /** Fixed visual fields and layer order bind an engine bitmap to its editable content. */
 export function blockVisualSignature(blocks:readonly TextBlock[]):string {
@@ -56,6 +67,7 @@ export function lineCount(b: TextBlock, width: number) {
 }
 export function getIssues(page: StudioPage): Issue[] {
   const issues: Issue[] = [];
+  page.engineReview?.warnings.forEach((warning,index)=>issues.push({id:page.id+"-engine-"+index,kind:"engine",pageId:page.id,title:warning,description:"엔진 결과에 기록된 경고입니다."}));
   if (page.status === "failed") issues.push({id:page.id+"-error",kind:"error",pageId:page.id,title:"처리를 완료하지 못했어요",description:page.error || "엔진 연결과 처리 기록을 확인해 주세요."});
   for (const b of page.blocks) {
     if (!b.text.trim()) {
@@ -119,6 +131,16 @@ export function validatePendingBatch(value:unknown,projectId:string,pageId:strin
  return batch;
 }
 function validDate(value:unknown,fallback:string) {return typeof value==="string"&&Number.isFinite(Date.parse(value))?value:fallback;}
+export function readEngineReview(value:unknown):EngineReview|undefined {
+  if(value===undefined)return undefined;
+  if(!value||typeof value!=='object'||!('warnings' in value)||!Array.isArray(value.warnings)||!value.warnings.every(w=>typeof w==='string'))throw new Error("저장된 엔진 경고를 확인해 주세요.");
+  const warnings=[...value.warnings];
+  if(!('soundEffects' in value)||value.soundEffects===undefined)return {warnings};
+  const s=value.soundEffects;
+  if(!s||typeof s!=='object'||!('preserved' in s)||!('translated' in s)||
+    typeof s.preserved!=='number'||typeof s.translated!=='number'||!Number.isSafeInteger(s.preserved)||!Number.isSafeInteger(s.translated)||s.preserved<0||s.translated<0)throw new Error("효과음 처리 기록을 확인해 주세요.");
+  return {warnings,soundEffects:{preserved:s.preserved,translated:s.translated}};
+}
 function normalizeProject(value:unknown,imported:boolean):Project {
   let p=value as Project;
   if(!p||typeof p.name!=="string"||!Array.isArray(p.pages)||(imported&&p.pages.length>200))throw new Error("Trio 프로젝트 파일을 확인해 주세요.");
@@ -136,6 +158,7 @@ function normalizeProject(value:unknown,imported:boolean):Project {
     if(raw.enginePageNumber!==undefined&&(!Number.isSafeInteger(raw.enginePageNumber)||raw.enginePageNumber<1||raw.enginePageNumber>100000))throw new Error('저장된 서버 페이지 순서를 확인해 주세요.');
     // Project backups include manual regions; OCR's per-response limit is separate.
     const page:StudioPage={...raw,blocks:validateBlocks(raw.blocks,{preserveContent:true}),error:typeof raw.error==="string"?raw.error:undefined,processed:raw.processed===true||((raw.status==="review"||raw.status==="completed")&&!!raw.cleanImage),requestId:undefined};
+    if(raw.engineReview!==undefined)page.engineReview=readEngineReview(raw.engineReview);
     if(imported){page.jobId=undefined;page.jobEndpoint=undefined;page.pendingBatch=undefined;page.enginePageNumber=undefined;}
     else if(raw.jobId){
       if(!isStudioId(raw.jobId)||typeof raw.jobEndpoint!=="string")throw new Error("저장된 작업 ID와 엔진 주소를 확인해 주세요.");
@@ -170,6 +193,7 @@ export function validateBlocks(value: unknown,options:{preserveContent?:boolean}
   const seen=new Set<string>();
   return value.map((b:Partial<TextBlock>)=>{
     if (!b || ![b.x,b.y,b.w,b.h].every(n=>typeof n==="number" && Number.isFinite(n)) || typeof b.text!=="string") throw new Error("텍스트 좌표와 번역문을 확인해 주세요.");
+    if(b.userSourceBox!==undefined&&!validOcrBox(b.userSourceBox))throw new Error("수정한 OCR 영역이 페이지 범위를 벗어났어요.");
     const id=typeof b.id==="string"&&b.id.trim().length>0?b.id:uid();
     if(seen.has(id))throw new Error("같은 ID의 텍스트 영역이 중복돼요.");
     seen.add(id);

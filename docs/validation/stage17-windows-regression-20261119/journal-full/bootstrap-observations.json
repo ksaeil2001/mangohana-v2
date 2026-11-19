@@ -1,0 +1,47 @@
+[
+  {
+    "kind": "default",
+    "runId": "6c492482-b4da-414d-a720-bfeea809708d",
+    "rootPid": 27236,
+    "same": true,
+    "supervisorStart": "2026-11-18T22:11:55.286Z",
+    "workerStart": "2026-11-18T22:11:57.577Z",
+    "workerExit": "2026-11-18T22:12:02.102Z",
+    "rootExitCode": 87,
+    "reason": "lifetime_timeout",
+    "resumed": true,
+    "clean": true,
+    "active": 0,
+    "gateCreated": "2026-11-18T22:11:57.580Z",
+    "profile": true,
+    "jobs": true,
+    "stdoutBytes": [],
+    "stderrBytes": [],
+    "report": null
+  },
+  {
+    "kind": "OCR_COLD_TRANSLATION_WARM",
+    "runId": "2fe82085-627a-4c17-adfd-575d27762778",
+    "rootPid": 38868,
+    "same": true,
+    "supervisorStart": "2026-11-18T22:12:03.331Z",
+    "workerStart": "2026-11-18T22:12:04.675Z",
+    "workerExit": "2026-11-18T22:12:07.461Z",
+    "rootExitCode": 0,
+    "reason": "root_exit",
+    "resumed": true,
+    "clean": true,
+    "active": 0,
+    "gateCreated": "2026-11-18T22:12:04.680Z",
+    "profile": true,
+    "jobs": true,
+    "stdoutBytes": [],
+    "stderrBytes": [],
+    "report": {
+      "status": "BOOTSTRAP_ONLY_NO_AI",
+      "actualAiCalls": 0,
+      "engineCreated": false,
+      "created": "2026-11-18T22:12:07.360Z"
+    }
+  }
+]

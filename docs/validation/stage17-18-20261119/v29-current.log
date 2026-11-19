@@ -1,0 +1,17 @@
+TAP version 13
+# V29_CSS {"version":29,"originalSha256":"e2201997425db2f5a477bcafa002ea065df5202ab07fbcde210289c250c789cb","headSha256":"e2201997425db2f5a477bcafa002ea065df5202ab07fbcde210289c250c789cb","currentSha256":"cc307506ea5bd351036982e37ff20a67c39616f5066486626903efce0df4c05d","originalToHead":{"before":3233,"after":3233,"identical":3233,"changed":0,"missing":0,"added":0},"originalToCurrent":{"before":3233,"after":3245,"identical":3233,"changed":0,"missing":0,"added":12},"headToCurrent":{"before":3233,"after":3245,"identical":3233,"changed":0,"missing":0,"added":12}}
+# Subtest: the Stage17 OCR controls extend the baseline stylesheet without losing existing declarations or v29 coverage
+ok 1 - the Stage17 OCR controls extend the baseline stylesheet without losing existing declarations or v29 coverage
+  ---
+  duration_ms: 147.5424
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 292.5041

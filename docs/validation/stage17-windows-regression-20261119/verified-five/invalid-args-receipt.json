@@ -1,0 +1,15 @@
+{
+  "runId": "e27b924c-057c-4765-8114-6d5d9291ffb5",
+  "supervisorPid": 11872,
+  "rootPid": 34808,
+  "ready": true,
+  "resumed": true,
+  "terminationRequested": true,
+  "nativeElapsedMs": 7010,
+  "rootExit": 87,
+  "reason": "lifetime_timeout",
+  "activeAfter": 0,
+  "cleanup": false,
+  "members": [],
+  "exitFiletime": null
+}

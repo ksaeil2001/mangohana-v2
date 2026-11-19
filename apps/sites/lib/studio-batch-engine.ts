@@ -12,7 +12,8 @@ export class BatchPendingError extends Error {unknown=true;}
 export class BatchProtocolError extends Error {}
 class BatchPersistenceError extends Error {}
 const idPattern=/^[A-Za-z0-9_-]{1,128}$/;
-const statusSet=new Set(['queued','running','processing','completed','failed','cancelled']);
+const statusSet=new Set(['queued','running','processing','completed','failed','cancelled','result_unknown']);
+const retryAllowed=(job:Record<string,unknown>)=>!(job.recovery && typeof job.recovery==='object' && 'manuallyRetryable' in job.recovery && job.recovery.manuallyRetryable===false);
 function protocol(condition:unknown,message='배치 페이지와 작업 연결 정보가 올바르지 않아요.'):asserts condition {if(!condition)throw new BatchProtocolError(message);}
 const digest=async(bytes:BufferSource)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),byte=>byte.toString(16).padStart(2,'0')).join('');
 const stableHash=(value:unknown)=>digest(new TextEncoder().encode(JSON.stringify(value)));
@@ -25,7 +26,7 @@ async function responseData(response:Response){
 async function durable(operation:()=>void|Promise<void>){try{await operation();}catch{throw new BatchPersistenceError('접수 정보를 저장하지 못해 추가 요청을 중지했어요. 원본과 이전 내용을 보존해 주세요.');}}
 function validateBindings(value:Record<string,unknown>,intent:PendingBatch):BatchJobBinding[]{
  protocol(isStudioId(value.id)&&value.projectId===intent.projectId&&value.sourceLanguage===intent.source&&value.totalPages===intent.members.length&&Array.isArray(value.pages)&&value.pages.length===intent.members.length);
- protocol(['queued','running','completed','partial','failed'].includes(String(value.status)));
+ protocol(['queued','running','completed','partial','failed','result_unknown'].includes(String(value.status)));
  const seenPages=new Set<string>(),seenJobs=new Set<string>(),seenKeys=new Set<string>(),seenNumbers=new Set<number>();
  const result=(value.pages as unknown[]).map(raw=>{
   const page=engineObject(raw),index=intent.members.findIndex((_,index)=>page.key==='file:'+index),member=intent.members[index],job=engineObject(page.job);
@@ -124,10 +125,11 @@ export async function processProjectBatch(project:Project,targets:StudioPage[],e
      let data=await responseData(await fetch(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));validateJob(data,project.id,page.id,task.jobId);signal.throwIfAborted();
      callbacks.onStage(page.id,typeof data.stage==='string'?data.stage:'처리 중');
      if(data.errorCode==='RETRY_COMMIT_UNKNOWN'||data.stage==='retry_acceptance_unknown'){callbacks.onError(page.id,new BatchPendingError('이전 재시도의 접수 저장을 확인하지 못했어요. 작업 ID를 보존했으며 새 작업을 자동으로 만들지 않아요.'),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);continue;}
-     if(data.status==='failed'&&task.retryRequested&&!task.retried){task.retried=true;task.jobId=await retrySavedPage({...page,jobId:task.jobId},project.id,signal,callbacks.onJobs,()=>!failedWorker);data=await responseData(await fetch(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));validateJob(data,project.id,page.id,task.jobId);signal.throwIfAborted();}
+     if(data.status==='failed'&&retryAllowed(data)&&task.retryRequested&&!task.retried){task.retried=true;task.jobId=await retrySavedPage({...page,jobId:task.jobId},project.id,signal,callbacks.onJobs,()=>!failedWorker);data=await responseData(await fetch(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));validateJob(data,project.id,page.id,task.jobId);signal.throwIfAborted();}
      if(data.status==='completed'){const result=validatePageEngineResult(data.result);signal.throwIfAborted();callbacks.onResult(page.id,result);outcomes.set(page.id,'completed');tasks.delete(page.id);}
      else if(data.status==='cancelled'){callbacks.onError(page.id,new Error('서버에서 취소한 작업이에요. 기존 결과를 보존했어요.'),true,false);outcomes.set(page.id,'failed');tasks.delete(page.id);}
-     else if(data.status==='failed'){callbacks.onError(page.id,new Error(typeof data.error==='string'?data.error:'서버에서 이 페이지의 처리가 실패했어요.'),true,true);outcomes.set(page.id,'failed');tasks.delete(page.id);}
+     else if(data.status==='result_unknown'){callbacks.onError(page.id,new BatchPendingError('이 페이지의 실행 결과 또는 정산이 미확정이에요. 기존 작업 ID로 상태를 확인할 수 있어요.'),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);}
+     else if(data.status==='failed'){callbacks.onError(page.id,new Error(typeof data.error==='string'?data.error:'서버에서 이 페이지의 처리가 실패했어요.'),true,retryAllowed(data));outcomes.set(page.id,'failed');tasks.delete(page.id);}
     }catch(error){if(signal.aborted||error instanceof BatchPersistenceError){failedWorker=true;throw error;}callbacks.onError(page.id,pending(error),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);}
    }
   };

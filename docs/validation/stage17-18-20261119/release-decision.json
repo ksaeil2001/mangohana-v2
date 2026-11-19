@@ -1,0 +1,135 @@
+{
+  "command": [
+    "C:/Program Files/WindowsApps/OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt/dependencies/node/bin/node.exe",
+    "scripts/v2/review-release.mjs",
+    "check",
+    "docs/validation/stage17-18-20261119/release-dossier.json",
+    "docs/validation/stage17-18-20261119/release-pins.json"
+  ],
+  "node": "v24.22.1",
+  "firstPowerShellInvocationExitCode": 1,
+  "exitCode": 2,
+  "expectedBlocked": true,
+  "result": {
+    "candidateSha256": "3f896b672f1ccf80ecd1ef3d9cc0e56d3f936f6cf9e474c7f030a8784bd8beaa",
+    "status": "BLOCKED",
+    "deployAuthorized": false,
+    "rows": [
+      {
+        "id": "targeted",
+        "scope": "test",
+        "status": "PASS",
+        "reason": null,
+        "artifactSha256": "e4c61f5b867a264f33e79ae94ebae2beab1b48d9882aa8e1859f269c3749c844"
+      },
+      {
+        "id": "fullRegression",
+        "scope": "test",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "desktopBrowser",
+        "scope": "browser",
+        "status": "PASS",
+        "reason": null,
+        "artifactSha256": "2583fe2bae6068d1d325051bda0c38aad0cc9bb2fd7c5f6c3181ea54dd77ce61"
+      },
+      {
+        "id": "supportedDevices",
+        "scope": "device",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "security",
+        "scope": "review",
+        "status": "NEEDS_REVIEW",
+        "reason": "NEEDS_REVIEW",
+        "artifactSha256": "4aa83b8dafb93857d240aaa0055450f8fcb9760d4e0dfb308a3862ee5138e9fd"
+      },
+      {
+        "id": "performance",
+        "scope": "actual",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "modelRun",
+        "scope": "actual",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "pngReview",
+        "scope": "human",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "holdout",
+        "scope": "actual",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "rollback",
+        "scope": "rehearsal",
+        "status": "NEEDS_REVIEW",
+        "reason": "NEEDS_REVIEW",
+        "artifactSha256": "e4c61f5b867a264f33e79ae94ebae2beab1b48d9882aa8e1859f269c3749c844"
+      },
+      {
+        "id": "monitoring",
+        "scope": "review",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      },
+      {
+        "id": "localHosting",
+        "scope": "review",
+        "status": "PASS",
+        "reason": null,
+        "artifactSha256": "f1b882fbf7a1b0e9ad1f8352f12cb6748ef8b2750df67497295bf1a3dd169eca"
+      },
+      {
+        "id": "deploymentApproval",
+        "scope": "operator",
+        "status": "NOT_RUN",
+        "reason": "EVIDENCE_REQUIRED",
+        "artifactSha256": null
+      }
+    ],
+    "blockers": [
+      "UNMEASURED_INDICATORS",
+      "fullRegression",
+      "supportedDevices",
+      "security",
+      "performance",
+      "modelRun",
+      "pngReview",
+      "holdout",
+      "rollback",
+      "monitoring",
+      "deploymentApproval"
+    ],
+    "stage16": {
+      "status": "blocked",
+      "blockers": [
+        "UNUSED_HOLDOUT_REQUIRED",
+        "EXECUTION_APPROVAL_REQUIRED",
+        "START_EVIDENCE_REQUIRED",
+        "EXECUTION_RECEIPTS_REQUIRED",
+        "INDEPENDENT_REVIEW_REQUIRED",
+        "PAIRED_REPORT_REQUIRED"
+      ]
+    }
+  }
+}

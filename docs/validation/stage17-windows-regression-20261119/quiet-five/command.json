@@ -1,0 +1,26 @@
+{
+  "mode": "five",
+  "traceFlag": "normal",
+  "started": "2026-11-18T22:25:09.585Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-quiet-five-nXy5NA",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/v2/engine-ocr-refinement.test.mjs",
+    "tests/v2/engine-runtime-reuse.test.mjs",
+    "tests/v2/imported-font-bootstrap.test.mjs",
+    "tests/v2/typesetting-only-native.test.mjs",
+    "tests/v2/warm-electron-entry.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-quiet-five-nXy5NA\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-quiet-five-nXy5NA\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-quiet-five-nXy5NA\\entry"
+  }
+}

@@ -1,0 +1,389 @@
+[
+  {
+    "label": "v2-current",
+    "fixture": "ocr-refinement-23598d4a-baa5-4e07-bf3b-e38e67a5a21c",
+    "eventsPresent": false,
+    "ownedChildCount": 0,
+    "hooksReleased": true,
+    "files": [
+      {
+        "name": "source.png",
+        "created": "2026-11-18T18:26:53.7700000Z",
+        "modified": "2026-11-18T18:26:54.0000000Z"
+      }
+    ],
+    "stages": []
+  },
+  {
+    "label": "verified-five",
+    "fixture": "ocr-refinement-8d76cbcc-45ae-450f-93c3-aee9427988aa",
+    "eventsPresent": true,
+    "ownedChildCount": 1,
+    "hooksReleased": true,
+    "files": [
+      {
+        "name": "ocr-refinement",
+        "created": "2026-11-18T20:47:27.2000000Z",
+        "modified": "2026-11-18T20:47:27.2000000Z"
+      },
+      {
+        "name": "learned-mask-evidence.json",
+        "created": "2026-11-18T20:47:27.3500000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "normalized.png",
+        "created": "2026-11-18T20:47:27.0900000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "ocr.json",
+        "created": "2026-11-18T20:47:27.2800000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "progress.jsonl",
+        "created": "2026-11-18T20:47:27.1700000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "raw-ocr.json",
+        "created": "2026-11-18T20:47:27.1900000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "refined-ocr.json",
+        "created": "2026-11-18T20:47:27.2700000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "region-detection.json",
+        "created": "2026-11-18T20:47:27.1700000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "region-selection.json",
+        "created": "2026-11-18T20:47:27.2800000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "removal-mask-learned-gray.png",
+        "created": "2026-11-18T20:47:27.3500000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "removal-mask-legacy.png",
+        "created": "2026-11-18T20:47:27.3500000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "removal-mask.png",
+        "created": "2026-11-18T20:47:27.3600000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "runtime-events.jsonl",
+        "created": "2026-11-18T20:47:27.1700000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "source-mask-evidence.json",
+        "created": "2026-11-18T20:47:27.3600000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "source.png",
+        "created": "2026-11-18T20:47:27.0900000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "translation-input.json",
+        "created": "2026-11-18T20:47:27.3600000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      },
+      {
+        "name": "translation-review.json",
+        "created": "2026-11-18T20:47:27.3800000Z",
+        "modified": "2026-11-18T20:47:28.0000000Z"
+      }
+    ],
+    "stages": [
+      {
+        "at": "2026-11-18T20:47:27.185Z",
+        "phase": "ocr_runtime_cache",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.188Z",
+        "phase": "ocr_status_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.190Z",
+        "phase": "ocr_status_complete",
+        "code": null,
+        "durationMs": 2
+      },
+      {
+        "at": "2026-11-18T20:47:27.193Z",
+        "phase": "ocr_recognition_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.199Z",
+        "phase": "ocr_recognition_complete",
+        "code": null,
+        "durationMs": 7
+      },
+      {
+        "at": "2026-11-18T20:47:27.249Z",
+        "phase": "ocr_refinement_crop_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.254Z",
+        "phase": "ocr_refinement_crop_complete",
+        "code": null,
+        "durationMs": 6
+      },
+      {
+        "at": "2026-11-18T20:47:27.257Z",
+        "phase": "ocr_refinement_crop_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.262Z",
+        "phase": "ocr_refinement_crop_complete",
+        "code": null,
+        "durationMs": 5
+      },
+      {
+        "at": "2026-11-18T20:47:27.265Z",
+        "phase": "ocr_refinement_crop_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.270Z",
+        "phase": "ocr_refinement_crop_complete",
+        "code": null,
+        "durationMs": 5
+      },
+      {
+        "at": "2026-11-18T20:47:27.281Z",
+        "phase": "ocr_refinement_complete",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.299Z",
+        "phase": "renderer_prepare_complete",
+        "code": null,
+        "durationMs": 1
+      },
+      {
+        "at": "2026-11-18T20:47:27.380Z",
+        "phase": "translation_runtime_cache",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:47:27.382Z",
+        "phase": "llama_help_start",
+        "code": null,
+        "durationMs": null
+      }
+    ]
+  },
+  {
+    "label": "verified-full",
+    "fixture": "ocr-refinement-000d1710-1e6f-49f9-a4ae-1722596f55c3",
+    "eventsPresent": true,
+    "ownedChildCount": 1,
+    "hooksReleased": true,
+    "files": [
+      {
+        "name": "ocr-refinement",
+        "created": "2026-11-18T20:52:35.3900000Z",
+        "modified": "2026-11-18T20:52:35.3900000Z"
+      },
+      {
+        "name": "learned-mask-evidence.json",
+        "created": "2026-11-18T20:52:35.6800000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "normalized.png",
+        "created": "2026-11-18T20:52:35.3000000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "ocr.json",
+        "created": "2026-11-18T20:52:35.6200000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "progress.jsonl",
+        "created": "2026-11-18T20:52:35.3600000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "raw-ocr.json",
+        "created": "2026-11-18T20:52:35.3800000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "refined-ocr.json",
+        "created": "2026-11-18T20:52:35.6000000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "region-detection.json",
+        "created": "2026-11-18T20:52:35.3600000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "region-selection.json",
+        "created": "2026-11-18T20:52:35.6100000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "removal-mask-learned-gray.png",
+        "created": "2026-11-18T20:52:35.6800000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "removal-mask-legacy.png",
+        "created": "2026-11-18T20:52:35.6800000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "removal-mask.png",
+        "created": "2026-11-18T20:52:35.6900000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "runtime-events.jsonl",
+        "created": "2026-11-18T20:52:35.3700000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "source-mask-evidence.json",
+        "created": "2026-11-18T20:52:35.6900000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "source.png",
+        "created": "2026-11-18T20:52:35.2900000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "translation-input.json",
+        "created": "2026-11-18T20:52:35.7000000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      },
+      {
+        "name": "translation-review.json",
+        "created": "2026-11-18T20:52:35.7000000Z",
+        "modified": "2026-11-18T20:52:36.0000000Z"
+      }
+    ],
+    "stages": [
+      {
+        "at": "2026-11-18T20:52:35.370Z",
+        "phase": "ocr_runtime_cache",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.373Z",
+        "phase": "ocr_status_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.375Z",
+        "phase": "ocr_status_complete",
+        "code": null,
+        "durationMs": 2
+      },
+      {
+        "at": "2026-11-18T20:52:35.377Z",
+        "phase": "ocr_recognition_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.384Z",
+        "phase": "ocr_recognition_complete",
+        "code": null,
+        "durationMs": 7
+      },
+      {
+        "at": "2026-11-18T20:52:35.576Z",
+        "phase": "ocr_refinement_crop_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.582Z",
+        "phase": "ocr_refinement_crop_complete",
+        "code": null,
+        "durationMs": 5
+      },
+      {
+        "at": "2026-11-18T20:52:35.584Z",
+        "phase": "ocr_refinement_crop_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.590Z",
+        "phase": "ocr_refinement_crop_complete",
+        "code": null,
+        "durationMs": 5
+      },
+      {
+        "at": "2026-11-18T20:52:35.592Z",
+        "phase": "ocr_refinement_crop_start",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.597Z",
+        "phase": "ocr_refinement_crop_complete",
+        "code": null,
+        "durationMs": 5
+      },
+      {
+        "at": "2026-11-18T20:52:35.608Z",
+        "phase": "ocr_refinement_complete",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.625Z",
+        "phase": "renderer_prepare_complete",
+        "code": null,
+        "durationMs": 1
+      },
+      {
+        "at": "2026-11-18T20:52:35.703Z",
+        "phase": "translation_runtime_cache",
+        "code": null,
+        "durationMs": null
+      },
+      {
+        "at": "2026-11-18T20:52:35.705Z",
+        "phase": "llama_help_start",
+        "code": null,
+        "durationMs": null
+      }
+    ]
+  }
+]

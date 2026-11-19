@@ -1,0 +1,17 @@
+TAP version 13
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+ok 1 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+  ---
+  duration_ms: 15810.5367
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-journal-native-gP5DiA\\typesetting-native-0x7f84
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15921.9082

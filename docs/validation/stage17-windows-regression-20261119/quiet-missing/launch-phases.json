@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "expected": 1,
+  "measured": 1,
+  "rows": [
+    {
+      "kind": "missing-plan",
+      "runId": "a4477e0b-d41f-47bd-af99-f29f12a4e81e",
+      "supervisorPid": 4492,
+      "rootPid": 22336,
+      "sameIdentity": true,
+      "measured": true,
+      "supervisorCreatedUtc": "2026-11-18T22:41:32.244Z",
+      "compileStartedUtc": "2026-11-18T22:41:32.467Z",
+      "compileCompletedUtc": "2026-11-18T22:41:32.656Z",
+      "rootCreatedUtc": "2026-11-18T22:41:32.726Z",
+      "rootExitedUtc": "2026-11-18T22:41:32.789Z",
+      "beforeCompileMs": 223,
+      "compileMs": 189,
+      "afterCompileUntilRootMs": 70,
+      "workerMs": 63,
+      "rootExitCode": 1,
+      "reason": "root_exit",
+      "clean": true,
+      "activeAfter": 0,
+      "witness": {
+        "events": [
+          {
+            "phase": "startup_failed",
+            "code": "WARM_STARTUP_FAILED",
+            "primaryFailureCode": "ENOENT",
+            "bootstrapStage": "plan_read",
+            "cleanupConfirmed": false
+          }
+        ],
+        "actualAiCalls": 0
+      }
+    }
+  ]
+}

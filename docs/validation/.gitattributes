@@ -1,0 +1,5 @@
+# Saved regression receipts hash the original bytes, including Windows line endings.
+stage1[5-8]-*/**/*.json -text
+stage1[5-8]-*/**/*.jsonl -text
+stage1[5-8]-*/**/*.log -text
+stage1[5-8]-*/**/*.tap -text

@@ -1,0 +1,28 @@
+{
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "node": "v24.22.1",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "args": [
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false"
+  ],
+  "cwd": "C:\\dev\\Projects\\mangohana\\",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "started": "2026-11-18T18:22:45.186Z",
+  "finished": "2026-11-18T18:22:57.928Z",
+  "exitCode": 0,
+  "signal": null,
+  "counts": {
+    "tests": null,
+    "pass": null,
+    "fail": null,
+    "skipped": null,
+    "cancelled": null,
+    "todo": null
+  },
+  "sources": "root-types-current-sources.json",
+  "changedDuringRun": [],
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

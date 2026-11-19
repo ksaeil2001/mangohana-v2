@@ -1,4 +1,4 @@
-import { blockVisualSignature, DEFAULT_ENGINE_ENDPOINT, isStudioId, validateBlocks, type StudioPage } from "./studio-model";
+import { blockVisualSignature, DEFAULT_ENGINE_ENDPOINT, isStudioId, readEngineReview, validateBlocks, type StudioPage } from "./studio-model";
 export { DEFAULT_ENGINE_ENDPOINT } from "./studio-model";
 export class TerminalJobError extends Error { terminal=true;retryableJob=false; }
 export function endpointURL(value:string) {
@@ -9,6 +9,9 @@ export function endpointURL(value:string) {
   return url.href.replace(/\/$/,"");
 }
 export const RETIRED_JOB_NOTICE="이전 연결은 더 이상 사용할 수 없어요. ‘이전 결과로 편집’ 후 온라인 엔진으로 다시 처리해 주세요.";
+export function localStudioEndpoint(page:Pick<StudioPage,'jobId'|'jobEndpoint'>):string|undefined {
+  return !page.jobId||page.jobEndpoint===DEFAULT_ENGINE_ENDPOINT?DEFAULT_ENGINE_ENDPOINT:undefined;
+}
 export function canResumeJob(page:StudioPage|undefined):boolean {
   if(!page?.jobId||!page.jobEndpoint)return false;
   try{endpointURL(page.jobEndpoint);return true;}catch{return false;}
@@ -39,10 +42,12 @@ function resultImage(value:unknown):string|undefined{
   if(typeof value!=="string"||!/^data:image\/(png|jpeg|webp);base64,/.test(value))throw new Error("엔진 이미지는 PNG, JPG, WebP 데이터 형식이어야 해요.");
   return value;
 }
-export type PageEngineResult=Pick<StudioPage,'blocks'|'cleanImage'|'finalImage'|'finalImageSignature'>;
+export type PageEngineResult=Pick<StudioPage,'blocks'|'cleanImage'|'finalImage'|'finalImageSignature'|'engineReview'>;
 export function validatePageEngineResult(value:unknown):PageEngineResult {
  const result=engineObject(value),blocks=validateBlocks(result.blocks),cleanImage=resultImage(result.clean_image),finalImage=resultImage(result.final_image);
- return {blocks,cleanImage,finalImage,finalImageSignature:finalImage?blockVisualSignature(blocks):undefined};
+ const soundEffects=result.evidence&&typeof result.evidence==='object'&&'sound_effects' in result.evidence?result.evidence.sound_effects:undefined;
+ const engineReview=result.warnings===undefined&&soundEffects===undefined?undefined:readEngineReview({warnings:result.warnings??[],soundEffects});
+ return {blocks,cleanImage,finalImage,finalImageSignature:finalImage?blockVisualSignature(blocks):undefined,...(engineReview?{engineReview}:{})};
 }
 export async function processPage(page:StudioPage,endpoint:string,source:string,target:string,signal:AbortSignal,onJob:(id:string)=>void|Promise<void>,onStage:(stage:string)=>void,options:ProcessPageOptions={}):Promise<PageEngineResult> {
   signal.throwIfAborted();

@@ -1,0 +1,272 @@
+TAP version 13
+# Subtest: refinement executes three service.execute crop requests inside one cold lifetime, preserving raw evidence and refined mask protection
+ok 1 - refinement executes three service.execute crop requests inside one cold lifetime, preserving raw evidence and refined mask protection
+  ---
+  duration_ms: 1563.1327
+  type: 'test'
+  ...
+# Subtest: default and explicit false retain full OCR lifetime with no crop inference and explicitly hold unresolved connected dialogue
+ok 2 - default and explicit false retain full OCR lifetime with no crop inference and explicitly hold unresolved connected dialogue
+  ---
+  duration_ms: 1013.7403
+  type: 'test'
+  ...
+# Subtest: cached full and crop OCR keep a separate owner across jobs without status or lazy-child restarts
+ok 3 - cached full and crop OCR keep a separate owner across jobs without status or lazy-child restarts
+  ---
+  duration_ms: 1240.28
+  type: 'test'
+  ...
+# Subtest: a crop lazy respawn is denied before creating a child and never replays full OCR
+ok 4 - a crop lazy respawn is denied before creating a child and never replays full OCR
+  ---
+  duration_ms: 1587.085
+  type: 'test'
+  ...
+# Subtest: empty crop OCR or a dead retained child preserves raw/source evidence and cannot reach translation
+ok 5 - empty crop OCR or a dead retained child preserves raw/source evidence and cannot reach translation
+  ---
+  duration_ms: 2479.1853
+  type: 'test'
+  ...
+# Subtest: cancellation during crop OCR drains the same owner and never publishes a refined page
+ok 6 - cancellation during crop OCR drains the same owner and never publishes a refined page
+  ---
+  duration_ms: 436.3764
+  type: 'test'
+  ...
+# Subtest: foreign crop shape and existing refinement artifacts fail before extra inference without overwriting anything
+ok 7 - foreign crop shape and existing refinement artifacts fail before extra inference without overwriting anything
+  ---
+  duration_ms: 1592.7985
+  type: 'test'
+  ...
+# Subtest: refinement is an explicit boolean requiring a learned region detector; invalid options create no work
+ok 8 - refinement is an explicit boolean requiring a learned region detector; invalid options create no work
+  ---
+  duration_ms: 1397.0827
+  type: 'test'
+  ...
+# Subtest: margin correspondence reaches renderer drafts and learned mask IDs while leaving glyph quality pending
+ok 9 - margin correspondence reaches renderer drafts and learned mask IDs while leaving glyph quality pending
+  ---
+  duration_ms: 971.1286
+  type: 'test'
+  ...
+# Subtest: uncertain connected dialogue stops before masks and translation with a durable review packet
+ok 10 - uncertain connected dialogue stops before masks and translation with a durable review packet
+  ---
+  duration_ms: 1268.2983
+  type: 'test'
+  ...
+# Subtest: default false keeps per-job cold lifecycle, authenticated model identity and original quality guards
+not ok 11 - default false keeps per-job cold lifecycle, authenticated model identity and original quality guards
+  ---
+  duration_ms: 16713.3828
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\engine-runtime-reuse.test.mjs:12:1'
+  failureType: 'testCodeFailure'
+  error: '생성한 프로세스의 종료 확인에 실패했습니다. 엔진을 다시 시작해야 합니다.'
+  code: 'CLEANUP_FAILED'
+  stack: |-
+    failure (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine-boundaries.cjs:19:24)
+    C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:693:17
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Object.run (C:\dev\Projects\mangohana\packages\ai-engine\vendor\trio\scripts\sites-local\engine.cjs:717:12)
+    async TestContext.<anonymous> (file:///C:/dev/Projects/mangohana/tests/v2/engine-runtime-reuse.test.mjs:13:33)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request
+ok 12 - Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request
+  ---
+  duration_ms: 3649.9476
+  type: 'test'
+  ...
+# Subtest: Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening
+ok 13 - Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening
+  ---
+  duration_ms: 4966.0811
+  type: 'test'
+  ...
+# Subtest: Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved
+ok 14 - Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved
+  ---
+  duration_ms: 2586.3299
+  type: 'test'
+  ...
+# Subtest: Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved
+ok 15 - Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved
+  ---
+  duration_ms: 1966.1246
+  type: 'test'
+  ...
+# Subtest: health advertises saved terminology consumption for both page and Stage11 text paths
+ok 16 - health advertises saved terminology consumption for both page and Stage11 text paths
+  ---
+  duration_ms: 4144.4736
+  type: 'test'
+  ...
+# Subtest: Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft
+ok 17 - Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft
+  ---
+  duration_ms: 3204.3422
+  type: 'test'
+  ...
+# Subtest: Stage11 text partial response cannot publish, erase source, or replace a last normal PNG
+ok 18 - Stage11 text partial response cannot publish, erase source, or replace a last normal PNG
+  ---
+  duration_ms: 3024.4231
+  type: 'test'
+  ...
+# Subtest: Stage11 page partial response cannot publish, erase source, or replace a last normal PNG
+ok 19 - Stage11 page partial response cannot publish, erase source, or replace a last normal PNG
+  ---
+  duration_ms: 1135.7382
+  type: 'test'
+  ...
+# Subtest: Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report
+ok 20 - Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report
+  ---
+  duration_ms: 691.8536
+  type: 'test'
+  ...
+# Subtest: a page request binds the server snapshot and records actual glossary/context consumption
+ok 21 - a page request binds the server snapshot and records actual glossary/context consumption
+  ---
+  duration_ms: 1091.2641
+  type: 'test'
+  ...
+# Subtest: selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs
+ok 22 - selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs
+  ---
+  duration_ms: 1894.1596
+  type: 'test'
+  ...
+# Subtest: a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation
+ok 23 - a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation
+  ---
+  duration_ms: 1502.5479
+  type: 'test'
+  ...
+# Subtest: engine close cancels active synthetic translation, drains job and caches, then releases hooks
+ok 24 - engine close cancels active synthetic translation, drains job and caches, then releases hooks
+  ---
+  duration_ms: 952.342
+  type: 'test'
+  ...
+# Subtest: a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation
+ok 25 - a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation
+  ---
+  duration_ms: 2476.6914
+  type: 'test'
+  ...
+# Subtest: recognition failure records bounded private diagnostics before generic public error without model work
+ok 26 - recognition failure records bounded private diagnostics before generic public error without model work
+  ---
+  duration_ms: 812.8875
+  type: 'test'
+  ...
+# Subtest: cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments
+ok 27 - cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments
+  ---
+  duration_ms: 2158.8646
+  type: 'test'
+  ...
+# Subtest: unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job
+ok 28 - unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job
+  ---
+  duration_ms: 1044.5945
+  type: 'test'
+  ...
+# Subtest: worker bootstrap loads the signed production font without image execution
+ok 29 - worker bootstrap loads the signed production font without image execution
+  ---
+  duration_ms: 4527.3508
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-measured-five-v9kuA1\\font-bootstrap-sdJItS\\probe-summary.json
+# Subtest: worker font failure stays closed with a stack before any image pipeline
+ok 30 - worker font failure stays closed with a stack before any image pipeline
+  ---
+  duration_ms: 4140.9545
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-measured-five-v9kuA1\\font-bootstrap-MGHrMQ\\probe-summary.json
+# Subtest: worker persists bound per-region layout diagnostics without an image execution
+ok 31 - worker persists bound per-region layout diagnostics without an image execution
+  ---
+  duration_ms: 16542.2873
+  type: 'test'
+  ...
+# FONT_ONLY_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-measured-five-v9kuA1\\font-bootstrap-wVEAQi\\probe-summary.json
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+ok 32 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication
+  ---
+  duration_ms: 15178.7845
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-measured-five-v9kuA1\\typesetting-native-LeeZkT
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion
+ok 33 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion
+  ---
+  duration_ms: 17123.6002
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-measured-five-v9kuA1\\typesetting-native-nQFpTw
+# Subtest: dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval
+ok 34 - dedicated no-model worker renders thirteen synthetic regions and retains non-final candidate before publication with a separately bound exact ROI expansion refuses changed automatic readability without approval
+  ---
+  duration_ms: 15355.6822
+  type: 'test'
+  ...
+# TYPESETTING_SYNTHETIC_EVIDENCE=E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-measured-five-v9kuA1\\typesetting-native-FAeJfs
+# Subtest: entry detection uses the normalized entry argv path and remains false for source-only imports
+ok 35 - entry detection uses the normalized entry argv path and remains false for source-only imports
+  ---
+  duration_ms: 0.8142
+  type: 'test'
+  ...
+# Subtest: startup diagnostics preserve only a safe error code and a known bootstrap stage
+ok 36 - startup diagnostics preserve only a safe error code and a known bootstrap stage
+  ---
+  duration_ms: 0.8665
+  type: 'test'
+  ...
+# Subtest: real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly
+ok 37 - real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly
+  ---
+  duration_ms: 10217.9014
+  type: 'test'
+  ...
+# Subtest: real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle
+not ok 38 - real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle
+  ---
+  duration_ms: 15006.1486
+  type: 'test'
+  location: 'C:\\dev\\Projects\\mangohana\\tests\\v2\\warm-electron-entry.test.mjs:29:1'
+  failureType: 'testTimeoutFailure'
+  error: 'test timed out after 15000ms'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result
+ok 39 - real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result
+  ---
+  duration_ms: 3642.7895
+  type: 'test'
+  ...
+# Subtest: real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result
+ok 40 - real Electron OCR-cold bootstrap binds its plan/config without creating a model or AI result
+  ---
+  duration_ms: 2665.476
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 38
+# fail 1
+# cancelled 1
+# skipped 0
+# todo 0
+# duration_ms 177487.513

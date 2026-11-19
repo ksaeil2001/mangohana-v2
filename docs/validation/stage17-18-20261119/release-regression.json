@@ -1,0 +1,148 @@
+{
+  "candidateSha256": "113a8938010dc616986c3ca06398fc610c42a799646eaf82a89b799c566c2d43",
+  "sets": [
+    {
+      "file": "docs/validation/stage17-18-20261119/v2-current.json",
+      "sha256": "4fa55b870c8869431248a5e5a16c45ce5e1c4971d8457c5fe2939ed1ada784e2",
+      "logSha256": "c489a7e2f60dd966e94a2ccde2addd230643f00b843e1112df80a64892c9b8f9",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1340,
+        "pass": 1330,
+        "fail": 7,
+        "skipped": 0,
+        "cancelled": 3,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/web-current.json",
+      "sha256": "e0dca6e41a66a2a770e4bf22ca2f69b8e7283ec50ce9eed4d69f56c3e1a0fc80",
+      "logSha256": "f88572bb23136dbeb0fd8b82333f5b8aa555e1799485da35139a76c6fd870764",
+      "exitCode": 0,
+      "counts": {
+        "tests": 239,
+        "pass": 239,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/domain-current.json",
+      "sha256": "81e640756f7301864848732b24103c3c8e020611d2d1008d59d4a8919908f5f2",
+      "logSha256": "25f05fcefce7a123624287471d1d40badbc0d8f26882eddf132aaf92b6418369",
+      "exitCode": 0,
+      "counts": {
+        "tests": 111,
+        "pass": 111,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/v29-current.json",
+      "sha256": "519b0c0f3469ac83ee20e0f4a6da5aeb42251e897a94f797a3f82fe69e62c6d5",
+      "logSha256": "f6c1c188486dc1f5d2b2d74d241855b83865ae18c88046d3ab7b6f3d9258fb13",
+      "exitCode": 0,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    }
+  ],
+  "guarded": [
+    {
+      "file": "docs/validation/stage17-18-20261119/s16-focused-repeat.json",
+      "sha256": "8be9f6a5002d776517d624be7fac2c750caf4f3a594d9c98964e86897ea8e69b",
+      "logSha256": "59511705e4c45aa43a662495b6f22a105b0f9592b7dbb591153ada4ecc6788db",
+      "exitCode": 0,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/s16reg-verified.json",
+      "sha256": "3b7011c7182a77e27b631fe5e4f8351e7bb738ccfeb29d278e2c00472e0b65b3",
+      "logSha256": "d7655540cca2cce4029a0e077138ac75aef489a8d8743def57d5268054777e43",
+      "exitCode": 0,
+      "counts": {
+        "tests": 32,
+        "pass": 32,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/s16-first.json",
+      "sha256": "bbf5f5ccf3a2ac2ad0796da4334c297ee21be79ea67da49370c9e0d92ba6afbf",
+      "logSha256": "84a878a2b685068bcd89b6ee69693ac51eaef028feb2b251573ce31bf6083a74",
+      "exitCode": 0,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/s16-observations-confirmed.json",
+      "sha256": "096e759d954b234e64ae657a0a3cebf11511e76272410006d428b30fac74fef7",
+      "logSha256": "666b458b8925e5edec7761cd9b12e6a7a5276ef2c01f787c7e4244d663c2b886",
+      "exitCode": 0,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/s16-blind-confirmed.json",
+      "sha256": "ee72ea61826538afa2e1d42b33b177362e76e82b1a079b4de6b206918ddaa150",
+      "logSha256": "8f044023ef18c5e141b27cc9f6cda075475a87d5c89a7f7768205241b3015aa2",
+      "exitCode": 0,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/s16-paired-confirmed.json",
+      "sha256": "9bae7dac78f5baded07469e277189312b65d49f905c81597a51e73d5753bad8e",
+      "logSha256": "86e4321fb02c1a24e47725fee2e709c2d8eb1969be43a70acfbff31e00a06cef",
+      "exitCode": 0,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    }
+  ],
+  "coverage": "Current eligible V2 and all Studio checks. Stage16 uses the original name/metadata allowlists. Historical Legacy/PG was not rerun."
+}

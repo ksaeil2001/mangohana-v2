@@ -400,7 +400,9 @@ async function createEngine(options) {
         scope:{owner:args.ownerScope,projectId:args.projectId,pageId:args.pageId,pageNumber:args.pageNumber??null,sourceSha256:originalHash}});
       await fs.writeFile(path.join(output,'translation-input.json'),JSON.stringify(translationInput,null,2),{flag:'wx'});
       const pendingTranslations=[];
-      const translationIdentity=reviewed?null:{configuration:await configuration('translation'),translationInputFingerprint:translationInput.fingerprint},savedTranslation=reviewed?null:await checkpoint.load('translation',translationIdentity);
+      let stage15Receipt;
+      const translationIdentity=reviewed || args.translateStage ? null : {configuration:await configuration('translation'),translationInputFingerprint:translationInput.fingerprint};
+      const savedTranslation=reviewed || args.translateStage ? null : await checkpoint.load('translation',translationIdentity);
       try {
       if(reviewed){
         humanReview=await resolveEngineReview({resolve:args.resolveTranslationReview,snapshot:reviewSnapshot,lines,phase:'translation',previousReceipt:humanReview.receipt});
@@ -411,6 +413,21 @@ async function createEngine(options) {
             candidateOrigin:humanReview.receipt.selections.find(r=>r.regionId===line.id).origin,rawModelTranslation:selected.aiTranslation,
             humanReviewReceiptSha256:humanReview.receipt.receiptSha256});
         }
+      } else if (args.translateStage) {
+        const {rows,receipt} = await args.translateStage({sourceSha256:originalHash, normalizedSha256:normalizedHash, ocrSha256:maskIdentity.ocrSha256,
+          lines, translationInput},LIMITS.translationMs);
+        stage15Receipt = receipt;
+        const requestId = receipt.publication.executionId, fingerprint = receipt.publication.inputFingerprint;
+        for (const [i,line] of lines.entries()) {
+          const proposed = rows[i], qaReport = qaApi.inspectTranslationQuality({sourceText:line.sourceText,translatedText:proposed.translatedText,dialogueType:line.dialogueType});
+          if (qaReport.issues.some(issue => issue.type === 'NUMBER_MISMATCH' && issue.severity === 'error'))
+            throw failure('TRANSLATION_NUMBER_MISMATCH','현재 대사의 숫자가 보존되지 않았습니다.');
+          pendingTranslations.push({...proposed,qaReport});
+          records.push({id:line.id,requestId,requestScope:'page',engine:'stage15_synthetic',usedExactTm:false,
+            modelHttpRequests:0,responseIdentity:'validated_page_json_ids',requestedContextFingerprint:fingerprint,returnedContextFingerprint:fingerprint,qaReport});
+        }
+        translationRequests.push({requestId, scope:'page',regionIds:rows.map(r=>r.id),httpRequests:0,contextFingerprint:fingerprint,
+          contextSnapshotSha256:args.translationContext?.snapshotSha256,imageSha256:normalizedHash,usedImageContext:false});
       } else {
       if(savedTranslation){pendingTranslations.push(...savedTranslation.payload.pendingTranslations);records.push(...savedTranslation.payload.records);translationRequests.push(...savedTranslation.payload.translationRequests);}
       else {
@@ -511,8 +528,8 @@ async function createEngine(options) {
         if(reviewed)lines[i].userTranslation=humanReview.lines[i].userTranslation;
         records[i].semantic=validated[i].semantic;
       }
-      if(!reviewed)await saveCheckpoint('translation',translationIdentity,{pendingTranslations,records,translationRequests});
-      else await fs.writeFile(path.join(output,'human-translation-review.json'),JSON.stringify(humanReview.receipt,null,2),{flag:'wx'});
+      if(!reviewed && !stage15Receipt)await saveCheckpoint('translation',translationIdentity,{pendingTranslations,records,translationRequests});
+      if(reviewed)await fs.writeFile(path.join(output,'human-translation-review.json'),JSON.stringify(humanReview.receipt,null,2),{flag:'wx'});
       } catch(error) {
         await fs.writeFile(path.join(output,'translation-review.json'),JSON.stringify({version:1,status:'needs_review',reason:error.code??'TRANSLATION_RESPONSE_INVALID',outputCompliance:error.outputCompliance??null,translationInputFingerprint:translationInput.fingerprint,receivedCandidateIds:pendingTranslations.map(r=>r.id),expectedIds:lines.map(r=>r.id),partialApplied:false,automaticRetry:false,semanticAccuracy:null,humanSemanticVerified:null},null,2),{flag:'wx'});
         throw error;
@@ -615,6 +632,7 @@ async function createEngine(options) {
         version: 1, jobId, evidenceKind: 'LOCAL_ENGINE_CANDIDATE', qaStatus: 'pending', finalStatus: 'manual_review',
         userApproved: false, manualCorrections: reviewed?lines.length:0, sourceLanguage,
         ...(reviewed?{humanTranslationReview:humanReview.receipt}:{}),
+        ...(stage15Receipt ? {stage15:stage15Receipt} : {}),
         image: { width: dimensions.width, height: dimensions.height, originalMime: header.mime },
         hashes: { original: originalHash, normalized: normalizedHash, mask: sha(mask), cleaned: sha(inpainting.bytes), candidate: sha(pngBytes) },
         originalPreserved: true, ocr: extraction, lines, translations: records,
@@ -674,7 +692,13 @@ async function createEngine(options) {
           blocked = '생성한 프로세스의 종료 확인에 실패했습니다. 엔진을 다시 시작해야 합니다.';
           throw failure('CLEANUP_FAILED', blocked);
         }
+        if (args.translateStage && error?.code === 'RESULT_UNKNOWN') throw failure('RESULT_UNKNOWN','번역 시도의 효과 또는 정산이 미확정입니다.');
         assertActive(controller.signal);
+        if (args.translateStage && ['CANCELLED','STAGE15_ADMISSION_DENIED','AUTHORITY_MISMATCH','AUTHORITY_EXPIRED','PROVIDER_PIN_MISMATCH',
+          'FALLBACK_CONSUMED','FALLBACK_INELIGIBLE','REVIEW_REVISION_CONFLICT','STAGE15_PROVENANCE_INVALID','STAGE15_TRANSLATION_BLOCKED',
+          'STAGE15_BATCH_AUTHORITY_MISMATCH','STAGE15_BATCH_BUDGET_EXHAUSTED','STAGE15_BATCH_QUOTE_EXCEEDED',
+          'STAGE15_BATCH_FALLBACK_CONSUMED','STAGE15_BATCH_EVIDENCE_MISSING'].includes(error?.code))
+          throw failure(error.code,'승인 또는 번역 검사 근거를 확인해 주세요.');
         // 외부 모델 응답·예외 문자열에 비밀정보가 섞일 수 있어 고정 문구만 반환한다.
         const known = new Set(['IMAGE_BYTES', 'IMAGE_LIMIT', 'IMAGE_FORMAT', 'IMAGE_MIME', 'INVALID_IMAGE', 'ANIMATED_IMAGE',
           'OCR_TIMEOUT', 'OCR_INCOMPLETE', 'OCR_EMPTY', 'PROCESS_RESTART_REQUIRED', 'OCR_REFINEMENT_INVALID', 'OCR_REFINEMENT_AMBIGUOUS', 'OCR_REFINEMENT_STALE', 'OCR_REFINEMENT_RESPONSE_INVALID', 'TRANSLATION_ID', 'TRANSLATION_RESULT', 'TRANSLATION_MISSING',

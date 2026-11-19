@@ -1,0 +1,27 @@
+{
+  "runtime": [],
+  "supervisors": [
+    {
+      "test": "real Electron CLI with a deliberately missing plan emits startup_failed and exits 1 promptly",
+      "runId": "3b878e06-5741-4e68-8c2e-92deff46f6b0",
+      "rootPid": 29916,
+      "supervisorPid": 32304,
+      "requestedUtc": "2026-11-18T21:07:28.011Z",
+      "rootCreatedUtc": "2026-11-18T21:07:28.767Z",
+      "readyObservedUtc": "2026-11-18T21:07:29.014Z",
+      "resumedObservedUtc": "2026-11-18T21:07:29.015Z",
+      "rootExitUtc": "2026-11-18T21:07:29.078Z",
+      "completionObservedUtc": "2026-11-18T21:07:29.163Z",
+      "supervisorExitedUtc": "2026-11-18T21:07:29.179Z",
+      "reason": "root_exit",
+      "failure": null,
+      "rootExitCode": 1,
+      "clean": true,
+      "activeAfter": 0,
+      "sameIdentity": true,
+      "supervisorWaitMs": 1003,
+      "nativeElapsedMs": 351
+    }
+  ],
+  "typesetting": []
+}

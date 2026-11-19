@@ -1,0 +1,532 @@
+{
+  "scope": "Independent OS process and loopback control. No application modules or fixture filesystem operations in the Node child.",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-minimal-host-nVCB1z",
+  "node": "v24.22.1",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "inlineSourceSha256": "6515a6baf27dadb60f904247d22e70d6702f2deefac743fc0ab415cfc91e2e69",
+  "verifiedPairs": 20,
+  "nodeRuns": [
+    {
+      "index": 0,
+      "launched": "2026-11-18T22:18:42.717Z",
+      "pid": 23532,
+      "entry": 1795040322767,
+      "elapsedMs": 250.35620000000017,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:42.725Z",
+          "complete": "2026-11-18T22:18:42.747Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:42.960Z",
+          "complete": "2026-11-18T22:18:42.975Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:42.981Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 1,
+      "launched": "2026-11-18T22:18:43.191Z",
+      "pid": 26592,
+      "entry": 1795040323231,
+      "elapsedMs": 212.64609999999993,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:43.195Z",
+          "complete": "2026-11-18T22:18:43.197Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:43.402Z",
+          "complete": "2026-11-18T22:18:43.408Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:43.413Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 2,
+      "launched": "2026-11-18T22:18:43.414Z",
+      "pid": 15684,
+      "entry": 1795040323458,
+      "elapsedMs": 220.08269999999993,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:43.418Z",
+          "complete": "2026-11-18T22:18:43.419Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:43.630Z",
+          "complete": "2026-11-18T22:18:43.638Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:43.643Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 3,
+      "launched": "2026-11-18T22:18:43.644Z",
+      "pid": 37560,
+      "entry": 1795040323696,
+      "elapsedMs": 211.375,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:43.648Z",
+          "complete": "2026-11-18T22:18:43.649Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:43.852Z",
+          "complete": "2026-11-18T22:18:43.859Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:43.864Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 4,
+      "launched": "2026-11-18T22:18:43.865Z",
+      "pid": 28824,
+      "entry": 1795040323932,
+      "elapsedMs": 218.98180000000048,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:43.886Z",
+          "complete": "2026-11-18T22:18:43.887Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:44.097Z",
+          "complete": "2026-11-18T22:18:44.105Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:44.112Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 5,
+      "launched": "2026-11-18T22:18:44.293Z",
+      "pid": 5664,
+      "entry": 1795040324337,
+      "elapsedMs": 317.6275999999998,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:44.298Z",
+          "complete": "2026-11-18T22:18:44.299Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:44.507Z",
+          "complete": "2026-11-18T22:18:44.615Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:44.620Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 6,
+      "launched": "2026-11-18T22:18:44.621Z",
+      "pid": 9828,
+      "entry": 1795040324670,
+      "elapsedMs": 217.40020000000004,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:44.625Z",
+          "complete": "2026-11-18T22:18:44.625Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:44.835Z",
+          "complete": "2026-11-18T22:18:44.842Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:44.846Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 7,
+      "launched": "2026-11-18T22:18:44.847Z",
+      "pid": 11052,
+      "entry": 1795040324899,
+      "elapsedMs": 234.9351999999999,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:44.852Z",
+          "complete": "2026-11-18T22:18:44.853Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:45.052Z",
+          "complete": "2026-11-18T22:18:45.087Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:45.091Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 8,
+      "launched": "2026-11-18T22:18:45.092Z",
+      "pid": 24348,
+      "entry": 1795040325144,
+      "elapsedMs": 222.0020000000004,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:45.096Z",
+          "complete": "2026-11-18T22:18:45.096Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:45.310Z",
+          "complete": "2026-11-18T22:18:45.317Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:45.324Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 9,
+      "launched": "2026-11-18T22:18:45.505Z",
+      "pid": 35396,
+      "entry": 1795040325550,
+      "elapsedMs": 1696.784999999999,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:45.509Z",
+          "complete": "2026-11-18T22:18:45.510Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:45.719Z",
+          "complete": "2026-11-18T22:18:47.206Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:47.210Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 10,
+      "launched": "2026-11-18T22:18:47.211Z",
+      "pid": 36912,
+      "entry": 1795040327257,
+      "elapsedMs": 2956.6823999999997,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:47.217Z",
+          "complete": "2026-11-18T22:18:47.217Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:47.422Z",
+          "complete": "2026-11-18T22:18:48.938Z",
+          "error": "TimeoutError"
+        },
+        {
+          "begin": "2026-11-18T22:18:49.141Z",
+          "complete": "2026-11-18T22:18:50.173Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:50.178Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 11,
+      "launched": "2026-11-18T22:18:50.178Z",
+      "pid": 13580,
+      "entry": 1795040330230,
+      "elapsedMs": 3629.0257,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:50.182Z",
+          "complete": "2026-11-18T22:18:50.183Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:50.387Z",
+          "complete": "2026-11-18T22:18:51.898Z",
+          "error": "TimeoutError"
+        },
+        {
+          "begin": "2026-11-18T22:18:52.102Z",
+          "complete": "2026-11-18T22:18:53.603Z",
+          "error": "TimeoutError"
+        },
+        {
+          "begin": "2026-11-18T22:18:53.808Z",
+          "complete": "2026-11-18T22:18:53.811Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:53.816Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 12,
+      "launched": "2026-11-18T22:18:53.817Z",
+      "pid": 37492,
+      "entry": 1795040333865,
+      "elapsedMs": 843.2558000000008,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:53.822Z",
+          "complete": "2026-11-18T22:18:53.822Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:54.030Z",
+          "complete": "2026-11-18T22:18:54.665Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:54.671Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 13,
+      "launched": "2026-11-18T22:18:54.860Z",
+      "pid": 3744,
+      "entry": 1795040334914,
+      "elapsedMs": 1018.1688999999988,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:54.865Z",
+          "complete": "2026-11-18T22:18:54.865Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:55.075Z",
+          "complete": "2026-11-18T22:18:55.883Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:55.887Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 14,
+      "launched": "2026-11-18T22:18:55.888Z",
+      "pid": 35212,
+      "entry": 1795040335941,
+      "elapsedMs": 399.5203999999976,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:55.892Z",
+          "complete": "2026-11-18T22:18:55.893Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:56.100Z",
+          "complete": "2026-11-18T22:18:56.292Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:56.296Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 15,
+      "launched": "2026-11-18T22:18:56.297Z",
+      "pid": 20252,
+      "entry": 1795040336347,
+      "elapsedMs": 2615.2927999999993,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:56.303Z",
+          "complete": "2026-11-18T22:18:56.303Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:56.514Z",
+          "complete": "2026-11-18T22:18:58.023Z",
+          "error": "TimeoutError"
+        },
+        {
+          "begin": "2026-11-18T22:18:58.227Z",
+          "complete": "2026-11-18T22:18:58.918Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:18:58.923Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 16,
+      "launched": "2026-11-18T22:18:58.923Z",
+      "pid": 29324,
+      "entry": 1795040338972,
+      "elapsedMs": 1124.7639000000017,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:18:58.927Z",
+          "complete": "2026-11-18T22:18:58.928Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:18:59.129Z",
+          "complete": "2026-11-18T22:19:00.052Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:19:00.056Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 17,
+      "launched": "2026-11-18T22:19:00.244Z",
+      "pid": 36256,
+      "entry": 1795040340290,
+      "elapsedMs": 523.2069999999985,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:19:00.248Z",
+          "complete": "2026-11-18T22:19:00.249Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:19:00.448Z",
+          "complete": "2026-11-18T22:19:00.771Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:19:00.776Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 18,
+      "launched": "2026-11-18T22:19:00.777Z",
+      "pid": 33204,
+      "entry": 1795040340821,
+      "elapsedMs": 748.0839999999989,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:19:00.781Z",
+          "complete": "2026-11-18T22:19:00.782Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:19:00.987Z",
+          "complete": "2026-11-18T22:19:01.529Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:19:01.534Z",
+      "code": null,
+      "signal": "SIGKILL"
+    },
+    {
+      "index": 19,
+      "launched": "2026-11-18T22:19:01.534Z",
+      "pid": 25840,
+      "entry": 1795040341592,
+      "elapsedMs": 2817.4130000000005,
+      "pair": true,
+      "requests": [
+        {
+          "begin": "2026-11-18T22:19:01.538Z",
+          "complete": "2026-11-18T22:19:01.539Z",
+          "error": "ECONNREFUSED"
+        },
+        {
+          "begin": "2026-11-18T22:19:01.755Z",
+          "complete": "2026-11-18T22:19:03.267Z",
+          "error": "TimeoutError"
+        },
+        {
+          "begin": "2026-11-18T22:19:03.471Z",
+          "complete": "2026-11-18T22:19:04.355Z",
+          "verified": true
+        }
+      ],
+      "closed": "2026-11-18T22:19:04.361Z",
+      "code": null,
+      "signal": "SIGKILL"
+    }
+  ],
+  "shellRuns": [
+    {
+      "requested": "2026-11-18T22:18:42.981Z",
+      "elapsedMs": 208.13690000000042,
+      "firstStatementUtc": "2026-11-18T22:18:43.1684148Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "requested": "2026-11-18T22:18:44.112Z",
+      "elapsedMs": 180.23279999999977,
+      "firstStatementUtc": "2026-11-18T22:18:44.2746543Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "requested": "2026-11-18T22:18:45.324Z",
+      "elapsedMs": 180.57809999999972,
+      "firstStatementUtc": "2026-11-18T22:18:45.4879046Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "requested": "2026-11-18T22:18:54.671Z",
+      "elapsedMs": 189.1242000000002,
+      "firstStatementUtc": "2026-11-18T22:18:54.8433240Z",
+      "code": 0,
+      "signal": null
+    },
+    {
+      "requested": "2026-11-18T22:19:00.056Z",
+      "elapsedMs": 186.5061999999998,
+      "firstStatementUtc": "2026-11-18T22:19:00.2244565Z",
+      "code": 0,
+      "signal": null
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+TAP version 13
+# Subtest: a saved lock cannot start without current unused work evidence
+ok 1 - a saved lock cannot start without current unused work evidence
+  ---
+  duration_ms: 54.1525
+  type: 'test'
+  ...
+# Subtest: a locked four condition plan cannot start without scoped execution approval
+ok 2 - a locked four condition plan cannot start without scoped execution approval
+  ---
+  duration_ms: 35.022
+  type: 'test'
+  ...
+# Subtest: a report with one missing assigned receipt cannot reach final acceptance
+ok 3 - a report with one missing assigned receipt cannot reach final acceptance
+  ---
+  duration_ms: 61.5352
+  type: 'test'
+  ...
+# Subtest: a report with only one returning reviewer cannot reach final acceptance
+ok 4 - a report with only one returning reviewer cannot reach final acceptance
+  ---
+  duration_ms: 43.7525
+  type: 'test'
+  ...
+# Subtest: a missing or replaced pre-execution start commitment blocks final reconciliation
+ok 5 - a missing or replaced pre-execution start commitment blocks final reconciliation
+  ---
+  duration_ms: 14.3343
+  type: 'test'
+  ...
+# Subtest: subsequent approval cannot retroactively replace the one recorded at start
+ok 6 - subsequent approval cannot retroactively replace the one recorded at start
+  ---
+  duration_ms: 15.1809
+  type: 'test'
+  ...
+# Subtest: approval facts absent from its pinned content cannot open the gate
+ok 7 - approval facts absent from its pinned content cannot open the gate
+  ---
+  duration_ms: 14.9154
+  type: 'test'
+  ...
+# Subtest: start can precede every post-run artifact and its synthetic record is scoped
+ok 8 - start can precede every post-run artifact and its synthetic record is scoped
+  ---
+  duration_ms: 14.9288
+  type: 'test'
+  ...
+# Subtest: exposed tuned and unauthorized works cannot reuse a previously valid start
+ok 9 - exposed tuned and unauthorized works cannot reuse a previously valid start
+  ---
+  duration_ms: 41.7259
+  type: 'test'
+  ...
+# Subtest: an approval with foreign jobs foreign lock refusal or missing route evidence blocks start
+ok 10 - an approval with foreign jobs foreign lock refusal or missing route evidence blocks start
+  ---
+  duration_ms: 64.6307
+  type: 'test'
+  ...
+# Subtest: changed model scope or an unassigned fourth cell blocks even a newly pinned job list
+ok 11 - changed model scope or an unassigned fourth cell blocks even a newly pinned job list
+  ---
+  duration_ms: 24.0119
+  type: 'test'
+  ...
+# Subtest: the five official artifacts reproduce the same locked cohort receipts returns and cost rows
+ok 12 - the five official artifacts reproduce the same locked cohort receipts returns and cost rows
+  ---
+  duration_ms: 26.3005
+  type: 'test'
+  ...
+# Subtest: unfavorable tied and uncertain outcomes survive reconciliation without a winner requirement
+ok 13 - unfavorable tied and uncertain outcomes survive reconciliation without a winner requirement
+  ---
+  duration_ms: 20.3773
+  type: 'test'
+  ...
+# Subtest: a missing stage or attempt receipt keeps every planned cell and its original reason
+ok 14 - a missing stage or attempt receipt keeps every planned cell and its original reason
+  ---
+  duration_ms: 44.0373
+  type: 'test'
+  ...
+# Subtest: an unsettled fee blocks final cost acceptance and preserves the confirmed subtotal
+ok 15 - an unsettled fee blocks final cost acceptance and preserves the confirmed subtotal
+  ---
+  duration_ms: 22.0051
+  type: 'test'
+  ...
+# Subtest: a later success and a billing reference cannot hide a failed attempt without an execution receipt
+ok 16 - a later success and a billing reference cannot hide a failed attempt without an execution receipt
+  ---
+  duration_ms: 24.4585
+  type: 'test'
+  ...
+# Subtest: every scheduled ballot needs both axes even if another overlap is fully answered
+ok 17 - every scheduled ballot needs both axes even if another overlap is fully answered
+  ---
+  duration_ms: 21.567
+  type: 'test'
+  ...
+# Subtest: two independent submitted judgments can disagree or explicitly abstain
+ok 18 - two independent submitted judgments can disagree or explicitly abstain
+  ---
+  duration_ms: 22.9843
+  type: 'test'
+  ...
+# Subtest: an axis with no assessable independent overlap cannot be accepted on returned forms alone
+ok 19 - an axis with no assessable independent overlap cannot be accepted on returned forms alone
+  ---
+  duration_ms: 20.9566
+  type: 'test'
+  ...
+# Subtest: a replayed receipt counts once and a receipt for a foreign job blocks the dossier
+ok 20 - a replayed receipt counts once and a receipt for a foreign job blocks the dossier
+  ---
+  duration_ms: 23.9467
+  type: 'test'
+  ...
+# Subtest: substituted downstream pins or an edited effect or cost report cannot be accepted
+ok 21 - substituted downstream pins or an edited effect or cost report cannot be accepted
+  ---
+  duration_ms: 70.5677
+  type: 'test'
+  ...
+# Subtest: receipt and ballot evidence kinds cannot be mixed into a synthetic reconciliation
+ok 22 - receipt and ballot evidence kinds cannot be mixed into a synthetic reconciliation
+  ---
+  duration_ms: 42.8666
+  type: 'test'
+  ...
+# Subtest: empty actual evidence and a complete synthetic dossier both leave actual gates blocked
+ok 23 - empty actual evidence and a complete synthetic dossier both leave actual gates blocked
+  ---
+  duration_ms: 11.8
+  type: 'test'
+  ...
+# Subtest: self-labelled human submissions still need two independent authenticated return records
+ok 24 - self-labelled human submissions still need two independent authenticated return records
+  ---
+  duration_ms: 44.4612
+  type: 'test'
+  ...
+# Subtest: the S16-05 handoff report replays exactly and cannot substitute for a start receipt
+ok 25 - the S16-05 handoff report replays exactly and cannot substitute for a start receipt
+  ---
+  duration_ms: 24.6251
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 817.0581

@@ -1,0 +1,30 @@
+{
+  "mode": "bootstrap-resume",
+  "started": "2026-11-18T22:20:28.949Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-bootstrap-resume-G5q845",
+  "exe": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--require",
+    "C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\trace.cjs",
+    "--test-name-pattern",
+    "^real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result$",
+    "tests/v2/warm-electron-entry.test.mjs"
+  ],
+  "sourceCount": 401,
+  "finished": "2026-11-18T22:20:31.971Z",
+  "exit": 0,
+  "signal": null,
+  "counts": {
+    "tests": 1,
+    "pass": 1,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "pass": true,
+  "logSha256": "b0f97e3153de66e6704e488c3d48085ae7ad8a559ab9f220509e437173ec8fe1"
+}

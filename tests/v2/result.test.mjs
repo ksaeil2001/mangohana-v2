@@ -20,6 +20,16 @@ function report() {
 }
 const assets={cleanedPng:png,candidatePng:png};
 
+test('sound effect treatment follows explicit OCR classification and the verified typeset IDs',()=>{
+ const r=report();
+ assert.equal(reportToStudioResult(r,assets).evidence.sound_effects,undefined);
+ r.ocr.nonSpeechText=[{type:'unknown'},{type:'sound_effect',text:'ドン'},{type:'sign_or_label'}];
+ r.ocr.speechBubbles[0].type='dialogue';
+ assert.deepEqual(reportToStudioResult(r,assets).evidence.sound_effects,{preserved:1,translated:0});
+ r.ocr.speechBubbles[0].type='sound_effect';
+ assert.deepEqual(reportToStudioResult(r,assets).evidence.sound_effects,{preserved:1,translated:1});
+});
+
 function stage12Report(){
  const r=report(),identity={version:1,contract:'stage12-input-v1',jobId:r.jobId,pageNumber:1,width:1,height:1,sourceSha256:digest,sourceImageSha256:digest,cleanedImageSha256:digest,maskSha256:digest,ocrSha256:'b'.repeat(64),translationInputFingerprint:'a'.repeat(64),coordinateSpace:'normalized-page-pixels',mode:'unreviewed_candidate',maskReview:'candidate_validated_not_human_approved'};
  r.hashes={...r.hashes,original:digest,normalized:digest,mask:digest};r.translationInput={version:'synthetic-layout-input',fingerprint:identity.translationInputFingerprint};r.typesetting.inputIdentity=identity;r.lines[0].pageNumber=1;

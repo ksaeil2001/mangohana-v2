@@ -1,0 +1,35 @@
+{
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "node": "v24.22.1",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/v2/result.test.mjs",
+    "tests/v2/region-selection.test.mjs",
+    "tests/v2/usage.test.mjs",
+    "tests/v2/context-read-revision.test.mjs",
+    "tests/v2/stage15-provider-contract.test.mjs",
+    "tests/v2/stage15-inspection-graph.test.mjs",
+    "tests/v2/stage15-quality-decision.test.mjs",
+    "tests/v2/stage17-release.test.mjs"
+  ],
+  "cwd": "C:\\dev\\Projects\\mangohana\\",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "started": "2026-11-18T17:53:24.382Z",
+  "finished": "2026-11-18T17:53:30.829Z",
+  "exitCode": 0,
+  "signal": null,
+  "counts": {
+    "tests": 96,
+    "pass": 96,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "sources": "sources-92f94419e758b032ddb92881a4bdfd9556f2ab0a1c7b28c388e6cda366c33a25.json",
+  "changedDuringRun": [],
+  "logSha256": "baf7eeed9df768c81168cbea951d93be15cae88db3d660f9731a9ee548f35f2f"
+}

@@ -1,0 +1,1073 @@
+{
+  "scope": "Paired diagnostic only, independent memory-only loopback server with per-request timing and no application modules",
+  "rows": [
+    {
+      "index": 0,
+      "pid": 7880,
+      "started": 1795040525010,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 242.0156,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040525018,
+            "error": "ECONNREFUSED",
+            "done": 1795040525028
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040525243,
+            "status": 200,
+            "done": 1795040525256
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040525256,
+            "status": 401,
+            "done": 1795040525260
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 237.46319999999997,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040525023,
+            "error": "ECONNREFUSED",
+            "done": 1795040525028
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040525244,
+            "status": 200,
+            "done": 1795040525259
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040525259,
+            "status": 401,
+            "done": 1795040525260
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040525058,
+        "listening": 1795040525068,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040525245,
+            "returned": 1795040525248,
+            "finished": 1795040525248
+          },
+          {
+            "id": "http-2",
+            "received": 1795040525249,
+            "returned": 1795040525249,
+            "finished": 1795040525249
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040525256,
+            "returned": 1795040525256,
+            "finished": 1795040525256
+          },
+          {
+            "id": "http-3",
+            "received": 1795040525256,
+            "returned": 1795040525256,
+            "finished": 1795040525256
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "pid": 19488,
+      "started": 1795040525269,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 220.7373,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040525273,
+            "error": "ECONNREFUSED",
+            "done": 1795040525274
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040525486,
+            "status": 200,
+            "done": 1795040525491
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040525491,
+            "status": 401,
+            "done": 1795040525494
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 220.87839999999994,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040525273,
+            "error": "ECONNREFUSED",
+            "done": 1795040525274
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040525487,
+            "status": 200,
+            "done": 1795040525493
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040525493,
+            "status": 401,
+            "done": 1795040525494
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040525331,
+        "listening": 1795040525342,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040525494,
+            "returned": 1795040525496,
+            "finished": 1795040525496
+          },
+          {
+            "id": "http-2",
+            "received": 1795040525497,
+            "returned": 1795040525497,
+            "finished": 1795040525497
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040525497,
+            "returned": 1795040525497,
+            "finished": 1795040525497
+          },
+          {
+            "id": "http-3",
+            "received": 1795040525498,
+            "returned": 1795040525498,
+            "finished": 1795040525498
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "pid": 18912,
+      "started": 1795040525501,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 225.49900000000014,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040525506,
+            "error": "ECONNREFUSED",
+            "done": 1795040525507
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040525722,
+            "status": 200,
+            "done": 1795040525729
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040525729,
+            "status": 401,
+            "done": 1795040525731
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 225.1821000000001,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040525506,
+            "error": "ECONNREFUSED",
+            "done": 1795040525507
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040525724,
+            "status": 200,
+            "done": 1795040525730
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040525730,
+            "status": 401,
+            "done": 1795040525731
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040525553,
+        "listening": 1795040525564,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040525728,
+            "returned": 1795040525730,
+            "finished": 1795040525731
+          },
+          {
+            "id": "http-2",
+            "received": 1795040525731,
+            "returned": 1795040525732,
+            "finished": 1795040525732
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040525732,
+            "returned": 1795040525733,
+            "finished": 1795040525733
+          },
+          {
+            "id": "http-3",
+            "received": 1795040525733,
+            "returned": 1795040525733,
+            "finished": 1795040525733
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "pid": 29864,
+      "started": 1795040525738,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 213.9996000000001,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040525742,
+            "error": "ECONNREFUSED",
+            "done": 1795040525744
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040525949,
+            "status": 200,
+            "done": 1795040525954
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040525954,
+            "status": 401,
+            "done": 1795040525956
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 213.98109999999997,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040525743,
+            "error": "ECONNREFUSED",
+            "done": 1795040525744
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040525950,
+            "status": 200,
+            "done": 1795040525956
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040525956,
+            "status": 401,
+            "done": 1795040525957
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040525789,
+        "listening": 1795040525800,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040525956,
+            "returned": 1795040525958,
+            "finished": 1795040525959
+          },
+          {
+            "id": "http-2",
+            "received": 1795040525959,
+            "returned": 1795040525960,
+            "finished": 1795040525960
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040525960,
+            "returned": 1795040525960,
+            "finished": 1795040525960
+          },
+          {
+            "id": "http-3",
+            "received": 1795040525961,
+            "returned": 1795040525961,
+            "finished": 1795040525961
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "pid": 6612,
+      "started": 1795040525964,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 224.69910000000004,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040525969,
+            "error": "ECONNREFUSED",
+            "done": 1795040525971
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040526185,
+            "status": 200,
+            "done": 1795040526192
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040526192,
+            "status": 401,
+            "done": 1795040526194
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 224.8913,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040525970,
+            "error": "ECONNREFUSED",
+            "done": 1795040525971
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040526186,
+            "status": 200,
+            "done": 1795040526193
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040526193,
+            "status": 401,
+            "done": 1795040526195
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040526017,
+        "listening": 1795040526027,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040526188,
+            "returned": 1795040526191,
+            "finished": 1795040526192
+          },
+          {
+            "id": "http-2",
+            "received": 1795040526192,
+            "returned": 1795040526192,
+            "finished": 1795040526193
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040526193,
+            "returned": 1795040526193,
+            "finished": 1795040526193
+          },
+          {
+            "id": "http-3",
+            "received": 1795040526194,
+            "returned": 1795040526194,
+            "finished": 1795040526194
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "pid": 23636,
+      "started": 1795040526202,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 222.68630000000007,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040526206,
+            "error": "ECONNREFUSED",
+            "done": 1795040526207
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040526421,
+            "status": 200,
+            "done": 1795040526426
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040526426,
+            "status": 401,
+            "done": 1795040526429
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 222.55060000000003,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040526207,
+            "error": "ECONNREFUSED",
+            "done": 1795040526207
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040526422,
+            "status": 200,
+            "done": 1795040526428
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040526428,
+            "status": 401,
+            "done": 1795040526429
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040526252,
+        "listening": 1795040526263,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040526418,
+            "returned": 1795040526420,
+            "finished": 1795040526421
+          },
+          {
+            "id": "http-2",
+            "received": 1795040526422,
+            "returned": 1795040526422,
+            "finished": 1795040526422
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040526422,
+            "returned": 1795040526422,
+            "finished": 1795040526422
+          },
+          {
+            "id": "http-3",
+            "received": 1795040526423,
+            "returned": 1795040526423,
+            "finished": 1795040526423
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "pid": 22108,
+      "started": 1795040526435,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 218.27930000000015,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040526439,
+            "error": "ECONNREFUSED",
+            "done": 1795040526440
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040526648,
+            "status": 200,
+            "done": 1795040526655
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040526655,
+            "status": 401,
+            "done": 1795040526657
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 218.519,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040526439,
+            "error": "ECONNREFUSED",
+            "done": 1795040526440
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040526649,
+            "status": 200,
+            "done": 1795040526656
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040526656,
+            "status": 401,
+            "done": 1795040526658
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040526479,
+        "listening": 1795040526490,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040526651,
+            "returned": 1795040526654,
+            "finished": 1795040526654
+          },
+          {
+            "id": "http-2",
+            "received": 1795040526655,
+            "returned": 1795040526655,
+            "finished": 1795040526655
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040526655,
+            "returned": 1795040526656,
+            "finished": 1795040526656
+          },
+          {
+            "id": "http-3",
+            "received": 1795040526656,
+            "returned": 1795040526656,
+            "finished": 1795040526656
+          }
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "pid": 31740,
+      "started": 1795040526665,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 221.44700000000012,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040526670,
+            "error": "ECONNREFUSED",
+            "done": 1795040526671
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040526884,
+            "status": 200,
+            "done": 1795040526890
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040526890,
+            "status": 401,
+            "done": 1795040526892
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 221.94299999999976,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040526670,
+            "error": "ECONNREFUSED",
+            "done": 1795040526672
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040526885,
+            "status": 200,
+            "done": 1795040526891
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040526891,
+            "status": 401,
+            "done": 1795040526892
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040526717,
+        "listening": 1795040526727,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040526886,
+            "returned": 1795040526888,
+            "finished": 1795040526889
+          },
+          {
+            "id": "http-2",
+            "received": 1795040526889,
+            "returned": 1795040526890,
+            "finished": 1795040526890
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040526890,
+            "returned": 1795040526890,
+            "finished": 1795040526890
+          },
+          {
+            "id": "http-3",
+            "received": 1795040526891,
+            "returned": 1795040526891,
+            "finished": 1795040526891
+          }
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "pid": 34144,
+      "started": 1795040526900,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 215.03900000000021,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040526905,
+            "error": "ECONNREFUSED",
+            "done": 1795040526906
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040527112,
+            "status": 200,
+            "done": 1795040527117
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040527117,
+            "status": 401,
+            "done": 1795040527120
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 214.96540000000005,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040526905,
+            "error": "ECONNREFUSED",
+            "done": 1795040526906
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040527113,
+            "status": 200,
+            "done": 1795040527119
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040527119,
+            "status": 401,
+            "done": 1795040527120
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040526952,
+        "listening": 1795040526963,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040527119,
+            "returned": 1795040527121,
+            "finished": 1795040527122
+          },
+          {
+            "id": "http-2",
+            "received": 1795040527123,
+            "returned": 1795040527123,
+            "finished": 1795040527123
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040527123,
+            "returned": 1795040527123,
+            "finished": 1795040527123
+          },
+          {
+            "id": "http-3",
+            "received": 1795040527124,
+            "returned": 1795040527124,
+            "finished": 1795040527124
+          }
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "pid": 33092,
+      "started": 1795040527126,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 211.5657000000001,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040527131,
+            "error": "ECONNREFUSED",
+            "done": 1795040527132
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040527333,
+            "status": 200,
+            "done": 1795040527340
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040527340,
+            "status": 401,
+            "done": 1795040527342
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 211.61799999999994,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040527131,
+            "error": "ECONNREFUSED",
+            "done": 1795040527132
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040527335,
+            "status": 200,
+            "done": 1795040527341
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040527341,
+            "status": 401,
+            "done": 1795040527343
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040527164,
+        "listening": 1795040527175,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040527327,
+            "returned": 1795040527330,
+            "finished": 1795040527330
+          },
+          {
+            "id": "http-2",
+            "received": 1795040527331,
+            "returned": 1795040527331,
+            "finished": 1795040527331
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040527331,
+            "returned": 1795040527331,
+            "finished": 1795040527332
+          },
+          {
+            "id": "http-3",
+            "received": 1795040527332,
+            "returned": 1795040527332,
+            "finished": 1795040527332
+          }
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "pid": 34376,
+      "started": 1795040527349,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 214.01769999999988,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040527356,
+            "error": "ECONNREFUSED",
+            "done": 1795040527357
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040527561,
+            "status": 200,
+            "done": 1795040527567
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040527567,
+            "status": 401,
+            "done": 1795040527570
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 214.64020000000028,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040527356,
+            "error": "ECONNREFUSED",
+            "done": 1795040527357
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040527562,
+            "status": 200,
+            "done": 1795040527569
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040527569,
+            "status": 401,
+            "done": 1795040527571
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040527400,
+        "listening": 1795040527411,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040527563,
+            "returned": 1795040527565,
+            "finished": 1795040527566
+          },
+          {
+            "id": "http-2",
+            "received": 1795040527567,
+            "returned": 1795040527567,
+            "finished": 1795040527568
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040527568,
+            "returned": 1795040527568,
+            "finished": 1795040527568
+          },
+          {
+            "id": "http-3",
+            "received": 1795040527569,
+            "returned": 1795040527569,
+            "finished": 1795040527569
+          }
+        ]
+      }
+    },
+    {
+      "index": 11,
+      "pid": 15444,
+      "started": 1795040527578,
+      "fetch": {
+        "pair": true,
+        "elapsedMs": 223.4369999999999,
+        "calls": [
+          {
+            "id": "fetch-1",
+            "auth": true,
+            "sent": 1795040527582,
+            "error": "ECONNREFUSED",
+            "done": 1795040527583
+          },
+          {
+            "id": "fetch-2",
+            "auth": true,
+            "sent": 1795040527797,
+            "status": 200,
+            "done": 1795040527803
+          },
+          {
+            "id": "fetch-3",
+            "auth": false,
+            "sent": 1795040527803,
+            "status": 401,
+            "done": 1795040527805
+          }
+        ]
+      },
+      "http": {
+        "pair": true,
+        "elapsedMs": 223.69810000000007,
+        "calls": [
+          {
+            "id": "http-1",
+            "auth": true,
+            "sent": 1795040527582,
+            "error": "ECONNREFUSED",
+            "done": 1795040527583
+          },
+          {
+            "id": "http-2",
+            "auth": true,
+            "sent": 1795040527798,
+            "status": 200,
+            "done": 1795040527805
+          },
+          {
+            "id": "http-3",
+            "auth": false,
+            "sent": 1795040527805,
+            "status": 401,
+            "done": 1795040527806
+          }
+        ]
+      },
+      "witness": {
+        "entry": 1795040527628,
+        "listening": 1795040527639,
+        "events": [
+          {
+            "id": "fetch-2",
+            "received": 1795040527799,
+            "returned": 1795040527802,
+            "finished": 1795040527803
+          },
+          {
+            "id": "http-2",
+            "received": 1795040527803,
+            "returned": 1795040527803,
+            "finished": 1795040527804
+          },
+          {
+            "id": "fetch-3",
+            "received": 1795040527804,
+            "returned": 1795040527804,
+            "finished": 1795040527804
+          },
+          {
+            "id": "http-3",
+            "received": 1795040527805,
+            "returned": 1795040527805,
+            "finished": 1795040527805
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "scope": "synthetic",
+  "goal": {
+    "outcome": "Keep a local OCR box edit across save and later results",
+    "stopWhen": "Review this candidate once"
+  },
+  "baselineSha256": "58a50aebe1a772112f011da0a02c7ba5ee2069c70e8cb4689c1706404e48ab44",
+  "candidateSha256": "c085822f7c84da6bc7dacb9bdc16c8b9ae56ce24dd893067a5b26c60e8959b34",
+  "sourceWork": {
+    "id": "stage17-test-owned-page",
+    "sha256": "4f5d70945493655be708e0b72f033cc53cbe79f1e70080be2aa4d1a0cbd7221c",
+    "regionIds": [
+      "s17-ocr"
+    ]
+  },
+  "observation": "Editing an OCR region did not have its own saved coordinate field",
+  "firstWrongStage": "Studio editor",
+  "hypothesis": "An editor override can preserve the observed box and the layout box",
+  "fixedStage": "Studio editor",
+  "files": [
+    {
+      "path": "apps/sites/lib/studio-model.ts",
+      "beforeSha256": "07558898316c1d7c4282bff8f52420f48195adff303b2b561b07f469a16a8006",
+      "afterSha256": "065248f8c768c284ce8dddcc9854baf42dccd863109c2e7fee3e4eb8bf5370fb"
+    },
+    {
+      "path": "apps/sites/lib/studio-state.ts",
+      "beforeSha256": "2e4c378f084aa5c2b1e51c3e60481bdbe67ab0d6d6ec4a2dfb50a77388469da8",
+      "afterSha256": "0510b4dbdc683ea78d4e2ee2c10c2725d119590b79db69418c3af8fd0f057a01"
+    },
+    {
+      "path": "apps/sites/components/studio.tsx",
+      "beforeSha256": "f7a4f92ca9678a7337ec41e1d3a9b89957bf9aa5789cc16ba4932e7568ca5385",
+      "afterSha256": "9886671f953f1f6a37a1eafb3f8e83248aee32116fc90e85bf31ce804307510c"
+    },
+    {
+      "path": "apps/sites/app/globals.css",
+      "beforeSha256": "f748141d8f7c3448df43ce5983db086be3cc743d24441aae61a9ce8bc25f0dbf",
+      "afterSha256": "cc307506ea5bd351036982e37ff20a67c39616f5066486626903efce0df4c05d"
+    }
+  ],
+  "beforeImageSha256": null,
+  "afterImageSha256": "ebd66ab14210f323f1c675c1d263ddb71428622d89ba0d5a14ca9750b9c9a02d",
+  "checks": [
+    {
+      "id": "red",
+      "scope": "synthetic",
+      "candidateSha256": "58a50aebe1a772112f011da0a02c7ba5ee2069c70e8cb4689c1706404e48ab44",
+      "status": "FAIL",
+      "command": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe --test --test-reporter=tap --test-name-pattern an OCR box edit apps/sites/checks/stage17-studio.test.mjs",
+      "exitCode": 1,
+      "logSha256": "036baca4a8327272166857d9031b950a780e1e2872120fb106a06dee6f9cad1f"
+    },
+    {
+      "id": "targeted",
+      "scope": "synthetic",
+      "candidateSha256": "c085822f7c84da6bc7dacb9bdc16c8b9ae56ce24dd893067a5b26c60e8959b34",
+      "status": "PASS",
+      "command": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe --test --test-reporter=tap --test-concurrency=1 apps/sites/checks/batch-engine.test.mjs apps/sites/checks/batch-proxy.test.mjs apps/sites/checks/canvas-browser.test.mjs apps/sites/checks/context-client.test.mjs apps/sites/checks/context-proxy.test.mjs apps/sites/checks/context-ui.test.mjs apps/sites/checks/editor-lifecycle.test.mjs apps/sites/checks/engine-integration.test.mjs apps/sites/checks/final-image.test.mjs apps/sites/checks/image-execution.test.mjs apps/sites/checks/image-permit-recovery.test.mjs apps/sites/checks/layout-candidate-page.test.mjs apps/sites/checks/layout-readability-page.test.mjs apps/sites/checks/layout-readability-proxy.test.mjs apps/sites/checks/layout-review-page.test.mjs apps/sites/checks/layout-review.test.mjs apps/sites/checks/layout-roi-exact-page.test.mjs apps/sites/checks/layout-roi-page.test.mjs apps/sites/checks/layout-roi-proxy.test.mjs apps/sites/checks/legacy-local-compatibility.test.mjs apps/sites/checks/project-deletion.test.mjs apps/sites/checks/project-summary.test.mjs apps/sites/checks/reading-resume.test.mjs apps/sites/checks/stage17-export-name.test.mjs apps/sites/checks/stage17-studio.test.mjs apps/sites/checks/state-boundaries.test.mjs apps/sites/checks/state-regressions.test.mjs apps/sites/checks/studio.test.mjs apps/sites/checks/translation-review.test.mjs apps/sites/checks/typesetting-resume.test.mjs apps/sites/checks/workspace-state.test.mjs",
+      "exitCode": 0,
+      "logSha256": "f88572bb23136dbeb0fd8b82333f5b8aa555e1799485da35139a76c6fd870764"
+    },
+    {
+      "id": "newWork",
+      "scope": "actual",
+      "candidateSha256": "c085822f7c84da6bc7dacb9bdc16c8b9ae56ce24dd893067a5b26c60e8959b34",
+      "status": "NOT_RUN",
+      "command": null,
+      "exitCode": null,
+      "logSha256": null
+    },
+    {
+      "id": "regression",
+      "scope": "synthetic",
+      "candidateSha256": "c085822f7c84da6bc7dacb9bdc16c8b9ae56ce24dd893067a5b26c60e8959b34",
+      "status": "FAIL",
+      "command": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe docs/validation/stage17-18-20261119/v2-regression.mjs --engine-volume",
+      "exitCode": 1,
+      "logSha256": "c489a7e2f60dd966e94a2ccde2addd230643f00b843e1112df80a64892c9b8f9"
+    }
+  ],
+  "renderedRun": "browser-checkpoint",
+  "axes": {
+    "source": "PASS",
+    "actualAI": "NOT_RUN",
+    "browser": "PASS",
+    "human": "NOT_RUN"
+  },
+  "priorCandidates": [],
+  "newKnowledge": true,
+  "budgetState": "unknown",
+  "review": "uncertain",
+  "unverified": [
+    "independent new manuscript",
+    "human review",
+    "actual cost",
+    "region ID identifies the contract fixture; the browser used a fresh editor-generated ID",
+    "before-version PNG was not recorded"
+  ],
+  "measurements": {
+    "before": {
+      "elapsedMs": null,
+      "tokens": null,
+      "amountUsd": null
+    },
+    "after": {
+      "elapsedMs": null,
+      "tokens": null,
+      "amountUsd": null
+    }
+  },
+  "problem": {
+    "id": "s17-editor-ocr-box",
+    "severity": "unrated",
+    "attempts": [],
+    "previousEscalations": 0
+  },
+  "handoff": {
+    "question": "Does the editable OCR box remain distinct on an independently provided new work?",
+    "diff": "apps/sites/lib/studio-model.ts and apps/sites/lib/studio-state.ts",
+    "evidence": [
+      "roi-red.log",
+      "web-current.json",
+      "browser-checkpoint.log",
+      "v2-current.json"
+    ]
+  }
+}

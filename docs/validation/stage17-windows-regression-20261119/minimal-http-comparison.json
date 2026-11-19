@@ -1,0 +1,55 @@
+{
+  "base": {
+    "servers": 20,
+    "verified": 20,
+    "minMs": 211,
+    "maxMs": 3629,
+    "individualGetTimeouts": [
+      {
+        "run": 10,
+        "entryMs": 46,
+        "getMs": 1516
+      },
+      {
+        "run": 11,
+        "entryMs": 52,
+        "getMs": 1511
+      },
+      {
+        "run": 11,
+        "entryMs": 52,
+        "getMs": 1501
+      },
+      {
+        "run": 15,
+        "entryMs": 50,
+        "getMs": 1509
+      },
+      {
+        "run": 19,
+        "entryMs": 58,
+        "getMs": 1512
+      }
+    ]
+  },
+  "paired": {
+    "servers": 12,
+    "fetchPairs": 12,
+    "httpPairs": 12,
+    "totals": {
+      "fetch": {
+        "timeouts": 0,
+        "withServer": 0,
+        "finishedBeforeTimeout": 0,
+        "missing": 0
+      },
+      "http": {
+        "timeouts": 0,
+        "withServer": 0,
+        "finishedBeforeTimeout": 0,
+        "missing": 0
+      }
+    },
+    "rows": []
+  }
+}

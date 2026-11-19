@@ -1,0 +1,41 @@
+{
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "node": "v24.22.1",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "apps/sites/checks/stage17-studio.test.mjs",
+    "apps/sites/checks/studio.test.mjs",
+    "apps/sites/checks/editor-lifecycle.test.mjs",
+    "apps/sites/checks/reading-resume.test.mjs",
+    "apps/sites/checks/state-boundaries.test.mjs",
+    "apps/sites/checks/final-image.test.mjs",
+    "apps/sites/checks/workspace-state.test.mjs",
+    "apps/sites/checks/batch-engine.test.mjs",
+    "apps/sites/checks/canvas-browser.test.mjs",
+    "apps/sites/checks/project-deletion.test.mjs",
+    "apps/sites/checks/project-summary.test.mjs",
+    "apps/sites/checks/state-regressions.test.mjs",
+    "apps/sites/checks/legacy-local-compatibility.test.mjs",
+    "apps/sites/checks/engine-integration.test.mjs"
+  ],
+  "cwd": "C:\\dev\\Projects\\mangohana\\",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "started": "2026-11-18T17:53:24.463Z",
+  "finished": "2026-11-18T17:53:40.445Z",
+  "exitCode": 1,
+  "signal": null,
+  "counts": {
+    "tests": 158,
+    "pass": 155,
+    "fail": 3,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "sources": "sources-92f94419e758b032ddb92881a4bdfd9556f2ab0a1c7b28c388e6cda366c33a25.json",
+  "changedDuringRun": [],
+  "logSha256": "f9811fbc4a24109413fa9e172b450456433bf1698a264a79588885f2b253b9fa"
+}

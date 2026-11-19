@@ -1,0 +1,4701 @@
+{
+  "schemaVersion": 1,
+  "kind": "stage16-condition-table",
+  "scope": "synthetic",
+  "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+  "matrices": [
+    {
+      "schemaVersion": 1,
+      "kind": "stage16-condition-matrix",
+      "shared": {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+        "fontSha256": "8d50c2feb7ab837497cb1244199c19ae6d28256c81d197e7446fd6e55a564f14",
+        "settingsSha256": "cde0fb0dec1400c54a0f7e7eafa73624c53e4da258bbd34b3380a0defeba95c1",
+        "contextSnapshotSha256": "bb3c89f92b9dd69f3f7332a7a58824e9bb75ea46c617ce8b9a10941efa12b884",
+        "intermediateSha256": null
+      },
+      "conditions": [
+        {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        },
+        {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        }
+      ],
+      "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e"
+    },
+    {
+      "schemaVersion": 1,
+      "kind": "stage16-condition-matrix",
+      "shared": {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "sourceSha256": "a03484d60425d7b61778dff541fa128759978273312cc168ed901b56a81b8e64",
+        "fontSha256": "8d50c2feb7ab837497cb1244199c19ae6d28256c81d197e7446fd6e55a564f14",
+        "settingsSha256": "cde0fb0dec1400c54a0f7e7eafa73624c53e4da258bbd34b3380a0defeba95c1",
+        "contextSnapshotSha256": "7721b61743ecd3aae4bba339a734193170fa83ef4bfe8a4c85c7d4988bea2fed",
+        "intermediateSha256": null
+      },
+      "conditions": [
+        {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        },
+        {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        }
+      ],
+      "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd"
+    }
+  ],
+  "observations": {
+    "schemaVersion": 1,
+    "kind": "stage16-execution-observations",
+    "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+    "jobsSha256": "781f0ffaa5274eff2f6955905163622860dcb731e248c60d113d9942cdcc5dc6",
+    "cells": [
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "condition": {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-final:A:baseline",
+            "receiptId": "receipt:page-final:A:baseline",
+            "receiptSha256": "21d873910c085e7933a8fe9b25f85daab8331561235f1d97e106e22a56efb099",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+            "initialization": {
+              "mode": "cold",
+              "reason": null,
+              "elapsedMs": {
+                "value": 7,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-final:A:baseline",
+                "jobId": "page-final:A:baseline",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "050b70110ee2fa1f909e05e68362ce0b90919f8475290f776893491fdcb95873",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:baseline:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "e0844cc9e0f1cebcd9a6dcb288da7020c1633cff76f5fb9a070bae8d5f28615a",
+                    "usageScopeSha256": "19f7c00e17e977b64fc98ab1a5cf82c486a469e09bcbc0104c2b47e6e9dd372d",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "050b70110ee2fa1f909e05e68362ce0b90919f8475290f776893491fdcb95873",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:baseline:OCR:primary:receipt",
+                      "page-final:A:baseline:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:baseline:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "f3642b709daf1bcfc17bfe526d376cb7a90464730ee8e1b784817487c5d658d6",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:baseline:OCR:primary:fee"
+                        },
+                        "artifactSha256": "050b70110ee2fa1f909e05e68362ce0b90919f8475290f776893491fdcb95873",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "702af74a8ce9c33a8162073ef4b6b20d67026f5ee606567be1c86b8c5d761f3e",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:baseline:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "d0253549be5e246552ace50820197e763431a19a733ee8af79c6f930456097c5",
+                    "usageScopeSha256": "c3f6741a8afe5e616f36f9d9114f5829fd89ff7c11bd27281171892ad8811c05",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "702af74a8ce9c33a8162073ef4b6b20d67026f5ee606567be1c86b8c5d761f3e",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:baseline:TRANSLATE:primary:receipt",
+                      "page-final:A:baseline:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:baseline:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "194fa5b0588b920b23b9c4f83a2221066dca5db63fa80f9756843fe2e83ba2a6",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-final:A:baseline:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "702af74a8ce9c33a8162073ef4b6b20d67026f5ee606567be1c86b8c5d761f3e",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "ad2ff46a2a655a392547370f1c2115e7248f949201ec05b879787b77ee32ef76",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:baseline:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "62d7d203d2189e8c04dd0fdb80f058a7d76a02d58806ab9dbabb921f40a16eb8",
+                    "usageScopeSha256": "2225065d61ecff9ee22ccf80db043b586ba45e009c7f54ff30325d9a3008394b",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "ad2ff46a2a655a392547370f1c2115e7248f949201ec05b879787b77ee32ef76",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:baseline:MASK:primary:receipt",
+                      "page-final:A:baseline:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:baseline:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "9d8fd9befb59f2b2b0558f80931ba486d93630e466feb4834683f421990c3aa0",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:baseline:MASK:primary:fee"
+                        },
+                        "artifactSha256": "ad2ff46a2a655a392547370f1c2115e7248f949201ec05b879787b77ee32ef76",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "79f21c5f7155c2e253aea2b08087b2fe5366175ee2384ab89ac70875ead6c9b8",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:baseline:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "688393ef2dbf650f17c558b3ea2530ff002c93c53ce48e0717797dcf28c77d62",
+                    "usageScopeSha256": "7f39ecbc1723bf8527e027a7d02b3da14c1dff41abafb471df30bd87e9135e97",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "79f21c5f7155c2e253aea2b08087b2fe5366175ee2384ab89ac70875ead6c9b8",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:baseline:INPAINT:primary:receipt",
+                      "page-final:A:baseline:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:baseline:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "e1b0f91ddbeb36ffa9805f4bf35fde6f4ac868d8fb70e51577ceed18266ed7eb",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:baseline:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "79f21c5f7155c2e253aea2b08087b2fe5366175ee2384ab89ac70875ead6c9b8",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:baseline:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "bc4eda336b3d2e1281316b0cd8b07560830f7d5b8e149024eb7c23068f121754",
+                    "usageScopeSha256": "f4001f5938968ae74708908c349bc5b6cbf0c67fe65d57904800316750ee7ea2",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:baseline:TYPESET:primary:receipt",
+                      "page-final:A:baseline:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:baseline:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "42b8ef9e47a57895994363ccbf2ce84b2f2c6760b3d69913210e5becc9d2b222",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:baseline:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "condition": {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-final:A:improved",
+            "receiptId": "receipt:page-final:A:improved",
+            "receiptSha256": "4a9a54a8a7d3e43f04161b40c39ba42d4b13f780f44891fca3c698d458e515f9",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+            "initialization": {
+              "mode": "warm",
+              "reason": null,
+              "elapsedMs": {
+                "value": 1,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-final:A:improved",
+                "jobId": "page-final:A:improved",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "3be2aaeefe739872efc6b77dc74cd5a5ee731d3833bc90dc41871934bd609cca",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:improved:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "bd56642c7f8703b0cde71b8327b3254004818c72b6c7683def5ba4d546524503",
+                    "usageScopeSha256": "fb4844faaffd9fc85dd5d1653656e1695f108dcc20bbdbf6e8314128c526ff95",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "3be2aaeefe739872efc6b77dc74cd5a5ee731d3833bc90dc41871934bd609cca",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:improved:OCR:primary:receipt",
+                      "page-final:A:improved:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:improved:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "3584f2ae64189a1ff4cd93749f5f6b2238ebcd3494f24688ce5b9098ee608ed3",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:improved:OCR:primary:fee"
+                        },
+                        "artifactSha256": "3be2aaeefe739872efc6b77dc74cd5a5ee731d3833bc90dc41871934bd609cca",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "538e2bd03887669cd157ba38bc938d5fe32504061859451a81e72ac8efa45cfa",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:improved:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "db32cc4bc7dbe803b53c97c7386e25e6f92428e237d987037b53517dda699ce6",
+                    "usageScopeSha256": "3c5a1aa32541154748108b9c4d1ec742fbd8b92244c160f6865c1aee7767978a",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "538e2bd03887669cd157ba38bc938d5fe32504061859451a81e72ac8efa45cfa",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:improved:TRANSLATE:primary:receipt",
+                      "page-final:A:improved:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:improved:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "c1273326c62f974303a5afc143dfe343d8030424d8496f66e477d4135c639276",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-final:A:improved:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "538e2bd03887669cd157ba38bc938d5fe32504061859451a81e72ac8efa45cfa",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "5bc60765a3fe37c710027c69103e00e59b6bfefa124cb4083a81100a87cae345",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:improved:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "f2485817dd67ca8ea6eace3bcf5de16e416fae552c3ba6116957cdfb1dccbffd",
+                    "usageScopeSha256": "25b334b7e21781fb6748934a0a7531ef8f27fbfc0fa17a17d7bab1f65a34fd75",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "5bc60765a3fe37c710027c69103e00e59b6bfefa124cb4083a81100a87cae345",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:improved:MASK:primary:receipt",
+                      "page-final:A:improved:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:improved:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "d54a77104243ce52e3ca5ade8ca294736549c263bbcf4e4612b950df9f187ffd",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:improved:MASK:primary:fee"
+                        },
+                        "artifactSha256": "5bc60765a3fe37c710027c69103e00e59b6bfefa124cb4083a81100a87cae345",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "75ef8c6c7debc093b42793724fcd445507b88c8b5bb4af0b18fee484f278e439",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:improved:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "e084686e01bd1cc9bc0858b248f7ad8106af9065caf0f5bbfb14c765dfc02bc6",
+                    "usageScopeSha256": "d5dd92d32a172030fb464efaa9c78f1948821eef62127b8f6fb1ab41c14b7632",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "75ef8c6c7debc093b42793724fcd445507b88c8b5bb4af0b18fee484f278e439",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:improved:INPAINT:primary:receipt",
+                      "page-final:A:improved:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:improved:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "db6d795de05ed820cd47c71b0730599898ea3b9ab3b6fa1aa0f0e4cf85d3799c",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:improved:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "75ef8c6c7debc093b42793724fcd445507b88c8b5bb4af0b18fee484f278e439",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:A:improved:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "55bcfe324254e8508e3dd191964c82a56f7ec856457355a8507efefc98f57ee2",
+                    "usageScopeSha256": "b1a8611a0e3d32c5b68652d33bead629b5fe9218fca5f3e5141f5d51519c077e",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:A:improved:TYPESET:primary:receipt",
+                      "page-final:A:improved:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:A:improved:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "395618321e8f878dedb9502146a53d350af5ac1ed91d7e69acecc6d7657ea83b",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:A:improved:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "condition": {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-final:B:baseline",
+            "receiptId": "receipt:page-final:B:baseline",
+            "receiptSha256": "e359fd6c2d647c38668debfc9c3eccbb332c88cb81a5f12496ba554462421ca9",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+            "initialization": {
+              "mode": "cold",
+              "reason": null,
+              "elapsedMs": {
+                "value": 7,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-final:B:baseline",
+                "jobId": "page-final:B:baseline",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "0896054a978db4b1b60cc51011a7596b11c32d9372788ba7b18bda4c7a676253",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:baseline:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "fbd008004bd7cf53a273cd02441655001e348dd1a3950f6caefcfcd6e550453f",
+                    "usageScopeSha256": "1a47d59b6e8c0be03f6de69b12ae94ca1beeb19991a9fc181fbdfdac099af7e9",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "0896054a978db4b1b60cc51011a7596b11c32d9372788ba7b18bda4c7a676253",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:baseline:OCR:primary:receipt",
+                      "page-final:B:baseline:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:baseline:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "c612d9c8f781d465c2611aac90b6a19dfa78dcb194f6a74da9ef02b108e79d63",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:baseline:OCR:primary:fee"
+                        },
+                        "artifactSha256": "0896054a978db4b1b60cc51011a7596b11c32d9372788ba7b18bda4c7a676253",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "fd6748a5d12e02200dfcc62bcd434549a91991fa33187ab80855795d4743be32",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:baseline:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "35c3a829606cb4ab49892cd95cd86e38cc882c9e815186171626422585ae7933",
+                    "usageScopeSha256": "ad34e9483bae3384a127258e9ad78cd66d553b2d132699e0477feb74d7b88f88",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "fd6748a5d12e02200dfcc62bcd434549a91991fa33187ab80855795d4743be32",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:baseline:TRANSLATE:primary:receipt",
+                      "page-final:B:baseline:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:baseline:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "a5241c5ad8eae3ce8f29ee58ef79f968627c604ac38edbccfe43dba0928c104b",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-final:B:baseline:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "fd6748a5d12e02200dfcc62bcd434549a91991fa33187ab80855795d4743be32",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "4da4448f5e8e40babaa4ad8e282f82cf0f260825f48f14dc4daf642e8fbb0842",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:baseline:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "6ed75b6af3f9205e493005d6962b242cfd3d8e168620d0eb0b2ea68bfc83bb4f",
+                    "usageScopeSha256": "faf48932081b42ff8dcc76a4e557bca98b3fcca4ebea0ddf5d873f38a2f533d5",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "4da4448f5e8e40babaa4ad8e282f82cf0f260825f48f14dc4daf642e8fbb0842",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:baseline:MASK:primary:receipt",
+                      "page-final:B:baseline:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:baseline:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "f5c8ec32dfaf5ec549c379e69627b0beddb1bb3f151fe8201dde8b5ff77f2d9a",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:baseline:MASK:primary:fee"
+                        },
+                        "artifactSha256": "4da4448f5e8e40babaa4ad8e282f82cf0f260825f48f14dc4daf642e8fbb0842",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "ca2ef2c4dbdafcf06dc2a3487b23edec65b302c558cf461cd10100a3e5cc5be8",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:baseline:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "d867d9be97536df997fb990ba367858b4bd33d409597233c27c714716d943477",
+                    "usageScopeSha256": "bd7dc5573262288fae6407e4f43337c9b3682f4e39bc78776bc011b545d0b52e",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "ca2ef2c4dbdafcf06dc2a3487b23edec65b302c558cf461cd10100a3e5cc5be8",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:baseline:INPAINT:primary:receipt",
+                      "page-final:B:baseline:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:baseline:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "26d86f1a8d34502cfce5887330d2cda53a6edfb42547dc78823e77d3159f496d",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:baseline:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "ca2ef2c4dbdafcf06dc2a3487b23edec65b302c558cf461cd10100a3e5cc5be8",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:baseline:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "ffc75cd8de1db73561c4767071be67ff5e6b07ab535e3174e1c05f32f2c7face",
+                    "usageScopeSha256": "9724729ad53a0364d87bcc8e5fdcc61e247cb32f67bc8be3ac0b576e25d33ede",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:baseline:TYPESET:primary:receipt",
+                      "page-final:B:baseline:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:baseline:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "b81027ffe1585470e62f5e369b517ed9b3b3647915e5a3d6f83101805b567f78",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:baseline:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "condition": {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-final:B:improved",
+            "receiptId": "receipt:page-final:B:improved",
+            "receiptSha256": "6152bfe57482df2352103ca0e9739dd1cbbde6f452e96fd74dd3f269344535ec",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+            "initialization": {
+              "mode": "warm",
+              "reason": null,
+              "elapsedMs": {
+                "value": 1,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-final:B:improved",
+                "jobId": "page-final:B:improved",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "80995e704690cc7ad5584ed84059f2a96efc8067f1be9db9a4795e138eb14a69",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:improved:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "287dbe2dda6dc410cd36762cfef91b1015fabdc5358996f884238af7da642934",
+                    "usageScopeSha256": "43232e0c5f5e188450a79bf4a21940229baac9f71a840a848db4b7238bc1f886",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "80995e704690cc7ad5584ed84059f2a96efc8067f1be9db9a4795e138eb14a69",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:improved:OCR:primary:receipt",
+                      "page-final:B:improved:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:improved:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "80d58b9498a8bfe198f0f5503d63c4b476fa750f3eeccace04e2274769cafe48",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:improved:OCR:primary:fee"
+                        },
+                        "artifactSha256": "80995e704690cc7ad5584ed84059f2a96efc8067f1be9db9a4795e138eb14a69",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "de11fddcd96cee28505a710e956fac69b37e26c23448125c37028f54d311b4b4",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:improved:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "b32856ec2c4966f9bf2d446186c8713ecd7762a314b0d3a5755a4d8827992416",
+                    "usageScopeSha256": "b2747b76831ba31ed8b78a78f160780bd2b6bf615740cbcadf25c742de1439bd",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "de11fddcd96cee28505a710e956fac69b37e26c23448125c37028f54d311b4b4",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:improved:TRANSLATE:primary:receipt",
+                      "page-final:B:improved:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:improved:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "94d8f08e18f2bba6edee111b9e968ee6e4f9a62328dab76414fe210db17997cf",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-final:B:improved:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "de11fddcd96cee28505a710e956fac69b37e26c23448125c37028f54d311b4b4",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "964dbe0142cf7604be809d306fef225a4ebe1404dec13011ac0e6b3620ce4666",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:improved:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "7e53e47b2405913bb93f8b8a16c3191ee0e8846a487e0a494ea66a76509f59fb",
+                    "usageScopeSha256": "3a33ac7edf60840dc0aa41f138a8f652b2ad55f48826233767a060f22595571d",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "964dbe0142cf7604be809d306fef225a4ebe1404dec13011ac0e6b3620ce4666",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:improved:MASK:primary:receipt",
+                      "page-final:B:improved:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:improved:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "0139de478bd575a909dcae97240007d49aa91cb9e63f94c66b12bf7f7d5add10",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:improved:MASK:primary:fee"
+                        },
+                        "artifactSha256": "964dbe0142cf7604be809d306fef225a4ebe1404dec13011ac0e6b3620ce4666",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "f406da627813e40ad27989f2a5c04e5c29d6adcd31a26f061638e54f2668dde9",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:improved:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "e83280b4c007332a44dd9610c8f114e3d7ab7be8ada4735a539584069aa3a1dd",
+                    "usageScopeSha256": "0f11cce2d7d1db6ba8488fee02a4ddb3f32b8c71b4e2a7b2f9c2a011e41f58f6",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "f406da627813e40ad27989f2a5c04e5c29d6adcd31a26f061638e54f2668dde9",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:improved:INPAINT:primary:receipt",
+                      "page-final:B:improved:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:improved:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "d5a531da1550ad00f443c55cd18a26011dbe7c0bbd5bb6be2c792357ee949ad7",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:improved:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "f406da627813e40ad27989f2a5c04e5c29d6adcd31a26f061638e54f2668dde9",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-final:B:improved:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "17999524702188027a575d9725391e6528fe902c23f84a93a0cc31312ede9e4d",
+                    "usageScopeSha256": "8d8fcd1eb5b3abd19701600b214b58b8d761e5daf651e6effa893307418407d9",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-final:B:improved:TYPESET:primary:receipt",
+                      "page-final:B:improved:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-final:B:improved:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "0eb921cf716291a96cc0ba035fa4adac34fcfb12ee73c1ce7b599546e44be7a3",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-final:B:improved:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "condition": {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-other:A:baseline",
+            "receiptId": "receipt:page-other:A:baseline",
+            "receiptSha256": "fdbc684bc8d5b6e92e2b7013328a4d41004673ae51b08d9780e3143d101cd17e",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+            "initialization": {
+              "mode": "cold",
+              "reason": null,
+              "elapsedMs": {
+                "value": 7,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-other:A:baseline",
+                "jobId": "page-other:A:baseline",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "4ccc22e1b1c535014bbc36d9264be0f5ba4d5071cf5703467695c367c06b4930",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:baseline:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "254a517aae2a7f5fcf38e533654a08011f1f9a9a187b590695af0b99b9b10a5b",
+                    "usageScopeSha256": "7a516ff6420348686a6f3da0fc497dc3842a2013045442af86a5212bbd2165c7",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "4ccc22e1b1c535014bbc36d9264be0f5ba4d5071cf5703467695c367c06b4930",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:baseline:OCR:primary:receipt",
+                      "page-other:A:baseline:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:baseline:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "3a2bea578dddb3bdba7fbe682d795bee6002b9b110e3f32c11eca9b598edd546",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:baseline:OCR:primary:fee"
+                        },
+                        "artifactSha256": "4ccc22e1b1c535014bbc36d9264be0f5ba4d5071cf5703467695c367c06b4930",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "1aa617fb4aa75a6a34b4bca135ec9322f52eb6609627e66e61aeaa5dfb293ed1",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:baseline:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "5878911cb8ef3245c92502e09329a7b9a6325cb379e1c50e8ebe40c915466cff",
+                    "usageScopeSha256": "8f57d9d15a9e502f6742733f8c2b6f0e62c3eb51868b7834999a65d444674a1f",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "1aa617fb4aa75a6a34b4bca135ec9322f52eb6609627e66e61aeaa5dfb293ed1",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:baseline:TRANSLATE:primary:receipt",
+                      "page-other:A:baseline:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:baseline:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "e40aebbb6fd12b8874087cc7779db1c0e4bc78d13cc369c04381c082025346f7",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-other:A:baseline:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "1aa617fb4aa75a6a34b4bca135ec9322f52eb6609627e66e61aeaa5dfb293ed1",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "7bd0d1c538b31a651c99e84c465a8e1f8a684e18c753a0a35a252dbd3d9eacd2",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:baseline:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "60b72792afba90758467a02d1d735ea82c9c246dc33a633834fc478c4a45e2b4",
+                    "usageScopeSha256": "d849fb0fb02a41ca7e11738b46057024b6a865f59e54cc1237c5fbcd3e5b4fa3",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "7bd0d1c538b31a651c99e84c465a8e1f8a684e18c753a0a35a252dbd3d9eacd2",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:baseline:MASK:primary:receipt",
+                      "page-other:A:baseline:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:baseline:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "c45ee95b2d2db3c9b20194a2007e896d97d815f02618f4579eda948c3d8af3be",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:baseline:MASK:primary:fee"
+                        },
+                        "artifactSha256": "7bd0d1c538b31a651c99e84c465a8e1f8a684e18c753a0a35a252dbd3d9eacd2",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "d15d97116af4ddd47189d1565e7339824a182b121f3a583694535b56fafa19a3",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:baseline:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "08f0ff6f4674401ce36078f35d2cd7a9ed8e7600df81e64a55ca1d78c8983630",
+                    "usageScopeSha256": "ec7c1ea30598fdea9f00929ced90e76928088f2b9ce6d7d8cc94100b9e9b7e9c",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "d15d97116af4ddd47189d1565e7339824a182b121f3a583694535b56fafa19a3",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:baseline:INPAINT:primary:receipt",
+                      "page-other:A:baseline:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:baseline:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "24fe9bc04516a2a8b0de6961b0ca5452c41295182099958bbebfedecd6d68f3b",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:baseline:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "d15d97116af4ddd47189d1565e7339824a182b121f3a583694535b56fafa19a3",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:baseline:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "0fc23b01dd4359cf0013768fd1d0cdebd6c56fd2b9ce259c7e2a4409765beef5",
+                    "usageScopeSha256": "89a78d50261a8876e3d5cf2e4bca885d5343270a48e6244c0274346c1480648f",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:baseline:TYPESET:primary:receipt",
+                      "page-other:A:baseline:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:baseline:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "056d95986388e2c17365fb5db623d18b8cf8c7be510839e1c9ca6432ce002a07",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:baseline:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "condition": {
+          "model": "A",
+          "modelSha256": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-other:A:improved",
+            "receiptId": "receipt:page-other:A:improved",
+            "receiptSha256": "87331f525eeb365be6a629e25635b12ef933b25e8d643204a7d7242cd1ad41cf",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+            "initialization": {
+              "mode": "warm",
+              "reason": null,
+              "elapsedMs": {
+                "value": 1,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-other:A:improved",
+                "jobId": "page-other:A:improved",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "4f7f6a9c18901b1d7563168359406b46b5a6d23e06335332a3a7517ba03b3a66",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:improved:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "227db6a960b479b6a1ba08b2b475c6e08739bd7544ce7a9915eb7692dd6df950",
+                    "usageScopeSha256": "dbaebc0a97820717a794aabf7c8e23422546870ed28631fd9d1daa8abe49de49",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "4f7f6a9c18901b1d7563168359406b46b5a6d23e06335332a3a7517ba03b3a66",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:improved:OCR:primary:receipt",
+                      "page-other:A:improved:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:improved:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "62000fbeae58e7605430e9e8ea070f4f56014f1884700ccb9227d87f74d81fe4",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:improved:OCR:primary:fee"
+                        },
+                        "artifactSha256": "4f7f6a9c18901b1d7563168359406b46b5a6d23e06335332a3a7517ba03b3a66",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "d62df081f87092b3182bcbaa8f3a78770561ec503199cc0f8ddc4c35b7cfa311",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:improved:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "b61954ad668af036d52d6ae11260b59423cbadd36b3684a121b2612f99479cfd",
+                    "usageScopeSha256": "6fb2f26b18bd5bc731361c9dea5083ada6ee0170d2e4cf67a06111c285caeb77",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "d62df081f87092b3182bcbaa8f3a78770561ec503199cc0f8ddc4c35b7cfa311",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:improved:TRANSLATE:primary:receipt",
+                      "page-other:A:improved:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:improved:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "5e633097ed85a225c69a2b61f607ce249632f01796fc26a048ff5bc879c63419",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-other:A:improved:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "d62df081f87092b3182bcbaa8f3a78770561ec503199cc0f8ddc4c35b7cfa311",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "d4d40cec4c73eb3ac8ebfb106e0441c13e046c3c60d2a215635fdf2adc8060e6",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:improved:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "29b1ad25c5113dbb29624d1f2874378e13a3185d4dafad6775552dea8ad9b5cb",
+                    "usageScopeSha256": "3a292e5d64637dc208315e29f3f65d5c9152989297910996cd70ab57c9cf46c3",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "d4d40cec4c73eb3ac8ebfb106e0441c13e046c3c60d2a215635fdf2adc8060e6",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:improved:MASK:primary:receipt",
+                      "page-other:A:improved:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:improved:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "9b0514fbb2c65b66c9d0883365de20d1264123e61a9be6769ca4845ae9305952",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:improved:MASK:primary:fee"
+                        },
+                        "artifactSha256": "d4d40cec4c73eb3ac8ebfb106e0441c13e046c3c60d2a215635fdf2adc8060e6",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "6b94a1bf1380112791d60a98f158d35934568c9770cabc6679cc410a2b85444c",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:improved:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "45127f4b582a0d3b59e5484163b575db70d8571dc73a189f127b705e339c5cb5",
+                    "usageScopeSha256": "ea6633f4df49ab22e3a74773559885db115caea293c30831636881560f78e22f",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "6b94a1bf1380112791d60a98f158d35934568c9770cabc6679cc410a2b85444c",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:improved:INPAINT:primary:receipt",
+                      "page-other:A:improved:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:improved:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "c386280eb704bca9a1a718b3affcae88a1600e29b3619fe0657377d88c699955",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:improved:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "6b94a1bf1380112791d60a98f158d35934568c9770cabc6679cc410a2b85444c",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:A:improved:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-A",
+                      "modelId": "model-A",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "903eab7e032d164d8df7b59d1547bda6c89d0a3ea9a664e91bc095040dcb0e45"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "83427dc436c39ce3c36f274dc48f20f95432be1adb0d937367f0de421d73cd0e",
+                    "usageScopeSha256": "2954a80bb72761cdc50985a083a2c2c0d49a901bdd26bb1a5d484c1463f4760a",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:A:improved:TYPESET:primary:receipt",
+                      "page-other:A:improved:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:A:improved:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "f54470fe416c6425c9d5b8d7fd5f5ee201b902b8bc8bcf792b3355de689b2660",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:A:improved:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "condition": {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "baseline",
+          "processingSha256": "8ba8496a2525ae171ffd104d632dede6ef418d9b95962a9d88e2fcdbc8d48d24"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-other:B:baseline",
+            "receiptId": "receipt:page-other:B:baseline",
+            "receiptSha256": "93a98daa824922c25a9cf2a32b47ab6557a4c9c29cfe6d857844b6f0c86bbfdd",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+            "initialization": {
+              "mode": "cold",
+              "reason": null,
+              "elapsedMs": {
+                "value": 7,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-other:B:baseline",
+                "jobId": "page-other:B:baseline",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "85070045b6e294ffe569c47ace7c34ceb86b30890a0fb6aeeec0dae3ef24ddde",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:baseline:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "12107f450a6d05108f8098e962a901b3a01db435485874eca8bd2c72e580dc5d",
+                    "usageScopeSha256": "8155e21560f0dbceec53106b405f10668b0bb5ae5220a7c23494a92d02ad4623",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "85070045b6e294ffe569c47ace7c34ceb86b30890a0fb6aeeec0dae3ef24ddde",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:baseline:OCR:primary:receipt",
+                      "page-other:B:baseline:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:baseline:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "3885ec6a90661a56788bc8c6eb8f2ef81f0af426c0d3a0f9f7c1e1bda48e0ff5",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:baseline:OCR:primary:fee"
+                        },
+                        "artifactSha256": "85070045b6e294ffe569c47ace7c34ceb86b30890a0fb6aeeec0dae3ef24ddde",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "54dbdd8245650e4d81a5aabed7a3ebfece79f8d3480764742b5840e53b78e0fa",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:baseline:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "af0d0e1ae708ce7230177edd9cd4fd4e68dc6df182cab2baba549fd6ae3d2913",
+                    "usageScopeSha256": "fe0d99cdf972d058c20aa9825d31e426ff6b7d8d9b1961889e8f8500020df32f",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "54dbdd8245650e4d81a5aabed7a3ebfece79f8d3480764742b5840e53b78e0fa",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:baseline:TRANSLATE:primary:receipt",
+                      "page-other:B:baseline:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:baseline:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "0239e4805acf27ec4c4a0b428c5e2f76755172545d26b0c7d37600b5e59dbbbf",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-other:B:baseline:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "54dbdd8245650e4d81a5aabed7a3ebfece79f8d3480764742b5840e53b78e0fa",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "1ac61665ba196239de5c98eee3b62e57a68b6d90cd77c38a51b8feefa6d07f88",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:baseline:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "9530ca1b02bf02f9d1337e2f2dabb5ec8f24291762924404ce8a49140a29a31b",
+                    "usageScopeSha256": "55ed1fd5b00ae87f227de25aeade4b64adbb2e713f8b47c26c13d2ac5c232e5a",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "1ac61665ba196239de5c98eee3b62e57a68b6d90cd77c38a51b8feefa6d07f88",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:baseline:MASK:primary:receipt",
+                      "page-other:B:baseline:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:baseline:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "19a810f122f7e90171eed1f1406a24e1747221aa2ab3cce5f884528a20833fa3",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:baseline:MASK:primary:fee"
+                        },
+                        "artifactSha256": "1ac61665ba196239de5c98eee3b62e57a68b6d90cd77c38a51b8feefa6d07f88",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "98b86900ce45b8f5359cf4f7fd0e595ae48b2a03f57596c552f13b1e54a66297",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:baseline:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "2dc4084495ba3fe3ca5300ca1e86d2885ebd5eaa68568c72993cfb398f7c43c2",
+                    "usageScopeSha256": "f141f25c88c90f37c8cc4ed80b1ffec08d83bdc4b182596d10096204836461e4",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "98b86900ce45b8f5359cf4f7fd0e595ae48b2a03f57596c552f13b1e54a66297",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:baseline:INPAINT:primary:receipt",
+                      "page-other:B:baseline:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:baseline:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "a995f039a725ffdbba13f7834726cf2590a6c011370ad3f11f2ecba86b6e2d5f",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:baseline:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "98b86900ce45b8f5359cf4f7fd0e595ae48b2a03f57596c552f13b1e54a66297",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:baseline:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "4669f9f88e046e83db95e21cde97b9c4e5b2585cd7b8876b4085c4fb5d9ed14d",
+                    "usageScopeSha256": "435201dbab5b53aa7c95e3b5ff2c41bd6c9a352553fdbd8b0e4379359dedd4c4",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:baseline:TYPESET:primary:receipt",
+                      "page-other:B:baseline:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:baseline:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "92a7f6e02f0a2df98989768ac83c870a1b1fb06fc61c0bb93edc466bc45f7d08",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:baseline:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "condition": {
+          "model": "B",
+          "modelSha256": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7",
+          "processing": "improved",
+          "processingSha256": "e88853216dc0a71e56da0adc54560d5531fcd9aa04734773fd13de947615ed58"
+        },
+        "path": {
+          "kind": "full_path",
+          "intermediateSha256": null,
+          "firstStage": "OCR"
+        },
+        "jobs": [
+          {
+            "jobId": "page-other:B:improved",
+            "receiptId": "receipt:page-other:B:improved",
+            "receiptSha256": "c6e69e2255e328ad77aa65d8470212fa1870334e1cecaf1f24fa1b8a0289e4b8",
+            "evidenceKind": "synthetic",
+            "reportedStatus": "succeeded",
+            "status": "succeeded",
+            "reason": null,
+            "resultSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907",
+            "initialization": {
+              "mode": "warm",
+              "reason": null,
+              "elapsedMs": {
+                "value": 1,
+                "unit": "ms",
+                "reason": null
+              }
+            },
+            "timeScope": null,
+            "elapsedMs": {
+              "value": 40,
+              "unit": "ms",
+              "reason": null
+            },
+            "peakRamBytes": {
+              "value": 900,
+              "unit": "bytes",
+              "reason": null
+            },
+            "pageAttempts": [
+              {
+                "attemptId": "history:page-other:B:improved",
+                "jobId": "page-other:B:improved",
+                "number": 1,
+                "manualEdits": 0,
+                "status": "succeeded"
+              }
+            ],
+            "stages": [
+              {
+                "stage": "OCR",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "29228fb36cefe508014d40178eb46159137bc237ea39cec60efad0d9d72394b3",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:improved:OCR:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "ocr",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "5e28583d2c86c88847b43a7292fa85c80ea00346cfc40def3f669c73d4cd284c",
+                    "usageScopeSha256": "f794d33c8f11a7da37525b4aab26571d59b85bc65a8f4d7addbdf97de630f5f6",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "29228fb36cefe508014d40178eb46159137bc237ea39cec60efad0d9d72394b3",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:improved:OCR:primary:receipt",
+                      "page-other:B:improved:OCR:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:improved:OCR:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "d25ba63b9af5465f8dce88e4c99280fba1cb70e6803d59865f1a096500eef683",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:improved:OCR:primary:fee"
+                        },
+                        "artifactSha256": "29228fb36cefe508014d40178eb46159137bc237ea39cec60efad0d9d72394b3",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TRANSLATE",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "e6015b327e0e6ae24cf1a433ab966e9a938280068a68d5cf2fff23c71ef9dd49",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:improved:TRANSLATE:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "translate",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "ce1d9ab5dc932085dddfa7223822ff75a96307177e8c5f6263d620b442709ca1",
+                    "usageScopeSha256": "494ea3d0b94050f27b0dd55cabc1551bdc531e84d9659c04bea3165caa891fbf",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "e6015b327e0e6ae24cf1a433ab966e9a938280068a68d5cf2fff23c71ef9dd49",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:improved:TRANSLATE:primary:receipt",
+                      "page-other:B:improved:TRANSLATE:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:improved:TRANSLATE:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "67ed3ad5bfd3981a65abb7a94fa754012afd69f974235da6038ffd7d82d341c8",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0.25",
+                          "currency": "USD",
+                          "source": "page-other:B:improved:TRANSLATE:primary:fee"
+                        },
+                        "artifactSha256": "e6015b327e0e6ae24cf1a433ab966e9a938280068a68d5cf2fff23c71ef9dd49",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0.25",
+                      "confirmedSubtotal": "0.25",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0.25",
+                  "confirmedSubtotal": "0.25",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "MASK",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "be058654427c063b560c05bd4135c6b2a37d3c19943e67d00e9d6dfb94eb699a",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:improved:MASK:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "mask",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "bac04afc8f40e195b8af440b2b0cdfaee0c1098002012614e606d5286fd73eea",
+                    "usageScopeSha256": "7e2f13c4b908cf3b1b972866958665ec577e85e910ab47528adbda2971f4c0a8",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "be058654427c063b560c05bd4135c6b2a37d3c19943e67d00e9d6dfb94eb699a",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:improved:MASK:primary:receipt",
+                      "page-other:B:improved:MASK:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:improved:MASK:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "9add75526d40c1c29842a6875bb9092beb464f3984b7317063a934eacce1f4e9",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:improved:MASK:primary:fee"
+                        },
+                        "artifactSha256": "be058654427c063b560c05bd4135c6b2a37d3c19943e67d00e9d6dfb94eb699a",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "INPAINT",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "213619843c15d3e54aa6dce28d096fbda1231e2c6b546863ac9e09415e7a2ee5",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:improved:INPAINT:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "inpaint",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "04d358ba325c5f6b8db31ecdd244bc1e1d7251e8696b7fc4aea357b3b003212a",
+                    "usageScopeSha256": "5a535e663d4f7c657b1d74851cdad471c3a26af8cca2015c115d58c4dd010666",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "213619843c15d3e54aa6dce28d096fbda1231e2c6b546863ac9e09415e7a2ee5",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:improved:INPAINT:primary:receipt",
+                      "page-other:B:improved:INPAINT:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:improved:INPAINT:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "ca30261296b45b20d6f37af4de4c0b004dd0a36e8ca6ad45948c2808b5c5c272",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:improved:INPAINT:primary:fee"
+                        },
+                        "artifactSha256": "213619843c15d3e54aa6dce28d096fbda1231e2c6b546863ac9e09415e7a2ee5",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              },
+              {
+                "stage": "TYPESET",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907",
+                "elapsedMs": {
+                  "value": 5,
+                  "unit": "ms",
+                  "reason": null
+                },
+                "peakRamBytes": {
+                  "value": 100,
+                  "unit": "bytes",
+                  "reason": null
+                },
+                "attempts": [
+                  {
+                    "executionId": "page-other:B:improved:TYPESET:primary",
+                    "action": "EXECUTE_STAGE",
+                    "previousExecutionId": null,
+                    "provider": {
+                      "providerId": "provider-B",
+                      "modelId": "model-B",
+                      "modelVersion": "synthetic-v1",
+                      "profileDigest": "bd44f35c24b365e5d9921d1f134d459ecb50e21fd8c1f26d2021ccc52f422eef"
+                    },
+                    "nodeId": "typeset",
+                    "regionId": null,
+                    "regionIds": [
+                      "r1",
+                      "r2"
+                    ],
+                    "inputFingerprint": "ee094e2b3ca29ed0bab35849919315796bc99d076004a498aa8a4acebf8b33f0",
+                    "usageScopeSha256": "de714d5a5d1136c2931b01b9fe66f59db47a1021205edd152e8983beca2c3023",
+                    "status": "succeeded",
+                    "reason": null,
+                    "resultSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907",
+                    "dispatched": true,
+                    "evidenceRefs": [
+                      "page-other:B:improved:TYPESET:primary:receipt",
+                      "page-other:B:improved:TYPESET:primary:fee"
+                    ],
+                    "observations": [
+                      {
+                        "operation": "DISPATCH",
+                        "invoked": true,
+                        "lookupStatus": null,
+                        "state": "CONFIRMED_SUCCESS",
+                        "started": true,
+                        "errorCode": null,
+                        "evidenceRefs": [
+                          "page-other:B:improved:TYPESET:primary:receipt"
+                        ],
+                        "providerOutcome": "SUCCESS",
+                        "evidenceFingerprint": "78ed4f916431f4f2295b22e57f7d4c49243a756df6f6a169e211aa9f2e9b0561",
+                        "charge": {
+                          "state": "CONFIRMED",
+                          "amount": "0",
+                          "currency": "USD",
+                          "source": "page-other:B:improved:TYPESET:primary:fee"
+                        },
+                        "artifactSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907",
+                        "regionIds": [
+                          "r1",
+                          "r2"
+                        ],
+                        "missingRegionIds": []
+                      }
+                    ],
+                    "lookupCount": 0,
+                    "lookupCountReason": null,
+                    "lookupMs": {
+                      "value": 0,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "elapsedMs": {
+                      "value": 3,
+                      "unit": "ms",
+                      "reason": null
+                    },
+                    "charge": {
+                      "state": "CONFIRMED",
+                      "currency": "USD",
+                      "amount": "0",
+                      "confirmedSubtotal": "0",
+                      "reason": null
+                    }
+                  }
+                ],
+                "retryCount": 0,
+                "fallbackCount": 0,
+                "countReason": null,
+                "charge": {
+                  "state": "CONFIRMED",
+                  "currency": "USD",
+                  "amount": "0",
+                  "confirmedSubtotal": "0",
+                  "reason": null
+                }
+              }
+            ],
+            "charge": {
+              "state": "CONFIRMED",
+              "currency": "USD",
+              "amount": "0.25",
+              "confirmedSubtotal": "0.25",
+              "reason": null
+            }
+          }
+        ],
+        "completed": true
+      }
+    ],
+    "summary": {
+      "plannedCells": 8,
+      "completedCells": 8,
+      "plannedJobs": 8,
+      "observedJobs": 8,
+      "completedJobs": 8,
+      "charge": {
+        "state": "CONFIRMED",
+        "currency": "USD",
+        "amount": "2",
+        "confirmedSubtotal": "2",
+        "reason": null
+      },
+      "recordedSuccess": {
+        "firstAttempt": 8,
+        "afterRetry": 0,
+        "afterManualEdits": 0,
+        "pagesWithHistory": 8,
+        "denominator": 8,
+        "basis": "PINNED_HISTORY_CLAIMS",
+        "byEvidenceKind": {
+          "actual_product": 0,
+          "component": 0,
+          "cache_reuse": 0,
+          "synthetic": 8,
+          "not_run": 0
+        }
+      }
+    }
+  }
+}

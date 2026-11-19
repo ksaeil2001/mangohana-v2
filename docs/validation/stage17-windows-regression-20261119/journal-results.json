@@ -1,0 +1,219 @@
+{
+  "pass": false,
+  "originalFixtureHash": "d612c3d056ba6e40259758c5d59bfde663bdbe69e791766654a5f88038bed213",
+  "revisedFixtureHash": "1971c6915cf1852c4fbda01bb7a28f62da7e6b20606c0650de4c6ebfc0516cd6",
+  "fixtureVerified": true,
+  "sourceKeysCompared": 401,
+  "currentSourcesVerified": true,
+  "outputHashes": {
+    "normal": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+    "expanded": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb"
+  },
+  "runs": [
+    {
+      "label": "journal-five",
+      "counts": {
+        "tests": 40,
+        "pass": 40,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T21:53:00.443Z",
+      "finished": "2026-11-18T21:55:53.007Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "engine-ocr-refinement.test.mjs",
+          "tests": 10,
+          "passed": 10
+        },
+        {
+          "name": "engine-runtime-reuse.test.mjs",
+          "tests": 18,
+          "passed": 18
+        },
+        {
+          "name": "imported-font-bootstrap.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "typesetting-only-native.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "warm-electron-entry.test.mjs",
+          "tests": 6,
+          "passed": 6
+        }
+      ],
+      "logSha256": "05f533feec1b368c0fb5c8ab91b372860cd71fc3468bd10b7cbe575b11c25deb",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 10,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "missingPlanWorker": {
+        "supervisor": "2026-11-18T21:55:44.071Z",
+        "start": "2026-11-18T21:55:44.543Z",
+        "exit": "2026-11-18T21:55:44.605Z",
+        "ms": 62,
+        "exitCode": 1,
+        "clean": true,
+        "active": 0
+      },
+      "pass": true
+    },
+    {
+      "label": "journal-full",
+      "counts": {
+        "tests": 1340,
+        "pass": 1333,
+        "fail": 7,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 1,
+      "started": "2026-11-18T21:55:53.766Z",
+      "finished": "2026-11-18T22:12:41.849Z",
+      "failures": [
+        "not ok 152 - Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft",
+        "not ok 156 - a page request binds the server snapshot and records actual glossary/context consumption",
+        "not ok 157 - selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+        "not ok 158 - a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+        "not ok 159 - engine close cancels active synthetic translation, drains job and caches, then releases hooks",
+        "not ok 160 - a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+        "not ok 1329 - real Electron bootstrap-only validates its genuine gate before ready and exits without creating an engine or AI result"
+      ],
+      "selectedFiles": [
+        {
+          "name": "engine-ocr-refinement.test.mjs",
+          "tests": 10,
+          "passed": 10
+        },
+        {
+          "name": "engine-runtime-reuse.test.mjs",
+          "tests": 18,
+          "passed": 12
+        },
+        {
+          "name": "imported-font-bootstrap.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "typesetting-only-native.test.mjs",
+          "tests": 3,
+          "passed": 3
+        },
+        {
+          "name": "warm-electron-entry.test.mjs",
+          "tests": 6,
+          "passed": 5
+        }
+      ],
+      "logSha256": "a6735edf0e16be211037fa753eb2e111a65fd89d68d1bc47aee0273237021133",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 10,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "missingPlanWorker": {
+        "supervisor": "2026-11-18T22:11:50.500Z",
+        "start": "2026-11-18T22:11:50.985Z",
+        "exit": "2026-11-18T22:11:51.055Z",
+        "ms": 70,
+        "exitCode": 1,
+        "clean": true,
+        "active": 0
+      },
+      "pass": false
+    },
+    {
+      "label": "journal-missing",
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T22:12:42.930Z",
+      "finished": "2026-11-18T22:12:52.658Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "warm-electron-entry.test.mjs",
+          "tests": 1,
+          "passed": 1
+        }
+      ],
+      "logSha256": "9803c0786f6a704413d5da16eceb1d97f28d0e058c5ad1016f7fed40715bd7f2",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 1,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "missingPlanWorker": {
+        "supervisor": "2026-11-18T22:12:43.311Z",
+        "start": "2026-11-18T22:12:51.494Z",
+        "exit": "2026-11-18T22:12:51.553Z",
+        "ms": 59,
+        "exitCode": 1,
+        "clean": true,
+        "active": 0
+      },
+      "pass": true
+    },
+    {
+      "label": "journal-native",
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "code": 0,
+      "started": "2026-11-18T22:12:56.191Z",
+      "finished": "2026-11-18T22:13:12.656Z",
+      "failures": [],
+      "selectedFiles": [
+        {
+          "name": "typesetting-only-native.test.mjs",
+          "tests": 1,
+          "passed": 1
+        }
+      ],
+      "logSha256": "509f3345b6e6c5162607f7b6301a2c11b86a8483e6ff6d55b85b87a37764d648",
+      "hashesMatch": true,
+      "commandsMatch": true,
+      "inputsUnchanged": true,
+      "workerReceipts": 1,
+      "receiptsMatch": true,
+      "outputBound": true,
+      "missingPlan": true,
+      "pass": true
+    }
+  ],
+  "stage16": {
+    "pass": true,
+    "executions": 193,
+    "distinctNames": 130
+  },
+  "protection": true
+}

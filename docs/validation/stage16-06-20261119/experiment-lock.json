@@ -1,0 +1,32 @@
+{
+  "status": "locked",
+  "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+  "record": {
+    "schemaVersion": 1,
+    "kind": "stage16-experiment-lock",
+    "preregistrationSha256": "9046520e837129103e8c0bf4a428eb668a05740afc062d6d5db863911150cd44",
+    "manifestSha256": "23450b0fd5df89ff206dbc93a8232fe5ecf381627112ff5bf8ae66264f565348",
+    "candidateSelectionSha256": "81283143e450ab38b568c6d542c59471a0fcab55fed3f27937bd2daa236a6d47",
+    "holdoutHistorySha256": "be50d125ef4fe10a1c6313c4f499d599e34b6a0bad5a0bcfe4ab986f9661ca15",
+    "samples": [
+      {
+        "pageId": "page-final",
+        "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+        "groundTruthSha256": "de2ba1128d3ed1c76676ae2f7e3a60ee54de589cc09f25739eb3fdb9a9260d35",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+        "workId": "work-final",
+        "leakageGroupId": "group-work-final",
+        "contextSnapshotSha256": "bb3c89f92b9dd69f3f7332a7a58824e9bb75ea46c617ce8b9a10941efa12b884"
+      },
+      {
+        "pageId": "page-other",
+        "sourceSha256": "a03484d60425d7b61778dff541fa128759978273312cc168ed901b56a81b8e64",
+        "groundTruthSha256": "d8595fef4457462b2f77973165567f01793aee6c4f69a087653468c332672494",
+        "matrixSha256": "727b73c7a3c5ffe98a57f7b207e883b2139404445c1382d199dabe5b725f6dcd",
+        "workId": "work-other",
+        "leakageGroupId": "group-work-other",
+        "contextSnapshotSha256": "7721b61743ecd3aae4bba339a734193170fa83ef4bfe8a4c85c7d4988bea2fed"
+      }
+    ]
+  }
+}

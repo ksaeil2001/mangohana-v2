@@ -1,0 +1,48 @@
+{
+  "mode": "five",
+  "traceFlag": "trace",
+  "started": "2026-11-18T20:47:26.101Z",
+  "tmp": "E:/Dev/Outputs/MangohanaV2-20261111/tests/stage17-windows-verified-five-M5cWGS",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "executableSha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+  "node": "v24.22.1",
+  "args": [
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "--require",
+    "C:\\dev\\Projects\\mangohana\\docs\\validation\\stage17-windows-regression-20261119\\trace.cjs",
+    "tests/v2/engine-ocr-refinement.test.mjs",
+    "tests/v2/engine-runtime-reuse.test.mjs",
+    "tests/v2/imported-font-bootstrap.test.mjs",
+    "tests/v2/typesetting-only-native.test.mjs",
+    "tests/v2/warm-electron-entry.test.mjs"
+  ],
+  "branch": "codex/mangohana-v2-sites-20261111",
+  "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+  "fixtureRoots": {
+    "owned": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-verified-five-M5cWGS\\owned",
+    "lease": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-verified-five-M5cWGS\\lease",
+    "entry": "E:\\Dev\\Outputs\\MangohanaV2-20261111\\tests\\stage17-windows-verified-five-M5cWGS\\entry"
+  },
+  "finished": "2026-11-18T20:51:07.849Z",
+  "code": 1,
+  "signal": null,
+  "counts": {
+    "tests": 40,
+    "pass": 36,
+    "fail": 3,
+    "cancelled": 1,
+    "skipped": 0,
+    "todo": 0
+  },
+  "changed": [],
+  "logSha256": "c88c91b0814a0539ff43b26ca1656f7dd675acd46c81f011b549e6bc86d1bcf9",
+  "sourcesSha256": "7dfb8980e716325487c211ea60ee04b9e1ed0900fe2667776c4df72f6504d49a",
+  "failures": [
+    "not ok 22 - selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+    "not ok 23 - a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+    "not ok 28 - unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job",
+    "not ok 38 - real Electron CLI with invalid argument count exits 1 instead of leaving its loop idle"
+  ]
+}

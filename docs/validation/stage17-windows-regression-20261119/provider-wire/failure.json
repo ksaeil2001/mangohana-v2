@@ -1,0 +1,55 @@
+{
+  "counts": {
+    "tests": 28,
+    "pass": 27,
+    "fail": 1,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "case": "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+  "pid": 6612,
+  "launchRequested": "2026-11-18T21:44:55.667Z",
+  "spawnReturned": "2026-11-18T21:44:55.672Z",
+  "exit": "2026-11-18T21:45:02.352Z",
+  "fixture": "engine-reuse-9aBLbQ",
+  "sockets": [
+    {
+      "request": 40,
+      "socket": 33,
+      "at": "2026-11-18T21:44:55.878Z"
+    },
+    {
+      "request": 41,
+      "socket": 35,
+      "at": "2026-11-18T21:44:57.599Z"
+    },
+    {
+      "request": 42,
+      "socket": 37,
+      "at": "2026-11-18T21:44:59.315Z"
+    }
+  ],
+  "sent": 3,
+  "headers": 0,
+  "phases": [
+    {
+      "at": "2026-11-18T21:44:55.665Z",
+      "phase": "llama_load_start"
+    },
+    {
+      "at": "2026-11-18T21:45:01.033Z",
+      "phase": "llama_load_failed",
+      "code": "LLM_START_TIMEOUT",
+      "exitCode": null
+    }
+  ],
+  "journalBirth": "2026-11-18T21:44:55.880Z",
+  "actualRows": [
+    {
+      "path": "/v1/models",
+      "authorized": true,
+      "pid": 6612
+    }
+  ]
+}

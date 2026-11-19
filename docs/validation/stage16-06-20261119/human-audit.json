@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "kind": "stage16-human-audit",
+  "scope": "synthetic",
+  "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+  "protocolSha256": "616ddffd42f2b4f4a4dedb57dc5ecd5e9a1084d30951c96d51fdf09c94326772",
+  "reviewers": [
+    {
+      "reviewerId": "fixture-reader-one",
+      "independenceGroup": "group-fixture-reader-one"
+    },
+    {
+      "reviewerId": "fixture-reader-two",
+      "independenceGroup": "group-fixture-reader-two"
+    }
+  ],
+  "returns": {
+    "schemaVersion": 1,
+    "kind": "stage16-blind-returns",
+    "lockId": "99bb793f09a7214ef974c27387e7ed84c7ac4b037b01f5be01693b86bb71e68b",
+    "sealSha256": "172706f70d3a93515cc75e9f51e3934d67495c2d3673003dc30a2ad04f63ce34",
+    "observationsSha256": "93003d5591605bc5c1d110c059e00489b8a919e7d4a6e3cf24870c2a7add7664",
+    "reviewerAuthentication": "unverified_offline_submission",
+    "pairs": [
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "model": "A",
+        "results": {
+          "baseline": {
+            "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:A:baseline",
+                "receiptSha256": "21d873910c085e7933a8fe9b25f85daab8331561235f1d97e106e22a56efb099",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "c682e0aaff0a8d6cb15f742f528874cfde94109c2456ff9fcf0a583a2ac1e6aa"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:A:improved",
+                "receiptSha256": "4a9a54a8a7d3e43f04161b40c39ba42d4b13f780f44891fca3c698d458e515f9",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "b03d482e03fd323f61e7f5a048922e9c10e213b88cc5c8f9894be0f627f869d9"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "assignmentId": "ec2e4b5924f7d61df9680842243ea4033982c9803878ed1724fe707b01697c7c",
+            "reviewerId": "fixture-reader-one",
+            "status": "answered",
+            "evidenceKind": "synthetic",
+            "semanticFidelity": {
+              "choice": "A",
+              "preference": "baseline",
+              "reason": null
+            },
+            "naturalness": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            }
+          }
+        ],
+        "comparison": {
+          "semanticFidelity": "not_overlapped",
+          "naturalness": "not_overlapped"
+        }
+      },
+      {
+        "workId": "work-final",
+        "pageId": "page-final",
+        "model": "B",
+        "results": {
+          "baseline": {
+            "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:B:baseline",
+                "receiptSha256": "e359fd6c2d647c38668debfc9c3eccbb332c88cb81a5f12496ba554462421ca9",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "30e6775187cfac408f82c5a05fdc6ab85c91e9e5cc50dfcbdcbff40ad259d107"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-final:B:improved",
+                "receiptSha256": "6152bfe57482df2352103ca0e9739dd1cbbde6f452e96fd74dd3f269344535ec",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "588f44cea9efc67550f3d7f62cc4aa1e4f3f72b480bd42d96862b598712232c9"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "assignmentId": "dd22ff7a88153722f38ccc35806b0edbe86231e0c6ae054efb521cf18b976f07",
+            "reviewerId": "fixture-reader-two",
+            "status": "answered",
+            "evidenceKind": "synthetic",
+            "semanticFidelity": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            },
+            "naturalness": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            }
+          }
+        ],
+        "comparison": {
+          "semanticFidelity": "not_overlapped",
+          "naturalness": "not_overlapped"
+        }
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "model": "A",
+        "results": {
+          "baseline": {
+            "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:A:baseline",
+                "receiptSha256": "fdbc684bc8d5b6e92e2b7013328a4d41004673ae51b08d9780e3143d101cd17e",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "6fed1f87ad4e1baebb896d1056f3bdd0c7fae52f7b862017e9b154ced9b4e125"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:A:improved",
+                "receiptSha256": "87331f525eeb365be6a629e25635b12ef933b25e8d643204a7d7242cd1ad41cf",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "70f505c3420ad470978ab82d97058aca52b833be2db89df8cab451f5023d8b02"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "assignmentId": "4eb39f6b0a66bb6536fef2c9a3c101e281ebe0fb5773644da68247331f4e255a",
+            "reviewerId": "fixture-reader-one",
+            "status": "answered",
+            "evidenceKind": "synthetic",
+            "semanticFidelity": {
+              "choice": "B",
+              "preference": "baseline",
+              "reason": null
+            },
+            "naturalness": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            }
+          },
+          {
+            "assignmentId": "93f28895704e2a5bfac075f45ff024d33db81b364589e69d899d5712beab05b4",
+            "reviewerId": "fixture-reader-two",
+            "status": "answered",
+            "evidenceKind": "synthetic",
+            "semanticFidelity": {
+              "choice": "B",
+              "preference": "baseline",
+              "reason": null
+            },
+            "naturalness": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            }
+          }
+        ],
+        "comparison": {
+          "semanticFidelity": "agree",
+          "naturalness": "agree"
+        }
+      },
+      {
+        "workId": "work-other",
+        "pageId": "page-other",
+        "model": "B",
+        "results": {
+          "baseline": {
+            "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:B:baseline",
+                "receiptSha256": "93a98daa824922c25a9cf2a32b47ab6557a4c9c29cfe6d857844b6f0c86bbfdd",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "798984d04e25c25dc7a97f457ca30a1713cadee303bb293db11c428238e4b892"
+              }
+            ]
+          },
+          "improved": {
+            "resultSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907",
+            "reason": null,
+            "jobs": [
+              {
+                "jobId": "page-other:B:improved",
+                "receiptSha256": "c6e69e2255e328ad77aa65d8470212fa1870334e1cecaf1f24fa1b8a0289e4b8",
+                "evidenceKind": "synthetic",
+                "status": "succeeded",
+                "reason": null,
+                "resultSha256": "479b0350c62716eded91aef0cf31a9fd05ffe88896fe77f9655e1ff946f2b907"
+              }
+            ]
+          }
+        },
+        "assignments": [
+          {
+            "assignmentId": "0a5bc634e7b57ce0dd44648963c31351652f8f9799dfb64a83604edb19ccbc85",
+            "reviewerId": "fixture-reader-one",
+            "status": "answered",
+            "evidenceKind": "synthetic",
+            "semanticFidelity": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            },
+            "naturalness": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            }
+          },
+          {
+            "assignmentId": "74c12b8dd9a694b102f79b2a57d54a8edd6b0a22585fccf020ad730a784b72c4",
+            "reviewerId": "fixture-reader-two",
+            "status": "answered",
+            "evidenceKind": "synthetic",
+            "semanticFidelity": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            },
+            "naturalness": {
+              "choice": "tie",
+              "preference": "tie",
+              "reason": null
+            }
+          }
+        ],
+        "comparison": {
+          "semanticFidelity": "agree",
+          "naturalness": "agree"
+        }
+      }
+    ],
+    "summary": {
+      "plannedPairs": 4,
+      "overlapPairs": 2,
+      "plannedAssignments": 6,
+      "issuedAssignments": 6,
+      "answered": 6,
+      "partial": 0,
+      "unanswered": 0,
+      "unavailable": 0
+    }
+  }
+}

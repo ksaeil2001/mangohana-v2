@@ -1,0 +1,706 @@
+{
+  "children": 21,
+  "identities": 21,
+  "timeouts": 0,
+  "outputs": [
+    {
+      "test": "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+      "leaf": "engine-default-aqfVDW",
+      "pid": 34652,
+      "identity": true,
+      "requested": "2026-11-18T21:30:07.823Z",
+      "exit": "2026-11-18T21:30:11.819Z",
+      "firstJs": "2026-11-18T21:30:07.875Z",
+      "listen": "2026-11-18T21:30:11.566Z",
+      "firstServerRequest": "2026-11-18T21:30:11.761Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 8,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 3679
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "default false keeps per-job cold lifecycle, authenticated model identity and original quality guards",
+      "leaf": "engine-default-aqfVDW",
+      "pid": 27532,
+      "identity": true,
+      "requested": "2026-11-18T21:30:12.203Z",
+      "exit": "2026-11-18T21:30:12.654Z",
+      "firstJs": "2026-11-18T21:30:12.253Z",
+      "listen": "2026-11-18T21:30:12.573Z",
+      "firstServerRequest": "2026-11-18T21:30:12.624Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 308
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage13 render-only retry reuses verified OCR translation and cleaned checkpoints without another model request",
+      "leaf": "engine-default-Gc8Ld4",
+      "pid": 35756,
+      "identity": true,
+      "requested": "2026-11-18T21:30:14.881Z",
+      "exit": "2026-11-18T21:30:15.717Z",
+      "firstJs": "2026-11-18T21:30:14.930Z",
+      "listen": "2026-11-18T21:30:15.365Z",
+      "firstServerRequest": "2026-11-18T21:30:15.511Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 423
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage13 owned store persists checkpoint receipts and commits a render retry once after reopening",
+      "leaf": "engine-default-8zfiCA",
+      "pid": 31748,
+      "identity": true,
+      "requested": "2026-11-18T21:30:18.805Z",
+      "exit": "2026-11-18T21:30:20.995Z",
+      "firstJs": "2026-11-18T21:30:18.851Z",
+      "listen": "2026-11-18T21:30:20.600Z",
+      "firstServerRequest": "2026-11-18T21:30:20.664Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 1735
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage12 refuses omitTypesettingIdentity before any partial candidate PNG is saved",
+      "leaf": "engine-default-IXOJxH",
+      "pid": 15248,
+      "identity": true,
+      "requested": "2026-11-18T21:30:23.828Z",
+      "exit": "2026-11-18T21:30:24.696Z",
+      "firstJs": "2026-11-18T21:30:23.881Z",
+      "listen": "2026-11-18T21:30:24.642Z",
+      "firstServerRequest": "2026-11-18T21:30:24.660Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 749
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage12 refuses staleTypesettingIdentity before any partial candidate PNG is saved",
+      "leaf": "engine-default-M0qrw2",
+      "pid": 22680,
+      "identity": true,
+      "requested": "2026-11-18T21:30:27.324Z",
+      "exit": "2026-11-18T21:30:27.975Z",
+      "firstJs": "2026-11-18T21:30:27.369Z",
+      "listen": "2026-11-18T21:30:27.764Z",
+      "firstServerRequest": "2026-11-18T21:30:27.943Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 375
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage11 default text path consumes bound context with real TS modules and keeps uncertain semantics as a draft",
+      "leaf": "engine-default-RVKZiv",
+      "pid": 29968,
+      "identity": true,
+      "requested": "2026-11-18T21:30:36.648Z",
+      "exit": "2026-11-18T21:30:36.901Z",
+      "firstJs": "2026-11-18T21:30:36.696Z",
+      "listen": "2026-11-18T21:30:36.709Z",
+      "firstServerRequest": "2026-11-18T21:30:36.866Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 157
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage11 text partial response cannot publish, erase source, or replace a last normal PNG",
+      "leaf": "engine-default-pXUKT3",
+      "pid": 23268,
+      "identity": true,
+      "requested": "2026-11-18T21:30:40.726Z",
+      "exit": "2026-11-18T21:30:40.997Z",
+      "firstJs": "2026-11-18T21:30:40.771Z",
+      "listen": "2026-11-18T21:30:40.785Z",
+      "firstServerRequest": "2026-11-18T21:30:40.940Z",
+      "requests": 4,
+      "responses": 4,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 155
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Stage11 page partial response cannot publish, erase source, or replace a last normal PNG",
+      "leaf": "engine-default-KF0Blw",
+      "pid": 12708,
+      "identity": true,
+      "requested": "2026-11-18T21:30:41.633Z",
+      "exit": "2026-11-18T21:30:41.878Z",
+      "firstJs": "2026-11-18T21:30:41.680Z",
+      "listen": "2026-11-18T21:30:41.694Z",
+      "firstServerRequest": "2026-11-18T21:30:41.843Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 149
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "Japanese translation in valid page JSON is rejected before any candidate, restoration or completed report",
+      "leaf": "engine-default-hn3U4T",
+      "pid": 31216,
+      "identity": true,
+      "requested": "2026-11-18T21:30:42.713Z",
+      "exit": "2026-11-18T21:30:42.960Z",
+      "firstJs": "2026-11-18T21:30:42.758Z",
+      "listen": "2026-11-18T21:30:42.771Z",
+      "firstServerRequest": "2026-11-18T21:30:42.923Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 152
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "a page request binds the server snapshot and records actual glossary/context consumption",
+      "leaf": "engine-default-ieJCSm",
+      "pid": 3600,
+      "identity": true,
+      "requested": "2026-11-18T21:30:43.628Z",
+      "exit": "2026-11-18T21:30:44.917Z",
+      "firstJs": "2026-11-18T21:30:43.681Z",
+      "listen": "2026-11-18T21:30:44.761Z",
+      "firstServerRequest": "2026-11-18T21:30:44.875Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 7,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 1067
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+      "leaf": "engine-reuse-HmaKr6",
+      "pid": 35588,
+      "identity": true,
+      "requested": "2026-11-18T21:30:46.493Z",
+      "exit": "2026-11-18T21:30:47.213Z",
+      "firstJs": "2026-11-18T21:30:46.541Z",
+      "listen": "2026-11-18T21:30:46.554Z",
+      "firstServerRequest": "2026-11-18T21:30:46.714Z",
+      "requests": 12,
+      "responses": 12,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "response_finished",
+        "to": "server_request_start",
+        "ms": 169
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+      "leaf": "engine-reuse-HmaKr6",
+      "pid": 31024,
+      "identity": true,
+      "requested": "2026-11-18T21:30:47.274Z",
+      "exit": "2026-11-18T21:30:47.611Z",
+      "firstJs": "2026-11-18T21:30:47.322Z",
+      "listen": "2026-11-18T21:30:47.336Z",
+      "firstServerRequest": "2026-11-18T21:30:47.476Z",
+      "requests": 7,
+      "responses": 7,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 140
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+      "leaf": "engine-reuse-3Qfz2Y",
+      "pid": 23340,
+      "identity": true,
+      "requested": "2026-11-18T21:30:48.346Z",
+      "exit": "2026-11-18T21:30:50.113Z",
+      "firstJs": "2026-11-18T21:30:48.395Z",
+      "listen": "2026-11-18T21:30:49.121Z",
+      "firstServerRequest": "2026-11-18T21:30:49.187Z",
+      "requests": 12,
+      "responses": 12,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 712
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "engine close cancels active synthetic translation, drains job and caches, then releases hooks",
+      "leaf": "engine-reuse-EJoNku",
+      "pid": 7752,
+      "identity": true,
+      "requested": "2026-11-18T21:30:50.812Z",
+      "exit": "2026-11-18T21:30:51.288Z",
+      "firstJs": "2026-11-18T21:30:50.857Z",
+      "listen": "2026-11-18T21:30:51.118Z",
+      "firstServerRequest": "2026-11-18T21:30:51.237Z",
+      "requests": 5,
+      "responses": 4,
+      "maxCompletedDiaryMs": 4,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED",
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "node_entry",
+        "to": "module_load_start",
+        "ms": 250
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "leaf": "engine-reuse-PLDmFY",
+      "pid": 29108,
+      "identity": true,
+      "requested": "2026-11-18T21:30:52.118Z",
+      "exit": "2026-11-18T21:30:52.555Z",
+      "firstJs": "2026-11-18T21:30:52.162Z",
+      "listen": "2026-11-18T21:30:52.176Z",
+      "firstServerRequest": "2026-11-18T21:30:52.334Z",
+      "requests": 8,
+      "responses": 8,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "response_finished",
+        "to": "server_request_start",
+        "ms": 168
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "leaf": "engine-reuse-PLDmFY",
+      "pid": 32560,
+      "identity": true,
+      "requested": "2026-11-18T21:30:52.619Z",
+      "exit": "2026-11-18T21:30:52.847Z",
+      "firstJs": "2026-11-18T21:30:52.672Z",
+      "listen": "2026-11-18T21:30:52.685Z",
+      "firstServerRequest": "2026-11-18T21:30:52.832Z",
+      "requests": 1,
+      "responses": 1,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 147
+      },
+      "failures": [
+        {
+          "at": "2026-11-18T21:30:52.839Z",
+          "code": "LLM_MODEL_ID"
+        }
+      ],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "a cached server reporting a foreign model cannot serve a new page and is disposed before another cold validation",
+      "leaf": "engine-reuse-PLDmFY",
+      "pid": 29768,
+      "identity": true,
+      "requested": "2026-11-18T21:30:53.456Z",
+      "exit": "2026-11-18T21:30:53.788Z",
+      "firstJs": "2026-11-18T21:30:53.489Z",
+      "listen": "2026-11-18T21:30:53.502Z",
+      "firstServerRequest": "2026-11-18T21:30:53.652Z",
+      "requests": 7,
+      "responses": 7,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 150
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments",
+      "leaf": "engine-default-WPtO7f",
+      "pid": 30560,
+      "identity": true,
+      "requested": "2026-11-18T21:30:54.899Z",
+      "exit": "2026-11-18T21:30:55.150Z",
+      "firstJs": "2026-11-18T21:30:54.936Z",
+      "listen": "2026-11-18T21:30:54.950Z",
+      "firstServerRequest": "2026-11-18T21:30:55.108Z",
+      "requests": 3,
+      "responses": 3,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 158
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "cold and cached OCR scopes inject private homes while same-executable model and restoration providers keep their environments",
+      "leaf": "engine-reuse-dYTZPN",
+      "pid": 38612,
+      "identity": true,
+      "requested": "2026-11-18T21:30:56.010Z",
+      "exit": "2026-11-18T21:30:56.577Z",
+      "firstJs": "2026-11-18T21:30:56.053Z",
+      "listen": "2026-11-18T21:30:56.067Z",
+      "firstServerRequest": "2026-11-18T21:30:56.213Z",
+      "requests": 12,
+      "responses": 12,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "response_finished",
+        "to": "server_request_start",
+        "ms": 202
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    },
+    {
+      "test": "unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job",
+      "leaf": "engine-reuse-58zJkV",
+      "pid": 10120,
+      "identity": true,
+      "requested": "2026-11-18T21:30:57.307Z",
+      "exit": "2026-11-18T21:30:57.651Z",
+      "firstJs": "2026-11-18T21:30:57.347Z",
+      "listen": "2026-11-18T21:30:57.360Z",
+      "firstServerRequest": "2026-11-18T21:30:57.515Z",
+      "requests": 7,
+      "responses": 7,
+      "maxCompletedDiaryMs": 3,
+      "parentStatuses": [
+        200,
+        401,
+        200,
+        401,
+        200,
+        401
+      ],
+      "parentErrors": [
+        "ECONNREFUSED"
+      ],
+      "longestObservedGap": {
+        "from": "listening",
+        "to": "server_request_start",
+        "ms": 155
+      },
+      "failures": [],
+      "lastBeforeTimeout": null,
+      "nextAfterTimeout": null
+    }
+  ]
+}

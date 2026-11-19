@@ -1,0 +1,167 @@
+{
+  "scope": "local_candidate_review",
+  "previousReview": {
+    "candidateSha256": "3f896b672f1ccf80ecd1ef3d9cc0e56d3f936f6cf9e474c7f030a8784bd8beaa",
+    "status": "BLOCKED"
+  },
+  "candidateSha256": "113a8938010dc616986c3ca06398fc610c42a799646eaf82a89b799c566c2d43",
+  "events": [
+    {
+      "file": "docs/validation/stage17-18-20261119/export-name-red.json",
+      "at": "2026-11-18T18:12:46.697Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "24b1a9f01db19c120964727b6dbac0c8eb3ea6983faa019861e17a0c90d5436a"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/v2-engine-volume.json",
+      "at": "2026-11-18T18:21:42.999Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1340,
+        "pass": 1338,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 1,
+        "todo": 0
+      },
+      "logSha256": "86fee98737b7e7a6d194586a3c64bb5c0dcd58f0158a445d9fc4c73ca02eb425"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/export-name-green.json",
+      "at": "2026-11-18T18:22:45.717Z",
+      "exitCode": 0,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "d91223e3c4c37cda528b8b8412b0a3e724a76f2f8cc76fb8683827d21f0d5b6c"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/browser-current.json",
+      "at": "2026-11-18T18:23:35.538Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "8ec3cd6dfe873b24f3199ba2e6faf4fb2dc50b964c14a9732311f7f6fd53c3a9"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/web-current.json",
+      "at": "2026-11-18T18:24:40.710Z",
+      "exitCode": 0,
+      "counts": {
+        "tests": 239,
+        "pass": 239,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "f88572bb23136dbeb0fd8b82333f5b8aa555e1799485da35139a76c6fd870764"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/v2-current.json",
+      "at": "2026-11-18T18:43:37.730Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1340,
+        "pass": 1330,
+        "fail": 7,
+        "skipped": 0,
+        "cancelled": 3,
+        "todo": 0
+      },
+      "logSha256": "c489a7e2f60dd966e94a2ccde2addd230643f00b843e1112df80a64892c9b8f9"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/browser-final.json",
+      "at": "2026-11-18T18:44:09.692Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "4ad087542121b0d30e8f0ff7af24b22b256c2489b2b8bd79b3dc32ea7fd97153"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/browser-ui-current.json",
+      "at": "2026-11-18T18:46:36.072Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "844931f6092eb251aae9212fd58b7d6e8df31ffba24b09d34aaf429c23c791f0"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/native-current.json",
+      "at": "2026-11-18T18:51:28.269Z",
+      "exitCode": 1,
+      "counts": {
+        "tests": 40,
+        "pass": 34,
+        "fail": 5,
+        "skipped": 0,
+        "cancelled": 1,
+        "todo": 0
+      },
+      "logSha256": "7b36520ba8bc8d53dac2558dbd82ae0e26ce6a6440c7435ae386b647e0022cf3"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/browser-checkpoint.json",
+      "at": "2026-11-18T18:53:25.369Z",
+      "exitCode": 0,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "c27145d3769bf4cf46411cd4aa1f32398a303df895f6c1cb2c8d74b5a45543ee"
+    },
+    {
+      "file": "docs/validation/stage17-18-20261119/entry-witness.json",
+      "at": "2026-11-18T18:53:57.132Z",
+      "exitCode": 0,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "logSha256": "2c02e14199a4c0c63f418c28e37a8cdc76755dcf93097c3a489c6a53bf89248b"
+    }
+  ],
+  "productionDeployment": null,
+  "productionMonitoring": null,
+  "operatorApproval": null
+}

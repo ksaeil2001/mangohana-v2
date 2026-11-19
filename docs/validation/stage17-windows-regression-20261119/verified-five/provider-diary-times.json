@@ -1,0 +1,44 @@
+[
+  {
+    "test": "selected reuse keeps independent OCR/server owners, isolates project switches, and uses fresh page bodies with exact IDs",
+    "leaf": "engine-reuse-z7oKRI",
+    "requestCount": 15,
+    "start": "2026-11-18T20:48:18.556Z",
+    "failure": "2026-11-18T20:48:23.903Z",
+    "diaryCreated": "2026-11-18T20:48:13.3900000Z",
+    "diaryModified": "2026-11-18T20:48:20.0000000Z",
+    "firstRequest": {
+      "pid": 38076,
+      "route": "/v1/models",
+      "authorized": true
+    }
+  },
+  {
+    "test": "a warm OCR lazy restart is rejected before spawning and only the next explicit job performs cold preparation",
+    "leaf": "engine-reuse-bB1ljS",
+    "requestCount": 1,
+    "start": "2026-11-18T20:48:25.111Z",
+    "failure": "2026-11-18T20:48:30.479Z",
+    "diaryCreated": "2026-11-18T20:48:25.3300000Z",
+    "diaryModified": "2026-11-18T20:48:26.0000000Z",
+    "firstRequest": {
+      "pid": 35532,
+      "route": "/v1/models",
+      "authorized": true
+    }
+  },
+  {
+    "test": "unconfirmed cached owner cleanup blocks the engine and keeps hooks until owner recovery instead of accepting another job",
+    "leaf": "engine-reuse-3LxBTe",
+    "requestCount": 1,
+    "start": "2026-11-18T20:48:57.769Z",
+    "failure": "2026-11-18T20:49:03.115Z",
+    "diaryCreated": "2026-11-18T20:48:57.9900000Z",
+    "diaryModified": "2026-11-18T20:48:58.0000000Z",
+    "firstRequest": {
+      "pid": 17252,
+      "route": "/v1/models",
+      "authorized": true
+    }
+  }
+]

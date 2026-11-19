@@ -1,0 +1,274 @@
+{
+  "stage": "S16-03",
+  "dateKst": "2026-11-19",
+  "scope": "Offline synthetic receipt joining and accounting only.",
+  "runtime": {
+    "version": "v24.22.1",
+    "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+    "sha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+    "head": "4a87e02020a62b3a8925c6568925477e8b063b78",
+    "branch": "codex/mangohana-v2-sites-20261111"
+  },
+  "verification": {
+    "entry": "run-allowed.mjs",
+    "preload": "metadata-only.mjs",
+    "arguments": "<pinned Node> docs/validation/stage16-03-20261119/run-allowed.mjs <red|focused|regression>",
+    "selection": "Named files and exact test names. Since the first executed test, node:test registration is filtered with an allowlist in addition to the anchored CLI name pattern. Post-run TAP names must match exactly.",
+    "access": "Child test processes have no filesystem write, child process, worker or native-addon grants. The sharp implementation is replaced before test imports. Other listed codecs, network modules and fetch are blocked.",
+    "firstTwoLaunches": "No test body ran. File discovery was replaced with a direct file entry, then the Windows preload path was converted to a file URL.",
+    "sourcePinsUnchangedAcrossFinalRuns": true,
+    "numberOfFinalPinnedFiles": 22,
+    "finalRegressionGroups": {
+      "conditionMatrix": 3,
+      "experimentLock": 4,
+      "offlineOperations": 5,
+      "stage15Provider": 9
+    },
+    "redBaseline": {
+      "initialTestSourceSha256": "45bbc67fc1d6b17888449c862f738c18a778da2dc06d73ce1cb740d76483d9e7",
+      "initialFixtureSha256": "7609a47a2071fb713ac918a22d882f452afffae9dbd32ef75b20dbcf3c9ef5ae",
+      "initialSuccessfulLauncherSha256": "c9166dfa39e0715572adb378ac1b687a6548f5047465f8fead61ecdb4c7588ce",
+      "projection": "Stage06 aggregateOperations(receipts.map(r => r.page)).recordedSuccess.firstAttempt and Stage15 aggregateStage15Usage(translation.attempts[0].observations).charge.confirmedSubtotal exposed as the putative total. This was a synthetic pre-join test projection."
+    }
+  },
+  "runs": [
+    {
+      "log": "first-red.log",
+      "suite": "red",
+      "exitCode": 2,
+      "counts": {
+        "tests": 0,
+        "pass": 0,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "c116134607a50e0a5053fd3f68ba8e09600f8c87abcf5b9f291890176f7a5498",
+      "forbiddenOperationMarker": false,
+      "note": "Node's file discovery stopped before test registration under the read limits."
+    },
+    {
+      "log": "red.log",
+      "suite": "red",
+      "exitCode": 2,
+      "counts": {
+        "tests": 0,
+        "pass": 0,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "bb36f7a5c64322cf49250d1b8fb7bd75c9bf6985122637562cf3f926cde93c50",
+      "forbiddenOperationMarker": false,
+      "note": "The Windows preload path was rejected before test registration."
+    },
+    {
+      "log": "red-contract.log",
+      "suite": "red",
+      "exitCode": 1,
+      "counts": {
+        "tests": 4,
+        "pass": 0,
+        "fail": 4,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "555c10fa134f831926804e932fc70865c550792f2bcf9e9340be5557f1bb26f6",
+      "forbiddenOperationMarker": false,
+      "note": "Four assertion failures against the pre-join synthetic baseline."
+    },
+    {
+      "log": "first-focused.log",
+      "suite": "focused",
+      "exitCode": 0,
+      "counts": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "904018729ca4f296d02c07ff6b7374d8d3c47b1dd4d621e08d9875d83bcd2acf",
+      "forbiddenOperationMarker": false,
+      "note": "Joined stage and job metadata, first acceptance checks."
+    },
+    {
+      "log": "regression.log",
+      "suite": "regression",
+      "exitCode": 0,
+      "counts": {
+        "tests": 18,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "8517737a6e339e247a5b13589edf1813afe893382379204972710b76a7cf22cc",
+      "forbiddenOperationMarker": false,
+      "note": "Initial positive list of adjacent metadata regressions."
+    },
+    {
+      "log": "red-stage-evidence.log",
+      "suite": "focused",
+      "exitCode": 1,
+      "counts": {
+        "tests": 18,
+        "pass": 13,
+        "fail": 5,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "038826c159f5bedff4e14a38f931216e60fdd7f1834c0e384bf2bd8dc9ded13c",
+      "forbiddenOperationMarker": false,
+      "note": "Five additional failures for stage scope, history and accounting."
+    },
+    {
+      "log": "green-stage-evidence.log",
+      "suite": "focused",
+      "exitCode": 0,
+      "counts": {
+        "tests": 18,
+        "pass": 18,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "a1a7c7cf8eb29843c38b9c8ec969d131f5369aee0e6ebc422d208c68bca47c1d",
+      "forbiddenOperationMarker": false,
+      "note": "Bundled restoration, native timings and receipt history."
+    },
+    {
+      "log": "red-settlement.log",
+      "suite": "focused",
+      "exitCode": 1,
+      "counts": {
+        "tests": 20,
+        "pass": 18,
+        "fail": 2,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "18a9389ad49990ef1319ef7a1e4fc57eaaf5c83c4b9605cc9d92a9dbadd92fda",
+      "forbiddenOperationMarker": false,
+      "note": "Two new failures for unsupported zero and provider-version substitution."
+    },
+    {
+      "log": "red-native-binding.log",
+      "suite": "focused",
+      "exitCode": 1,
+      "counts": {
+        "tests": 21,
+        "pass": 20,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "b6e40e3b22631f17c7f2b8b0d1b5b2fd80fdb208d633e76540125d7fb71f14e4",
+      "forbiddenOperationMarker": false,
+      "note": "Settlement and distinct profiles passed. Relabelling both journal bindings still passed incorrectly."
+    },
+    {
+      "log": "final-focused.log",
+      "suite": "focused",
+      "exitCode": 0,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "07f70c9188750cbd9959f97f647020f0ada021d0c4c74f8c6c5733d130d2165e",
+      "forbiddenOperationMarker": false,
+      "note": "Final focused contract and independent four-cell arithmetic."
+    },
+    {
+      "log": "final-regression.log",
+      "suite": "regression",
+      "exitCode": 0,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "76c655c889d440d823a5a07208bdcfe1963641581b8e64b8dfbb379f8acdf081",
+      "forbiddenOperationMarker": false,
+      "note": "Final adjacent exact-name regression."
+    }
+  ],
+  "finalSourceSha256": {
+    "packages/evaluation/stage16-execution-observations.mjs": "36b0fc743619e225b7051e1aca641d85210eadb264c5e98ce30012389ad74825",
+    "packages/evaluation/stage16-experiment-lock.mjs": "d73967a3638310ec9c9d0d07fff4f68b34ee2c99af4baa0f2077086dcd4872b1",
+    "packages/evaluation/stage16-condition-matrix.mjs": "8f15aaa851463dc92829d7bb71b58917b7cfbaad5228b6a9330a4c52a9b8b1c1",
+    "packages/evaluation/offline/operations.mjs": "dbb47223f29e5149ed88188d4a2cebd65494dbf15bb9566595c32bb6e8bbf337",
+    "packages/evaluation/offline/contract.mjs": "57ed99788a463908814690984f3263a802133ed5f52cec92f888476b462f1c66",
+    "packages/evaluation/dataset-contract.mjs": "826f674d283babad08a410fef759ceb52fbe13c37ee1ac752e720f83362bedad",
+    "packages/evaluation/policy/policy.mjs": "fb5252de43cfbc5be14d35bfd0ece4c5b00e362b8a2b15837fd4b9cb5b093b8b",
+    "packages/evaluation/policy/stage08-v1.1.json": "5d8e5f5f75244fe138772e9865c255a5d7c0e5e7db97e851a350f67f9922f1d9",
+    "apps/engine/stage15-batch-accounting.mjs": "fa437387ea1465029b188c8b7661d3be29419d8bbf444424fc92bd489bd94a0e",
+    "apps/engine/stage15-provider-adapter.mjs": "5ff8b985052f62853540fc4b64672ec99600e013bf84e95a488da391a5767f39",
+    "apps/engine/store.mjs": "0f63a6773a507c0385666d117cf83d5ba13cec0a8980fb95fe3eed024cdbfc39",
+    "packages/ai-engine/quality/stage15-stage-graph.cjs": "b9f91574ab7c57c037f03b4707b01824d6d6b15c340bbb40cd2c7f737ce93ca2",
+    "packages/ai-engine/quality/recovery-checkpoint.cjs": "1aff650b45a2bd09eff7ed2e87336d73db8b4d94519607be99247767eed6398a",
+    "tests/v2/stage16-execution-observations.test.mjs": "3884dd68b287dff185fcb6fc785383b3c9caead56be1ca18110f2b29882bce83",
+    "tests/v2/fixtures/stage16-observations.mjs": "ebc8fc0957acdec79092bbd0b52e073790cc688c1f9f13f532ae7f26cb90ebdc",
+    "tests/v2/fixtures/stage16-experiment.mjs": "d56b694b30b101ea993997457cbf09a12be1c62db095fd7158ea4478d7190fe9",
+    "tests/v2/stage16-condition-matrix.test.mjs": "18f4ab82a45cd49fda98a3825f0966fc06c47ff68fbadeb87377d5c09a623dd2",
+    "tests/v2/stage16-experiment-lock.test.mjs": "9034be288020c71e4c0f7473feda6c5aba8a5b16ad76e8e8854fdfde3dabd043",
+    "tests/v2/offline-evaluation.test.mjs": "aa9ea9ce19c8cf577edccba252328f43d9e284e6427323e8775ea8fce5a926c3",
+    "tests/v2/stage15-provider-contract.test.mjs": "04725b9cd7be2900551aa7d6d13d5da3c94e80b68fed0eac7bf16725b0ff5612",
+    "docs/validation/stage16-03-20261119/metadata-only.mjs": "b4d79f00abd1397b48b6a79ee25fd0404e99db1068271648782a8a76278f91ef",
+    "docs/validation/stage16-03-20261119/run-allowed.mjs": "26bf61f2844ccdc0d53af817faf72cfeb70fd9c05e48ea094c53728534c3af9f"
+  },
+  "independentCalculation": {
+    "role": "test_verifier",
+    "configuredModel": "GPT-6 Luna / low",
+    "childAgents": 1,
+    "activity": "Read-only manual arithmetic; no test execution or file changes.",
+    "expected": {
+      "planned": 4,
+      "observed": 3,
+      "completed": 2,
+      "states": [
+        "succeeded",
+        "partial",
+        "succeeded",
+        "unknown"
+      ],
+      "settledUsdByJob": [
+        "0.12",
+        null,
+        "0",
+        null
+      ],
+      "confirmedSubtotalUsd": "0.12",
+      "totalUsd": null,
+      "recoveredJobFallbacks": 1,
+      "recoveredJobLookups": 1
+    },
+    "actualFixtureProjection": "synthetic-summary.json"
+  },
+  "sessionScope": {
+    "realDatasetReads": 0,
+    "productModelRuns": 0,
+    "realProviderCalls": 0,
+    "permitsIssuedOrConsumed": 0,
+    "imageProcessingIncludingSynthetic": 0,
+    "humanQualityEvaluation": "NOT_RUN",
+    "nextStageStarted": false,
+    "developmentCost": null
+  }
+}

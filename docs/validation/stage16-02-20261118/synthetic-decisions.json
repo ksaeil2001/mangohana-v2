@@ -1,0 +1,157 @@
+{
+  "scope": "Synthetic metadata only",
+  "preregistration": {
+    "work_split_and_exposure": "81283143e450ab38b568c6d542c59471a0fcab55fed3f27937bd2daa236a6d47",
+    "source_and_gt_hashes": [
+      {
+        "pageId": "page-final",
+        "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+        "groundTruthSha256": "de2ba1128d3ed1c76676ae2f7e3a60ee54de589cc09f25739eb3fdb9a9260d35",
+        "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e"
+      }
+    ],
+    "ocr_normalization": "NFKC_CODEPOINTS_KEEP_SPACE_PUNCTUATION",
+    "matching_unit_and_iou": {
+      "unit": "region",
+      "method": "MAX_CARDINALITY_THEN_IOU",
+      "threshold": 0.5
+    },
+    "error_taxonomy_and_severity": "49a8ed7c48e45d451bea1754d1f10f9341de34915df0515d0dda7d3a6316ca09",
+    "evaluator_and_policy_version": {
+      "evaluatorSha256": "27f6343f980c4c0ab821d9c72d211d0eb76b0853825cefd80476a05e43cab27e",
+      "policySha256": "2a03775d62ce98706f898aa165eaf6ca56166ecfc165bc3a117ce5c8f51a9219"
+    },
+    "model_adapter_prompt_font_versions": {
+      "adapterSha256": "ae1eae1d76e5b7c865c4122ce366a08025842566d2d96c75cc13e6353a73db0d",
+      "promptSha256": "cf07194ee232eb531e15f690000d19846dea69cf05504782658afcfacb9228a2",
+      "fontSha256": "8d50c2feb7ab837497cb1244199c19ae6d28256c81d197e7446fd6e55a564f14",
+      "models": {
+        "A": "73f95cf180a19624e4be9a711fd53a90dadfffa410cc9cd2ba1999454a5b99b8",
+        "B": "af30308345d789145d9087a8d6e5037a089e92239bc312bcaba0099bb8e20ba7"
+      }
+    },
+    "environment_and_sampling": "853b5639ebd7ba4e2129ae249f6d56c3277219053793fd6853776be35d86a4f1",
+    "approval_policy": "c1f4fa786807c4438642c4de1693b47fa1fc1ed66583923288284d19b5b11766",
+    "primary_metric_and_minimum_effect": {
+      "metric": "work_paired_score",
+      "minimumEffect": 0.04
+    },
+    "noninferiority_margins": {
+      "naturalness": 0.02
+    },
+    "resource_caps_and_stop_rules": {
+      "maxRequests": 8,
+      "maxTokens": 1000,
+      "maxDurationMs": 10000,
+      "maxRamBytes": 1000000,
+      "maxGpuBytes": 500000,
+      "maxMoney": 0,
+      "currency": "KRW",
+      "stopRulesSha256": "0d72e537aa534257cc725a0b6bc5e6583914c2e35d3b56a501fa661a5c2bbbe5"
+    },
+    "blind_randomized_human_review": "e25006d51ae881a4eacd494fa0ea88a297bd2a3d902d596815abe9fe722fcde1",
+    "holdout_freeze": {
+      "manifestSha256": "fffef42eb1d3caf3170f8a5198855c8981c6272cca2fdec8094d4095632dc9a7",
+      "historyLength": 1,
+      "historySha256": "eaa2ec95f9b5fe63a2dadbe35d3a72b8a886c0f317207bc7629554860b0066b9"
+    }
+  },
+  "pinnedBeforeChanges": {
+    "preregistrationSha256": "73993092ab0b4569fddb4bc138b37d5da4f33502bc64a52c7b04cea174806d44",
+    "candidateSelectionSha256": "81283143e450ab38b568c6d542c59471a0fcab55fed3f27937bd2daa236a6d47",
+    "holdoutHistorySha256": "eaa2ec95f9b5fe63a2dadbe35d3a72b8a886c0f317207bc7629554860b0066b9"
+  },
+  "independentExpected": "9494e6e92520e950b9434e2829d3dd2eeec39d51c2abf34107eed3a7a7230762",
+  "control": {
+    "status": "locked",
+    "lockId": "9494e6e92520e950b9434e2829d3dd2eeec39d51c2abf34107eed3a7a7230762",
+    "record": {
+      "schemaVersion": 1,
+      "kind": "stage16-experiment-lock",
+      "preregistrationSha256": "73993092ab0b4569fddb4bc138b37d5da4f33502bc64a52c7b04cea174806d44",
+      "manifestSha256": "fffef42eb1d3caf3170f8a5198855c8981c6272cca2fdec8094d4095632dc9a7",
+      "candidateSelectionSha256": "81283143e450ab38b568c6d542c59471a0fcab55fed3f27937bd2daa236a6d47",
+      "holdoutHistorySha256": "eaa2ec95f9b5fe63a2dadbe35d3a72b8a886c0f317207bc7629554860b0066b9",
+      "samples": [
+        {
+          "pageId": "page-final",
+          "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+          "groundTruthSha256": "de2ba1128d3ed1c76676ae2f7e3a60ee54de589cc09f25739eb3fdb9a9260d35",
+          "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+          "workId": "work-final",
+          "leakageGroupId": "group-work-final",
+          "contextSnapshotSha256": "bb3c89f92b9dd69f3f7332a7a58824e9bb75ea46c617ce8b9a10941efa12b884"
+        }
+      ]
+    }
+  },
+  "differentWorkSharedContext": {
+    "status": "blocked",
+    "lockId": null,
+    "reason": "CANDIDATE_CONTEXT_REUSED"
+  },
+  "unknownHistory": {
+    "status": "blocked",
+    "lockId": null,
+    "reason": "CANDIDATE_EXPOSURE_UNKNOWN"
+  },
+  "documentedNonRun": {
+    "status": "locked",
+    "lockId": "9e4dc1e4ba7e43da4771061f19297220d5ed56cdda436d7fcc675da88a3c9600",
+    "record": {
+      "schemaVersion": 1,
+      "kind": "stage16-experiment-lock",
+      "preregistrationSha256": "b2cea434facee542849511df44b80a09f122a9ae5aa9aa4c1aa6c71759b763dc",
+      "manifestSha256": "fffef42eb1d3caf3170f8a5198855c8981c6272cca2fdec8094d4095632dc9a7",
+      "candidateSelectionSha256": "3afd7d47e5c642e9a94666ed2c7d6212d86a85611b08698e7e66e0cc732e0904",
+      "holdoutHistorySha256": "eaa2ec95f9b5fe63a2dadbe35d3a72b8a886c0f317207bc7629554860b0066b9",
+      "samples": [
+        {
+          "pageId": "page-final",
+          "sourceSha256": "63f3c28066f0f203d9c005ac7a3fe4561e64586c94220b5068f02aacfa884536",
+          "groundTruthSha256": "de2ba1128d3ed1c76676ae2f7e3a60ee54de589cc09f25739eb3fdb9a9260d35",
+          "matrixSha256": "e55c3e8d2dffae01e6ba55b8a5dfa3574ff1c0b6da9c2af8205e425b65004b0e",
+          "workId": "work-final",
+          "leakageGroupId": "group-work-final",
+          "contextSnapshotSha256": "bb3c89f92b9dd69f3f7332a7a58824e9bb75ea46c617ce8b9a10941efa12b884"
+        }
+      ]
+    }
+  },
+  "currentExposureAfterTuning": {
+    "candidateSelectionSha256": "81283143e450ab38b568c6d542c59471a0fcab55fed3f27937bd2daa236a6d47",
+    "holdoutHistorySha256": "0929234c8a14eb086899bb3e284b566eca4ede871f53cc163a365b56a587c425"
+  },
+  "afterOpeningAndTuning": {
+    "status": "blocked",
+    "lockId": null,
+    "reason": "HOLDOUT_TUNED_AFTER_OPENING",
+    "replacementHoldoutRequired": true,
+    "disposition": {
+      "previousManifestSha256": "fffef42eb1d3caf3170f8a5198855c8981c6272cca2fdec8094d4095632dc9a7",
+      "observedManifestSha256": "fffef42eb1d3caf3170f8a5198855c8981c6272cca2fdec8094d4095632dc9a7",
+      "previousHistorySha256": "eaa2ec95f9b5fe63a2dadbe35d3a72b8a886c0f317207bc7629554860b0066b9",
+      "historySha256": "0929234c8a14eb086899bb3e284b566eca4ede871f53cc163a365b56a587c425",
+      "changes": [
+        {
+          "workId": "work-final",
+          "leakageGroupId": "group-work-final",
+          "from": "holdout",
+          "to": "dev",
+          "pageIds": [
+            "page-final"
+          ]
+        }
+      ]
+    }
+  },
+  "submittingOldHistoryAgainstCurrentPins": {
+    "status": "blocked",
+    "lockId": null,
+    "reason": "HOLDOUT_HISTORY_CHANGED"
+  },
+  "verifiedSources": {
+    "packages/evaluation/stage16-experiment-lock.mjs": "75622a175a9821087a7a1af0a21278d7eacb7776731e1b03e33737471ff36f1d",
+    "tests/v2/fixtures/stage16-experiment.mjs": "d56b694b30b101ea993997457cbf09a12be1c62db095fd7158ea4478d7190fe9"
+  }
+}

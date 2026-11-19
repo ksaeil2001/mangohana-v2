@@ -1,0 +1,56 @@
+[
+  {
+    "run": "6c492482-b4da-414d-a720-bfeea809708d",
+    "exit": 87,
+    "reason": "lifetime_timeout",
+    "profile": [
+      {
+        "name": "userData",
+        "created": null
+      },
+      {
+        "name": "sessionData",
+        "created": null
+      },
+      {
+        "name": "temp",
+        "created": null
+      },
+      {
+        "name": "documents",
+        "created": null
+      },
+      {
+        "name": "home",
+        "created": null
+      }
+    ]
+  },
+  {
+    "run": "2fe82085-627a-4c17-adfd-575d27762778",
+    "exit": 0,
+    "reason": "root_exit",
+    "profile": [
+      {
+        "name": "userData",
+        "created": "2026-11-18T22:12:04.790Z"
+      },
+      {
+        "name": "sessionData",
+        "created": "2026-11-18T22:12:06.120Z"
+      },
+      {
+        "name": "temp",
+        "created": "2026-11-18T22:12:06.620Z"
+      },
+      {
+        "name": "documents",
+        "created": "2026-11-18T22:12:07.130Z"
+      },
+      {
+        "name": "home",
+        "created": "2026-11-18T22:12:07.310Z"
+      }
+    ]
+  }
+]

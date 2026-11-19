@@ -3,25 +3,40 @@ import { canUseFinalImage, FONTS, type StudioPage } from "./studio-model";
 const LIMIT=8*1024*1024;
 export const MAX_PAGES=100;
 export async function extractImages(files:File[]):Promise<File[]> {
-  const images:File[]=[];let total=0;
+  const images:File[]=[];
+  let count=0, total=0;
+  function reserve(size:number) {
+    if(++count>MAX_PAGES) throw new Error("한 번에 최대 100페이지를 추가할 수 있어요.");
+    total+=size;
+    if(total>160*1024*1024) throw new Error("이미지의 총용량은 160MB까지 지원해요.");
+  }
   for (const file of files) {
     if (/\.zip$/i.test(file.name)) {
       if(file.size>80*1024*1024) throw new Error("ZIP 파일은 80MB 이하로 올려 주세요.");
-      const data=unzipSync(new Uint8Array(await file.arrayBuffer()),{filter:entry=>{
-        if (!/\.(png|jpe?g|webp)$/i.test(entry.name) || /(^|\/)__MACOSX\//.test(entry.name) || /(^|\/)\./.test(entry.name)) return false;
+      const archive=new Uint8Array(await file.arrayBuffer()), names=new Set<string>();
+      // Read the directory without inflating any entry until every requested page fits.
+      unzipSync(archive,{filter:entry=>{
+        if (!/\.(png|jpe?g|webp)$/i.test(entry.name)) return false;
+        const parts=entry.name.split('/');
+        if (parts.some(p=>!p||p==='..'||p==='.')||/[\\:\x00-\x1f]/.test(entry.name)) throw new Error("ZIP 안의 이미지 경로를 확인해 주세요.");
+        if (parts.some(p=>p==='__MACOSX'||p.startsWith('.'))) return false;
         if(entry.originalSize>LIMIT) throw new Error("압축 안의 이미지 한 장이 8MiB를 넘어요.");
-        total+=entry.originalSize;
-        if(total>160*1024*1024) throw new Error("압축을 푼 이미지의 총용량은 160MB까지 지원해요.");
-        return true;
+        if(entry.compression===0 && entry.size!==entry.originalSize) throw new Error("ZIP 안의 이미지 용량을 확인해 주세요.");
+        if(names.has(entry.name)) throw new Error("ZIP 안에 같은 경로의 이미지가 두 개 있어요.");
+        names.add(entry.name);
+        reserve(entry.originalSize);
+        return false;
       }});
+      const data=unzipSync(archive,{filter:entry=>names.has(entry.name)});
       for (const [name,bytes] of Object.entries(data).sort(([a],[b])=>a.localeCompare(b,"ko",{numeric:true}))) {
-        if (images.length>=MAX_PAGES) throw new Error("한 번에 최대 100페이지를 추가할 수 있어요.");
         const ext=name.split(".").pop()!.toLowerCase();
         images.push(new File([new Uint8Array(bytes).buffer],name.split("/").pop()!,{type:ext==="jpg"||ext==="jpeg"?"image/jpeg":`image/${ext}`}));
       }
-    } else if (/\.(png|jpe?g|webp)$/i.test(file.name)) {if(file.size>LIMIT) throw new Error("이미지는 한 장당 8MiB까지 지원해요.");total+=file.size;images.push(file);}
+    } else if (/\.(png|jpe?g|webp)$/i.test(file.name)) {
+      if(file.size>LIMIT) throw new Error("이미지는 한 장당 8MiB까지 지원해요.");
+      reserve(file.size);images.push(file);
+    }
   }
-  if(images.length>MAX_PAGES || total>160*1024*1024) throw new Error("한 번에 100페이지 · 총 160MB까지 추가할 수 있어요.");
   if(!images.length) throw new Error("JPG, PNG, WebP 이미지 또는 이미지가 담긴 ZIP을 올려 주세요.");
   return images;
 }
@@ -72,7 +87,13 @@ export async function renderPage(page:StudioPage):Promise<Blob> {
 export function download(blob:Blob,name:string) {const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
 export async function downloadPages(pages:StudioPage[],name:string) {
   const files:Record<string,Uint8Array>={};
-  for(let i=0;i<pages.length;i++){const blob=await renderPage(pages[i]);files[`${String(i+1).padStart(3,"0")}-${pages[i].name.replace(/\.[^.]+$/,"")}.png`]=new Uint8Array(await blob.arrayBuffer());}
+  for(const [index,page] of pages.entries()){
+    const leaf=page.name.split(/[\\/]/).pop() ?? "";
+    const stem=leaf.replace(/\.[^.]+$/,"").replace(/[<>:"|?*\x00-\x1f\x7f]/g,"_").replace(/[. ]+$/g,"") || "page";
+    const number=String(index+1).padStart(3,"0");
+    const blob=await renderPage(page);
+    files[number+"-"+stem+".png"]=new Uint8Array(await blob.arrayBuffer());
+  }
   files["페이지목록.txt"]=strToU8("Trio 식자 결과\n"+pages.map(p=>`${p.name}: ${p.width} × ${p.height} · 텍스트 ${p.blocks.length}개`).join("\n"));
   download(new Blob([new Uint8Array(zipSync(files,{level:0})).buffer],{type:"application/zip"}),name+"-결과.zip");
 }

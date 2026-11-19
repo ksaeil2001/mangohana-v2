@@ -1,0 +1,2342 @@
+{
+  "notes": "Directory creation bounds launch preparation. Historical exact root exit time was not saved. Receipt mtime is an upper bound. Electron timestamp-matched roots are labeled explicitly.",
+  "runs": [
+    {
+      "label": "v2-engine-volume",
+      "started": "2026-11-18T18:08:16.159Z",
+      "finished": "2026-11-18T18:21:42.999Z",
+      "counts": {
+        "tests": 1340,
+        "pass": 1338,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 1,
+        "todo": 0
+      },
+      "sandboxRoot": "mangohana-release-v2-xyIVkd",
+      "matchingRoots": [
+        "electron-entry-1795026053960-139a6d"
+      ],
+      "entry": [
+        {
+          "root": "electron-entry-1795026053960-139a6d",
+          "rows": [
+            {
+              "directory": "missing-plan-952f04",
+              "directoryCreatedUtc": "2026-11-18T18:20:54.260Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "98444b25f54bece38ef1e779ad626a49e9a94ab591479dd5a7d28d0fca265b95",
+                "runId": "bb385281-b919-49e0-a76c-9a9e4d73178f",
+                "supervisorPid": 18008,
+                "rootPid": 38800,
+                "rootCreatedUtc": "2026-11-18T18:21:16.934Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:20.000Z",
+                "nativeElapsedMs": 1064,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "9259be6bd1a62bf27d151e6bb735b064ebcb91ad0b3ed0d42386c0b1c84b16a8",
+                "runId": "bb385281-b919-49e0-a76c-9a9e4d73178f",
+                "supervisorPid": 18008,
+                "rootPid": 38800,
+                "rootCreatedUtc": "2026-11-18T18:21:16.934Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:20.000Z",
+                "nativeElapsedMs": 1064,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0,
+                "events": [
+                  {
+                    "phase": "startup_failed",
+                    "code": "WARM_STARTUP_FAILED",
+                    "stage": "plan_read"
+                  }
+                ]
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "invalid-args-7a6b2e",
+              "directoryCreatedUtc": "2026-11-18T18:21:08.960Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "6b8fd297c6220be4d8fe4378ad085ff815694452beb8f85da15a960b626ea0a5",
+                "runId": "363a8772-812a-4181-b547-fc74e2fab711",
+                "supervisorPid": 21156,
+                "rootPid": 31368,
+                "rootCreatedUtc": "2026-11-18T18:21:20.269Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:22.000Z",
+                "nativeElapsedMs": 1523,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "43a1b8ce911a3e97ac62fd7d41685f7fdfdac8b9d3c9b513960440beee756d19",
+                "runId": "363a8772-812a-4181-b547-fc74e2fab711",
+                "supervisorPid": 21156,
+                "rootPid": 31368,
+                "rootCreatedUtc": "2026-11-18T18:21:20.269Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:22.000Z",
+                "nativeElapsedMs": 1523,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0,
+                "events": [
+                  {
+                    "code": "WARM_PLAN_ARGUMENT_REQUIRED"
+                  }
+                ]
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "bootstrap-positive-115ecb",
+              "directoryCreatedUtc": "2026-11-18T18:21:21.950Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "d7bf416876d7de7f472e2c7499a75da08214af9b914884f2033dbdb980557105",
+                "runId": "149f2496-01da-42dd-8d51-bb044935ac76",
+                "supervisorPid": 15404,
+                "rootPid": 32272,
+                "rootCreatedUtc": "2026-11-18T18:21:23.584Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:26.000Z",
+                "nativeElapsedMs": 1917,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "bootstrap-job-proof.json",
+                "sha256": "0572374c8c04fe4e20a4a572c0e44466dfe5df96feafb79e7fd1da1e863bb75b",
+                "runId": "149f2496-01da-42dd-8d51-bb044935ac76",
+                "supervisorPid": 15404,
+                "rootPid": 32272,
+                "rootCreatedUtc": "2026-11-18T18:21:23.584Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:26.000Z",
+                "nativeElapsedMs": 1917,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "bootstrap-positive-f09a1f",
+              "directoryCreatedUtc": "2026-11-18T18:21:25.540Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "adfd2c5cdeb652ae5fe9af969bdecffe7711a6b5404bbcef011e7fcc7377b202",
+                "runId": "f3317a10-f326-4a0b-896d-d15bb54ad488",
+                "supervisorPid": 11696,
+                "rootPid": 27272,
+                "rootCreatedUtc": "2026-11-18T18:21:26.193Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:30.000Z",
+                "nativeElapsedMs": 1944,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "bootstrap-job-proof.json",
+                "sha256": "334fed49d9d83424a14fa451f40d667b67c6d8dc451ce7926d220cb29881942b",
+                "runId": "f3317a10-f326-4a0b-896d-d15bb54ad488",
+                "supervisorPid": 11696,
+                "rootPid": 27272,
+                "rootCreatedUtc": "2026-11-18T18:21:26.193Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:21:30.000Z",
+                "nativeElapsedMs": 1944,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "identityMatch": true
+            }
+          ]
+        }
+      ],
+      "typesetting": [
+        {
+          "directory": "typesetting-native-juhQp8",
+          "directoryCreatedUtc": "2026-11-18T18:19:36.750Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "69cca288afc99ed1989837d97296f9545207806b9386b5931bffca467117a7e1",
+            "runId": "68ab3ac5-bdbc-44dd-a14e-850d85f41c54",
+            "supervisorPid": 23056,
+            "rootPid": 18892,
+            "rootCreatedUtc": "2026-11-18T18:19:37.459Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:19:58.000Z",
+            "nativeElapsedMs": 18121,
+            "rootExitCode": 2147483651,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "99ff85e7e33fc4983ed83609374029869d993582753298766f31ab37ca141380",
+            "runId": "68ab3ac5-bdbc-44dd-a14e-850d85f41c54",
+            "supervisorPid": 23056,
+            "rootPid": 18892,
+            "rootCreatedUtc": "2026-11-18T18:19:37.459Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:19:58.000Z",
+            "nativeElapsedMs": 18121,
+            "rootExitCode": 2147483651,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:19:42.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:19:42.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:19:42.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:19:42.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:19:42.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:19:42.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:19:44.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:19:44.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:19:44.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:19:44.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:19:46.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:19:46.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:19:46.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:19:46.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:19:48.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-request-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-response-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-request-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:19:50.000Z"
+            },
+            {
+              "file": "gate-response-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:19:50.000Z"
+            }
+          ],
+          "resultWrittenUtc": "2026-11-18T18:19:50.000Z",
+          "resultBound": true,
+          "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+          "reportedSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+          "hasWorkerFailure": false,
+          "winHandleError": true
+        },
+        {
+          "directory": "typesetting-native-KaNzGd",
+          "directoryCreatedUtc": "2026-11-18T18:19:56.130Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "8d3d30db5ed6a4875faa45dadce7f5c5e13f095c2e7c159f063762b4533449c6",
+            "runId": "86334130-2e2b-4e36-b0b6-f5ea4f4d9aaf",
+            "supervisorPid": 3596,
+            "rootPid": 36324,
+            "rootCreatedUtc": "2026-11-18T18:19:56.845Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:20:12.000Z",
+            "nativeElapsedMs": 13330,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "843235ecbfb82bdb5c9e7ff3a9650b9b7e139b188aa90fb5b9ad07e0e64720c4",
+            "runId": "86334130-2e2b-4e36-b0b6-f5ea4f4d9aaf",
+            "supervisorPid": 3596,
+            "rootPid": 36324,
+            "rootCreatedUtc": "2026-11-18T18:19:56.845Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:20:12.000Z",
+            "nativeElapsedMs": 13330,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:20:00.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:20:00.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:20:00.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:20:00.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:20:00.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:20:00.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:20:04.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:20:04.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:20:04.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:20:04.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:20:06.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:20:08.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:20:08.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:08.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:08.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-request-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-response-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-request-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:20:10.000Z"
+            },
+            {
+              "file": "gate-response-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:20:10.000Z"
+            }
+          ],
+          "resultWrittenUtc": "2026-11-18T18:20:10.000Z",
+          "resultBound": true,
+          "candidateSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+          "reportedSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+          "hasWorkerFailure": false,
+          "winHandleError": false
+        },
+        {
+          "directory": "typesetting-native-p3ZTta",
+          "directoryCreatedUtc": "2026-11-18T18:20:10.270Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "0a4509dd971c42613f48f92b1888a008c3f3e281058675118707a8157997f8ab",
+            "runId": "5552bce9-7b54-4313-94e1-73d2f26ccd10",
+            "supervisorPid": 38512,
+            "rootPid": 21312,
+            "rootCreatedUtc": "2026-11-18T18:20:15.535Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:20:36.000Z",
+            "nativeElapsedMs": 18892,
+            "rootExitCode": 1,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "5e519ffd34dc8d48c5f190d26eaa34b6906bc6847cb5ddb0e3f3beca361b29d8",
+            "runId": "5552bce9-7b54-4313-94e1-73d2f26ccd10",
+            "supervisorPid": 38512,
+            "rootPid": 21312,
+            "rootCreatedUtc": "2026-11-18T18:20:15.535Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:20:36.000Z",
+            "nativeElapsedMs": 18892,
+            "rootExitCode": 1,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:20:20.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:20:20.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:20:20.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:20:20.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:20:20.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:20:20.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:20:26.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:20:28.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:20:28.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:20:28.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:20:28.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:20:30.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:20:32.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:20:32.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:34.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:20:34.000Z"
+            }
+          ],
+          "resultWrittenUtc": null,
+          "resultBound": null,
+          "candidateSha256": null,
+          "reportedSha256": null,
+          "hasWorkerFailure": true,
+          "winHandleError": false
+        }
+      ]
+    },
+    {
+      "label": "v2-current",
+      "started": "2026-11-18T18:25:32.652Z",
+      "finished": "2026-11-18T18:43:37.730Z",
+      "counts": {
+        "tests": 1340,
+        "pass": 1330,
+        "fail": 7,
+        "skipped": 0,
+        "cancelled": 3,
+        "todo": 0
+      },
+      "sandboxRoot": "mangohana-release-v2-4qB0VG",
+      "matchingRoots": [
+        "electron-entry-1795027347718-7f9e1e"
+      ],
+      "entry": [
+        {
+          "root": "electron-entry-1795027347718-7f9e1e",
+          "rows": [
+            {
+              "directory": "missing-plan-d64e27",
+              "directoryCreatedUtc": "2026-11-18T18:42:27.890Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "de4e2fbdb34b900930b203dd9528cbd09818116f408642689ec83a50bd3ba2ce",
+                "runId": "567e127e-8b80-4982-9e43-6fba093681a4",
+                "supervisorPid": 31592,
+                "rootPid": 38204,
+                "rootCreatedUtc": "2026-11-18T18:42:28.451Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:42:36.000Z",
+                "nativeElapsedMs": 7055,
+                "rootExitCode": 87,
+                "reason": "lifetime_timeout",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": true,
+                "clean": false,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "7ffca3b4174abcbdced6433d93e052e2be8fab284db4791a381c6207b43b89fb",
+                "rootPid": 38204,
+                "rootCreatedUtc": "2026-11-18T18:42:28.451Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:42:46.000Z",
+                "failure": "WARM_JOB_SUPERVISOR_EXIT_UNCONFIRMED",
+                "clean": false,
+                "events": []
+              },
+              "identityMatch": false
+            },
+            {
+              "directory": "invalid-args-133555",
+              "directoryCreatedUtc": "2026-11-18T18:42:42.720Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "917685200a90fac7c6d899379b356d59e15ce2dd3a068b776073071f1ddfb280",
+                "runId": "9672b1ad-bf37-4af8-96ef-8358b474a56c",
+                "supervisorPid": 34304,
+                "rootPid": 6240,
+                "rootCreatedUtc": "2026-11-18T18:42:50.696Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:42:52.000Z",
+                "nativeElapsedMs": 112,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "cac3a86eb124941114a32e27065f56ef6b46944d062d058adb8207428dcf256e",
+                "runId": "9672b1ad-bf37-4af8-96ef-8358b474a56c",
+                "supervisorPid": 34304,
+                "rootPid": 6240,
+                "rootCreatedUtc": "2026-11-18T18:42:50.696Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:42:52.000Z",
+                "nativeElapsedMs": 112,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0,
+                "events": [
+                  {
+                    "code": "WARM_PLAN_ARGUMENT_REQUIRED"
+                  }
+                ]
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "bootstrap-positive-496349",
+              "directoryCreatedUtc": "2026-11-18T18:42:50.870Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "70b2c05c1ceb81b59f244f75ecf6d2b2c5b336ff8bb3818316240f1e1bdbb1e9",
+                "runId": "d5b9e92c-148b-4070-906b-649ea1cafa12",
+                "supervisorPid": 37796,
+                "rootPid": 29292,
+                "rootCreatedUtc": "2026-11-18T18:43:00.357Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:43:06.000Z",
+                "nativeElapsedMs": 4475,
+                "rootExitCode": 87,
+                "reason": "lifetime_timeout",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": true,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "bootstrap-job-proof.json",
+                "sha256": "0efdf68b5ca001b914f0d3bc7118bd47b3b1fa9a123311e54a149769d74b663f",
+                "runId": "d5b9e92c-148b-4070-906b-649ea1cafa12",
+                "supervisorPid": 37796,
+                "rootPid": 29292,
+                "rootCreatedUtc": "2026-11-18T18:43:00.357Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:43:06.000Z",
+                "nativeElapsedMs": 4475,
+                "rootExitCode": 87,
+                "reason": "lifetime_timeout",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": true,
+                "clean": true,
+                "active": 0
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "bootstrap-positive-1916ea",
+              "directoryCreatedUtc": "2026-11-18T18:43:04.970Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "23900ce3435f4e34e63c902b8d83da86d25036c9c28e2c9cda1cd8e82338c889",
+                "runId": "05cb873e-bd2e-42e5-8b05-7d6e4b75fa15",
+                "supervisorPid": 25760,
+                "rootPid": 27656,
+                "rootCreatedUtc": "2026-11-18T18:43:21.309Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:43:26.000Z",
+                "nativeElapsedMs": 3484,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "bootstrap-job-proof.json",
+                "sha256": "a6579f37ec8aeff1fe1bc3254587073188b4c427e93703a757ffb8d604244933",
+                "runId": "05cb873e-bd2e-42e5-8b05-7d6e4b75fa15",
+                "supervisorPid": 25760,
+                "rootPid": 27656,
+                "rootCreatedUtc": "2026-11-18T18:43:21.309Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:43:26.000Z",
+                "nativeElapsedMs": 3484,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "identityMatch": true
+            }
+          ]
+        }
+      ],
+      "typesetting": [
+        {
+          "directory": "typesetting-native-2IW2cq",
+          "directoryCreatedUtc": "2026-11-18T18:41:02.210Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "257ebd86d41d2e1d70fd2d1840a57abdf5ee55dc57fc96cd81d24a7c4c18a232",
+            "runId": "17d901af-7362-4349-9dbe-4a37b8fcda0e",
+            "supervisorPid": 38736,
+            "rootPid": 23036,
+            "rootCreatedUtc": "2026-11-18T18:41:14.511Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:41:30.000Z",
+            "nativeElapsedMs": 15269,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "d34dfaa56f7e8cdc434b4048f0f5b9aa817ec1a20fb72015a9f75a50917d07c0",
+            "runId": "17d901af-7362-4349-9dbe-4a37b8fcda0e",
+            "supervisorPid": 38736,
+            "rootPid": 23036,
+            "rootCreatedUtc": "2026-11-18T18:41:14.511Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:41:30.000Z",
+            "nativeElapsedMs": 15269,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:41:20.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:41:20.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:41:20.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:41:20.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:41:20.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:41:20.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:41:24.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:41:24.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:41:24.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:41:24.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:41:26.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:28.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:30.000Z"
+            },
+            {
+              "file": "gate-request-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:41:30.000Z"
+            },
+            {
+              "file": "gate-response-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:41:30.000Z"
+            },
+            {
+              "file": "gate-request-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:41:30.000Z"
+            },
+            {
+              "file": "gate-response-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:41:30.000Z"
+            }
+          ],
+          "resultWrittenUtc": "2026-11-18T18:41:30.000Z",
+          "resultBound": true,
+          "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+          "reportedSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+          "hasWorkerFailure": false,
+          "winHandleError": false
+        },
+        {
+          "directory": "typesetting-native-YtphJa",
+          "directoryCreatedUtc": "2026-11-18T18:41:29.860Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "2469b707e039c1adf6659473d515b85f5d9110b5adb21dfe3906ca782f06297f",
+            "runId": "e271bfd8-e53d-4e0a-b835-d5d64b5c4758",
+            "supervisorPid": 27936,
+            "rootPid": 2608,
+            "rootCreatedUtc": "2026-11-18T18:41:30.643Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:41:52.000Z",
+            "nativeElapsedMs": 19345,
+            "rootExitCode": 2147483651,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "c429188f22a5fb52e7cdfbf7039a59140f1682a12ef27f789eb189c0d4b80a2a",
+            "runId": "e271bfd8-e53d-4e0a-b835-d5d64b5c4758",
+            "supervisorPid": 27936,
+            "rootPid": 2608,
+            "rootCreatedUtc": "2026-11-18T18:41:30.643Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:41:52.000Z",
+            "nativeElapsedMs": 19345,
+            "rootExitCode": 2147483651,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:41:34.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:41:34.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:41:34.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:41:34.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:41:34.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:41:34.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:41:38.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:41:38.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:41:38.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:41:38.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:41:38.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:41:40.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:41:42.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:44.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:41:44.000Z"
+            },
+            {
+              "file": "gate-request-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:41:44.000Z"
+            },
+            {
+              "file": "gate-response-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:41:44.000Z"
+            },
+            {
+              "file": "gate-request-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:41:44.000Z"
+            },
+            {
+              "file": "gate-response-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:41:44.000Z"
+            }
+          ],
+          "resultWrittenUtc": "2026-11-18T18:41:44.000Z",
+          "resultBound": true,
+          "candidateSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+          "reportedSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+          "hasWorkerFailure": false,
+          "winHandleError": true
+        },
+        {
+          "directory": "typesetting-native-PDCSjN",
+          "directoryCreatedUtc": "2026-11-18T18:41:50.100Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "31918935165c0db18d6704bb2bfc906891d4194beeca91c8f95195cbbe10852c",
+            "runId": "4c56626a-373a-4bf2-92aa-8d2579c754f2",
+            "supervisorPid": 28912,
+            "rootPid": 34656,
+            "rootCreatedUtc": "2026-11-18T18:41:50.851Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:42:10.000Z",
+            "nativeElapsedMs": 18412,
+            "rootExitCode": 1,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "5233d9672ba07624f731a8e494ba44c634d9b095ecc78b719f77efee21ea6dd3",
+            "runId": "4c56626a-373a-4bf2-92aa-8d2579c754f2",
+            "supervisorPid": 28912,
+            "rootPid": 34656,
+            "rootCreatedUtc": "2026-11-18T18:41:50.851Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:42:10.000Z",
+            "nativeElapsedMs": 18412,
+            "rootExitCode": 1,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:41:54.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:41:54.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:41:54.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:41:54.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:41:54.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:41:54.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:42:04.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:42:04.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:42:04.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:42:04.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:42:06.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:42:08.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:42:08.000Z"
+            }
+          ],
+          "resultWrittenUtc": null,
+          "resultBound": null,
+          "candidateSha256": null,
+          "reportedSha256": null,
+          "hasWorkerFailure": true,
+          "winHandleError": false
+        }
+      ]
+    },
+    {
+      "label": "native-current",
+      "started": "2026-11-18T18:47:36.059Z",
+      "finished": "2026-11-18T18:51:28.269Z",
+      "counts": {
+        "tests": 40,
+        "pass": 34,
+        "fail": 5,
+        "skipped": 0,
+        "cancelled": 1,
+        "todo": 0
+      },
+      "sandboxRoot": "mangohana-release-native-22CRqH",
+      "matchingRoots": [
+        "electron-entry-1795027852392-993ae2"
+      ],
+      "entry": [
+        {
+          "root": "electron-entry-1795027852392-993ae2",
+          "rows": [
+            {
+              "directory": "missing-plan-6e8b67",
+              "directoryCreatedUtc": "2026-11-18T18:50:53.050Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "98804d4f3a9a86b04d84190cfbb649b89e93fb3b6775a1d46afc9b8c3eb292f6",
+                "runId": "2696ff30-1798-4d87-b81b-0657139eac97",
+                "supervisorPid": 16864,
+                "rootPid": 27216,
+                "rootCreatedUtc": "2026-11-18T18:50:59.672Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:08.000Z",
+                "nativeElapsedMs": 7041,
+                "rootExitCode": 87,
+                "reason": "lifetime_timeout",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": true,
+                "clean": false,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "b8edc230e0a96cff236cd6e59b40f48e0e29b0c758719ffa7e5e20443b2f9bd5",
+                "runId": "2696ff30-1798-4d87-b81b-0657139eac97",
+                "supervisorPid": 16864,
+                "rootPid": 27216,
+                "rootCreatedUtc": "2026-11-18T18:50:59.672Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:12.000Z",
+                "nativeElapsedMs": 7041,
+                "rootExitCode": 87,
+                "reason": "lifetime_timeout",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": true,
+                "clean": false,
+                "active": 0,
+                "events": []
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "invalid-args-a11eda",
+              "directoryCreatedUtc": "2026-11-18T18:51:07.400Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "cc0be4b76f95b72e46c96907766b8e1556ab01e8e74eb4cd9db9cf08a39c0ee4",
+                "runId": "8297d141-2a12-4fc9-9837-b0f96ccc2db5",
+                "supervisorPid": 21868,
+                "rootPid": 13240,
+                "rootCreatedUtc": "2026-11-18T18:51:21.459Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:22.000Z",
+                "nativeElapsedMs": 351,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "d24b1d8834fe6b6819d91265f0d5c6bc350e8a385dc68d956bb614c451956c2c",
+                "runId": "8297d141-2a12-4fc9-9837-b0f96ccc2db5",
+                "supervisorPid": 21868,
+                "rootPid": 13240,
+                "rootCreatedUtc": "2026-11-18T18:51:21.459Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:22.000Z",
+                "nativeElapsedMs": 351,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0,
+                "events": [
+                  {
+                    "code": "WARM_PLAN_ARGUMENT_REQUIRED"
+                  }
+                ]
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "bootstrap-positive-b924c9",
+              "directoryCreatedUtc": "2026-11-18T18:51:21.870Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "b9302dce0f7cd47ebbf2377cd81e8d495a927c05cd208b67d1270651129ae222",
+                "runId": "76911b54-35c8-4318-9ddb-e63b860e7cdb",
+                "supervisorPid": 5912,
+                "rootPid": 9524,
+                "rootCreatedUtc": "2026-11-18T18:51:23.570Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:26.000Z",
+                "nativeElapsedMs": 1887,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "bootstrap-job-proof.json",
+                "sha256": "8374c41e25b34c35cd459ec7c26e4785b2fa582f5129853bc73394be194cf816",
+                "runId": "76911b54-35c8-4318-9ddb-e63b860e7cdb",
+                "supervisorPid": 5912,
+                "rootPid": 9524,
+                "rootCreatedUtc": "2026-11-18T18:51:23.570Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:26.000Z",
+                "nativeElapsedMs": 1887,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "identityMatch": true
+            },
+            {
+              "directory": "bootstrap-positive-53ed53",
+              "directoryCreatedUtc": "2026-11-18T18:51:25.520Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "d893ccdc8992b166fd4a208f50f46df7520c86cb2bde7457f89d59a8c329a891",
+                "runId": "c7776473-0fcd-4437-b5f8-697836959b23",
+                "supervisorPid": 22448,
+                "rootPid": 38788,
+                "rootCreatedUtc": "2026-11-18T18:51:26.169Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:30.000Z",
+                "nativeElapsedMs": 1917,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "bootstrap-job-proof.json",
+                "sha256": "95dcf3652c1de728c0d08d84eb121242a52f52b599fca7a3ef48ed3e46ad4d70",
+                "runId": "c7776473-0fcd-4437-b5f8-697836959b23",
+                "supervisorPid": 22448,
+                "rootPid": 38788,
+                "rootCreatedUtc": "2026-11-18T18:51:26.169Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:51:30.000Z",
+                "nativeElapsedMs": 1917,
+                "rootExitCode": 0,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "identityMatch": true
+            }
+          ]
+        }
+      ],
+      "typesetting": [
+        {
+          "directory": "typesetting-native-EpRpUo",
+          "directoryCreatedUtc": "2026-11-18T18:49:40.650Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "08b3d97f4128a34763ca153452e26addcb85bd09dc7be5aebfb0aa9953867025",
+            "runId": "6d1d1c6a-1a53-4618-a10b-d362a1427a19",
+            "supervisorPid": 37116,
+            "rootPid": 11696,
+            "rootCreatedUtc": "2026-11-18T18:49:41.452Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:49:54.000Z",
+            "nativeElapsedMs": 10558,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "88c96732e7d88654efb09ab0dead6322fe3ccf3cd6e28c0e72aba83aa2973de1",
+            "runId": "6d1d1c6a-1a53-4618-a10b-d362a1427a19",
+            "supervisorPid": 37116,
+            "rootPid": 11696,
+            "rootCreatedUtc": "2026-11-18T18:49:41.452Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:49:54.000Z",
+            "nativeElapsedMs": 10558,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:49:44.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:49:44.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:49:44.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:49:44.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:49:46.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:49:46.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:49:48.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:49:50.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-request-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-response-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-request-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:49:52.000Z"
+            },
+            {
+              "file": "gate-response-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:49:52.000Z"
+            }
+          ],
+          "resultWrittenUtc": "2026-11-18T18:49:52.000Z",
+          "resultBound": true,
+          "candidateSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+          "reportedSha256": "ce0111bb5e7711a4f25d8577b8fed5bddc87009184cb0640557c7c89b832cea3",
+          "hasWorkerFailure": false,
+          "winHandleError": false
+        },
+        {
+          "directory": "typesetting-native-42S8iZ",
+          "directoryCreatedUtc": "2026-11-18T18:49:52.120Z",
+          "out": {
+            "file": "controller.json",
+            "sha256": "03fca7a3181c432ede197568f964b9aec36d191cc3e7f4fcc9a908d726a5cb03",
+            "runId": "4f23d2d8-2526-4eb6-b7f8-c697b07ee65b",
+            "supervisorPid": 21136,
+            "rootPid": 21948,
+            "rootCreatedUtc": "2026-11-18T18:50:04.240Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:50:22.000Z",
+            "nativeElapsedMs": 16278,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "kernel": {
+            "file": "job-control-receipt.json",
+            "sha256": "b2d983001e643dfc9835c271b43e1c1fc749b01658ab643750a2c15687a3bdf3",
+            "runId": "4f23d2d8-2526-4eb6-b7f8-c697b07ee65b",
+            "supervisorPid": 21136,
+            "rootPid": 21948,
+            "rootCreatedUtc": "2026-11-18T18:50:04.240Z",
+            "exactExitUtc": null,
+            "receiptWrittenUtc": "2026-11-18T18:50:22.000Z",
+            "nativeElapsedMs": 16278,
+            "rootExitCode": 0,
+            "reason": "root_exit",
+            "failure": null,
+            "ready": true,
+            "resumed": true,
+            "terminated": false,
+            "clean": true,
+            "active": 0
+          },
+          "gates": [
+            {
+              "file": "gate-request-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:50:10.000Z"
+            },
+            {
+              "file": "gate-response-1.json",
+              "phase": "worker-start",
+              "at": "2026-11-18T18:50:10.000Z"
+            },
+            {
+              "file": "gate-request-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:50:10.000Z"
+            },
+            {
+              "file": "gate-response-2.json",
+              "phase": "before-inputs",
+              "at": "2026-11-18T18:50:10.000Z"
+            },
+            {
+              "file": "gate-request-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:50:10.000Z"
+            },
+            {
+              "file": "gate-response-3.json",
+              "phase": "before-mask-prepare",
+              "at": "2026-11-18T18:50:10.000Z"
+            },
+            {
+              "file": "gate-request-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-response-4.json",
+              "phase": "before-cleaned-read",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-request-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-response-5.json",
+              "phase": "before-background-inspection",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-request-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-response-6.json",
+              "phase": "before-background-diagnostics",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-request-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:50:16.000Z"
+            },
+            {
+              "file": "gate-response-7.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:50:18.000Z"
+            },
+            {
+              "file": "gate-request-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:50:18.000Z"
+            },
+            {
+              "file": "gate-response-8.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:50:18.000Z"
+            },
+            {
+              "file": "gate-request-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:50:18.000Z"
+            },
+            {
+              "file": "gate-response-9.json",
+              "phase": "before-typeset",
+              "at": "2026-11-18T18:50:18.000Z"
+            },
+            {
+              "file": "gate-request-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:50:18.000Z"
+            },
+            {
+              "file": "gate-response-10.json",
+              "phase": "after-typeset",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-request-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-response-11.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-request-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-response-12.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-request-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-response-13.json",
+              "phase": "before-diagnostic-write",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-request-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-response-14.json",
+              "phase": "before-diagnostic-commit",
+              "at": "2026-11-18T18:50:20.000Z"
+            },
+            {
+              "file": "gate-request-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:50:22.000Z"
+            },
+            {
+              "file": "gate-response-15.json",
+              "phase": "before-worker-result",
+              "at": "2026-11-18T18:50:22.000Z"
+            },
+            {
+              "file": "gate-request-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:50:22.000Z"
+            },
+            {
+              "file": "gate-response-16.json",
+              "phase": "before-worker-write",
+              "at": "2026-11-18T18:50:22.000Z"
+            }
+          ],
+          "resultWrittenUtc": "2026-11-18T18:50:22.000Z",
+          "resultBound": true,
+          "candidateSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+          "reportedSha256": "2f48756a4a5cc4ed18f175d4dd8d0b384584be1a1c3614865c4e68bee7bc92bb",
+          "hasWorkerFailure": false,
+          "winHandleError": false
+        },
+        {
+          "directory": "typesetting-native-VzJpYY",
+          "directoryCreatedUtc": "2026-11-18T18:50:20.590Z",
+          "out": null,
+          "kernel": null,
+          "gates": [],
+          "resultWrittenUtc": null,
+          "resultBound": null,
+          "candidateSha256": null,
+          "reportedSha256": null,
+          "hasWorkerFailure": false,
+          "winHandleError": null
+        }
+      ]
+    },
+    {
+      "label": "entry-witness",
+      "started": "2026-11-18T18:53:50.106Z",
+      "finished": "2026-11-18T18:53:57.132Z",
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "sandboxRoot": "mangohana-release-entry-witness-1CXIqT",
+      "matchingRoots": [
+        "mangohana-release-entry-witness-1CXIqT"
+      ],
+      "entry": [
+        {
+          "root": "mangohana-release-entry-witness-1CXIqT",
+          "rows": [
+            {
+              "directory": "missing-plan-600dcc",
+              "directoryCreatedUtc": "2026-11-18T18:53:54.390Z",
+              "kernel": {
+                "file": "job-control-receipt.json",
+                "sha256": "8368210387473ffff79b8848091c5e52c70714aef06b6ddae1a93474602c60f7",
+                "runId": "8710ea14-e905-4f87-b90f-47ecbec06370",
+                "supervisorPid": 14244,
+                "rootPid": 25752,
+                "rootCreatedUtc": "2026-11-18T18:53:56.430Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:53:58.000Z",
+                "nativeElapsedMs": 394,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0
+              },
+              "proof": {
+                "file": "entry-proof.json",
+                "sha256": "2b644a6d8bffb82b4630282bfa9935a0cca06f9693f8bc4b641c07f81d2b92c6",
+                "runId": "8710ea14-e905-4f87-b90f-47ecbec06370",
+                "supervisorPid": 14244,
+                "rootPid": 25752,
+                "rootCreatedUtc": "2026-11-18T18:53:56.430Z",
+                "exactExitUtc": null,
+                "receiptWrittenUtc": "2026-11-18T18:53:58.000Z",
+                "nativeElapsedMs": 394,
+                "rootExitCode": 1,
+                "reason": "root_exit",
+                "failure": null,
+                "ready": true,
+                "resumed": true,
+                "terminated": false,
+                "clean": true,
+                "active": 0,
+                "events": [
+                  {
+                    "phase": "startup_failed",
+                    "code": "WARM_STARTUP_FAILED",
+                    "stage": "plan_read"
+                  }
+                ]
+              },
+              "identityMatch": true
+            }
+          ]
+        }
+      ],
+      "typesetting": []
+    }
+  ]
+}

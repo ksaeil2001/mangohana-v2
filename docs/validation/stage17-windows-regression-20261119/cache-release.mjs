@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {createRequire} from 'node:module';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+const previous=process.argv[3]==='previous',version=previous?'42.9.3':'42.10.0',root=fileURLToPath(new URL('../../../',import.meta.url));
+const stage=fs.mkdtempSync(path.join(os.tmpdir(),'mangohana-stage17-electron-'));
+const npm=process.argv[2],requireEngine=createRequire(path.join(root,'packages/ai-engine/package.json'));
+const opts={encoding:'utf8',windowsHide:true};
+const [packed]=JSON.parse(execFileSync(process.execPath,[npm,'pack','electron@'+version,'--ignore-scripts','--json','--pack-destination',stage,'--registry=https://registry.npmjs.org'],opts));
+if(packed.name!=='electron'||packed.version!==version||packed.filename!=='electron-'+version+'.tgz')throw Error('Unexpected package');
+const tgz=path.join(stage,packed.filename);
+const packageIntegrity='sha512-'+createHash('sha512').update(fs.readFileSync(tgz)).digest('base64');
+if(packageIntegrity!==packed.integrity)throw Error('npm archive integrity mismatch');
+const sums=JSON.parse(execFileSync(path.join(process.env.SystemRoot,'System32/tar.exe'),['-xOzf',tgz,'package/checksums.json'],opts));
+const platform='win32',arch='x64',name='electron-v'+version+'-'+platform+'-'+arch+'.zip';
+const {downloadArtifact}=requireEngine('@electron/get');
+const archive=await downloadArtifact({version,platform,arch,artifactName:'electron',checksums:sums});
+const hash=createHash('sha256');for await(const bytes of fs.createReadStream(archive))hash.update(bytes);
+const archiveSha256=hash.digest('hex');
+if(archiveSha256!==sums[name])throw Error('Windows archive checksum mismatch');
+const evidence={version,platform,arch,name,packageIntegrity,archiveSha256,cachePath:archive,packagePath:tgz,
+  fixedIssue:'https://releases.electronjs.org/pr/52956',time:new Date().toISOString()};
+fs.writeFileSync(new URL(previous?'./electron-previous-archive.json':'./electron-archive.json',import.meta.url),JSON.stringify(evidence,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({version,packageIntegrity,archiveSha256}));

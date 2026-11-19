@@ -1,0 +1,241 @@
+{
+  "scope": "Original metadata-only runners, file and test-name grants, and image guards",
+  "node": "v24.22.1",
+  "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+  "inputs": {
+    "docs\\validation\\stage16-03-20261119\\metadata-only.mjs": "b4d79f00abd1397b48b6a79ee25fd0404e99db1068271648782a8a76278f91ef",
+    "docs\\validation\\stage16-03-20261119\\run-allowed.mjs": "26bf61f2844ccdc0d53af817faf72cfeb70fd9c05e48ea094c53728534c3af9f",
+    "docs\\validation\\stage16-03-20261119\\synthetic-summary.json": "2a3b6d6b36e00aeb426b54e55d144210f5f5a74eeddef6b2ad2304f34597872e",
+    "docs\\validation\\stage16-03-20261119\\test-runs.json": "b412c52d41a4689129a0ac8172fef80e4f8a18f3f970aaf3c3a38710815956d4",
+    "docs\\validation\\stage16-04-20261119\\red-baseline.mjs": "ea455b80bf98554fb90793c8f8fa847327c9eceb773262cab177054696576ad5",
+    "docs\\validation\\stage16-04-20261119\\run-allowed.mjs": "5e9137af27bf1f3b3b79cccafb8566be15b892d6bd6fc5052dd91a8d41a2b897",
+    "docs\\validation\\stage16-04-20261119\\synthetic-coordinator.json": "0dbfee1305e0b9f853f4750b8733d47c7cded258a04f27e2ca1a431ae3a9792c",
+    "docs\\validation\\stage16-04-20261119\\synthetic-form-1.json": "de5a978292729482b26e192a39e9d069f87659fbdc19f014b339293838a74a64",
+    "docs\\validation\\stage16-04-20261119\\synthetic-form-2.json": "f81012c0cb34941492e899c8575ade9487adfbf867fde8d203387c4f34474663",
+    "docs\\validation\\stage16-04-20261119\\synthetic-recovery.json": "8631664106b55e47c28051305667fd8a2ec9191cbb4463c8964dcf2b6eb8923a",
+    "docs\\validation\\stage16-04-20261119\\test-runs.json": "6192124bd0708fb502547158fb49cdca721e6c13ca638c0c141a10480e661a2b",
+    "docs\\validation\\stage16-05-20261119\\red-baseline.mjs": "8f108c3731019f4675509b4ff63228f364be0eb549b921799b0100c9224bb33d",
+    "docs\\validation\\stage16-05-20261119\\run-allowed.mjs": "1570eada0ff2ffb1bd556dee54aea2a54cf0f350a507b7c0f57e30fa5174ec32",
+    "docs\\validation\\stage16-05-20261119\\synthetic-report.json": "72c47ed67d2dfcaa03e2d154df787fc266a0487a2af91fedac4c841e8f0c367e",
+    "docs\\validation\\stage16-05-20261119\\test-runs.json": "35c8b75a2ba7958d1d302a36e88a0c4ca8ea6c954e81cc5661e40731a69a9ccb",
+    "docs\\validation\\stage16-06-20261119\\condition-table.json": "24dfb928ed316702be605ac7a1b4a3061e5646fe2228e72e61c8dc1bbb8b2afd",
+    "docs\\validation\\stage16-06-20261119\\cost-adjusted-success.json": "95cce8907dd662475edc5f5896f65f32a2ec8dd2fe70899c7a708655e54bc470",
+    "docs\\validation\\stage16-06-20261119\\experiment-lock.json": "8b2ceb29f9c367845c3e5a23aba55ee129ec385840daeb904dbf457cbe9f7809",
+    "docs\\validation\\stage16-06-20261119\\human-audit.json": "b08e20dff82d4006a99d49cfa61391993cc792eda55141dfb3320e671b433976",
+    "docs\\validation\\stage16-06-20261119\\red-baseline.mjs": "47b690a0984ddeb36fe470c7f3c2dbf1b2e53e69063c1a655264786805879364",
+    "docs\\validation\\stage16-06-20261119\\run-allowed.mjs": "1f30f5e3d403bb2b1237eea159deb01dbd1d73c9b65e9d1b02e6b96507894e14",
+    "docs\\validation\\stage16-06-20261119\\synthetic-index.json": "701299c460f3b2a89b59de1dea61be5c8842bcefe2d8b85972da64979d0967ba",
+    "docs\\validation\\stage16-06-20261119\\test-runs.json": "d15f857a515916bf95b1d2f9e5514cba1b522b65d0ff2b8bd4d36bd1747f4fce",
+    "docs\\validation\\stage16-06-20261119\\uncertainty-paired-report.json": "f2e30f98fd1f5157d2a54513165c4902590f5ac7730e2b5b45f9b930e9292b18",
+    "tests\\v2\\stage16-blind-review.test.mjs": "27b189a055d2a3af372bfc229ada03e8249e703cbaf84ea9fe22006c93b30354",
+    "tests\\v2\\stage16-condition-matrix.test.mjs": "18f4ab82a45cd49fda98a3825f0966fc06c47ff68fbadeb87377d5c09a623dd2",
+    "tests\\v2\\stage16-execution-observations.test.mjs": "3884dd68b287dff185fcb6fc785383b3c9caead56be1ca18110f2b29882bce83",
+    "tests\\v2\\stage16-experiment-lock.test.mjs": "9034be288020c71e4c0f7473feda6c5aba8a5b16ad76e8e8854fdfde3dabd043",
+    "tests\\v2\\stage16-final-acceptance.test.mjs": "bacda82fe9b0f14bfcfbee3df1d2d3a7f7cccb7cf89328a55757c198eaccc161",
+    "tests\\v2\\stage16-paired-report.test.mjs": "c4c5f104a4939528ec8c50adfc1cc2f7897c385a4b45117c3c07fa75fb9898f4"
+  },
+  "changed": [],
+  "pass": true,
+  "summaries": [
+    {
+      "stage": "03",
+      "suite": "focused",
+      "started": "2026-11-18T22:15:26.857Z",
+      "finished": "2026-11-18T22:15:27.473Z",
+      "args": [
+        "docs\\validation\\stage16-03-20261119\\run-allowed.mjs",
+        "focused"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "6e047bb37c7ee4008174d3f7652345ca0b9763bf42224da40e0d4d0d02400e41",
+      "pass": true
+    },
+    {
+      "stage": "03",
+      "suite": "regression",
+      "started": "2026-11-18T22:15:27.473Z",
+      "finished": "2026-11-18T22:15:28.600Z",
+      "args": [
+        "docs\\validation\\stage16-03-20261119\\run-allowed.mjs",
+        "regression"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "55f91e571c6e0e95fe0a1c9bfbb02df5855b22200de90efc6da4039b02b146fa",
+      "pass": true
+    },
+    {
+      "stage": "04",
+      "suite": "focused",
+      "started": "2026-11-18T22:15:28.600Z",
+      "finished": "2026-11-18T22:15:29.505Z",
+      "args": [
+        "docs\\validation\\stage16-04-20261119\\run-allowed.mjs",
+        "focused"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "201e587ec0610105289f9665c0d69240aa665fc52798ec2e73993d3bb9bae51c",
+      "pass": true
+    },
+    {
+      "stage": "04",
+      "suite": "regression",
+      "started": "2026-11-18T22:15:29.505Z",
+      "finished": "2026-11-18T22:15:31.010Z",
+      "args": [
+        "docs\\validation\\stage16-04-20261119\\run-allowed.mjs",
+        "regression"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "d78b55eb9c3d25cde0da3966b7cf02f15efa75c0d5c6b7f49207e7a7ef381c99",
+      "pass": true
+    },
+    {
+      "stage": "05",
+      "suite": "focused",
+      "started": "2026-11-18T22:15:31.010Z",
+      "finished": "2026-11-18T22:15:32.407Z",
+      "args": [
+        "docs\\validation\\stage16-05-20261119\\run-allowed.mjs",
+        "focused"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "e796202edd370e00baaefbf68e02ee23f96a06b1d1019bbeb781173948db56c0",
+      "pass": true
+    },
+    {
+      "stage": "05",
+      "suite": "regression",
+      "started": "2026-11-18T22:15:32.407Z",
+      "finished": "2026-11-18T22:15:34.476Z",
+      "args": [
+        "docs\\validation\\stage16-05-20261119\\run-allowed.mjs",
+        "regression"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 24,
+        "pass": 24,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "fc0b84b1be154af86101fdb4c98dc761ba600e0fca6657eba76b2732447605f6",
+      "pass": true
+    },
+    {
+      "stage": "06",
+      "suite": "focused",
+      "started": "2026-11-18T22:15:34.476Z",
+      "finished": "2026-11-18T22:15:35.716Z",
+      "args": [
+        "docs\\validation\\stage16-06-20261119\\run-allowed.mjs",
+        "focused"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "23cabc2838a425cefe928a41afe0684e47f8e39efac9c3cfc678950d9ead4f6c",
+      "pass": true
+    },
+    {
+      "stage": "06",
+      "suite": "regression",
+      "started": "2026-11-18T22:15:35.717Z",
+      "finished": "2026-11-18T22:15:38.388Z",
+      "args": [
+        "docs\\validation\\stage16-06-20261119\\run-allowed.mjs",
+        "regression"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 32,
+        "pass": 32,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "42609e2f2584abaea1a07015fd656f9747071f5cf6e9b218e7fcf4973a65609a",
+      "pass": true
+    },
+    {
+      "stage": "06",
+      "suite": "evidence",
+      "started": "2026-11-18T22:15:38.388Z",
+      "finished": "2026-11-18T22:15:38.882Z",
+      "args": [
+        "docs\\validation\\stage16-06-20261119\\run-allowed.mjs",
+        "evidence"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "counts": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "logSha256": "3e3d08a81847c6713f8fd1107269d3fe14559aa9f24200e4cdbb104dd583aa50",
+      "pass": true
+    }
+  ],
+  "executions": 193,
+  "distinctTestNames": 130
+}

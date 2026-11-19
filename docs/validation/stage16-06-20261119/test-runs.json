@@ -1,0 +1,374 @@
+{
+  "stage": "S16-06",
+  "dateKst": "2026-11-19",
+  "scope": "Offline synthetic gate and five-artifact reconciliation; actual start and actual acceptance BLOCKED.",
+  "runtime": {
+    "version": "v24.22.1",
+    "executable": "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1112-611-0_26.1112.611.0_x64__3k8sg7r9htsxt\\dependencies\\node\\bin\\node.exe",
+    "sha256": "c0b01496cf3da5cceca86eb6e1b2ef5d088cd46ad4e97cf502e2c937fa7f56b9",
+    "branch": "codex/mangohana-v2-sites-20261111",
+    "head": "4a87e02020a62b3a8925c6568925477e8b063b78"
+  },
+  "commands": {
+    "runner": "docs/validation/stage16-06-20261119/run-allowed.mjs",
+    "preload": "docs/validation/stage16-03-20261119/metadata-only.mjs",
+    "suites": [
+      "red",
+      "focused",
+      "capture",
+      "regression",
+      "evidence"
+    ],
+    "redMeaning": "Only the red suite redirects the new boundary to the actual S16-02/S16-05 outputs. Integrity, overlap, receipt and absent target the current implementation when replayed."
+  },
+  "containment": {
+    "firstTest": "red",
+    "allowlist": "One exact test file and enumerated test names per child. Permitted reads are named metadata/code/JSON files and seven named JavaScript dependency directories. The child has no filesystem-write, child-process, worker or native-addon grant.",
+    "images": "Existing metadata-only preload intercepts sharp, image/ML and network imports and fetch. No image input is granted. Parent capture serializes the five fixed JSON names and index after a successful guarded run.",
+    "sourceInspection": "Initial discovery used nonrecursive document filename filters in named documentation directories, an extension allowlist and image/archive rejection. No source-image inventory or execution store was opened."
+  },
+  "runs": [
+    {
+      "suite": "red",
+      "exitCode": 1,
+      "log": "red-contract.log",
+      "sha256": "d5bca260ff84161939a7d2d6b6f370ea44a08992d7cfb860edd9398ffb7148ad",
+      "tap": {
+        "tests": 4,
+        "pass": 0,
+        "fail": 4,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Four expected assertion failures against the original lock/report boundary; no product start or acceptance existed there."
+    },
+    {
+      "suite": "focused",
+      "exitCode": 0,
+      "log": "first-green.log",
+      "sha256": "7e96ef36711b981d073c8bc02f3e2ff6b11146e6064742cc0f9148063f1de17e",
+      "tap": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Initial four business gates."
+    },
+    {
+      "suite": "integrity",
+      "exitCode": 1,
+      "log": "red-start-integrity.log",
+      "sha256": "0a8cf71fa009b511e0fbc173c81028727eb182051cd2e521d4e8b518f895186a",
+      "tap": {
+        "tests": 3,
+        "pass": 0,
+        "fail": 3,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Three assertion failures on the first implementation: absent start pin, retroactive approval, unsigned decision field."
+    },
+    {
+      "suite": "focused",
+      "exitCode": 1,
+      "log": "red-overlap.log",
+      "sha256": "a7ce9999439f87b09758dd99d8ccfa8980a2e6f0ff9173f3a053bb6a05c76a7e",
+      "tap": {
+        "tests": 22,
+        "pass": 21,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Returned but unassessable overlap on a whole axis. The other 21 checks passed."
+    },
+    {
+      "suite": "receipt",
+      "exitCode": 1,
+      "log": "red-attempt-receipt.log",
+      "sha256": "4c9cff304bf26c97ce8ea631931f8ee11c99e12cc5eea1d1bf5058d3d73d0c20",
+      "tap": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Fixture construction failed with STAGE15_USAGE_INVALID before reaching the S16-06 assertion. This is not counted as a gate RED."
+    },
+    {
+      "suite": "capture",
+      "exitCode": 0,
+      "log": "final-focused.log",
+      "sha256": "1bab251a1d03e17d14d9d5dbb7aed08b806c3e306874a99c437d58a42f624d13",
+      "tap": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "First complete capture of the five synthetic outputs, after moving the invalid mutation to the consumer boundary."
+    },
+    {
+      "suite": "regression",
+      "exitCode": 0,
+      "log": "final-regression.log",
+      "sha256": "ae0d6381ad4f796c3056a478e17bf4351ae3f59b4c9a8ca95737c1a230599d9b",
+      "tap": {
+        "tests": 32,
+        "pass": 32,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Intermediate related regressions."
+    },
+    {
+      "suite": "evidence",
+      "exitCode": 0,
+      "log": "final-artifacts.log",
+      "sha256": "3bed18d53d30c1b2111d3df889ca88188102ff8f908571216f264dcf0640e022",
+      "tap": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Intermediate fresh reopen of six JSON files."
+    },
+    {
+      "suite": "absent",
+      "exitCode": 1,
+      "log": "red-null-evidence.log",
+      "sha256": "d4f4c396ad1d82ece9f2acbf79d89f11f732cfc37f2f2ebadcf98755b881cb1d",
+      "tap": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Explicit null inputs raised TypeError instead of returning the missing-evidence blockers."
+    },
+    {
+      "suite": "focused",
+      "exitCode": 0,
+      "log": "verified-focused.log",
+      "sha256": "10610ba884627aec3362df808844c4428b94e35a032271de4b65401f05edab3d",
+      "tap": {
+        "tests": 25,
+        "pass": 25,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Final focused tests following null handling and fixed-name reopen hardening."
+    },
+    {
+      "suite": "regression",
+      "exitCode": 0,
+      "log": "verified-regression.log",
+      "sha256": "121693c712a1f125d2258a05228944ab38b7ba7b18475bdd834c859fdb82a7f5",
+      "tap": {
+        "tests": 32,
+        "pass": 32,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Final named relevant regressions."
+    },
+    {
+      "suite": "evidence",
+      "exitCode": 0,
+      "log": "verified-artifacts.log",
+      "sha256": "c5bb36520af2dae158df21a6cd5bcfe3923456a01bf3310162f0c4dfb67d47e9",
+      "tap": {
+        "tests": 1,
+        "pass": 1,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "note": "Final disk reopen and deep comparison against a newly constructed synthetic run."
+    }
+  ],
+  "final": {
+    "focused": 25,
+    "regression": 32,
+    "savedArtifactReopen": 1,
+    "total": 58,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "regressionByFile": {
+      "stage16-condition-matrix": 2,
+      "stage16-experiment-lock": 6,
+      "stage16-execution-observations": 7,
+      "stage16-blind-review": 6,
+      "stage16-paired-report": 7,
+      "offline-evaluation": 2,
+      "quality-policy": 2
+    },
+    "fingerprints": {
+      "unchangedBeforeAfter": true,
+      "count": 65,
+      "sha256": {
+        "packages/evaluation/stage16-condition-matrix.mjs": "8f15aaa851463dc92829d7bb71b58917b7cfbaad5228b6a9330a4c52a9b8b1c1",
+        "packages/evaluation/stage16-experiment-lock.mjs": "d73967a3638310ec9c9d0d07fff4f68b34ee2c99af4baa0f2077086dcd4872b1",
+        "packages/evaluation/stage16-execution-observations.mjs": "36b0fc743619e225b7051e1aca641d85210eadb264c5e98ce30012389ad74825",
+        "packages/evaluation/stage16-blind-review.mjs": "d0b8947a11798d1b6fd8be6bc5f12cd32008c85c844e95c1fd6725198c893205",
+        "packages/evaluation/stage16-paired-report.mjs": "236e2397a639dc9275dae67d856c73e1281aa204beedac5676191a9921229885",
+        "packages/evaluation/stage16-final-acceptance.mjs": "f6a6ae9112b93fb5003fe638ee1bdf27f3b1f96f99cb90119cca74ef854aeb69",
+        "tests/v2/stage16-condition-matrix.test.mjs": "18f4ab82a45cd49fda98a3825f0966fc06c47ff68fbadeb87377d5c09a623dd2",
+        "tests/v2/stage16-experiment-lock.test.mjs": "9034be288020c71e4c0f7473feda6c5aba8a5b16ad76e8e8854fdfde3dabd043",
+        "tests/v2/stage16-execution-observations.test.mjs": "3884dd68b287dff185fcb6fc785383b3c9caead56be1ca18110f2b29882bce83",
+        "tests/v2/stage16-blind-review.test.mjs": "27b189a055d2a3af372bfc229ada03e8249e703cbaf84ea9fe22006c93b30354",
+        "tests/v2/stage16-paired-report.test.mjs": "c4c5f104a4939528ec8c50adfc1cc2f7897c385a4b45117c3c07fa75fb9898f4",
+        "tests/v2/stage16-final-acceptance.test.mjs": "bacda82fe9b0f14bfcfbee3df1d2d3a7f7cccb7cf89328a55757c198eaccc161",
+        "tests/v2/fixtures/stage16-experiment.mjs": "d56b694b30b101ea993997457cbf09a12be1c62db095fd7158ea4478d7190fe9",
+        "tests/v2/fixtures/stage16-observations.mjs": "7f9cad3c2d254ed4a00947a2e12d75371b729de9401afa0913bbb36a9998c215",
+        "tests/v2/fixtures/stage16-blind-review.mjs": "98452cacd0fbdb83c13dc82bb7daeadfc8e54f621feeff617bd9af4e75a031f8",
+        "tests/v2/fixtures/stage16-paired.mjs": "301c1d3c40d38424aa3bdabe5f3b808f27fa4e0ff445de7a01d1d28ed5087654",
+        "tests/v2/fixtures/stage16-acceptance.mjs": "f3b1dc89e76d67e80d5b7ea3e146925961888242b27526bc68d552725af4e4ea",
+        "packages/evaluation/dataset-contract.mjs": "b49657d3130b164d338501d4982cead673cd52b1e72ff018e83c763fbe70d9e9",
+        "packages/evaluation/image-fingerprint.mjs": "cb20b21331331041aa9b836c4bbd2e2fe568dec0c0f6a3cd1f582d838f883c92",
+        "packages/evaluation/dataset-v1.schema.json": "f876f683041cd30af1b0030f6783d55be0ccaeca77ed934c72609c0bf2c10d57",
+        "packages/evaluation/annotation-v1.schema.json": "539beff79d96465bc8546e19075c0255bccd17272db508e52551afb5abfa268e",
+        "packages/evaluation/policy/policy.mjs": "fb5252de43cfbc5be14d35bfd0ece4c5b00e362b8a2b15837fd4b9cb5b093b8b",
+        "packages/evaluation/policy/stage08-v1.1.json": "5d8e5f5f75244fe138772e9865c255a5d7c0e5e7db97e851a350f67f9922f1d9",
+        "packages/evaluation/offline/contract.mjs": "57ed99788a463908814690984f3263a802133ed5f52cec92f888476b462f1c66",
+        "packages/evaluation/offline/evaluator.mjs": "4dd5ee73c81b2e5729f9996bbc15ccd0ca45407a586a62d84b12ba64f6e65ad3",
+        "packages/evaluation/offline/evidence.mjs": "5bd92d9d98f3c3682bb544ec56dab9909bd79f55326366249f49e1c2ff2ef27a",
+        "packages/evaluation/offline/ocr.mjs": "6d72b8904d84d4588f8ce8c5bc6ae8e49329da9543711889f6507a1c2ee2cc9e",
+        "packages/evaluation/offline/operations.mjs": "dbb47223f29e5149ed88188d4a2cebd65494dbf15bb9566595c32bb6e8bbf337",
+        "packages/evaluation/offline/quality.mjs": "10ecf14ac5ccb6f6519084b8aae80997d68910ced4dac574c7aa7b833c3fb9cf",
+        "packages/evaluation/offline/report.mjs": "0c5fc1996b8ed91d21ba5086ebd34112b1fd73d6d162a79b8c9c54b76bca439f",
+        "packages/evaluation/offline/v2-adapter.mjs": "2c8a709d27d66fa20d4f68edd68a731b078987824e5cc6dd2e7568e6fb9227db",
+        "packages/contracts/src/v2-common-contract.mjs": "e2fd1e616d874365097363c4228d5794bcdb9e13ddcb184e6cadae9d7a3c2def",
+        "packages/contracts/schemas/v2-common-contract-v1.schema.json": "994b8a6a6a23568cc4e5c5170a2991c553c19a16a873d68e17e81dbfacc85c25",
+        "apps/desktop/scripts/evaluate-automation-quality.mjs": "3738adef1f4e5d4bc5a25006b263453359555efec0139770ce23b3efd0492f61",
+        "apps/engine/stage15-provider-adapter.mjs": "5ff8b985052f62853540fc4b64672ec99600e013bf84e95a488da391a5767f39",
+        "apps/engine/stage15-batch-accounting.mjs": "fa437387ea1465029b188c8b7661d3be29419d8bbf444424fc92bd489bd94a0e",
+        "apps/engine/store.mjs": "0f63a6773a507c0385666d117cf83d5ba13cec0a8980fb95fe3eed024cdbfc39",
+        "apps/engine/result.mjs": "7d59ecc39be9347645b05c62405d5126fc7302cdb897ee498878bf174a202b7f",
+        "packages/ai-engine/quality/human-translation-review.cjs": "5588e6dac58dce94cac6fae164ea348e128ddb8e10d60605110ebf7a39dcece7",
+        "packages/ai-engine/quality/recovery-checkpoint.cjs": "1aff650b45a2bd09eff7ed2e87336d73db8b4d94519607be99247767eed6398a",
+        "packages/ai-engine/quality/recovery-policy.cjs": "161a708dae946d67f3a8f0fa215c18f6a63ac84af85279842b1d61f81300d812",
+        "packages/ai-engine/quality/stage15-quality-decision.cjs": "902de5c4875328bbe96d506535fb3d4cae7d1ebdab7fd94f1bb1cbbbc56323a2",
+        "packages/ai-engine/quality/stage15-stage-graph.cjs": "b9f91574ab7c57c037f03b4707b01824d6d6b15c340bbb40cd2c7f737ce93ca2",
+        "tests/v2/offline-evaluation.test.mjs": "aa9ea9ce19c8cf577edccba252328f43d9e284e6427323e8775ea8fce5a926c3",
+        "tests/v2/offline-evaluation-fixture.mjs": "2c129cf45f5ecd3450460e4c4ff1527fda78386723f026a60a55994069bed856",
+        "tests/v2/quality-policy.test.mjs": "fb0747c3430af3dc7144ab563a981af63bc612d739005ac15e1e7e8563495308",
+        "docs/validation/stage16-03-20261119/metadata-only.mjs": "b4d79f00abd1397b48b6a79ee25fd0404e99db1068271648782a8a76278f91ef",
+        "docs/validation/stage16-05-20261119/synthetic-report.json": "72c47ed67d2dfcaa03e2d154df787fc266a0487a2af91fedac4c841e8f0c367e",
+        "docs/validation/stage16-06-20261119/run-allowed.mjs": "1f30f5e3d403bb2b1237eea159deb01dbd1d73c9b65e9d1b02e6b96507894e14",
+        "docs/validation/stage16-06-20261119/red-baseline.mjs": "47b690a0984ddeb36fe470c7f3c2dbf1b2e53e69063c1a655264786805879364",
+        "package.json": "dc63a4ab47e15b28d84d4d75dd136cc687075bb377a2dac442b59aa14c11f59c",
+        "package-lock.json": "cf76be31703f6ad27f8e1a03b377226608c4f54085fac55b39d3c8bc4bed9de3",
+        "node_modules/ajv/package.json": "1f9033ee5a6515e7d76938b7072941862d1ed228a6879cc7fe10cdeb75107989",
+        "node_modules/ajv-formats/package.json": "402fb4bcfa457f0226813f3976ac42839dd619907c075c108efba8600d7edb69",
+        "node_modules/fast-deep-equal/package.json": "a5c63940db0260739be9e2ac67f3aac268df4db5770420ee4e34e493152f97d2",
+        "node_modules/fast-uri/package.json": "30cad05aad3d3596513706451dbfc7e0422f9c1d00f2903ecc34580327d54bc7",
+        "node_modules/json-schema-traverse/package.json": "156fb24af02845c190701360d06dfda35ef04282e34a734289ea9535ad9819ae",
+        "node_modules/require-from-string/package.json": "c0002f7d4c7d7e2a885cf0f97226344902417c3a0980f2beca41962d2bc1f6d8",
+        "node_modules/decimal.js/package.json": "d7e3794828ee8bc94818613c9d901a9e7c857e6ffcf027245e661ddfc63d9b72",
+        "docs/validation/stage16-06-20261119/experiment-lock.json": "8b2ceb29f9c367845c3e5a23aba55ee129ec385840daeb904dbf457cbe9f7809",
+        "docs/validation/stage16-06-20261119/condition-table.json": "24dfb928ed316702be605ac7a1b4a3061e5646fe2228e72e61c8dc1bbb8b2afd",
+        "docs/validation/stage16-06-20261119/human-audit.json": "b08e20dff82d4006a99d49cfa61391993cc792eda55141dfb3320e671b433976",
+        "docs/validation/stage16-06-20261119/uncertainty-paired-report.json": "f2e30f98fd1f5157d2a54513165c4902590f5ac7730e2b5b45f9b930e9292b18",
+        "docs/validation/stage16-06-20261119/cost-adjusted-success.json": "95cce8907dd662475edc5f5896f65f32a2ec8dd2fe70899c7a708655e54bc470",
+        "docs/validation/stage16-06-20261119/synthetic-index.json": "701299c460f3b2a89b59de1dea61be5c8842bcefe2d8b85972da64979d0967ba"
+      }
+    }
+  },
+  "syntheticExample": {
+    "index": "synthetic-index.json",
+    "artifacts": {
+      "experimentLock": "experiment-lock.json",
+      "conditionTable": "condition-table.json",
+      "humanAudit": "human-audit.json",
+      "uncertaintyPairedReport": "uncertainty-paired-report.json",
+      "costAdjustedSuccess": "cost-adjusted-success.json"
+    },
+    "status": "synthetic_reconciled",
+    "works": 2,
+    "pages": 2,
+    "plannedCells": 8,
+    "observedJobs": 8,
+    "overlapPairs": 2,
+    "answeredSimulatedAssignments": 6,
+    "cost": {
+      "currency": "USD",
+      "amount": "2",
+      "scope": "synthetic fixture"
+    },
+    "modelA": {
+      "axis": "semanticFidelity",
+      "minimumEffect": 0.04,
+      "observed": "worse",
+      "inference": "inconclusive"
+    },
+    "modelB": {
+      "axis": "semanticFidelity",
+      "minimumEffect": 0.04,
+      "observed": "no_difference",
+      "inference": "inconclusive"
+    },
+    "byteSha256": {
+      "experiment-lock.json": "8b2ceb29f9c367845c3e5a23aba55ee129ec385840daeb904dbf457cbe9f7809",
+      "condition-table.json": "24dfb928ed316702be605ac7a1b4a3061e5646fe2228e72e61c8dc1bbb8b2afd",
+      "human-audit.json": "b08e20dff82d4006a99d49cfa61391993cc792eda55141dfb3320e671b433976",
+      "uncertainty-paired-report.json": "f2e30f98fd1f5157d2a54513165c4902590f5ac7730e2b5b45f9b930e9292b18",
+      "cost-adjusted-success.json": "95cce8907dd662475edc5f5896f65f32a2ec8dd2fe70899c7a708655e54bc470",
+      "synthetic-index.json": "701299c460f3b2a89b59de1dea61be5c8842bcefe2d8b85972da64979d0967ba"
+    }
+  },
+  "actual": {
+    "evidenceProvidedForRun": false,
+    "start": "blocked",
+    "acceptance": "blocked",
+    "blockers": [
+      "UNUSED_HOLDOUT_REQUIRED",
+      "EXECUTION_APPROVAL_REQUIRED",
+      "START_EVIDENCE_REQUIRED",
+      "EXECUTION_RECEIPTS_REQUIRED",
+      "INDEPENDENT_REVIEW_REQUIRED",
+      "PAIRED_REPORT_REQUIRED"
+    ],
+    "actualWorkPagesUsed": 0,
+    "productModelCalls": 0,
+    "permitsIssued": 0,
+    "permitsConsumed": 0,
+    "actualHumanRatings": 0,
+    "imageProcessing": 0,
+    "realCost": null,
+    "qualityOutcome": null
+  },
+  "independentReview": {
+    "role": "test_verifier",
+    "configuredModel": "gpt-6-luna",
+    "configuredEffort": "low",
+    "count": 1,
+    "mode": "Read-only intermediate source review of gates and lineage. No test executions or human evaluation by the subagent. Final source changes were checked by the main agent with the three final runs.",
+    "limitations": "External proof of work eligibility, execution approval, resource-readiness and actual reviewer identity must be obtained from their evidence owners. No actual operating authority integrated or exercised in this stage."
+  },
+  "main": "Codex, GPT-6 family. Exact active variant not independently confirmed.",
+  "usageCost": null
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "packages/ai-engine/package.json",
+    "sha256": "13ce1a7af71362672fd48b5050ad68a318ca11da7265615a5d2050867f419461",
+    "matches": true
+  },
+  {
+    "file": "packages/ai-engine/package-lock.json",
+    "sha256": "27c2751a44be72c210f4218505e4076848eebacc1961fe2914ef2c0f8c744ae9",
+    "matches": true
+  },
+  {
+    "file": "packages/ai-engine/node_modules/electron/package.json",
+    "sha256": "39c9caae81f676ef1c3dd60d7eb931e11ebad5865d1ba52b8ff0dc622ff104e7",
+    "matches": true
+  },
+  {
+    "file": "packages/ai-engine/node_modules/electron/dist/electron.exe",
+    "sha256": "f05ccb120ecdfc46945d37c68fc7890a70846b5ec5f9cc406c257de2e6ea3baa",
+    "matches": true
+  }
+]

@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: all five saved JSON artifacts reopen against the index and the independent synthetic replay
+ok 1 - all five saved JSON artifacts reopen against the index and the independent synthetic replay
+  ---
+  duration_ms: 93.9082
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 102.4485
