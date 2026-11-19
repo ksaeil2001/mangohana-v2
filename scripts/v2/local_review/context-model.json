@@ -1,0 +1,41 @@
+{
+  "repository": "onnx-community/Qwen3-4B-Instruct-2507-ONNX",
+  "revision": "41a4dd4d147229f83043afb98a4d4c803b8bfcbb",
+  "files": [
+    [
+      "config.json",
+      1834,
+      "e038fa647597fed7b72bb0d8fdf8c76a00b40627"
+    ],
+    [
+      "tokenizer.json",
+      9117040,
+      "6c0f4b0f97c638fb9b293aaa8bf99a159e650ed0"
+    ],
+    [
+      "tokenizer_config.json",
+      3503,
+      "96d30a0f5c199450ebbfcaff591f7e5d70653f7d"
+    ],
+    [
+      "onnx/model_q4.onnx",
+      454851,
+      "bd0b111dd18c881a220d146e5491a1111d46438a11b5087354667bf16a83207c"
+    ],
+    [
+      "onnx/model_q4.onnx_data",
+      2085644288,
+      "21e214a9c87271f4cfe5828794f9af288a3d856482ef99881bd54f6d4dfbb83a"
+    ],
+    [
+      "onnx/model_q4.onnx_data_1",
+      1875968000,
+      "3f9ffba3de283d1740cb4153ec6fd4104f2444a91036cbdca1dafa1ea4a3ba9f"
+    ]
+  ],
+  "tokenizerWheel": {
+    "file": "tokenizers-0.22.2-cp39-abi3-win_amd64.whl",
+    "url": "https://files.pythonhosted.org/packages/65/71/0670843133a43d43070abeb1949abfdef12a86d490bea9cd9e18e37c5ff7/tokenizers-0.22.2-cp39-abi3-win_amd64.whl",
+    "sha256": "c9ea31edff2968b44a88f97d784c2f16dc0729b8b143ed004699ebca91f05c48"
+  }
+}

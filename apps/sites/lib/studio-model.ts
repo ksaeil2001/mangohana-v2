@@ -13,10 +13,27 @@ export type TextBlock = {
 };
 export type PendingBatch={key:string;projectId:string;source:'ja'|'auto';target:'ko';phase:'prepared'|'sending';members:{pageId:string;pageNumber?:number;generation:number;sourceSha256:string;name:string}[]};
 export type StudioPage = {
+  reviewedWarningSignature?:string;
+  engineOutcome?: EngineOutcome;
   engineReview?:EngineReview;
   id: string; name: string; image: string; cleanImage?: string; finalImage?: string; finalImageSignature?: string; width: number; height: number;
   blocks: TextBlock[]; status: PageStatus; error?: string; reviewed: boolean; jobId?: string; jobEndpoint?: string; requestId?: string; processed?: boolean; engineGeneration?: number;enginePageNumber?:number;pendingBatch?:PendingBatch;
 };
+export type EngineOutcome='FAILED'|'RESULT_UNKNOWN'|'NEEDS_REVIEW'|'PARTIAL';
+export function readEngineOutcome(value:unknown):EngineOutcome|undefined {
+  return value==='FAILED'||value==='RESULT_UNKNOWN'||value==='NEEDS_REVIEW'||value==='PARTIAL'?value:undefined;
+}
+export const REVIEW_NAMES={NOT_STARTED:'미시작',RUNNING:'처리 중',FAILED:'실패',RESULT_UNKNOWN:'실행 결과 미확정',
+  NEEDS_REVIEW:'검토 필요',PARTIAL:'부분 처리',CANDIDATE_READY:'미승인 후보',APPROVED:'사용자 검수 완료'} as const;
+export function pageReviewState(page:StudioPage):keyof typeof REVIEW_NAMES {
+  if(page.status==='processing')return 'RUNNING';
+  if(page.engineOutcome)return page.engineOutcome;
+  if(page.status==='failed')return 'FAILED';
+  if(page.status==='paused'||page.jobId||page.pendingBatch?.phase==='sending')return 'RESULT_UNKNOWN';
+  if(page.reviewed&&page.status==='completed')return 'APPROVED';
+  if(page.processed&&canUseFinalImage(page))return 'CANDIDATE_READY';
+  return page.blocks.length||page.cleanImage?'NEEDS_REVIEW':'NOT_STARTED';
+}
 export type Project = {
   id: string; name: string; chapter: string; source: string; target: string; mode: Mode;
   sample: boolean; pages: StudioPage[]; createdAt: string; updatedAt: string;
@@ -84,6 +101,15 @@ export function getIssues(page: StudioPage): Issue[] {
   }
   return issues;
 }
+function reviewStillValid(page:StudioPage) {
+  const issues=getIssues(page);
+  return !issues.length || (canUseFinalImage(page) && issues.every(issue=>issue.kind==='engine') &&
+    page.reviewedWarningSignature===JSON.stringify(page.engineReview?.warnings??[]));
+}
+export function approvePageCandidate(page:StudioPage):StudioPage {
+  if(pageReviewState(page)!=='CANDIDATE_READY'||getIssues(page).some(issue=>issue.kind!=='engine'))return page;
+  return {...page,reviewed:true,status:'completed',reviewedWarningSignature:JSON.stringify(page.engineReview?.warnings??[])};
+}
 export function fitBlock(block: TextBlock, page: Pick<StudioPage,"width"|"height">): TextBlock {
   const b = {...block};
   while (b.size > 10 && lineCount(b,page.width)*b.size*b.lineHeight > b.h/100*page.height-12) b.size--;
@@ -92,7 +118,7 @@ export function fitBlock(block: TextBlock, page: Pick<StudioPage,"width"|"height
 export function pageStatus(page: StudioPage): PageStatus {
   if (page.status === "processing" || page.status === "failed") return page.status;
   if (page.jobId || page.pendingBatch || page.status === "paused") return "paused";
-  if (page.reviewed && getIssues(page).length === 0) return "completed";
+  if (page.reviewed && reviewStillValid(page)) return "completed";
   if (page.blocks.length || page.processed) return "review";
   return "ready";
 }
@@ -172,7 +198,8 @@ function normalizeProject(value:unknown,imported:boolean):Project {
       }
     }else{page.jobId=undefined;page.jobEndpoint=undefined;}
     if(!imported&&raw.pendingBatch)page.pendingBatch=validatePendingBatch(raw.pendingBatch,p.id,raw.id);
-    page.reviewed=raw.reviewed===true&&getIssues({...page,status:"review",jobId:undefined}).length===0;
+    page.engineOutcome=readEngineOutcome(raw.engineOutcome);
+    page.reviewed=raw.reviewed===true&&!page.engineOutcome&&reviewStillValid({...page,status:"review",jobId:undefined});
     if(!imported&&page.pendingBatch&&!page.jobId){page.status=raw.status==='failed'?'failed':'paused';page.error=page.error||'배치 접수 정보를 다시 확인해 주세요. 확인되기 전에는 새 작업을 만들지 않아요.';}
     else if(!imported&&raw.status==="processing"&&!page.jobId){page.status="failed";page.error="작업 ID를 받기 전에 연결이 끊겼어요. 엔진 기록을 확인한 뒤 재시도해 주세요.";}
     else if(!imported&&page.jobId)page.status=raw.status==="failed"?"failed":"paused";

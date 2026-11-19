@@ -12,6 +12,7 @@ const { selectDialogueRegions } = require('../../../../quality/region-selection.
 const { buildPageTranslationRequest, parsePageTranslation, parsePageTranslationResponse } = require('../../../../quality/page-translation.cjs');
 const { buildTranslationInput, linePromptData, regionResponseFormat, validateTranslationBatch } = require('../../../../quality/translation-contract.cjs');
 const { assertKoreanOutputBatch } = require('../../../../quality/korean-output.cjs');
+const {productOnnx,extractionFromOnnx,translationRequest,translatedPage} = require('../../../../quality/product-onnx.cjs');
 const { verifyLearnedMask, verifySourceTextMask, protectedOcrRegions } = require('../../../../quality/mask-evidence.cjs');
 const { runtimeReuseFlags, createOwnedRuntimeCache } = require('../../../../quality/owned-runtime.cjs');
 const { createOcrFailureDiagnostic } = require('../../../../quality/ocr-diagnostic.cjs');
@@ -44,23 +45,28 @@ async function createEngine(options) {
   const lamaBridge = path.join(root, 'scripts', 'sites-local', 'lama-stdio.py');
   const releaseHooks = acquireHooks();
   let closed = false, blocked, active, closePromise, font, ocr, registry, payloadApi, qaApi, rendererSource, ocrCache, translationCache, ocrEnvironmentPolicy;
-  let reuse = { ocr: false, translation: false };
+  let reuse = { ocr: false, translation: false }, onnx;
   let state = '파일 준비 확인 중입니다.';
 
   const load = (relative) => import(pathToFileURL(path.join(compiled, 'src', relative)).href);
   try {
     if (!app.isReady()) throw failure('APP_NOT_READY', 'app.whenReady() 이후 엔진을 생성해야 합니다.');
     reuse = runtimeReuseFlags(config);
-    llamaArguments(config,0);
+    onnx = productOnnx(config);
+    if (onnx) {
+      if (reuse.ocr || reuse.translation || config.refineConnectedOcr || config.mangaOcr)
+        throw failure('CONFIG_PATH','ONNX 프로필과 native OCR 재인식·런타임 재사용 설정을 함께 사용할 수 없습니다.');
+      await onnx.preflight();
+    } else llamaArguments(config,0);
     if(config.pageContextTranslation!==undefined&&typeof config.pageContextTranslation!=='boolean')throw failure('CONFIG_PATH','페이지 문맥 번역 설정은 boolean이어야 합니다.');
     llamaStartupMs(config);
     await fs.mkdir(path.join(profile, 'engine-temp'), { recursive: true });
     if (Boolean(config.regionDetectorWorker) !== Boolean(config.regionDetectorModel)) throw failure('CONFIG_PATH', '영역 탐지 실행기와 모델 경로가 함께 필요합니다.');
     if (config.refineConnectedOcr !== undefined && typeof config.refineConnectedOcr !== 'boolean' || config.refineConnectedOcr && !config.regionDetectorWorker) throw failure('CONFIG_PATH', '연결 대사 재인식은 boolean 설정과 학습 영역 탐지가 필요합니다.');
-    if (Boolean(config.textMaskWorker) !== Boolean(config.textMaskModel) || config.textMaskWorker && !config.regionDetectorWorker) throw failure('CONFIG_PATH', '학습 마스크에는 픽셀 모델·실행기와 대사 영역 탐지가 모두 필요합니다.');
+    if (Boolean(config.textMaskWorker) !== Boolean(config.textMaskModel) || config.textMaskWorker && !config.regionDetectorWorker && !onnx) throw failure('CONFIG_PATH', '학습 마스크에는 픽셀 모델·실행기와 대사 영역 탐지가 모두 필요합니다.');
     if(config.textMaskAlgorithm!==undefined&&(!config.textMaskWorker||!['dual-context-consensus-v1','source-ink-radial-halo-v3-experimental'].includes(config.textMaskAlgorithm)))throw failure('CONFIG_PATH','지원하는 학습 마스크 알고리즘과 실행기를 확인하세요.');
-    if (config.pageContextTranslation && !config.mmproj) throw failure('CONFIG_PATH', '페이지 그림 번역에는 대응하는 그림 인코더가 필요합니다.');
-    for (const key of ['llamaServer', 'gemmaModel', 'python', 'lamaWorker', 'lamaModel', 'lamaTileWrapper', ...(config.regionDetectorWorker ? ['regionDetectorWorker','regionDetectorModel'] : []), ...(config.textMaskWorker ? ['textMaskWorker','textMaskModel'] : []), ...(config.mmproj ? ['mmproj'] : [])]) {
+    if (config.pageContextTranslation && !config.mmproj && !onnx) throw failure('CONFIG_PATH', '페이지 그림 번역에는 대응하는 그림 인코더가 필요합니다.');
+    for (const key of [...(onnx ? [] : ['llamaServer','gemmaModel']), 'python', 'lamaWorker', 'lamaModel', 'lamaTileWrapper', ...(!onnx && config.regionDetectorWorker ? ['regionDetectorWorker','regionDetectorModel'] : []), ...(config.textMaskWorker ? ['textMaskWorker','textMaskModel'] : []), ...(!onnx && config.mmproj ? ['mmproj'] : [])]) {
       const name = absolute(config[key], key);
       if (!(await fs.stat(name)).isFile()) throw failure('RESOURCE_MISSING', `${key} 파일이 준비되지 않았습니다.`);
     }
@@ -78,7 +84,7 @@ async function createEngine(options) {
       resourcesPath: resources, initialResourceRoot: resourceRoot,
       ...(config.mangaOcr ? { mangaOcr: config.mangaOcr } : {}),
     });
-    ocr = createOcr();
+    if (!onnx) ocr = createOcr();
     if (reuse.ocr) ocrCache = createOwnedRuntimeCache({
       kind: 'ocr', createOwner: () => new ProcessOwner(), create: createOcr,
       prepare: async (service, { signal, context }) => {
@@ -97,7 +103,7 @@ async function createEngine(options) {
     registry = registryModule.createTranslationEngineRegistry([adapterModule.createLocalAiTranslationAdapter()]);
     payloadApi = payloadModule;
     qaApi = qaModule;
-    state = '파일·서명 글꼴 준비 완료. OCR 검증과 Gemma 적재는 작업 실행 시 시작합니다.';
+    state = '파일·서명 글꼴 준비 완료. 모델 적재는 작업 실행 시 시작합니다.';
   } catch (error) {
     blocked = error?.code === 'FONT_UNAVAILABLE' || error?.code === 'APP_NOT_READY' || error?.code === 'CONFIG_PATH'
       ? error.message : '엔진의 모델 경로·컴파일 결과·리소스 파일을 확인하지 못했습니다.';
@@ -105,21 +111,23 @@ async function createEngine(options) {
 
   function health() {
     return { ready: !closed && !blocked && !active, message: closed ? '엔진이 종료되었습니다.' : blocked ?? state,
-      savedContextSupported:!closed&&!blocked };
+      providerProfile:onnx?'onnx-cpu':'native',modelLoading:'ON_JOB',savedContextSupported:!closed&&!blocked };
   }
 
-  function inspectImage(bytes, mime) {
+  async function inspectImage(bytes, mime) {
     // HTTP 서버가 입력 8MiB를 검사한다. 같은 API로 최대 32MiB 결과도 확인한다.
     const header = imageHeader(bytes, mime, LIMITS.outputBytes);
-    const decoded = decode(bytes, header);
+    const decoded = await decodeSource(bytes, header);
     return decoded.getSize();
   }
 
   const ocrContext=()=>({engineFile:__filename,repositoryRoot:path.resolve(root,'../../../..'),config,compiled,resources,resourceRoot,
     environmentIdentity:ocrEnvironmentPolicy.identity,reuseOcrRuntime:reuse.ocr});
   const ocrCompatibilityAccess=createOcrCompatibilityAccess();
+  const ocrConfiguration=context=>onnx?onnx.configuration('ocr',__filename):computeOcrConfiguration(context);
   async function readOcrCheckpoint(args,checkpoint,identity,scope,signal,context=ocrContext()){
     if(args.resolveOcrCompatibility!==undefined&&typeof args.resolveOcrCompatibility!=='function')throw failure('OCR_COMPATIBILITY_REJECTED','호환 출처는 신뢰된 controller 함수로만 전달할 수 있습니다.');
+    if(onnx)return {value:await checkpoint.load('ocr',identity),compatibility:null};
     return ocrCompatibilityAccess.load({session:checkpoint,identity,context,scope,resumeFrom:args.resumeFrom,sourceEvidence:args.resolveOcrCompatibility,signal});
   }
 
@@ -129,9 +137,9 @@ async function createEngine(options) {
     const signal=args.signal;assertActive(signal);
     const original=await boundedFile(absolute(args.inputPath,'inputPath'),LIMITS.inputBytes),header=imageHeader(original);
     // Compute the same normalized identity in memory; no PNG file is created.
-    const normalized=decode(original,header).toPNG(),scope={ownerScope:args.ownerScope,projectId:args.projectId,pageId:args.pageId,
+    const normalized=(await decodeSource(original,header)).toPNG(),scope={ownerScope:args.ownerScope,projectId:args.projectId,pageId:args.pageId,
       sourceSha256:sha(original),normalizedSha256:sha(normalized),sourceLanguage:args.sourceLanguage??'auto',pageNumber:args.pageNumber??null};
-    const context=ocrContext(),identity={configuration:await computeOcrConfiguration(context)};
+    const context=ocrContext(),identity={configuration:await ocrConfiguration(context)};
     const session=createCheckpointSession({directory:args.resumeFrom?.directory??path.dirname(args.inputPath),jobId:'read-only-input-inspection',scope,resumeFrom:args.resumeFrom,signal});
     const ocr=await readOcrCheckpoint(args,session,identity,scope,signal,context);
     const out={status:'OCR_CHECKPOINT_REQUIRED',scope,currentOcrIdentity:identity,exactLoader:session.evidence(),ocrCompatibility:ocr.compatibility,
@@ -161,7 +169,7 @@ async function createEngine(options) {
   // A separate server-only, read-only entry. Never normalize, run a job or issue a permit.
   async function inspectImportedPageReadiness({binding,source,signal}){
     if(!health().ready)throw failure('ENGINE_UNAVAILABLE',health().message);
-    const context=ocrContext(),currentIdentity={configuration:await computeOcrConfiguration(context)};
+    const context=ocrContext(),currentIdentity={configuration:await ocrConfiguration(context)};
     return inspectImportedPageInputs({binding,source,signal,readCurrentOcr:async({scope,resumeFrom})=>{
       const checkpoint=createCheckpointSession({directory:source.directory,jobId:'read-only-imported-input',scope,resumeFrom,signal});
       const out=await readOcrCheckpoint({resumeFrom,resolveOcrCompatibility:async()=>source.compatibilityEvidence},checkpoint,currentIdentity,scope,signal,context);
@@ -214,7 +222,7 @@ async function createEngine(options) {
       assertActive(signal);
       const original = await boundedFile(inputPath, LIMITS.inputBytes);
       const header = imageHeader(original);
-      const normalized = decode(original, header).toPNG();
+      const normalized = (await decodeSource(original, header)).toPNG();
       const dimensions = imageHeader(normalized, 'image/png', LIMITS.outputBytes);
       const originalHash = sha(original), normalizedHash = sha(normalized);
       // Only an administrator-supplied function can select this route. HTTP JSON
@@ -230,7 +238,7 @@ async function createEngine(options) {
       const checkpoint=createCheckpointSession({directory:output,jobId,signal,onCheckpoint:args.onCheckpoint,resumeFrom:args.resumeFrom,scope:ocrScope});
       const checkpointsEnabled=typeof args.onCheckpoint==='function'||!!args.resumeFrom;
       const jobOcrContext=ocrContext();
-      const configuration=async stage=>!checkpointsEnabled?null:stage==='ocr'?computeOcrConfiguration(jobOcrContext):checkpointKey({stage,settings:stage==='ocr'?{
+      const configuration=async stage=>!checkpointsEnabled?null:stage==='ocr'?ocrConfiguration(jobOcrContext):stage==='translation'&&onnx?onnx.configuration(stage,__filename):checkpointKey({stage,settings:stage==='ocr'?{
         mangaOcr:config.mangaOcr??null,refineConnectedOcr:config.refineConnectedOcr??false,ocrEnvironment:ocrEnvironmentPolicy.identity,reuseOcrRuntime:reuse.ocr,
       }:stage==='translation'?{modelAlias:config.modelAlias??'gemma4-e2b-local',arguments:llamaArguments(config,0),pageContextTranslation:config.pageContextTranslation===true,reuseTranslationServer:reuse.translation}:{},
         files:await fingerprintFiles(stage==='ocr'?[__filename,config.python,config.regionDetectorWorker,config.regionDetectorModel,
@@ -263,7 +271,11 @@ async function createEngine(options) {
         } finally { detectorSignal.removeEventListener('abort', cancel); if (!record.closed) await owner.terminate(record, true); }
       });
       let rawExtraction, ocrRefinement, regionSelection, regionDetection,extraction,preSelectionExtraction;
-      if(savedOcr){({rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction}=savedOcr.payload);validateExtraction(extraction);}
+      if(savedOcr){
+        ({rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction}=savedOcr.payload);
+        validateExtraction(extraction);
+        if(onnx)await fs.writeFile(path.join(output,'onnx-ocr.json'),savedOcr.assets['onnx-ocr.json'],{flag:'wx'});
+      }
       else {
       if (config.refineConnectedOcr) {
         regionDetection = await detectRegions();
@@ -271,6 +283,16 @@ async function createEngine(options) {
       }
       await progress('ocr', '기존 OCR로 원문과 읽기 순서를 인식합니다.', 5);
       extraction = await deadline(signal, LIMITS.ocrMs, 'OCR_TIMEOUT', async (ocrSignal) => {
+        if (onnx) {
+          const request={jobId,pageNumber:args.pageNumber??1,sourceSha256:normalizedHash,normalized:path.join(output,'normalized.png'),width:dimensions.width,height:dimensions.height};
+          await runtimeEvent('onnx_ocr_start');
+          const reply=await onnx.execute('ocr',request,owner,ocrSignal,path.join(profile,'engine-temp'));
+          await fs.writeFile(path.join(output,'onnx-ocr.json'),JSON.stringify(reply),{flag:'wx'});
+          const detected=extractionFromOnnx(reply.data,request);
+          regionDetection=detected.detection;
+          await runtimeEvent('onnx_ocr_complete',{regions:detected.extraction.speechBubbles.length});
+          return detected.extraction;
+        }
         return await owner.run(async () => {
         const recognize = async (service, lease) => {
           const recognitionStarted = performance.now(); await runtimeEvent('ocr_recognition_start');
@@ -316,7 +338,7 @@ async function createEngine(options) {
       // selection. Keeping the old connected parent here would protect the
       // entire parent envelope and block all newly recognized child masks.
       preSelectionExtraction = structuredClone(extraction);
-      if (config.regionDetectorWorker) {
+      if (config.regionDetectorWorker || onnx) {
         if (!config.refineConnectedOcr) await fs.writeFile(path.join(output, 'raw-ocr.json'), JSON.stringify(rawExtraction, null, 2), { flag: 'wx' });
         regionDetection ??= await detectRegions();
         const selected = selectDialogueRegions(extraction, regionDetection);
@@ -333,7 +355,7 @@ async function createEngine(options) {
       }
       }
       await fs.writeFile(path.join(output, 'ocr.json'), JSON.stringify(extraction, null, 2), { flag: 'wx' });
-      if(!ocrRead.compatibility)await saveCheckpoint('ocr',ocrIdentity,{rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction});
+      if(!ocrRead.compatibility)await saveCheckpoint('ocr',ocrIdentity,{rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction},onnx?['onnx-ocr.json']:[]);
       window = await createRenderer(font, rendererSource, signal);
       const preparationStarted = performance.now();
       // A job is an immutable source incarnation. Bind its renderer mask to the
@@ -403,6 +425,7 @@ async function createEngine(options) {
       let stage15Receipt;
       const translationIdentity=reviewed || args.translateStage ? null : {configuration:await configuration('translation'),translationInputFingerprint:translationInput.fingerprint};
       const savedTranslation=reviewed || args.translateStage ? null : await checkpoint.load('translation',translationIdentity);
+      let translationRequestInFlight=false;
       try {
       if(reviewed){
         humanReview=await resolveEngineReview({resolve:args.resolveTranslationReview,snapshot:reviewSnapshot,lines,phase:'translation',previousReceipt:humanReview.receipt});
@@ -429,9 +452,27 @@ async function createEngine(options) {
         translationRequests.push({requestId, scope:'page',regionIds:rows.map(r=>r.id),httpRequests:0,contextFingerprint:fingerprint,
           contextSnapshotSha256:args.translationContext?.snapshotSha256,imageSha256:normalizedHash,usedImageContext:false});
       } else {
-      if(savedTranslation){pendingTranslations.push(...savedTranslation.payload.pendingTranslations);records.push(...savedTranslation.payload.records);translationRequests.push(...savedTranslation.payload.translationRequests);}
+      if(savedTranslation){
+        pendingTranslations.push(...savedTranslation.payload.pendingTranslations);records.push(...savedTranslation.payload.records);translationRequests.push(...savedTranslation.payload.translationRequests);
+        if(onnx) for(const [file,bytes] of Object.entries(savedTranslation.assets)) await fs.writeFile(path.join(output,file),bytes,{flag:'wx'});
+      }
       else {
       await deadline(signal, LIMITS.translationMs, 'TRANSLATION_TIMEOUT', async (translationSignal) => {
+        if (onnx) {
+          const request=translationRequest(translationInput,lines),requestId=randomUUID(), started=Date.now();
+          await fs.writeFile(path.join(output,'onnx-request.json'),JSON.stringify(request),{flag:'wx'});
+          await runtimeEvent('onnx_translation_start',{requestId});
+          const reply=await onnx.execute('translate',request,owner,translationSignal,path.join(profile,'engine-temp'),()=>{translationRequestInFlight=true;});
+          const responseBytes=Buffer.from(JSON.stringify(reply));
+          await fs.writeFile(path.join(output,'onnx-response.json'),responseBytes,{flag:'wx'});
+          translationRequestInFlight=false;
+          const result=translatedPage(reply,lines,qaApi.inspectTranslationQuality,{requestId,durationMs:Date.now()-started,
+            modelAlias:'Qwen3-4B-Instruct-2507-ONNX-q4',sourceImageSha256:normalizedHash,responseSha256:sha(responseBytes),
+            ...(translationInput.context.snapshotSha256?{contextSnapshotSha256:translationInput.context.snapshotSha256}:{})});
+          pendingTranslations.push(...result.pending);records.push(...result.records);translationRequests.push(result.request);
+          await runtimeEvent('onnx_translation_complete',{requestId,regions:records.length});
+          return;
+        }
         const translate = async translationServer => {
         if (config.pageContextTranslation && config.mmproj) {
           await progress('translate', '페이지 그림과 전체 대사 문맥을 함께 번역합니다.', 35);
@@ -446,7 +487,7 @@ async function createEngine(options) {
           const response = await owner.run(() => fetch(translationServer.origin + '/v1/chat/completions', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body,
             signal: AbortSignal.any([translationSignal, AbortSignal.timeout(120_000)]),
-          }), { ...translationServer.auth, onRequest: () => { modelHttpRequests++; } }, translationSignal);
+          }), { ...translationServer.auth, onRequest: () => { modelHttpRequests++; translationRequestInFlight=true; }, onResponse:()=>{translationRequestInFlight=false;} }, translationSignal);
           if (!response.ok) throw failure('TRANSLATION_RESULT', '페이지 문맥 번역 요청을 처리하지 못했습니다.');
           const result = await response.json();
           await fs.writeFile(path.join(output,'translation-response-page.json'),JSON.stringify({requestId,promptVersion:translationInput.promptVersions.page,requestFingerprint:fingerprint,response:result},null,2),{flag:'wx'});
@@ -484,7 +525,7 @@ async function createEngine(options) {
           const result = await deadline(translationSignal, LIMITS.translationItemMs, 'TRANSLATION_ITEM_TIMEOUT', (itemSignal) => owner.run(() => registry.executeTranslation(payload, {
             engineType: 'local_ai', localAiRuntime: 'custom', localAiEndpoint: translationServer.origin,
             localAiModel: config.modelAlias ?? 'gemma4-e2b-local', signal: itemSignal,skipQaInspection:true,
-          }), { ...translationServer.auth, onRequest: () => { modelHttpRequests++; } }, itemSignal));
+          }), { ...translationServer.auth, onRequest: () => { modelHttpRequests++; translationRequestInFlight=true; }, onResponse:()=>{translationRequestInFlight=false;} }, itemSignal));
           assertActive(translationSignal);
           if (payloadApi.computeTranslationPayloadFingerprint(payload) !== fingerprint ||
               result?.contextFingerprint !== undefined && result.contextFingerprint !== fingerprint ||
@@ -528,10 +569,13 @@ async function createEngine(options) {
         if(reviewed)lines[i].userTranslation=humanReview.lines[i].userTranslation;
         records[i].semantic=validated[i].semantic;
       }
-      if(!reviewed && !stage15Receipt)await saveCheckpoint('translation',translationIdentity,{pendingTranslations,records,translationRequests});
+      if(!reviewed && !stage15Receipt)await saveCheckpoint('translation',translationIdentity,{pendingTranslations,records,translationRequests},onnx?['onnx-request.json','onnx-response.json']:[]);
       if(reviewed)await fs.writeFile(path.join(output,'human-translation-review.json'),JSON.stringify(humanReview.receipt,null,2),{flag:'wx'});
       } catch(error) {
-        await fs.writeFile(path.join(output,'translation-review.json'),JSON.stringify({version:1,status:'needs_review',reason:error.code??'TRANSLATION_RESPONSE_INVALID',outputCompliance:error.outputCompliance??null,translationInputFingerprint:translationInput.fingerprint,receivedCandidateIds:pendingTranslations.map(r=>r.id),expectedIds:lines.map(r=>r.id),partialApplied:false,automaticRetry:false,semanticAccuracy:null,humanSemanticVerified:null},null,2),{flag:'wx'});
+        if(translationRequestInFlight&&error.code!=='CLEANUP_FAILED'&&(onnx||!signal.aborted))error=failure('RESULT_UNKNOWN','번역 실행에 대한 응답을 확인하지 못했습니다.');
+        const review={version:1,status:error.code==='RESULT_UNKNOWN'?'result_unknown':'needs_review',reason:error.code??'TRANSLATION_RESPONSE_INVALID',outputCompliance:error.outputCompliance??null,translationInputFingerprint:translationInput.fingerprint,receivedCandidateIds:pendingTranslations.map(r=>r.id),expectedIds:lines.map(r=>r.id),partialApplied:false,automaticRetry:false,semanticAccuracy:null,humanSemanticVerified:null};
+        try{await fs.writeFile(path.join(output,'translation-review.json'),JSON.stringify(review,null,2),{flag:'wx'});}
+        catch(writeError){if(error.code!=='RESULT_UNKNOWN')throw writeError;}
         throw error;
       }
       await translationServer?.close();
@@ -592,6 +636,10 @@ async function createEngine(options) {
       }
       // 번역을 고정한 배치 회귀를 모델 재호출 없이 재현할 수 있도록 파생 원본을 보존한다.
       await fs.writeFile(path.join(output, 'cleaned.png'), inpainting.bytes, { flag: 'wx' });
+      if (restorationPixels.maskedDarkPixels && !restorationPixels.changedDarkPixels) {
+        await fs.writeFile(path.join(output,'restoration-review.json'),JSON.stringify({reason:'SOURCE_RESIDUE_SUSPECTED',pixels:restorationPixels,residualJapanese:'NOT_MEASURED'}),{flag:'wx'});
+        throw failure('SOURCE_RESIDUE_SUSPECTED','제거 마스크 안의 어두운 원본 획이 그대로 남아 복원 검토가 필요합니다.');
+      }
       await saveCheckpoint('cleaned',cleanedIdentity,{verification:inpainting.verification},['cleaned.png']);
       await progress('typeset', '검토 전 한국어 식자 후보 PNG를 합성합니다.', 85);
       if(reviewed)humanReview=await resolveEngineReview({resolve:args.resolveTranslationReview,snapshot:reviewSnapshot,lines,phase:'before-render',previousReceipt:humanReview.receipt});
@@ -605,8 +653,15 @@ async function createEngine(options) {
         translationContextRevision: translationInput.context.revision, fontResourceIdentity: 'Pretendard Std Variable@1.3.9',
         mode: 'unreviewed_candidate', maskReview: 'candidate_validated_not_human_approved' };
       const rendered = await deadline(signal, LIMITS.renderMs, 'TYPESET_TIMEOUT', (renderSignal) => rendererCall(window, 'render', {
-        jobId, cleanedPngBase64: inpainting.bytes.toString('base64'), lines:renderLines, typesettingIdentity,
+        jobId, cleanedPngBase64: inpainting.bytes.toString('base64'), lines:renderLines, typesettingIdentity, returnStructuredFailure:true,
       }, renderSignal));
+      if(rendered?.jobId===jobId&&['MANUAL_LAYOUT_REQUIRED','FONT_OR_GLYPH_ERROR'].includes(rendered.failure?.code)){
+        const details=rendered.failure.layoutDiagnostics;
+        const regionId=renderLines.find(line=>line.id===details?.rejectedRegion)?.id??null;
+        const reasonCodes=Array.isArray(details?.reasonCodes)?details.reasonCodes.filter(code=>typeof code==='string'&&/^[A-Z_0-9]{1,100}$/.test(code)).slice(0,25):[];
+        await fs.writeFile(path.join(output,'typesetting-review.json'),JSON.stringify({rendererCode:rendered.failure.code,regionId,reasonCodes,typesettingIdentity}),{flag:'wx'});
+        throw failure('PARTIAL_TYPESETTING','원위치 식자와 글리프를 확인할 수 없어 수동 검토가 필요합니다.');
+      }
       validateRendered(rendered, jobId, renderLines, dimensions, typesettingIdentity);
       for (const layout of rendered.layoutReport) {
         const region = translationInput.regions.find(r => r.id === layout.id), record = records.find(r => r.id === layout.id);
@@ -667,7 +722,7 @@ async function createEngine(options) {
         Promise.resolve().then(() => { if (window && !window.isDestroyed()) window.destroy(); }),
         Promise.resolve().then(() => translationServer?.close()),
         Promise.resolve().then(() => bridgeRecord && !bridgeRecord.closed ? owner.terminate(bridgeRecord, true) : undefined),
-        Promise.resolve().then(() => ocr.close()),
+        Promise.resolve().then(() => ocr?.close()),
       ]);
       cleanup.push(...await Promise.allSettled([owner.cleanup()]));
       if (cleanup.some((result) => result.status === 'rejected')) throw failure('CLEANUP_FAILED', '생성한 작업의 종료 확인에 실패했습니다. 다음 작업을 차단합니다.');
@@ -692,7 +747,7 @@ async function createEngine(options) {
           blocked = '생성한 프로세스의 종료 확인에 실패했습니다. 엔진을 다시 시작해야 합니다.';
           throw failure('CLEANUP_FAILED', blocked);
         }
-        if (args.translateStage && error?.code === 'RESULT_UNKNOWN') throw failure('RESULT_UNKNOWN','번역 시도의 효과 또는 정산이 미확정입니다.');
+        if (error?.code === 'RESULT_UNKNOWN') throw failure('RESULT_UNKNOWN','번역 시도의 효과 또는 정산이 미확정입니다.');
         assertActive(controller.signal);
         if (args.translateStage && ['CANCELLED','STAGE15_ADMISSION_DENIED','AUTHORITY_MISMATCH','AUTHORITY_EXPIRED','PROVIDER_PIN_MISMATCH',
           'FALLBACK_CONSUMED','FALLBACK_INELIGIBLE','REVIEW_REVISION_CONFLICT','STAGE15_PROVENANCE_INVALID','STAGE15_TRANSLATION_BLOCKED',
@@ -702,8 +757,8 @@ async function createEngine(options) {
         // 외부 모델 응답·예외 문자열에 비밀정보가 섞일 수 있어 고정 문구만 반환한다.
         const known = new Set(['IMAGE_BYTES', 'IMAGE_LIMIT', 'IMAGE_FORMAT', 'IMAGE_MIME', 'INVALID_IMAGE', 'ANIMATED_IMAGE',
           'OCR_TIMEOUT', 'OCR_INCOMPLETE', 'OCR_EMPTY', 'PROCESS_RESTART_REQUIRED', 'OCR_REFINEMENT_INVALID', 'OCR_REFINEMENT_AMBIGUOUS', 'OCR_REFINEMENT_STALE', 'OCR_REFINEMENT_RESPONSE_INVALID', 'TRANSLATION_ID', 'TRANSLATION_RESULT', 'TRANSLATION_MISSING',
-          'TRANSLATION_TIMEOUT', 'TRANSLATION_ITEM_TIMEOUT', 'LLM_AUTH_UNSUPPORTED', 'LLM_HELP_TIMEOUT', 'LLM_PORT', 'LLM_START_TIMEOUT', 'LLM_START_FAILED',
-          'INPAINT_TIMEOUT', 'INPAINT_RESPONSE', 'INPAINT_PIXELS', 'TYPESET_TIMEOUT', 'TYPESET_ALPHA', 'TYPESET_RESULT',
+          'TRANSLATION_TIMEOUT', 'TRANSLATION_ITEM_TIMEOUT', 'TRANSLATION_PROVIDER_UNAVAILABLE', 'LLM_AUTH_UNSUPPORTED', 'LLM_HELP_TIMEOUT', 'LLM_PORT', 'LLM_START_TIMEOUT', 'LLM_START_FAILED',
+          'INPAINT_TIMEOUT', 'INPAINT_RESPONSE', 'INPAINT_PIXELS', 'SOURCE_RESIDUE_SUSPECTED', 'TYPESET_TIMEOUT', 'TYPESET_ALPHA', 'TYPESET_RESULT','PARTIAL_TYPESETTING',
           'SOURCE_CHANGED', 'STALE_RESULT', 'CHECKPOINT_INVALID', 'OCR_COMPATIBILITY_REJECTED', 'HUMAN_REVIEW_AUTHORITY_REQUIRED','HUMAN_REVIEW_BINDING_INVALID','HUMAN_REVIEW_REVISION_CONFLICT','HUMAN_REVIEW_EXECUTION_REQUIRED','HUMAN_REVIEW_OCR_CHECKPOINT_REQUIRED','HUMAN_REVIEW_RISK_UNRESOLVED', 'ENGINE_UNAVAILABLE', 'OCR_UNAVAILABLE', 'OUTPUT_EXISTS', 'TRANSLATION_NUMBER_MISMATCH',
           'TRANSLATION_IDENTITY_INVALID','TRANSLATION_CONTEXT_INVALID','TRANSLATION_CONTEXT_STALE','TRANSLATION_RESPONSE_INVALID','TRANSLATION_INPUT_LIMIT',
           'REGION_DETECTOR_TIMEOUT', 'REGION_DETECTOR_RESULT', 'REGION_SELECTION_INVALID', 'OCR_REVIEW_REQUIRED', 'NO_TRANSLATABLE_REGIONS', 'PAGE_TRANSLATION_INVALID', 'TEXT_MASK_INVALID', 'TEXT_MASK_TIMEOUT']);
@@ -754,6 +809,18 @@ async function boundedFile(filePath, limit) {
   } finally { await handle.close(); }
 }
 
+async function decodeSource(bytes, header) {
+  try {return decode(bytes,header);} catch(error) {
+    if(header.mime!=='image/webp' || error.code!=='INVALID_IMAGE')throw error;
+    // The validated, single-frame input can outlive Electron's installed WebP decoder.
+    // Keep source bytes untouched and return to the same normalized native-image pipeline.
+    try {
+      const {data,info}=await require('sharp')(bytes,{limitInputPixels:LIMITS.pixels,failOn:'error'}).ensureAlpha().png().toBuffer({resolveWithObject:true});
+      if(info.width!==header.width || info.height!==header.height)throw error;
+      return decode(data,{width:header.width,height:header.height,mime:'image/png'});
+    } catch {throw error;}
+  }
+}
 function decode(bytes, dimensions) {
   const header = imageHeader(bytes, undefined, LIMITS.outputBytes);
   if (header.width !== dimensions.width || header.height !== dimensions.height) throw failure('INVALID_IMAGE', '이미지 헤더 크기가 요청과 다릅니다.');
@@ -932,17 +999,21 @@ function comparePixels(sourceBytes, resultBytes, maskBytes, dimensions) {
     throw failure('INVALID_IMAGE', '디코딩된 픽셀 버퍼 크기가 일치하지 않습니다.');
   }
   let changedPixels = 0, outsideMaskChangedPixels = 0, alphaChangedPixels = 0, maskedPixels = 0;
+  let maskedDarkPixels = 0, changedDarkPixels = 0;
   for (let offset = 0; offset < source.length; offset += 4) {
     const alpha = mask[offset + 3];
     if (alpha !== 0 && alpha !== 255) throw failure('INVALID_IMAGE', '마스크 alpha가 이진값이 아닙니다.');
     if (alpha === 0) maskedPixels++;
+    const dark = alpha===0 && source[offset+3]===255 && Math.max(source[offset],source[offset+1],source[offset+2])<96;
+    if(dark)maskedDarkPixels++;
     if (source[offset + 3] !== result[offset + 3]) alphaChangedPixels++;
     if (source[offset] !== result[offset] || source[offset + 1] !== result[offset + 1] || source[offset + 2] !== result[offset + 2] || source[offset + 3] !== result[offset + 3]) {
       changedPixels++;
+      if(dark)changedDarkPixels++;
       if (alpha !== 0) outsideMaskChangedPixels++;
     }
   }
-  return { measured: true, decodedPixels: dimensions.width * dimensions.height, maskedPixels, changedPixels, outsideMaskChangedPixels, alphaChangedPixels };
+  return { measured: true, decodedPixels: dimensions.width * dimensions.height, maskedPixels, changedPixels, outsideMaskChangedPixels, alphaChangedPixels, maskedDarkPixels, changedDarkPixels };
 }
 
 async function createRenderer(font, bundle, signal) {

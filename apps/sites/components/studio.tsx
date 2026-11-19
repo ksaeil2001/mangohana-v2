@@ -2,7 +2,7 @@
 import {useCallback,useEffect,useLayoutEffect,useMemo,useReducer,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 import {flushSync} from 'react-dom';
 import {AlignCenter,AlignLeft,AlignRight,ArrowDownToLine,ArrowLeft,ArrowUpRight,Check,ChevronDown,ChevronLeft,ChevronRight,CircleCheck,Copy,Download,FileArchive,FileImage,FolderOpen,ImagePlus,Info,Keyboard,Layers,LoaderCircle,Maximize,Minus,MousePointer2,Plus,Redo2,Sparkles,SquareDashed,Trash2,Type,Undo2,Upload,WandSparkles,X,AlertTriangle} from 'lucide-react';
-import {canUseFinalImage,clamp,emptyProject,fitBlock,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
+import {approvePageCandidate,pageReviewState,readEngineOutcome,canUseFinalImage,clamp,emptyProject,fitBlock,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
 import {canExportPage,exportAvailability,pageActivity,type ExportFormat} from '@/lib/studio-presentation';
 import {resolveStudioShortcut} from '@/lib/studio-shortcuts';
 import {type SavedWorkspace} from '@/lib/studio-storage';
@@ -306,6 +306,7 @@ export default function Studio(){
   const endpoint=DEFAULT_ENGINE_ENDPOINT;
   const operation:ActiveOperation={kind:'processing',id:uid(),projectId:project.id};if(!beginActivity(operation))return;
   const controller=new AbortController();controllerRef.current=controller;const targetProject=project;let success=0,failed=0,stopped=0;
+  const observed=new Map<string,StudioPage['engineOutcome']>();
   const settled=new Set<string>(),pendingKnown=new Set(targets.filter(page=>page.jobId||page.pendingBatch).map(page=>page.id));
   const pageEvent=(id:string,event:PageEvent,label?:string)=>{
    const current=workspaceRef.current.projects.find(p=>p.id===targetProject.id)?.pages.find(pg=>pg.id===id);
@@ -326,9 +327,10 @@ export default function Studio(){
     for(const target of batchTargets)pageEvent(target.id,{type:'start',requestId:operation.id});
     await processProjectBatch(targetProject,batchTargets,DEFAULT_ENGINE_ENDPOINT,targetProject.source,targetProject.target,controller.signal,{
      onIntent:intent=>storeReceipt({intent}),onJobs:bindings=>storeReceipt({bindings}),
+     onObservation:(id,job)=>{observed.set(id,readEngineOutcome(job.reviewState));},
      onStage:(id,stage)=>sendActivity({type:'stage',id:operation.id,pageId:id,stage}),
      onResult:(id,result)=>{settled.add(id);if(pageEvent(id,{type:'result',requestId:operation.id,result},'OCR·번역 결과 수신'))success++;else stopped++;},
-     onError:(id,error,terminal,retryableJob)=>{settled.add(id);if(error instanceof BatchPendingError)stopped++;else failed++;pageEvent(id,error instanceof BatchPendingError?{type:'pause',requestId:operation.id,error:errorText(error)}:{type:'failure',requestId:operation.id,error:errorText(error),terminal,retryableJob},errorText(error));},
+     onError:(id,error,terminal,retryableJob)=>{settled.add(id);if(error instanceof BatchPendingError)stopped++;else failed++;pageEvent(id,error instanceof BatchPendingError?{type:'pause',requestId:operation.id,error:errorText(error),outcome:observed.get(id)??'RESULT_UNKNOWN'}:{type:'failure',requestId:operation.id,error:errorText(error),terminal,retryableJob,outcome:observed.get(id)},errorText(error));},
     },{currentPageId:()=>workspaceRef.current.reading?.[targetProject.id]?.pageId});
    }
    for(const target of targets.filter(page=>!batchIds.has(page.id))){
@@ -341,7 +343,7 @@ export default function Studio(){
      if(pageEvent(target.id,{type:'result',requestId:operation.id,result},`${target.name} · OCR·번역 결과 수신`))success++;else stopped++;settled.add(target.id);
     }catch(error){
      if(controller.signal.aborted){pageEvent(target.id,{type:'pause',requestId:operation.id},`${target.name} · 상태 조회 중지 (엔진 작업 취소 아님)`);stopped++;break;}
-     pageEvent(target.id,{type:'failure',requestId:operation.id,error:errorText(error),terminal:error instanceof TerminalJobError,retryableJob:error instanceof TerminalJobError&&error.retryableJob},`${target.name} · ${errorText(error)}`);failed++;settled.add(target.id);
+     pageEvent(target.id,error instanceof TerminalJobError&&error.outcome==='RESULT_UNKNOWN'?{type:'pause',requestId:operation.id,error:errorText(error),outcome:error.outcome}:{type:'failure',requestId:operation.id,error:errorText(error),terminal:error instanceof TerminalJobError&&error.terminal,retryableJob:error instanceof TerminalJobError&&error.retryableJob,outcome:error instanceof TerminalJobError?error.outcome:undefined},`${target.name} · ${errorText(error)}`);failed++;settled.add(target.id);
     }
    }
   }catch(error){
@@ -481,10 +483,11 @@ export default function Studio(){
               {selected.userSourceBox&&<button type="button" onClick={()=>patchBlock({userSourceBox:undefined},page.name+' · OCR 영역 복원')}>기존 좌표로 복원</button>}
               </fieldset>
             </form>}
-            {page&&(issues.length>0||page.status==='review'||effects)&&<details className="inspector-section" data-review-status={issues.length||page.status==='review'?'needs_review':'recorded'}>
-              <summary>{issues.length?`검토 필요 · 경고 ${issues.length}개`:page.status==='review'?'검토 필요':'효과음 처리 기록'}</summary>
+            {page&&(issues.length>0||page.status==='review'||effects)&&<details className="inspector-section" data-review-status={page.reviewed?'reviewed':issues.length||page.status==='review'?'needs_review':'recorded'}>
+              <summary>{page.reviewed?'사용자 검수 완료':issues.length?`검토 필요 · 경고 ${issues.length}개`:page.status==='review'?'검토 필요':'효과음 처리 기록'}</summary>
               {effects&&<p>효과음 처리 대상 · 원문 보존 {effects.preserved}개 · 번역 식자 {effects.translated}개</p>}
               {issues.length>0&&<ul>{issues.map((issue,i)=><li key={i}>{issue.blockId?<button type="button" onClick={()=>{setSelectedId(issue.blockId!);setCanvasLocation('editor');closeDrawer();}}>{issue.title}</button>:issue.title}</li>)}</ul>}
+              {pageReviewState(page)==='CANDIDATE_READY'&&<button type="button" disabled={!canEditCurrent||issues.some(issue=>issue.kind!=='engine')} onClick={()=>updatePage(approvePageCandidate,page.name+' · 사용자가 원문·번역·식자 검수 완료')}>원문·번역·식자 확인 후 검수 완료</button>}
             </details>}
             <section className="inspector-section typography-section" data-expanded={typographyOpen}><div className="section-title typography-title"><h3><button type="button" className="typography-disclosure" aria-label={typographyOpen?"글꼴 스타일 접기":"글꼴 스타일 펼치기"} aria-expanded={typographyOpen} aria-controls="typography-controls" onClick={()=>setTypographyOpen(open=>!open)}><ChevronDown size={14} aria-hidden="true"/><span>글꼴 스타일</span><span className="tiny-caps" aria-hidden="true">TYPOGRAPHY</span></button></h3>{selected&&<IconButton label="선택한 텍스트 삭제" disabled={!canEditCurrent} onClick={()=>{updatePage(p=>({...p,blocks:p.blocks.filter(b=>b.id!==selected.id),reviewed:false}),`${page.name} · 텍스트 삭제`);setSelectedId(null);}}><Trash2 size={14}/></IconButton>}</div><fieldset id="typography-controls" className="style-fieldset" hidden={!typographyOpen} disabled={!selected||!canEditCurrent}><label className="field-label" htmlFor="font-select">글꼴</label><select id="font-select" className="form-select font-select" value={selected?.font||"sans"} onChange={e=>patchBlock({font:e.target.value})}>{Object.entries(FONT_NAMES).map(([k,v])=><option value={k} key={k}>{v}</option>)}</select><div className="field-grid"><div><label className="field-label" htmlFor="font-size">크기</label><div className="number-field"><Type size={13}/><input id="font-size" aria-label="글자 크기" type="number" min={10} max={160} value={selected?.size||32} onChange={e=>patchBlock({size:clamp(Number(e.target.value)||10,10,160)})}/><span>px</span></div></div><div><label className="field-label" htmlFor="font-weight">굵기</label><select id="font-weight" className="form-select" value={selected?.weight||600} onChange={e=>patchBlock({weight:Number(e.target.value)})}><option value={400}>Regular</option><option value={500}>Medium</option><option value={600}>Semi Bold</option><option value={700}>Bold</option><option value={800}>Extra Bold</option></select></div></div>
               <div className="field-grid alignment-color"><div><label className="field-label">정렬</label><div className="alignment-control">{(["left","center","right"] as const).map((a,i)=>{const Icon=[AlignLeft,AlignCenter,AlignRight][i];return <button key={a} title={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-label={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-pressed={selected?.align===a} className={selected?.align===a?"active":""} onClick={()=>patchBlock({align:a})}><Icon size={15}/></button>;})}</div></div><div><label className="field-label" htmlFor="text-color">색상</label><div className="color-field"><input id="text-color" type="color" value={selected?.color||"#202020"} onChange={e=>patchBlock({color:e.target.value})}/><span>{(selected?.color||"#202020").slice(1).toUpperCase()}</span><ChevronDown size={11}/></div></div></div>

@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import humanReviewContract from '../../packages/ai-engine/quality/human-translation-review.cjs';
+import onnxProvider from '../../packages/ai-engine/quality/product-onnx.cjs';
 
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 function requireValue(condition, message) {
@@ -25,16 +26,23 @@ function png(bytes, width, height) {
   return 'data:image/png;base64,' + bytes.toString('base64');
 }
 
-function pageRequestProofs(report, translations, stage15) {
+function pageRequestProofs(report, translations, stage15, onnxReceipt) {
   const requests = report.translationRequests ?? [];
   requireValue(Array.isArray(requests) && requests.length <= 128, '페이지 번역 요청 기록이 올바르지 않습니다.');
   const byId = new Map();
   for (const request of requests) {
     requireValue(typeof request?.requestId === 'string' && request.requestId.length > 0 && request.requestId.length <= 200 && !byId.has(request.requestId), '페이지 번역 요청 식별자가 중복되거나 누락됐습니다.');
     const synthetic = stage15 && request.requestId === stage15.publication.executionId && request.contextFingerprint === stage15.publication.inputFingerprint;
-    requireValue(request.scope === 'page' && (synthetic ? request.httpRequests === 0 && request.usedImageContext === false : request.httpRequests === 1 && request.usedImageContext === true) &&
-      /^[a-f0-9]{64}$/.test(request.contextFingerprint) && /^[a-f0-9]{64}$/.test(request.imageSha256) &&
-      request.imageSha256 === report.hashes.normalized, '실제 페이지 그림·문맥 번역 실행 기록이 필요합니다.');
+    if (request.transport === 'onnx-cpu') {
+      requireValue(!stage15 && requests.length===1 && request.scope==='page' && onnxReceipt?.requestSha256===request.contextFingerprint &&
+        onnxReceipt?.responseSha256===request.responseSha256 && request.providerRevision===onnxProvider.revision &&
+        request.sourceImageSha256===report.hashes.normalized && request.localGenerations===1 && request.httpRequests===0 &&
+        request.usedImageContext===false && request.imageSha256===null, 'ONNX 페이지 번역의 원요청·응답 근거가 다릅니다.');
+    } else {
+      requireValue(!onnxReceipt && request.scope === 'page' && (synthetic ? request.httpRequests === 0 && request.usedImageContext === false : request.httpRequests === 1 && request.usedImageContext === true) &&
+        /^[a-f0-9]{64}$/.test(request.contextFingerprint) && /^[a-f0-9]{64}$/.test(request.imageSha256) &&
+        request.imageSha256 === report.hashes.normalized, '실제 페이지 그림·문맥 번역 실행 기록이 필요합니다.');
+    }
     requireValue(Array.isArray(request.regionIds) && request.regionIds.length > 0 && request.regionIds.length <= 128 &&
       new Set(request.regionIds).size === request.regionIds.length, '페이지 번역의 대사 목록이 중복되거나 비어 있습니다.');
     const members = [...translations.values()].filter(record => record.requestId === request.requestId);
@@ -54,7 +62,7 @@ function pageRequestProofs(report, translations, stage15) {
 }
 
 /** Convert only a trusted, integrity-checked engine report; this does not approve translation quality. */
-export function reportToStudioResult(report, { cleanedPng, candidatePng, verifiedStage15 }) {
+export function reportToStudioResult(report, { cleanedPng, candidatePng, verifiedStage15, verifiedOnnx }) {
   requireValue(Boolean(report?.stage15) === Boolean(verifiedStage15), '합성 번역 게시 서명을 확인해 주세요.');
   requireValue(report?.version === 1 && report.evidenceKind === 'LOCAL_ENGINE_CANDIDATE' && report.originalPreserved === true && report.userApproved === false, '실제 엔진의 원본 보존 보고서가 필요합니다.');
   requireValue(!report.regionSelection?.decisions?.some(d=>d.action==='needs_review') && !report.ocrRefinement?.reviews?.length &&
@@ -67,7 +75,7 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng, verifie
   requireValue(digest(cleanedPng) === report.hashes?.cleaned && digest(candidatePng) === report.hashes?.candidate, '저장된 결과의 해시가 엔진 보고서와 다릅니다.');
   const lines = indexed(report.lines,'대사');
   const translations = indexed(report.translations,'번역');
-  const pageRequests = pageRequestProofs(report, translations, verifiedStage15);
+  const pageRequests = pageRequestProofs(report, translations, verifiedStage15, verifiedOnnx);
   const layouts = indexed(report.typesetting?.layoutReport,'식자');
   const stage12 = [...layouts.values()].some(l=>l.contractVersion==='stage12-layout-v1');
   const typesettingIdentity = report.typesetting?.inputIdentity;
@@ -104,6 +112,7 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng, verifie
       Array.isArray(layout.actualLayout?.lines)&&JSON.stringify(layout.actualLayout.lines.map(l=>l.text))===JSON.stringify(layout.textEvidence.renderedLines)&&
       layout.glyphEvidence?.measured===true&&layout.glyphEvidence.missingGlyphOccurrences===0&&layout.raster?.paintedPixels>0&&
       layout.raster.clippedPixels===0&&layout.raster.otherRegionCollisionPixels===0&&layout.raster.overlappingInkPixels===0&&[0,null].includes(layout.raster.outsideInteriorPixels),'식자 문자열·글리프·픽셀 증거가 누락됐거나 모순됩니다.');
+    if (layout.placement && layout.placement!=='page') throw Object.assign(new Error('원위치 식자가 완료되지 않았습니다.'),{code:'PARTIAL_TYPESETTING'});
     const bbox = box(layout.bbox), sourceBbox = box(layout.sourceBbox ?? bbox);
     return {
       id:line.id, source:line.sourceText, text:effectiveText,
@@ -122,6 +131,7 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng, verifie
         preserved:report.ocr.nonSpeechText.filter(region=>region?.type==='sound_effect').length,
         translated:blocks.filter(block=>ocr.get(block.id).type==='sound_effect').length,
       }}:{}),
+      ...(verifiedOnnx ? {translation_transport:'onnx-cpu',model_image_input:false,automatic_quality_approval:false} : {}),
       ...(verifiedStage15 ? {translation_transport:'SYNTHETIC', translation_execution_id:verifiedStage15.publication.executionId,
         translation_artifact_sha256:verifiedStage15.publication.artifact.sha256} : {}),
       ...(humanReview?{human_translation_review:structuredClone(humanReview),manual_translation_selections:humanReview.selections.length}:{}),

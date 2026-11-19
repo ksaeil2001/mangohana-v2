@@ -122,17 +122,17 @@ export function connectionIsReady(state:ConnectionState,endpoint:string) {
 
 export type PageEvent={type:'start';requestId:string}|{type:'job';requestId:string;jobId:string;endpoint:string;pageNumber?:number}|{type:'batch';requestId:string;intent:PendingBatch}|
  {type:'result';requestId:string;result:Pick<StudioPage,'blocks'|'cleanImage'|'finalImage'|'finalImageSignature'|'engineReview'>}|
- {type:'failure';requestId:string;error:string;terminal:boolean;retryableJob?:boolean}|{type:'pause';requestId:string;error?:string}|{type:'continue-editing'};
+ {type:'failure';requestId:string;error:string;terminal:boolean;retryableJob?:boolean;outcome?:StudioPage['engineOutcome']}|{type:'pause';requestId:string;error?:string;outcome?:StudioPage['engineOutcome']}|{type:'continue-editing'};
 // Runtime tickets never become persisted editor revisions or cross-project cache values.
 const pageInputs=new WeakMap<StudioPage,{image:string;content:string;generation:number;manual:boolean}>();
 const pageContent=(page:StudioPage)=>JSON.stringify([page.width,page.height,page.blocks,page.cleanImage,page.finalImage,page.reviewed]);
 export function canApplyPageResult(page:StudioPage){const ticket=pageInputs.get(page);return !!ticket&&!ticket.manual&&ticket.image===page.image&&ticket.content===pageContent(page)&&ticket.generation===(page.engineGeneration??0);}
 export function transitionPage(page:StudioPage,event:PageEvent):StudioPage {
- if(event.type==='continue-editing')return {...page,status:page.blocks.length||page.processed?'review':'ready',reviewed:false,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
+ if(event.type==='continue-editing')return {...page,status:page.blocks.length||page.processed?'review':'ready',engineOutcome:undefined,reviewed:false,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
  if(event.type==='start'){
   if(page.status==='processing'&&page.requestId&&page.requestId!==event.requestId)return page;
   if(page.status==='processing'&&page.requestId===event.requestId)return page;
-  const next={...page,status:'processing' as const,requestId:event.requestId,error:undefined};
+  const next={...page,status:'processing' as const,engineOutcome:undefined,requestId:event.requestId,error:undefined};
   pageInputs.set(next,{image:page.image,content:pageContent(page),generation:page.engineGeneration??0,manual:page.reviewed||page.blocks.some(b=>b.userSourceBox!==undefined)||page.blocks.length>0&&page.finalImageSignature!==blockVisualSignature(page.blocks)});return next;
  }
  if(page.requestId!==event.requestId)return page;
@@ -144,9 +144,9 @@ export function transitionPage(page:StudioPage,event:PageEvent):StudioPage {
   if(!canApplyPageResult(page))return {...page,status:'review',requestId:undefined,error:'최신 사용자 수정과 확정값을 보존했어요. 이전 AI 후보는 적용하지 않았어요.'};
   return {...page,...event.result,engineReview:event.result.engineReview,status:'review',reviewed:false,processed:true,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
  }
- if(event.type==='failure')return {...page,status:'failed',requestId:undefined,error:event.error,...(event.terminal&&!event.retryableJob?{jobId:undefined,jobEndpoint:undefined}:{})};
+ if(event.type==='failure')return {...page,status:'failed',engineOutcome:event.outcome,requestId:undefined,error:event.error,...(event.terminal&&!event.retryableJob&&!event.outcome?{jobId:undefined,jobEndpoint:undefined}:{})};
  if(event.type==='pause'){
-  const stopped={...page,requestId:undefined,status:'review' as const,...(event.error?{error:event.error}:{})};
+  const stopped={...page,engineOutcome:event.outcome,requestId:undefined,status:'review' as const,...(event.error?{error:event.error}:{})};
   return {...stopped,status:page.jobId||page.pendingBatch?'paused':pageStatus(stopped)};
  }
  return page;

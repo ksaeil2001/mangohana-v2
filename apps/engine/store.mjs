@@ -4,6 +4,7 @@ import { mkdir, lstat, realpath, open, readdir, rename, rm, writeFile } from 'no
 import path from 'node:path';
 import { reportToStudioResult } from './result.mjs';
 import recoveryPolicy from '../../packages/ai-engine/quality/recovery-policy.cjs';
+import pageReview from '../../packages/ai-engine/quality/page-review-state.cjs';
 const {MAX_ATTEMPTS,classifyFailure}=recoveryPolicy;
 
 export const JOB_LIMITS = Object.freeze({ inputBytes: 8 * 1024 * 1024, outputBytes: 32 * 1024 * 1024,
@@ -25,7 +26,7 @@ export function usageFromReport(report,processingMs) {
       if(shared.has(record.requestId))continue;shared.add(record.requestId);
       const request=byRequest.get(record.requestId);
       if(!request){ledgerKnown=false;continue;}
-      units.push({calls:request.httpRequests,durationMs:request.durationMs,tokens:request.usage});
+      units.push({calls:request.transport==='onnx-cpu'?request.localGenerations:request.httpRequests,durationMs:request.durationMs,tokens:request.usage});
     }else if(record&&record.requestScope===undefined){
       // Legacy region reports prove calls and elapsed time, but have no token ledger contract.
       units.push({calls:record.modelHttpRequests,durationMs:record.durationMs,tokens:null});
@@ -125,12 +126,12 @@ export async function createTranslationReviewApplication(options) {
 }
 function publicJob(record) {
   const state = record.state;
-  return { id: state.id, status: state.status, stage: state.stage, progress: state.progress, message: state.message,
+  return { id: state.id, status: state.status, reviewState: pageReview.pageReviewState(state), stage: state.stage, progress: state.progress, message: state.message,
     fileName: state.name, width: state.width, height: state.height, projectId: state.projectId, pageId: state.pageId,
     sourceLanguage: state.sourceLanguage, sourceSha256: state.sourceSha256, createdAt: state.createdAt, updatedAt: state.updatedAt,
     pageNumber: state.pageNumber ?? null, batchId: state.batchId ?? null, retryOf: state.retryOf ?? null, usage: state.usage ?? null,
     error: state.error ?? null, errorCode: state.errorCode ?? null, warnings: [...(state.warnings ?? [])],
-    processingGeneration:state.sequence,resultRevision:state.resultReceipt?.revision??null,recovery:state.recovery??null,
+    processingGeneration:state.sequence,resultRevision:state.resultReceipt?.revision??null,candidateSha256:state.status==='completed'?state.resultReceipt?.candidateSha256??null:null,recovery:state.recovery??null,
     ...(state.stage15Attempts ? {stage15Attempts:structuredClone(state.stage15Attempts)} : {}),
     cancellation:state.cancelRequestedAt?{requestedAt:state.cancelRequestedAt,confirmedAt:state.cancelledAt??null}:null,
     reviewStatus: state.recovery?.type==='needs_review'?'needs_review':'unreviewed', downloadAvailable: state.status === 'completed' };
@@ -138,7 +139,8 @@ function publicJob(record) {
 function validateStoredState(state, id) {
   requireValue(state && state.version === 1 && state.id === id && uuid.test(id) && typeof state.owner==='string'&&shaPattern.test(state.owner) && typeof state.idempotencyKey==='string'&&keyPattern.test(state.idempotencyKey) &&
     shaPattern.test(state.fingerprint) && shaPattern.test(state.sourceSha256) && ['queued', 'running', 'completed', 'failed','cancelled','result_unknown'].includes(state.status) &&
-    (state.stage15 === undefined || state.stage15 === true) && (state.status !== 'result_unknown' || state.stage15 === true) &&
+    (state.stage15 === undefined || state.stage15 === true) &&
+    (state.status !== 'result_unknown' || state.stage15 === true || (state.errorCode==='RESULT_UNKNOWN'&&state.recovery?.manuallyRetryable===false)) &&
     ['ja', 'auto'].includes(state.sourceLanguage) && Object.hasOwn(sourceExtensions, state.mime) && validDimensions(state) &&
     [state.projectId,state.pageId].every(value=>value===null||typeof value==='string'&&idPattern.test(value)) &&
     Number.isSafeInteger(state.sequence) && state.sequence > 0 && typeof state.name === 'string' && state.name.length <= 180 &&
@@ -237,7 +239,8 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
     const pages = state.pages.map(page => {
       const job = latest(records.get(page.jobId));
       return { ...page, jobId: job?.state.id ?? page.jobId, job: job ? publicJob(job) : null,
-        status: job?.state.status ?? 'failed', errorCode: job?.state.errorCode ?? (state.status === 'accepted' ? null : 'BATCH_INCOMPLETE') };
+        status: job?.state.status ?? 'failed', reviewState: job ? pageReview.pageReviewState(job.state) : 'FAILED',
+        errorCode: job?.state.errorCode ?? (job ? null : 'BATCH_INCOMPLETE') };
     });
     const completedPages = pages.filter(page => page.status === 'completed').length, failedPages = pages.filter(page => ['failed','cancelled'].includes(page.status)).length;
     const unknownPages = pages.filter(page => page.status === 'result_unknown').length;
@@ -369,9 +372,22 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
     try {
       requireValue(Boolean(report.stage15) === (state.stage15 === true), 502, 'OUTPUT_INVALID', '번역 실행 출처가 다릅니다.');
       const verifiedStage15 = state.stage15 ? stage15.verifyReport(report,state) : undefined;
-      result = reportToStudioResult(report, { cleanedPng: buffers.cleaned, candidatePng: buffers.candidate, verifiedStage15 });
+      let verifiedOnnx;
+      if(report.translationRequests?.some(r=>r.transport==='onnx-cpu')){
+        const requestBytes=await boundedFile(path.join(record.directory,'onnx-request.json'),256*1024);
+        const responseBytes=await boundedFile(path.join(record.directory,'onnx-response.json'),8*1024*1024);
+        const request=JSON.parse(requestBytes),reply=JSON.parse(responseBytes);
+        verifiedOnnx={requestSha256:sha(requestBytes),responseSha256:sha(responseBytes)};
+        requireValue(reply.requestSha256===verifiedOnnx.requestSha256 && reply.data?.generation?.eos===true &&
+          reply.data.revision===report.translationRequests[0].providerRevision &&
+          request.lines.length===report.lines.length && reply.data.lines.length===report.lines.length &&
+          report.lines.every((line,i)=>request.lines[i].id===line.id && request.lines[i].source===line.sourceText &&
+            reply.data.lines[i].id===line.id && reply.data.lines[i].source===line.sourceText && reply.data.lines[i].ko===line.aiTranslation &&
+            reply.data.lines[i].flags?.length===0),502,'OUTPUT_INVALID','ONNX 원문·번역·식자 대응이 다릅니다.');
+      }
+      result = reportToStudioResult(report, { cleanedPng: buffers.cleaned, candidatePng: buffers.candidate, verifiedStage15, verifiedOnnx });
     }
-    catch { throw failure(502, 'OUTPUT_INVALID', '대사·번역·식자의 영역과 글꼴 증거가 일치하지 않습니다.'); }
+    catch (error) { if(error.code==='PARTIAL_TYPESETTING')throw error; throw failure(502, 'OUTPUT_INVALID', '대사·번역·식자의 영역과 글꼴 증거가 일치하지 않습니다.'); }
     return { report, result };
   }
   async function checkedCompletion(record) {
@@ -504,7 +520,7 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
     } catch (error) {
       state.usage = { processingMs: Math.round(performance.now()-started), localModelRequests:null, modelRequestMs:null, tokenUsage:null, engineMeasuredMs:null, monetaryCost:null };
       await serial(async()=>{
-        if (state.stage15 && error.code === 'RESULT_UNKNOWN') {
+        if (error.code === 'RESULT_UNKNOWN') {
           Object.assign(state,{status:'result_unknown',stage:'result_unknown',errorCode:'RESULT_UNKNOWN',message:'번역 실행 결과 또는 정산을 확인하지 못했습니다.',
             recovery:{code:'RESULT_UNKNOWN',type:'unsafe_to_repeat',automaticRetry:false,manuallyRetryable:false,monetaryCost:null}});
           if (state.batchId && state.stage15Attempts?.some(a=>a.resourceReleaseUnconfirmed)) {
@@ -614,6 +630,7 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
     async health() {
       let raw; try { raw = await engine.health(); } catch { raw = { ready: false }; }
       return { ready: !closed && !runtimeBlocked && (raw.ready === true || Boolean(active)), engineReady: !closed && !runtimeBlocked && raw.ready === true, running: Boolean(active), queued: queue.length,
+        ...(['native','onnx-cpu'].includes(raw.providerProfile)?{providerProfile:raw.providerProfile,modelLoading:raw.modelLoading}:{}),
         savedContextSupported:!closed&&raw.savedContextSupported===true };
     },
     async submit(input) {
@@ -622,6 +639,14 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
         available();
         const key = requestKey(metadata.owner,metadata.idempotencyKey), prior = requests.get(key);
         if (prior) { requireValue(prior.state.fingerprint === fingerprint, 409, 'IDEMPOTENCY_CONFLICT', '같은 작업 요청의 입력이 변경되었습니다.'); return publicJob(prior); }
+        if(metadata.projectId&&metadata.pageId){
+          const unresolved=[...records.values()].find(({state})=>state.owner===metadata.owner&&state.projectId===metadata.projectId&&
+            state.pageId===metadata.pageId&&pageReview.pageReviewState(state)==='RESULT_UNKNOWN');
+          if(unresolved){
+            requireValue(unresolved.state.sourceSha256===prepared.sourceSha256&&unresolved.state.sourceLanguage===metadata.sourceLanguage,409,'PAGE_SOURCE_CONFLICT','미확정 페이지의 입력이 달라졌습니다.');
+            return publicJob(unresolved);
+          }
+        }
         requireValue(records.size < JOB_LIMITS.jobs, 429, 'JOB_LIMIT', '보관할 수 있는 작업 수를 초과했습니다.');
         let dimensions; try { dimensions = await inspect(bytes, mime); } catch { throw failure(422, 'INVALID_IMAGE', '이미지 파일의 완전성과 크기를 확인해 주세요.'); }
         const record=recordFor(prepared,dimensions,stage15?{stage15:true}:{});await writeRecord(record);register(record);queue.push(record);applyPriorities();schedule();return publicJob(record);
@@ -730,7 +755,7 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
         const requestFingerprint=sha(JSON.stringify({retryRequestOf:id,owner,idempotencyKey}));
         if(prior){requireValue(prior.state.fingerprint===requestFingerprint,409,'IDEMPOTENCY_CONFLICT','같은 재시도 요청의 대상이 다릅니다.');return prior.state.retryOf&&!committed(prior)?admitRetry(prior):publicJob(prior);}
         const previous=latest(original);
-        if(previous.state.stage15 && ['failed','result_unknown'].includes(previous.state.status))
+        if(previous.state.status==='result_unknown'||previous.state.stage15 && previous.state.status==='failed')
           throw failure(409,'RETRY_UNSAFE','이 번역의 기존 시도와 승인 범위를 확인해 주세요.');
         requireValue(![...records.values()].some(record=>record.state.retryOf===previous.state.id&&!committed(record)),503,'RETRY_COMMIT_UNKNOWN','수락 여부를 확인하지 못한 재시도가 있습니다. 이전 요청 식별자로 확인해 주세요.');
         if(previous.state.status!=='failed'){

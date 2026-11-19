@@ -159,7 +159,9 @@ function acquireHooks() {
       headers.set('Authorization', `Bearer ${auth.secret}`);
       auth.onRequest?.();
       const response = await priorFetch.call(globalThis, input, { ...init, headers, redirect: 'error' });
-      return await boundedResponse(response, LIMITS.llmResponseBytes);
+      const bounded=await boundedResponse(response, LIMITS.llmResponseBytes);
+      auth.onResponse?.();
+      return bounded;
     };
     childProcess.spawn = spawnHook;
     globalThis.fetch = fetchHook;

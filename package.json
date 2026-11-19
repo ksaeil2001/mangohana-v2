@@ -10,6 +10,7 @@
     "dev": "node scripts/v2/start.mjs",
     "dev:legacy": "tsx scripts/dev.ts",
     "dev:v2": "node scripts/v2/start.mjs",
+    "translate:local": "node scripts/v2/local-review.mjs",
     "prepare:v2": "node scripts/v2/prepare.mjs",
     "resources:v2": "node scripts/v2/resources.mjs",
     "test:v2": "node scripts/v2/test.mjs",

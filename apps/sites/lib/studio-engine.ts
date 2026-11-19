@@ -1,6 +1,11 @@
-import { blockVisualSignature, DEFAULT_ENGINE_ENDPOINT, isStudioId, readEngineReview, validateBlocks, type StudioPage } from "./studio-model";
+import { blockVisualSignature, DEFAULT_ENGINE_ENDPOINT, isStudioId, readEngineReview, readEngineOutcome, validateBlocks, type StudioPage, type EngineOutcome } from "./studio-model";
 export { DEFAULT_ENGINE_ENDPOINT } from "./studio-model";
-export class TerminalJobError extends Error { terminal=true;retryableJob=false; }
+export class TerminalJobError extends Error { terminal=true;retryableJob=false;outcome?:EngineOutcome; }
+function unconfirmedJob(cause?:unknown) {
+  const detail=cause instanceof Error ? ' '+cause.message.slice(0,240) : '';
+  const error=new TerminalJobError('실행 결과를 확인하지 못했어요. 같은 작품·페이지의 기존 요청을 조회해 주세요.'+detail);
+  error.terminal=false;error.outcome='RESULT_UNKNOWN';return error;
+}
 export function endpointURL(value:string) {
   if(!value.trim()||value===DEFAULT_ENGINE_ENDPOINT)return DEFAULT_ENGINE_ENDPOINT;
   const url=new URL(value);
@@ -24,8 +29,8 @@ async function jsonResponse(response:Response):Promise<Record<string,unknown>> {
   if(!response.ok)throw new Error(`엔진 응답 오류 (${response.status}). 연결 설정과 엔진 기록을 확인해 주세요.`);
   return engineObject(await response.json());
 }
-export async function checkEngine(endpoint:string,signal?:AbortSignal) {
-  const data=await jsonResponse(await fetch(endpointURL(endpoint)+"/health",{signal:signal?AbortSignal.any([signal,AbortSignal.timeout(8000)]):AbortSignal.timeout(8000)}));
+export async function checkEngine(endpoint:string,signal?:AbortSignal,request:typeof fetch=fetch) {
+  const data=await jsonResponse(await request(endpointURL(endpoint)+"/health",{signal:signal?AbortSignal.any([signal,AbortSignal.timeout(8000)]):AbortSignal.timeout(8000)}));
   if(data.status!=="ok"&&data.status!=="healthy")throw new Error("엔진이 준비 상태를 응답하지 않았어요. 연결 규격을 확인해 주세요.");
   return data;
 }
@@ -62,9 +67,17 @@ export async function processPage(page:StudioPage,endpoint:string,source:string,
     const projectId=options.projectId||page.id;
     form.append("project_id",projectId);form.append("page_id",page.id);form.append("idempotency_key",await requestKey(page,projectId));
     signal.throwIfAborted();
-    onStage("작업 생성");const created=await jsonResponse(await fetch(base+"/jobs",{method:"POST",body:form,signal:AbortSignal.timeout(30000)}));
-    if(!isStudioId(created.id))throw new Error("엔진 작업 ID가 올바르지 않아요. 엔진 기록을 확인해 주세요.");
-    jobId=created.id;await onJob(jobId!);
+    onStage("작업 생성");
+    let response:Response|undefined;
+    try {
+      response=await fetch(base+"/jobs",{method:"POST",body:form,signal:AbortSignal.timeout(30000)});
+      const created=await jsonResponse(response);
+      if(!isStudioId(created.id))throw new Error("엔진 작업 ID가 올바르지 않아요. 엔진 기록을 확인해 주세요.");
+      jobId=created.id;await onJob(jobId!);
+    } catch(error) {
+      if(base===DEFAULT_ENGINE_ENDPOINT&&(!response||response.ok||response.status>=500))throw unconfirmedJob(error);
+      throw error;
+    }
   }
   const deadline=Date.now()+10*60*1000;
   while(Date.now()<deadline){
@@ -73,7 +86,8 @@ export async function processPage(page:StudioPage,endpoint:string,source:string,
     signal.throwIfAborted();
     if(base===DEFAULT_ENGINE_ENDPOINT&&(data.id!==jobId||data.projectId!==(options.projectId||page.id)||data.pageId!==page.id))throw new Error('엔진 응답의 작품·페이지·작업 연결이 달라 이전 내용을 보존했어요.');
     onStage(typeof data.stage==="string"?data.stage:"처리 중");
-    if(data.status==="failed"){const error=new TerminalJobError(typeof data.error==="string"?data.error:"엔진에서 처리가 실패했어요.");error.retryableJob=base===DEFAULT_ENGINE_ENDPOINT;throw error;}
+    if(data.status==="result_unknown"||data.reviewState==='RESULT_UNKNOWN')throw unconfirmedJob();
+    if(data.status==="failed"){const error=new TerminalJobError(typeof data.error==="string"?data.error:"엔진에서 처리가 실패했어요.");error.outcome=readEngineOutcome(data.reviewState);error.retryableJob=base===DEFAULT_ENGINE_ENDPOINT&&(data.recovery as {manuallyRetryable?:boolean}|null)?.manuallyRetryable!==false;throw error;}
     if(data.status==="cancelled")throw new TerminalJobError("엔진에서 취소된 작업이에요.");
     if(data.status==="completed"){
       return validatePageEngineResult(data.result||data);
