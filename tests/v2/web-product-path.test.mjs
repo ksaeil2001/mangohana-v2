@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdtemp, readFile, writeFile, mkdir} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
 import {createServer} from 'node:http';
 import {tsImport} from 'tsx/esm/api';
 import {runWebBatch} from '../../scripts/v2/web-review-batch.mjs';
@@ -10,6 +11,8 @@ import {once} from 'node:events';
 import sharp from 'sharp';
 import hostApi from '../../apps/engine/host.cjs';
 import {createJobStore} from '../../apps/engine/store.mjs';
+import {contentSha256} from '../../packages/evaluation/dataset-contract.mjs';
+import {hash} from '../../packages/evaluation/offline/contract.mjs';
 import {fixture, png} from './fixtures/owned-engine-runtime.mjs';
 
 const origin = 'http://127.0.0.1:5173';
@@ -62,6 +65,26 @@ test('HTTP batch uses the product stage graph and retains a missed OCR page besi
   assert.deepEqual(Object.keys(report.hashes).sort(),['candidate','cleaned','mask','normalized','original']);
   assert.equal(success.job.sourceSha256,report.hashes.original);
 });
+test('the first automatic rendering receives the saved normalized image and removal mask for background verification', async t => {
+  const renderInputs = [];
+  const env = await setup(t, f => { f.state.inspectRenderInput = value => renderInputs.push(value); },
+    { onnxModelsRoot: path.resolve('synthetic-models') });
+  const batch = await completed(env, (await submit(env)).id);
+  assert.equal(batch.pages[0].reviewState, 'CANDIDATE_READY');
+  assert.equal(renderInputs.length, 1);
+  const { typesettingIdentity, backgroundContext } = renderInputs[0];
+  assert.ok(backgroundContext, 'the ordinary product renderer needs the source and mask to verify a flat gray balloon');
+  const jobDir = path.join(env.base, 'jobs', batch.pages[0].jobId);
+  assert.deepEqual(Buffer.from(backgroundContext.sourcePngBase64, 'base64'), await readFile(path.join(jobDir, 'normalized.png')));
+  assert.deepEqual(Buffer.from(backgroundContext.maskPngBase64, 'base64'), await readFile(path.join(jobDir, 'removal-mask.png')));
+  assert.equal(backgroundContext.sourceSha256, typesettingIdentity.sourceImageSha256);
+  assert.equal(backgroundContext.maskSha256, typesettingIdentity.maskSha256);
+  assert.equal(backgroundContext.cleanedSha256, typesettingIdentity.cleanedImageSha256);
+  assert.deepEqual(backgroundContext.allowedBoxes, []);
+  assert.equal(backgroundContext.nonWhiteFallback, true);
+  assert.equal(backgroundContext.widenSharedBalloon, true);
+  assert.equal(backgroundContext.manualEntries, undefined);
+});
 test('opt-in CPU page translation preserves the request, actual dispatch and original ID through product LaMa and rendering',async t=>{
   const env=await setup(t,null,{onnxModelsRoot:path.resolve('synthetic-models')});
   const batch=await completed(env,(await submit(env)).id),job=batch.pages[0].job;
@@ -73,12 +96,198 @@ test('opt-in CPU page translation preserves the request, actual dispatch and ori
   assert.equal(result.evidence.automatic_quality_approval,false);
   assert.deepEqual(env.f.state.onnxCalls,['ocr','translate']);assert.equal(env.f.state.statusCalls,0);assert.equal(env.f.state.modelRecords.length,0);
 });
-for(const [fault,outcome] of [['miss','NEEDS_REVIEW'],['repetition','NEEDS_REVIEW'],['residue','NEEDS_REVIEW'],['unclean','NEEDS_REVIEW'],['restore','PARTIAL'],['margin','PARTIAL'],['layout','PARTIAL'],['unavailable','FAILED'],['lost','RESULT_UNKNOWN']]){
+async function saveOriginalName({ endpoint, cookie }, confirmed) {
+  const url = endpoint + '/projects/test-product/context';
+  const read = await fetch(url, { headers: { cookie } });
+  assert.equal(read.status, 200);
+  const { scopeId, revision } = await read.json();
+  assert.ok(scopeId);
+  const update = async (expected_revision, idempotency_key, change) => {
+    const response = await fetch(url, { method: 'POST', headers: { origin, cookie, 'content-type': 'application/json',
+      'X-Mangohana-Context-Scope': scopeId }, body: JSON.stringify({ expected_revision, idempotency_key, changes: [change] }) });
+    assert.equal(response.status, 200);
+    return response.json();
+  };
+  const edited = await update(revision, 'save-name', { type: 'upsert_term', term: { id: 'alice', source: 'アリス', target: 'アリス' } });
+  assert.equal(edited.terms[0].status, 'USER_MODIFIED');
+  if (confirmed) {
+    const approved = await update(edited.revision, 'confirm-name', { type: 'confirm_term', id: 'alice', expectedEntryRevision: 1 });
+    assert.equal(approved.terms[0].status, 'USER_CONFIRMED');
+  }
+}
+
+for (const [label,fault,source,translation,reason,message] of [
+  ['an unflagged gasp-only translation','predicate-gasp','寝ちゃったよ！','헉… 헉…','PREDICATE_REDUCED_TO_GASP',/숨소리.*원문과 번역/u],
+  ['an unflagged word added to punctuation','punctuation-word','、','그리고','PUNCTUATION_EXPANDED',/문장부호.*원문과 번역/u],
+  ['an unflagged repeated numeric field','numeric-fields','【体力：35/100】【気力：80/100】','[체력: 35/100] '+'[기력: 80/100] '.repeat(6).trimEnd(),'REPEATED_NUMERIC_FIELDS',/수치 항목.*원문과 번역/u],
+]) test(label+' is returned for review before restoration and keeps the received response', async t => {
+  const env = await setup(t, f => { f.state.onnxFault = fault; }, { onnxModelsRoot: path.resolve('synthetic-models') });
+  const job = (await completed(env, (await submit(env)).id)).pages[0].job;
+  assert.equal(job.reviewState, 'NEEDS_REVIEW');
+  assert.equal(job.downloadAvailable, false);
+  assert.match(job.error, message);
+  assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+  const directory = path.join(env.base, 'jobs', job.id);
+  const responseBytes = await readFile(path.join(directory, 'onnx-response.json'));
+  const response = JSON.parse(responseBytes);
+  const review = JSON.parse(await readFile(path.join(directory, 'translation-review.json'), 'utf8'));
+  assert.equal(response.data.lines[0].rawKo, translation);
+  assert.equal(review.reason, 'PAGE_TRANSLATION_INVALID');
+  assert.deepEqual(review.receivedCandidateIds, ['bubble-17']);
+  assert.deepEqual(review.semanticReview, [{ id: 'bubble-17', sourceText: source, translatedText: translation, code: reason }]);
+  assert.equal(review.partialApplied, false);
+  assert.equal(review.automaticRetry, false);
+  for (const file of ['cleaned.png', 'candidate.png']) await assert.rejects(readFile(path.join(directory, file)), { code: 'ENOENT' });
+  const inventoryUrl = env.endpoint + '/jobs/' + job.id + '/text-inventory';
+  const readInventory = async cookie => fetch(inventoryUrl, { headers: { cookie } });
+  const detail = await (await readInventory(env.cookie)).json();
+  const expected = [{ lineId: 'bubble-17', source, translation, reason }];
+  assert.deepEqual(detail.reviewCandidates?.lines, expected);
+  assert.equal(detail.reviewCandidates.jobId, job.id);
+  assert.equal(detail.reviewCandidates.sourceSha256, job.sourceSha256);
+  assert.equal(detail.notes, undefined);
+  const {readTextInventory} = await tsImport('../../apps/sites/lib/studio-engine.ts', import.meta.url);
+  const forStudio = await readTextInventory(job.id, new AbortController().signal, () => readInventory(env.cookie));
+  assert.deepEqual(forStudio.reviewCandidates.lines, expected);
+  const secondSession = await fetch(env.endpoint + '/health');
+  const foreignCookie = secondSession.headers.get('set-cookie').split(';')[0];
+  await secondSession.arrayBuffer();
+  assert.equal((await readInventory(foreignCookie)).status, 404);
+  response.data.lines[0].ko = '다른 원고의 문구';
+  await writeFile(path.join(directory, 'onnx-response.json'), JSON.stringify(response));
+  assert.equal((await readInventory(env.cookie)).status, 502);
+  await writeFile(path.join(directory, 'onnx-response.json'), responseBytes);
+  await env.host.close();
+  const reopened = await createJobStore({ root: path.join(env.base, 'jobs'), engine: env.f.engine });
+  try { assert.deepEqual((await reopened.getTextInventory(hash(env.cookie.split('=')[1]), job.id)).reviewCandidates, detail.reviewCandidates); }
+  finally { await reopened.close(); }
+  assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+});
+
+for (const [label, fault, confirmed, expected] of [
+  ['a confirmed name in Korean dialogue', 'name-inline', true, 'アリス의 설명'],
+  ['a confirmed name on its own', 'name-only', true, 'アリス'],
+  ['an unconfirmed name edit', 'name-inline', false, null],
+  ['untranslated words outside a confirmed name', 'name-copy', true, null],
+  ['a request changed into the speaker’s promise', 'name-promise', true, null],
+]) {
+  test('ONNX terminology gates ' + label, async t => {
+    const env = await setup(t, f => { f.state.onnxFault = fault; }, { onnxModelsRoot: path.resolve('synthetic-models') });
+    await saveOriginalName(env, confirmed);
+    const job = (await completed(env, (await submit(env)).id)).pages[0].job;
+    assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+    const directory = path.join(env.base, 'jobs', job.id);
+    const reply = JSON.parse(await readFile(path.join(directory, 'onnx-response.json'), 'utf8'));
+    assert.ok(reply.data.lines[0].flags.includes('JAPANESE_REMAINS'));
+    if (expected === null) {
+      assert.equal(job.reviewState, 'NEEDS_REVIEW');
+      assert.equal(job.downloadAvailable, false);
+      await assert.rejects(readFile(path.join(directory, 'candidate.png')), { code: 'ENOENT' });
+      return;
+    }
+    assert.equal(job.reviewState, 'CANDIDATE_READY');
+    assert.equal(job.usage.localModelRequests, 1);
+    const response = await fetch(env.endpoint + '/jobs/' + job.id + '/result', { headers: { cookie: env.cookie } });
+    assert.equal(response.status, 200);
+    const result = await response.json();
+    assert.deepEqual(result.blocks.map(({ id, text }) => [id, text]), [['bubble-17', expected]]);
+    assert.equal(result.evidence.automatic_quality_approval, false);
+    const report = JSON.parse(await readFile(path.join(directory, 'engine-report.json'), 'utf8'));
+    const compliance = report.quality.translation[0].semantic.outputCompliance;
+    assert.equal(compliance.status, 'PASS');
+    assert.deepEqual(compliance.exceptions.map(({ termId, status }) => [termId, status]), [['alice', 'USER_CONFIRMED_EXACT_SPAN']]);
+  });
+}
+
+for (const [fault, confirmed, expected] of [
+  ['name-note', true, { lineId: 'bubble-17', source: 'アリス', translation: 'アリス' }],
+  ['name-mixed', true, { lineId: 'sign', source: 'アリスの説明', translation: 'アリス의 설명' }],
+  ['name-mixed', false, null],
+]) {
+  test(`ONNX terminology gates a ${fault} page with confirmation ${confirmed}`, async t => {
+    const env = await setup(t, f => { f.state.onnxFault = fault; }, { onnxModelsRoot: path.resolve('synthetic-models') });
+    await saveOriginalName(env, confirmed);
+    const job = (await completed(env, (await submit(env)).id)).pages[0].job;
+    assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+    assert.equal(job.reviewState, fault === 'name-mixed' && confirmed ? 'CANDIDATE_READY' : 'NEEDS_REVIEW');
+    const response = await fetch(env.endpoint + '/jobs/' + job.id + '/text-inventory', { headers: { cookie: env.cookie } });
+    assert.equal(response.status, 200);
+    const inventory = await response.json();
+    if (!expected) {
+      assert.equal(job.downloadAvailable, false);
+      assert.equal(inventory.notes, undefined);
+      return;
+    }
+    assert.equal(inventory.textStatus, 'ready');
+    assert.equal(job.usage.localModelRequests, 1);
+    assert.deepEqual(inventory.notes.lines, [expected]);
+    if (fault === 'name-note') {
+      for (const file of ['removal-mask.png', 'cleaned.png', 'candidate.png']) {
+        await assert.rejects(readFile(path.join(env.base, 'jobs', job.id, file)), { code: 'ENOENT' });
+      }
+      return;
+    }
+    const result = await fetch(env.endpoint + '/jobs/' + job.id + '/result', { headers: { cookie: env.cookie } });
+    assert.equal(result.status, 200);
+    assert.deepEqual((await result.json()).blocks.map(({ id, text }) => [id, text]), [['bubble-17', '테스트']]);
+  });
+}
+
+test('one mixed ONNX request saves free-text notes while only speech reaches the PNG', async t => {
+  const env = await setup(t, f => { f.state.onnxFault = 'mixed'; }, { onnxModelsRoot: path.resolve('synthetic-models') });
+  const job = (await completed(env, (await submit(env)).id)).pages[0].job;
+  assert.equal(job.reviewState, 'CANDIDATE_READY', JSON.stringify(job));
+  assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+  assert.equal(job.usage.localModelRequests, 1);
+  assert.equal(job.textStatus, 'ready');
+  const result = await (await fetch(env.endpoint + '/jobs/' + job.id + '/result', { headers: { cookie: env.cookie } })).json();
+  assert.deepEqual(result.blocks.map(block => block.id), ['bubble-17']);
+  const inventory = await (await fetch(env.endpoint + '/jobs/' + job.id + '/text-inventory', { headers: { cookie: env.cookie } })).json();
+  assert.deepEqual(inventory.notes.lines.map(note => note.lineId), ['sign']);
+  const directory = path.join(env.base, 'jobs', job.id);
+  const request = JSON.parse(await readFile(path.join(directory, 'onnx-request.json'), 'utf8'));
+  assert.deepEqual(request.lines.map(line => line.id), ['bubble-17', 'sign']);
+  assert.deepEqual(request.noteRegionIds, ['sign']);
+  await writeFile(path.join(directory, 'text-notes.json'), '{}');
+  const changed = await fetch(env.endpoint + '/jobs/' + job.id + '/text-inventory', { headers: { cookie: env.cookie } });
+  assert.equal(changed.status, 502);
+  await changed.arrayBuffer();
+});
+for(const [fault,outcome] of [['miss','NEEDS_REVIEW'],['notes','NEEDS_REVIEW'],['repetition','NEEDS_REVIEW'],['residue','NEEDS_REVIEW'],['unclean','NEEDS_REVIEW'],['restore','PARTIAL'],['margin','PARTIAL'],['layout','PARTIAL'],['unavailable','FAILED'],['lost','RESULT_UNKNOWN']]){
   test('CPU product failure '+fault+' stays visible with state '+outcome,async t=>{
     const env=await setup(t,f=>{f.state.onnxFault=fault;},{onnxModelsRoot:path.resolve('synthetic-models')});
     const id=(await submit(env)).id, batch=await completed(env,id);
     assert.equal(batch.pages.length,1);assert.equal(batch.pages[0].reviewState,outcome,JSON.stringify(batch.pages[0].job));
     assert.equal(batch.pages[0].job.downloadAvailable,false);
+    if (fault === 'unclean') {
+      const job = batch.pages[0].job;
+      assert.match(job.error, /원문.*획.*복원/u);
+      const review = JSON.parse(await readFile(path.join(env.base,'jobs',job.id,'restoration-review.json'),'utf8'));
+      assert.equal(review.reason, 'SOURCE_RESIDUE_SUSPECTED');
+      assert.deepEqual(review.pixels.unchangedDarkRegionIds, ['bubble-17']);
+    }
+    if (fault === 'miss') {
+      const response = await fetch(env.endpoint + '/jobs/' + batch.pages[0].jobId + '/text-inventory', { headers: { cookie: env.cookie } });
+      assert.equal(response.status, 200);
+      const stored = await response.json();
+      assert.equal(stored.status, 'available');
+      assert.deepEqual(stored.inventory.lines.map(line => line.lineId), ['bubble-17']);
+      assert.deepEqual(stored.inventory.uncoveredBubbles.map(bubble => bubble.observationId), ['hole']);
+      assert.deepEqual(env.f.state.onnxCalls, ['ocr']);
+    }
+    if (fault === 'notes') {
+      const job = batch.pages[0].job;
+      assert.equal(job.textStatus, 'ready');
+      assert.equal(job.usage.localModelRequests, 1);
+      assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+      const response = await fetch(env.endpoint + `/jobs/${job.id}/text-inventory`, { headers: { cookie: env.cookie } });
+      const detail = await response.json();
+      assert.equal(response.status, 200);
+      assert.deepEqual(detail.notes.lines, [{ lineId: 'bubble-17', source: 'テスト', translation: '테스트' }]);
+      const jobDirectory = path.join(env.base, 'jobs', job.id);
+      for (const name of ['removal-mask.png', 'cleaned.png', 'candidate.png'])
+        await assert.rejects(readFile(path.join(jobDirectory, name)), { code: 'ENOENT' });
+    }
     const calls=[...env.f.state.onnxCalls];
     assert.equal((await submit(env)).id,id);await completed(env,id);
     assert.deepEqual(env.f.state.onnxCalls,calls);
@@ -153,9 +362,9 @@ test('Studio requires an explicit human action on the current candidate for appr
     assert.equal(m.approvePageCandidate(changed).reviewed,false);
   }
 });
-test('CLI resolves a lost acceptance via the Sites proxy and retains the full original manifest on resume',async t=>{
+async function cliThroughSites(t, { loseAcceptance = false, configure, engineOptions = {} } = {}) {
   const route=await tsImport('../../apps/sites/app/api/engine/[...path]/route.ts',import.meta.url);
-  const requests=[];let drop=true;
+  const requests=[];let drop=loseAcceptance;
   const site=createServer(async(req,res)=>{
     try{
       const chunks=[];for await(const b of req)chunks.push(b);
@@ -172,11 +381,18 @@ test('CLI resolves a lost acceptance via the Sites proxy and retains the full or
   });
   site.listen(0,'127.0.0.1');await once(site,'listening');t.after(()=>new Promise(resolve=>site.close(resolve)));
   const siteOrigin='http://127.0.0.1:'+site.address().port;
-  const env=await setup(t,f=>{f.state.ocrResultForPage=pageNumber=>({pageNumber,nonSpeechText:[],warnings:[],speechBubbles:
-    pageNumber===2?[]:[{id:'stable',text:'テスト',bbox:{x:0,y:0,width:1,height:1}}]});}, {}, siteOrigin);
+  const env=await setup(t,configure,engineOptions,siteOrigin);
   const previousUrl=process.env.MANGOHANA_ENGINE_URL;process.env.MANGOHANA_ENGINE_URL=env.endpoint;
   t.after(()=>{if(previousUrl===undefined)delete process.env.MANGOHANA_ENGINE_URL;else process.env.MANGOHANA_ENGINE_URL=previousUrl;});
   const originals=path.join(env.base,'cli-originals'),output=path.join(env.base,'cli-out');await mkdir(originals);
+  return { env, requests, originals, output, siteOrigin };
+}
+test('CLI resolves a lost acceptance via the Sites proxy and retains the full original manifest on resume',async t=>{
+  const { requests, originals, output, siteOrigin } = await cliThroughSites(t, {
+    loseAcceptance: true, configure: f => { f.state.ocrResultForPage = pageNumber => ({ pageNumber, nonSpeechText: [], warnings: [],
+      speechBubbles: pageNumber === 2 ? [] : [{ id: 'stable', text: 'テスト', bbox: { x: 0, y: 0, width: 1, height: 1 } }] });
+    },
+  });
   const rows=[1,2].map(index=>({id:'검사-'+index,work:'작품합성',index,source:index+'.png'}));
   for(const row of rows)await writeFile(path.join(originals,row.source),png,{flag:'wx'});
   const args={rows,originals,output,siteOrigin,pollIntervalMs:20};
@@ -186,4 +402,80 @@ test('CLI resolves a lost acceptance via the Sites proxy and retains the full or
   assert.deepEqual((await runWebBatch(args)).pages.map(p=>p.jobId),second.pages.map(p=>p.jobId));
   assert.equal(requests.filter(r=>r==='POST batches').length,1);assert.equal(requests.filter(r=>r==='POST batches/resolve').length,1);
   assert.ok(!requests.some(r=>r.endsWith('/retry')));assert.ok(second.pages.every(p=>p.webId&&p.sourceSha256));
+});
+test('CLI exports and reopens owned OCR lines and text notes through the same Sites proxy without new generation', async t => {
+  const { env, originals, output, siteOrigin } = await cliThroughSites(t, {
+    configure: f => { f.state.onnxFault = 'notes'; }, engineOptions: { onnxModelsRoot: path.resolve('synthetic-models') },
+  });
+  const rows = [{ id: 'p', work: 'synthetic', index: 1, source: 'page.png' }];
+  await writeFile(path.join(originals, 'page.png'), png, { flag: 'wx' });
+  const args = { rows, originals, output, siteOrigin, pollIntervalMs: 20 };
+  const first = await runWebBatch(args);
+  const [page] = first.pages;
+  assert.equal(page.reviewState, 'NEEDS_REVIEW');
+  assert.equal(page.textStatus, 'ready');
+  assert.equal(first.ready, 0);
+  const artifact = JSON.parse(await readFile(path.join(output, page.textInventoryFile), 'utf8'));
+  assert.equal(artifact.lines[0].source, 'テスト');
+  assert.equal(artifact.notes.lines[0].translation, '테스트');
+  const resumed = (await runWebBatch(args)).pages[0];
+  assert.equal(resumed.jobId, page.jobId);
+  assert.equal(resumed.textInventoryFile, page.textInventoryFile);
+  assert.deepEqual(env.f.state.onnxCalls, ['ocr', 'translate']);
+});
+
+test('first-image capture uses the original batch job even after the live web view shows a successful retry', async t => {
+  const onnx = { onnxModelsRoot: path.resolve('synthetic-models') };
+  const baseline = await setup(t, f => { f.state.onnxFault = 'restore'; }, onnx);
+  const firstBatch = await completed(baseline, (await submit(baseline)).id);
+  const { job: first } = firstBatch.pages[0];
+  assert.equal(first.reviewState, 'PARTIAL');
+  baseline.f.state.onnxFault = null;
+  const retry = await fetch(baseline.endpoint + `/jobs/${first.id}/retry`, { method: 'POST',
+    headers: { origin, cookie: baseline.cookie, 'content-type': 'application/json' },
+    body: JSON.stringify({ idempotency_key: 'compare-original-before-retry' }) });
+  assert.equal(retry.status, 202);
+  await retry.json();
+  const latest = (await completed(baseline, firstBatch.id)).pages[0].job;
+  assert.equal(latest.reviewState, 'CANDIDATE_READY');
+  assert.equal(latest.retryOf, first.id);
+  assert.notEqual(latest.id, first.id);
+
+  const improved = await setup(t, null, onnx);
+  const otherBatch = await completed(improved, (await submit(improved)).id);
+  const other = otherBatch.pages[0].job;
+  assert.equal(other.reviewState, 'CANDIDATE_READY');
+  assert.equal(other.sourceSha256, first.sourceSha256);
+  const sourceSha256 = first.sourceSha256, cohort = { evidenceKind: 'synthetic', pages: [{
+    pageId: 'test-page', workId: 'test-product', sourceSha256,
+    annotationSha256: contentSha256({ sourceSha256 }), kind: 'typeset', reviewerIds: ['test-reader'],
+  }] };
+  const cohortSha256 = contentSha256(cohort), outputDirectory = path.join(baseline.base, 'first-image-capture');
+  const stores = [];
+  for (const [version, env, batch] of [['baseline', baseline, firstBatch], ['improved', improved, otherBatch]]) {
+    const storeRoot = path.join(env.base, 'jobs');
+    const bytes = await readFile(path.join(storeRoot, 'batches', batch.id, 'state.json'));
+    stores.push({ version, storeRoot, batches: [{ batchId: batch.id, batchSha256: hash(bytes), workId: 'test-product' }] });
+  }
+  const calls = [baseline, improved].map(env => [...env.f.state.onnxCalls]);
+  const reviewCommand = (action, input) => JSON.parse(execFileSync(process.execPath,
+    ['scripts/v2/first-image-review.mjs', action], { input: JSON.stringify(input), encoding: 'utf8', windowsHide: true }));
+  const capture = reviewCommand('capture', { cohort, stores, pins: { cohortSha256 }, outputDirectory });
+  assert.deepEqual(capture.firstRuns.map(row => [row.version, row.status, row.pngSha256]), [
+    ['baseline', 'held', null], ['improved', 'completed', other.candidateSha256],
+  ]);
+  assert.deepEqual(capture.observations.map(row => row.jobId), [first.id, other.id]);
+  assert.ok(!JSON.stringify(capture).includes(latest.id));
+  const bytes = await readFile(path.join(capture.assetsRoot, `${other.candidateSha256}.png`));
+  assert.deepEqual(bytes, await readFile(path.join(improved.base, 'jobs', other.id, 'candidate.png')));
+  const { firstRuns, firstRunsSha256, assetsRoot } = capture, seed = '8'.repeat(64);
+  const pins = { cohortSha256, firstRunsSha256, seedSha256: contentSha256(seed) };
+  const { seal, sealSha256 } = reviewCommand('prepare', { cohort, firstRuns, pins, seed });
+  assert.deepEqual(seal.assignments[0].images.map(({ version }) => version), ['improved']);
+  const packet = reviewCommand('packet', { seal, sealSha256, assetsRoot, reviewerId: 'test-reader',
+    outputDirectory: path.join(baseline.base, 'blind-review') });
+  assert.equal(packet.reviewPages, 1);
+  assert.ok((await readFile(path.join(packet.outputDirectory, 'index.html'), 'utf8')).includes('첫 자동 이미지 판정표'));
+  assert.deepEqual([baseline, improved].map(env => env.f.state.onnxCalls), calls);
+  t.diagnostic('SYNTHETIC_FIRST_CAPTURE=' + outputDirectory);
 });

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>첫 자동 이미지 판정표</title>
+<style>
+  :root { color-scheme: light; font: 16px/1.55 system-ui, "Malgun Gothic", sans-serif; --image-width: 560px; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { color: #202624; background: #f4f5f1; margin: auto; max-width: 1260px; padding: 16px; }
+  h1 { font-size: 1.55rem; } h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+  nav, .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .75rem 0; }
+  button, select, input { font: inherit; color: inherit; border: 1px solid #777e76; border-radius: 5px; background: #fff; padding: .35rem .55rem; }
+  button { cursor: pointer; } button:disabled { cursor: default; opacity: .55; }
+  button[aria-pressed="true"], #save { background: #204837; color: white; }
+  button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #23644c; outline-offset: 2px; }
+  img { display: block; width: min(100%, var(--image-width)); height: auto; margin: auto; }
+  details, section { padding: .75rem; border: 1px solid #c7ccc2; border-radius: 6px; background: white; }
+  details { margin: .75rem 0; } summary { cursor: pointer; font-weight: 600; }
+  #results { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--image-width) + 1.65rem)), 1fr)); }
+  section { min-width: 0; } fieldset { min-width: 0; border: 0; padding: 0; margin: 1rem 0; }
+  legend { font-weight: 650; margin-bottom: .35rem; }
+  .field { display: grid; gap: .2rem; margin: .35rem 0; }
+  .field:has(input[type="checkbox"]) { display: flex; align-items: center; gap: .45rem; }
+  li { overflow-wrap: anywhere; margin: .3rem 0; } li button { margin-inline-start: .5rem; }
+  #message:empty { display: none; }
+</style>
+<main>
+  <h1>첫 자동 이미지 판정표</h1>
+  <p>원본과 대조해 각 결과를 판정하세요. 같은 폭에서 비교하고, 고쳐야 할 곳의 유형과 위치를 남기세요.</p>
+  <nav aria-label="평가 쪽 이동">
+    <button id="previous" type="button">이전 쪽</button><span id="position" aria-live="polite"></span><button id="next" type="button">다음 쪽</button>
+  </nav>
+  <div class="controls" aria-label="비교 폭">
+    <button type="button" data-width="560" aria-pressed="true">일반 폭 560px</button>
+    <button type="button" data-width="360" aria-pressed="false">모바일 폭 360px</button>
+    <button id="save" type="button">응답 저장</button>
+  </div>
+  <p id="message" role="status"></p>
+  <details id="original"><summary>원본 보기</summary></details>
+  <div id="results"></div>
+</main>
+<!-- REVIEW_DATA -->
+<script>
+  'use strict';
+  const { reviewerId, items, questions, choices, defectTypes, severities } = JSON.parse(document.getElementById('review-data').textContent);
+  const axes = { coverageAndOrder: '글줄·읽기 순서', translationMeaning: '번역 의미', artworkAndRemoval: '원문 제거·작화', typesettingLegibility: '한국어 식자' };
+  const choiceLabels = { pass: '합격', fail: '불합격', cannot_assess: '판단 불가' };
+  const severityLabels = { critical: '치명적', major: '중대', minor: '경미', uncertain: '불확실' };
+  const types = {
+    omission: '누락', reading_order: '읽기 순서', duplicate_text: '중복 글줄', extra_text: '원문에 없는 글줄', ocr_unreadable: '원문 오독·공백',
+    addition: '뜻을 덧붙임', polarity_reversal: '긍정·부정 반전', quantity_number: '수량·숫자 오류', name: '이름 표기',
+    honorific_register: '호칭·말투', speaker: '화자·상대', meaning_compression: '의미 축약', tense_aspect_action: '시제·행동 오류',
+    context: '문맥 오류', glossary: '확정 용어 오류', sfx_misclassification: '효과음 역할 오류', unreadable_uncertain: '뜻을 확인하기 어려움',
+    source_residue: '원문 잔상', white_halo: '흰 테두리 잔상', preserved_sfx_damage: '보존할 효과음 훼손', removal_mask_error: '원문 제거 범위 오류',
+    protection_intrusion: '보호 영역 침범', outside_mask_change: '제거 범위 밖 변화', inside_artwork_damage: '그림 훼손', bubble_border_damage: '말풍선 테두리 훼손', visual_defect: '기타 그림 결함',
+    translation_render_id: '잘못된 대사 위치', missing_text: '식자 문구 누락', missing_glyph: '없는 글자 표시', safe_area: '안전 영역 이탈',
+    overflow: '넘침·겹침', clipping: '잘림', minimum_size: '지나치게 작은 글자', long_korean: '부자연스러운 줄바꿈',
+    vertical_rotated: '세로·회전 배치 오류', user_edit_rerender: '사용자 수정 반영 오류',
+  };
+  const elements = Object.fromEntries(['previous', 'next', 'position', 'save', 'message', 'original', 'results'].map(id => [id, document.getElementById(id)]));
+  const answers = new Map();
+  let page = 0;
+  let nextFieldId = 0;
+
+  const element = (tag, text) => {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+  const choice = (value, text) => new Option(text, value);
+  function labeled(text, input) {
+    const field = element('div'), label = element('label', text);
+    field.className = 'field';
+    input.id = `review-field-${++nextFieldId}`;
+    label.htmlFor = input.id;
+    field.append(label, input);
+    return field;
+  }
+  const button = (text, action) => { const node = element('button', text); node.type = 'button'; node.onclick = action; return node; };
+  function image(ref, alt) {
+    const img = element('img'); img.src = './' + ref + '.png'; img.alt = alt; return img;
+  }
+
+  function defectFields(answer) {
+    const fields = element('fieldset'), list = element('ul');
+    const type = element('select'), severity = element('select'), location = element('input');
+    type.append(choice('', '유형 선택'));
+    for (const [axis, values] of Object.entries(defectTypes)) {
+      const group = element('optgroup'); group.label = axes[axis];
+      for (const value of values) group.append(choice(`${axis}:${value}`, types[value]));
+      type.append(group);
+    }
+    severity.append(choice('', '중대도 선택'), ...severities.map(value => choice(value, severityLabels[value])));
+    location.maxLength = 240;
+    location.placeholder = '예: 오른쪽 위 컷의 첫 말풍선';
+    const feedback = element('p'); feedback.setAttribute('role', 'status');
+    const noDefects = element('input'); noDefects.type = 'checkbox';
+    noDefects.onchange = () => { answer.defects = noDefects.checked ? [] : null; refresh(); };
+
+    function refresh() {
+      noDefects.checked = Array.isArray(answer.defects) && !answer.defects.length;
+      noDefects.disabled = Boolean(answer.defects?.length);
+      list.replaceChildren(...(answer.defects ?? []).map((entry, index) => {
+        const item = element('li', `${axes[entry.axis]} · ${types[entry.type]} · ${severityLabels[entry.severity]} · ${entry.location}`);
+        item.append(button('삭제', () => { answer.defects.splice(index, 1); if (!answer.defects.length) answer.defects = null; refresh(); }));
+        return item;
+      }));
+    }
+
+    const add = button('결함 추가', () => {
+      if (!type.value || !severity.value || !location.value.trim()) {
+        feedback.textContent = '결함의 유형, 중대도와 위치를 입력하세요.';
+        return;
+      }
+      const [axis, defectType] = type.value.split(':');
+      (answer.defects ??= []).push({ axis, type: defectType, severity: severity.value, location: location.value.trim() });
+      location.value = '';
+      feedback.textContent = '';
+      refresh();
+    });
+    fields.append(element('legend', '결함'), labeled('발견한 결함 없음', noDefects), list,
+      labeled('결함 유형', type), labeled('중대도', severity), labeled('위치', location), add, feedback);
+    refresh();
+    return fields;
+  }
+
+  function resultCard(assignmentId, { slot, ref }) {
+    const answer = answers.get(ref) ?? { assignmentId, imageRef: ref, ratings: {}, defects: null };
+    answers.set(ref, answer);
+    const card = element('section');
+    const ratings = element('fieldset');
+    ratings.append(element('legend', '판정'));
+    for (const [axis, question] of Object.entries(questions)) {
+      const select = element('select');
+      select.dataset.axis = axis;
+      select.append(choice('', '선택'), ...choices.map(value => choice(value, choiceLabels[value])));
+      select.value = answer.ratings[axis] ?? '';
+      select.onchange = () => { if (select.value) answer.ratings[axis] = select.value; else delete answer.ratings[axis]; };
+      ratings.append(labeled(question, select));
+    }
+    card.dataset.slot = slot;
+    card.append(element('h2', '결과 ' + slot), image(ref, '결과 ' + slot), ratings, defectFields(answer));
+    return card;
+  }
+
+  function showPage() {
+    const item = items[page];
+    elements.position.textContent = item ? `${page + 1} / ${items.length}` : '배정된 이미지 없음';
+    elements.previous.disabled = page === 0;
+    elements.next.disabled = page + 1 >= items.length;
+    elements.save.disabled = !item;
+    elements.original.hidden = !item;
+    if (!item) return;
+    elements.original.querySelector('img')?.remove();
+    elements.original.append(image(item.sourceRef, '같은 쪽의 원본'));
+    elements.results.replaceChildren(...item.images.map(entry => resultCard(item.assignmentId, entry)));
+  }
+  elements.previous.onclick = () => { if (page > 0) { page--; showPage(); } };
+  elements.next.onclick = () => { if (page + 1 < items.length) { page++; showPage(); } };
+  for (const control of document.querySelectorAll('[data-width]')) {
+    control.onclick = () => {
+      document.documentElement.style.setProperty('--image-width', control.dataset.width + 'px');
+      for (const other of document.querySelectorAll('[data-width]')) other.setAttribute('aria-pressed', String(other === control));
+    };
+  }
+  elements.save.onclick = () => {
+    const responses = [...answers.values()].filter(answer => Object.keys(answer.ratings).length || answer.defects !== null);
+    if (!responses.length) { elements.message.textContent = '판정이나 결함을 먼저 입력하세요.'; return; }
+    const resource = URL.createObjectURL(new Blob([JSON.stringify({ reviewerId, responses }, null, 2)], { type: 'application/json' }));
+    const link = element('a'); link.href = resource; link.download = '판정.json'; link.click();
+    setTimeout(() => URL.revokeObjectURL(resource), 1500);
+    elements.message.textContent = `${responses.length}개 결과의 응답 파일을 만들었습니다.`;
+  };
+  showPage();
+</script>
+</html>

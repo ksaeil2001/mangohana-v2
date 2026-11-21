@@ -9,6 +9,25 @@ function fixture(){
  return {bytes,bitmap,expectedIdentity,identity:{...expectedIdentity},expectedPixels:1,allowedRegions:[{id:'selected',bbox:{x:.25,y:.25,width:.5,height:.5},paddingPx:0}],protectedRegions:[{id:'sfx',bbox:{x:0,y:0,width:.1,height:.1}}]};
 }
 const verify=f=>{assert.equal(typeof api.verifySourceTextMask,'function');return api.verifySourceTextMask(f);};
+
+test('a restored balloon does not hide a separate balloon with all masked dark strokes unchanged', () => {
+  const width = 4, height = 2;
+  const source = Buffer.alloc(width * height * 4, 255);
+  const mask = Buffer.alloc(source.length, 255);
+  for (const offset of [0, 8]) {
+    source.fill(0, offset, offset + 3);
+    mask[offset + 3] = 0;
+  }
+  const result = Buffer.from(source);
+  result.fill(255, 0, 3);
+  const regions = [
+    { id: 'rewritten', bbox: { x: 0, y: 0, width: 0.5, height: 1 } },
+    { id: 'unchanged', bbox: { x: 0.5, y: 0, width: 0.5, height: 1 } },
+  ];
+  assert.deepEqual(api.unchangedRestorationRegions({ source, result, mask, width, height, regions }), ['unchanged']);
+  result.fill(200, 8, 11);
+  assert.deepEqual(api.unchangedRestorationRegions({ source, result, mask, width, height, regions }), []);
+});
 test('the product validator verifies decoded inverse alpha, selected bounds, exact counts and bound identity',()=>{
  const f=fixture(),r=verify(f);assert.equal(r.maskedPixels,1);assert.equal(r.protectedRegionPixels,0);assert.equal(r.qualityStatus,'REQUIRES_REVIEW');
 });

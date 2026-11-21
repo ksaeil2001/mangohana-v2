@@ -3,7 +3,8 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const {createHash} = require('node:crypto');
 const {fingerprintFiles, key} = require('./recovery-checkpoint.cjs');
-const {pagePromptData} = require('./translation-contract.cjs');
+const {pagePromptData, resolveTerms, assertDraftPredicates} = require('./translation-contract.cjs');
+const {assessKoreanOutput} = require('./korean-output.cjs');
 const {rectangle} = require('./source-line-roi.cjs');
 const {collectProcess, secretlessEnvironment, assertActive} = require('../vendor/trio/scripts/sites-local/engine-boundaries.cjs');
 const source = path.resolve(__dirname, '../../../scripts/v2/local_review');
@@ -17,6 +18,8 @@ function requireStage(value,code) {
 function productOnnx(config) {
   if (config.onnxModelsRoot === undefined) return null;
   requireStage(typeof config.onnxModelsRoot==='string' && path.isAbsolute(config.onnxModelsRoot),'CONFIG_PATH');
+  const textTileLimit = config.onnxTextTileLimit ?? 0;
+  requireStage(Number.isSafeInteger(textTileLimit) && textTileLimit >= 0 && textTileLimit <= 16, 'CONFIG_PATH');
   const root=path.resolve(config.onnxModelsRoot), pack=path.dirname(path.dirname(config.python));
   const qwen=path.join(root,'MangohanaV2-semantic/qwen3-4b-instruct-onnx-41a4dd4d');
   const vision=path.join(root,'MangohanaV2-vision');
@@ -35,11 +38,11 @@ function productOnnx(config) {
   async function configuration(stage,engineFile) {
     const files=[engineFile,config.python,bridge,...scripts[stage].map(s=>path.join(source,s)),...assets[stage]];
     if(stage==='translation') files.push(path.join(qwen,'tokenizer-deps','tokenizers'));
-    return key({stage,provider:'onnx-cpu',files:await fingerprintFiles(files),root});
+    return key({stage,provider:'onnx-cpu',files:await fingerprintFiles(files),root,...(stage==='ocr'?{textTileLimit}:{})});
   }
   async function execute(stage,request,owner,signal,temp,onDispatch){
     assertActive(signal);
-    const body=Buffer.from(JSON.stringify(request),'utf8'),requestSha256=hash(body);
+    const body=Buffer.from(JSON.stringify(stage==='ocr'&&textTileLimit?{...request,textTileLimit}:request),'utf8'),requestSha256=hash(body);
     const process=owner.spawn(config.python,['-I','-B','-X','utf8',bridge,stage,root],{
       cwd:path.dirname(config.python),windowsHide:true,shell:false,stdio:['pipe','pipe','pipe'],
       env:{...secretlessEnvironment(config.python,temp),HF_HUB_OFFLINE:'1',TRANSFORMERS_OFFLINE:'1',ORT_DISABLE_TELEMETRY:'1'}
@@ -70,12 +73,13 @@ function extractionFromOnnx(data,{jobId,pageNumber,sourceSha256,width,height}) {
   requireStage(!(data.failure==='OCR_UNAVAILABLE'&&data.inferenceStarted===false),'OCR_UNAVAILABLE');
   requireStage(data.page===jobId && data.sourceSha256===sourceSha256 && data.width===width && data.height===height &&
     Array.isArray(data.lines) && Array.isArray(data.detections) && Array.isArray(data.uncoveredBubbles),'OCR_INCOMPLETE');
-  requireStage(data.lines.length>0 && !data.uncoveredBubbles.length,'OCR_REVIEW_REQUIRED');
+  requireStage(data.lines.length>0 && !data.uncoveredBubbles.length && !data.independentSearch?.unsearchedPixelBoxes?.length,'OCR_REVIEW_REQUIRED');
   const speechBubbles=data.lines.map((row,index)=>{
     requireStage(['text_bubble','text_free'].includes(row.kind) && typeof row.source==='string' && row.source.trim(),'OCR_REVIEW_REQUIRED');
     requireStage(row.bbox && ['x','y','width','height'].every(k=>Number.isFinite(row.bbox[k])),'OCR_INCOMPLETE');
     return {id:row.id,text:row.source,type:'speech_bubble',language:'ja',bbox:row.bbox,polygon:rectangle(row.bbox),
-      confidence:row.confidence,readingOrder:index+1,notes:'',speakerCandidates:[]};
+      confidence:row.confidence,readingOrder:index+1,inventoryLineIds:[row.id],
+      ...(Number.isSafeInteger(row.panelOrder)&&row.panelOrder>0?{panelOrder:row.panelOrder}:{}),notes:'',speakerCandidates:[]};
   });
   // The product selector uses the same detected boxes for translate/preserve/review.
   // Tile duplicates were already removed by OCR; presenting them again would create ambiguous owners.
@@ -86,20 +90,40 @@ function extractionFromOnnx(data,{jobId,pageNumber,sourceSha256,width,height}) {
 }
 
 function translationRequest(input,lines) {
-  return {lines:lines.map(line=>({id:line.id,source:line.sourceText})),context:pagePromptData(input)};
+  return {lines:lines.map(line=>({id:line.id,source:line.sourceText})),context:pagePromptData(input,{compact:true})};
 }
 
-function translatedPage(reply,lines,inspect,ledger) {
+function onnxTranslationTargets(groups) {
+  return groups.map(group => ({ id: group.id, order: group.readingOrder, sourceText: group.text,
+    sourceLanguage: group.language, sourceLineIds: group.inventoryLineIds }));
+}
+
+function onnxFlagsAllowed(row, input) {
+  if (!Array.isArray(row?.flags) || row.flags.some(flag => flag !== 'JAPANESE_REMAINS' && flag !== 'NO_HANGUL')) return false;
+  if (!row.flags.length) return true;
+  // Provider warnings stay in the reply. Authorization comes from the bound input.
+  const region = input?.regions.find(region => region.id === row.id && region.sourceText === row.source);
+  if (!region) return false;
+  const { terms } = resolveTerms(input, region);
+  const compliance = assessKoreanOutput({ sourceText: region.sourceText, translatedText: row.ko, terms });
+  return compliance.status === 'PASS' && compliance.exceptions.length > 0;
+}
+
+function translatedPage(reply,lines,inspect,ledger,translationInput) {
   const {data,requestSha256}=reply, generation=data.generation;
+  requireStage(!(data.failure==='TRANSLATION_INPUT_LIMIT'&&data.inferenceStarted===false),'TRANSLATION_INPUT_LIMIT');
   requireStage(!(data.failure==='TRANSLATION_PROVIDER_UNAVAILABLE'&&data.inferenceStarted===false),'TRANSLATION_PROVIDER_UNAVAILABLE');
   requireStage(data.revision===spec.revision && generation?.eos===true &&
     [generation.inputTokens,generation.generatedTokens].every(n=>Number.isSafeInteger(n)&&n>0) &&
     Array.isArray(data.lines) && data.lines.length===lines.length,'PAGE_TRANSLATION_INVALID');
   const pending=[],records=[];
+  requireStage(data.lines.every((row, i) => row?.id === lines[i].id && row.source === lines[i].sourceText &&
+    typeof row.ko === 'string' && row.ko.trim()), 'PAGE_TRANSLATION_INVALID');
+  assertDraftPredicates(data.lines.map(row => ({ id: row.id, sourceText: row.source, translatedText: row.ko })),
+    { requestSha256, responseSha256: ledger.responseSha256 });
   for (const [index,line] of lines.entries()) {
     const row=data.lines[index];
-    requireStage(row?.id===line.id && row.source===line.sourceText && typeof row.ko==='string' && row.ko.trim() &&
-      Array.isArray(row.flags) && !row.flags.length,'PAGE_TRANSLATION_INVALID');
+    requireStage(onnxFlagsAllowed(row, translationInput), 'PAGE_TRANSLATION_INVALID');
     const qaReport=inspect({sourceText:line.sourceText,translatedText:row.ko,dialogueType:line.dialogueType});
     requireStage(!qaReport.issues.some(i=>i.type==='NUMBER_MISMATCH'&&i.severity==='error'),'TRANSLATION_NUMBER_MISMATCH');
     pending.push({id:line.id,sourceText:line.sourceText,proposedSource:line.sourceText,translatedText:row.ko,rawTranslatedText:row.rawKo,qaReport});
@@ -112,4 +136,4 @@ function translatedPage(reply,lines,inspect,ledger) {
     httpRequests:0,localGenerations:1,usage:{prompt_tokens:generation.inputTokens,completion_tokens:generation.generatedTokens,
       total_tokens:generation.inputTokens+generation.generatedTokens}}};
 }
-module.exports={productOnnx,extractionFromOnnx,translationRequest,translatedPage,revision:spec.revision};
+module.exports={productOnnx,extractionFromOnnx,onnxTranslationTargets,translationRequest,onnxFlagsAllowed,translatedPage,revision:spec.revision};

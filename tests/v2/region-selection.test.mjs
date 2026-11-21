@@ -2,10 +2,32 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 const {selectDialogueRegions}=createRequire(import.meta.url)('../../packages/ai-engine/quality/region-selection.cjs');
+const {extractionFromOnnx}=createRequire(import.meta.url)('../../packages/ai-engine/quality/product-onnx.cjs');
+const {protectedOcrRegions}=createRequire(import.meta.url)('../../packages/ai-engine/quality/mask-evidence.cjs');
 const box=(x,y,width=.1,height=.1)=>({x,y,width,height});
 const ocr=()=>({pageNumber:1,speechBubbles:[{id:'speech',text:'おはよう',bbox:box(.1,.1),readingOrder:1,notes:''},{id:'effect',text:'ドン',bbox:box(.7,.2),readingOrder:2,notes:''}],nonSpeechText:[],warnings:[]});
 const detection=(regions)=>({regions});
 const region=(id,kind,bbox,confidence=.9)=>({id,kind,bbox,confidence});
+
+test('ONNX free text keeps its own line and protection even when a dialogue box overlaps', () => {
+  const binding = { jobId: 'panel-page', pageNumber: 1, sourceSha256: 'a'.repeat(64), width: 100, height: 100 };
+  const lines = [
+    { ...region('speech', 'text_bubble', box(.15, .15, .25, .25)), source: 'どうぞ', panelOrder: 1 },
+    { ...region('sign', 'text_free', box(.3, .3, .05, .05)), source: '出口', panelOrder: 1 },
+  ];
+  const { extraction, detection: detected } = extractionFromOnnx({
+    page: binding.jobId, sourceSha256: binding.sourceSha256, width: 100, height: 100,
+    lines, detections: lines, uncoveredBubbles: [],
+  }, binding);
+  const selected = selectDialogueRegions(extraction, detected);
+  assert.deepEqual(selected.extraction.speechBubbles.map(line => line.id), ['speech']);
+  assert.deepEqual(selected.selection.decisions.map(({ id, action, sourceLineIds }) => ({ id, action, sourceLineIds })), [
+    { id: 'speech', action: 'translate', sourceLineIds: ['speech'] },
+    { id: 'sign', action: 'preserve', sourceLineIds: ['sign'] },
+  ]);
+  assert.equal(selected.extraction.speechBubbles[0].panelOrder, 1);
+  assert.deepEqual(protectedOcrRegions(extraction, selected.selection).map(line => line.id), ['sign']);
+});
 test('learned dialogue support selects speech while free text is preserved without inventing a kind',()=>{
  const input=ocr(),copy=structuredClone(input);
  const result=selectDialogueRegions(input,detection([region('d1','text_bubble',box(.09,.09,.13,.13)),region('d2','text_free',box(.69,.19,.13,.13))]));

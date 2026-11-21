@@ -45,13 +45,27 @@ class ProductBridgeTest(unittest.TestCase):
     def test_translation_receipt_binds_context_and_a_pre_generation_failure(self):
         request = dict(lines=[dict(id='bubble', source='猫')], context={'revision': 2})
         port = Mock(revision='pinned', last_generation={'eos': True})
-        port.translate.return_value = [{'id':'bubble','ko':'고양이'}]
+        port.translate_prepared.return_value = [{'id':'bubble','ko':'고양이'}]
+        port.translate.return_value = port.translate_prepared.return_value
         factory = Mock(return_value=port)
-        modules = {'context_translation': SimpleNamespace(PageTranslator=factory)}
+        tokenizer = object()
+        prepare = Mock(return_value=[5, 8, 3])
+        class PageInputLimit(ValueError):
+            input_tokens = 8201
+        modules = {'context_translation': SimpleNamespace(PageTranslator=factory,
+                   load_context_tokenizer=Mock(return_value=tokenizer), prepare_page_tokens=prepare,
+                   PageInputLimit=PageInputLimit)}
         reply = self.exchange('translate', request, modules)
-        port.translate.assert_called_once_with(request['lines'], request['context'])
+        prepare.assert_called_once_with(tokenizer, request['lines'], request['context'])
+        port.translate_prepared.assert_called_once_with(request['lines'], [5, 8, 3])
+        self.assertIs(factory.call_args.kwargs['tokenizer'], tokenizer)
         self.assertEqual(reply['revision'], 'pinned')
+        prepare.side_effect = PageInputLimit()
+        self.assertEqual(self.exchange('translate', request, modules),
+                         dict(failure='TRANSLATION_INPUT_LIMIT', inferenceStarted=False, inputTokens=8201))
+        self.assertEqual(factory.call_count, 1)
+        prepare.side_effect = None
         factory.side_effect = OSError('synthetic unavailable runtime')
         self.assertEqual(self.exchange('translate', request, modules),
                          dict(failure='TRANSLATION_PROVIDER_UNAVAILABLE', inferenceStarted=False))
-        self.assertEqual(port.translate.call_count, 1)
+        self.assertEqual(port.translate_prepared.call_count, 1)

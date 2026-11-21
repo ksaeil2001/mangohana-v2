@@ -60,6 +60,7 @@ export type ExtractedSpeechBubble = {
   isCrossValidated?: boolean;
   orientation?: ProductionOcrOrientation;
   productionOcrProvenance?: ProductionOcrProvenance;
+  inventoryLineIds?: string[];
 };
 
 export type ExtractedNonSpeechText = {

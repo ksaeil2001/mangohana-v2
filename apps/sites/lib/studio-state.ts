@@ -1,4 +1,4 @@
-import {blockVisualSignature,getIssues,pageStatus,validatePendingBatch,type PendingBatch,type Project,type StudioPage,type TextBlock} from './studio-model';
+import {blockVisualSignature,DEFAULT_ENGINE_ENDPOINT,getIssues,pageStatus,validatePendingBatch,type PendingBatch,type Project,type StudioPage,type TextBlock} from './studio-model';
 import {normalizeReadingState,patchReadingPosition,readingSelection,type ReadingState,type ReadingPosition,type ReadingPatch} from './studio-reading';
 
 export type PanelState={leftOpen:boolean;rightOpen:boolean;drawer:'pages'|'inspector'|null};
@@ -142,7 +142,8 @@ export function transitionPage(page:StudioPage,event:PageEvent):StudioPage {
  }
  if(event.type==='result'){
   if(!canApplyPageResult(page))return {...page,status:'review',requestId:undefined,error:'최신 사용자 수정과 확정값을 보존했어요. 이전 AI 후보는 적용하지 않았어요.'};
-  return {...page,...event.result,engineReview:event.result.engineReview,status:'review',reviewed:false,processed:true,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
+  const textInventoryJobId=page.jobEndpoint===DEFAULT_ENGINE_ENDPOINT?page.jobId:undefined;
+  return {...page,...event.result,engineReview:event.result.engineReview,textInventoryJobId,status:'review',reviewed:false,processed:true,jobId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,error:undefined};
  }
  if(event.type==='failure')return {...page,status:'failed',engineOutcome:event.outcome,requestId:undefined,error:event.error,...(event.terminal&&!event.retryableJob&&!event.outcome?{jobId:undefined,jobEndpoint:undefined}:{})};
  if(event.type==='pause'){
@@ -192,7 +193,7 @@ export function applyTextStyle(project:Project,sourcePageId:string,sourceBlockId
  const sourcePage=project.pages.find(page=>page.id===sourcePageId);
  if(!canEditPage(sourcePage))return project;
  const source=sourcePage?.blocks.find(block=>block.id===sourceBlockId);if(!source)return project;
- const {font,size,weight,align,color,lineHeight}=source,style={font,size,weight,align,color,lineHeight};
+ const {font,size,weight,align,color,lineHeight,strokeColor,strokeWidth}=source,style={font,size,weight,align,color,lineHeight,strokeColor,strokeWidth};
  const keys=Object.keys(style) as Array<keyof typeof style>;let changed=false;
  const pages=project.pages.map(page=>{
   if((scope==='page'&&page.id!==sourcePageId)||!canEditPage(page))return page;

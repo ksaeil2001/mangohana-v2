@@ -245,6 +245,9 @@ export function createEngineServer({ store, contextStore, reviewStore, inspectIm
         await jsonBody(request,[],[]);return json(response,202,await store.cancel(owner,cancelMatch[1]));
       }
       if (request.method === 'GET' && url.pathname === '/jobs' && typeof store.list === 'function') return json(response, 200, { jobs: await store.list(owner) });
+      const inventoryMatch = /^\/jobs\/([^/]+)\/text-inventory$/.exec(url.pathname);
+      if (request.method === 'GET' && inventoryMatch && uuid.test(inventoryMatch[1]) && typeof store.getTextInventory === 'function')
+        return json(response, 200, await store.getTextInventory(owner, inventoryMatch[1]));
       const match = /^\/jobs\/([^/]+)(\/result)?$/.exec(url.pathname);
       if (request.method === 'GET' && match && uuid.test(match[1])) {
         const job = await store.get(owner, match[1]);

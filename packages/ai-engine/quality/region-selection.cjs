@@ -15,6 +15,15 @@ function selectDialogueRegions(extraction,detection){
   const matches=detections.filter(d=>d.kind==='text_bubble'&&d.confidence>=.5).map(d=>({d,coverage:coverage(rectangle(region.bbox),d.bbox)})).sort((a,b)=>b.coverage-a.coverage||b.d.confidence-a.d.confidence);
   const best=matches[0],p=region.productionOcrProvenance,trace=region.ocrRefinement;
   let lineMapping=[],sourceLineIds=[],ownerIds=[],lineEligible=true;
+  let ownOnnxDetection;
+  if(region.inventoryLineIds!==undefined){
+   ownOnnxDetection=detections.find(d=>d.id===region.id&&(d.kind==='text_bubble'||d.kind==='text_free'));
+   if(!Array.isArray(region.inventoryLineIds)||region.inventoryLineIds.length!==1||region.inventoryLineIds[0]!==region.id||
+      !ownOnnxDetection||coverage(rectangle(region.bbox),ownOnnxDetection.bbox)<.999999||
+      coverage(rectangle(ownOnnxDetection.bbox),region.bbox)<.999999||sourceIds.has(region.id))
+     throw failure('ONNX 원문 글줄 ID와 위치가 올바르지 않습니다.');
+   sourceLineIds=[region.id];sourceIds.add(region.id);
+  }
   if(p){
    const width=p.cropTransform?.imageWidth,height=p.cropTransform?.imageHeight;
    if(!Number.isInteger(width)||!Number.isInteger(height)||width!==detection.width||height!==detection.height||p.groupId!==region.id||!Array.isArray(p.sourceDetectionIds)||!Array.isArray(p.sourceQuadsPx))throw failure('OCR 글줄 좌표 frame을 확인하지 못했습니다.');
@@ -28,8 +37,11 @@ function selectDialogueRegions(extraction,detection){
    lineEligible=lineMapping.every(x=>x.status==='unique')&&ownerIds.length===1;
    if(trace&&(!lineEligible||ownerIds[0]!==trace.roiId))throw failure('재OCR 자식과 원본 ROI 소유권이 일치하지 않습니다.');
   }
-  const confident=matches.filter(x=>x.coverage>=.75),free=detections.some(d=>d.kind==='text_free'&&d.confidence>=.5&&coverage(rectangle(region.bbox),d.bbox)>=.75);
-  const eligible=!region.ocrReview&&lineEligible&&(p?ownerIds.length===1:confident.length===1);
+  const confident=matches.filter(x=>x.coverage>=.75);
+  const free=ownOnnxDetection?ownOnnxDetection.kind==='text_free'&&ownOnnxDetection.confidence>=.5:
+    detections.some(d=>d.kind==='text_free'&&d.confidence>=.5&&coverage(rectangle(region.bbox),d.bbox)>=.75);
+  const eligible=!region.ocrReview&&lineEligible&&(p?ownerIds.length===1:
+    confident.length===1&&(!ownOnnxDetection||ownOnnxDetection===best.d&&ownOnnxDetection.kind==='text_bubble'));
   const connected=ownerIds.length>1;
   const action=eligible?'translate':!region.ocrReview&&!connected&&free&&ownerIds.length===0?'preserve':'needs_review';
   const owner=eligible?(p?detections.find(d=>d.id===ownerIds[0]):best.d):undefined;

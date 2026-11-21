@@ -5,7 +5,12 @@ import path from 'node:path';
 import { reportToStudioResult } from './result.mjs';
 import recoveryPolicy from '../../packages/ai-engine/quality/recovery-policy.cjs';
 import pageReview from '../../packages/ai-engine/quality/page-review-state.cjs';
+import textInventory from '../../packages/ai-engine/quality/text-inventory.cjs';
+import onnxProvider from '../../packages/ai-engine/quality/product-onnx.cjs';
+import translationContract from '../../packages/ai-engine/quality/translation-contract.cjs';
 const {MAX_ATTEMPTS,classifyFailure}=recoveryPolicy;
+const { extractionFromOnnx, onnxTranslationTargets, onnxFlagsAllowed } = onnxProvider;
+const { buildTranslationInput, draftReviewNotices, draftReviewNotice } = translationContract;
 
 export const JOB_LIMITS = Object.freeze({ inputBytes: 8 * 1024 * 1024, outputBytes: 32 * 1024 * 1024,
   reportBytes: 16 * 1024 * 1024, jobs: 200, side: 8000, pixels: 12_000_000 });
@@ -132,6 +137,8 @@ function publicJob(record) {
     pageNumber: state.pageNumber ?? null, batchId: state.batchId ?? null, retryOf: state.retryOf ?? null, usage: state.usage ?? null,
     error: state.error ?? null, errorCode: state.errorCode ?? null, warnings: [...(state.warnings ?? [])],
     processingGeneration:state.sequence,resultRevision:state.resultReceipt?.revision??null,candidateSha256:state.status==='completed'?state.resultReceipt?.candidateSha256??null:null,recovery:state.recovery??null,
+    ...(state.textInventoryReceipt ? { textInventoryAvailable: true } : {}),
+    ...(state.textNotesReceipt ? { textStatus: 'ready' } : {}),
     ...(state.stage15Attempts ? {stage15Attempts:structuredClone(state.stage15Attempts)} : {}),
     cancellation:state.cancelRequestedAt?{requestedAt:state.cancelRequestedAt,confirmedAt:state.cancelledAt??null}:null,
     reviewStatus: state.recovery?.type==='needs_review'?'needs_review':'unreviewed', downloadAvailable: state.status === 'completed' };
@@ -325,6 +332,115 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
     requireValue(validDimensions(dimensions) && (!size || dimensions.width === size.width && dimensions.height === size.height), 502, 'OUTPUT_INVALID', '이미지 크기와 실제 파일이 일치하지 않습니다.');
     return dimensions;
   }
+  async function readInventoryAssets(record) {
+    await regularDirectory(record.directory);
+    const [ocr, normalized, original] = await Promise.all([
+      boundedFile(path.join(record.directory, 'onnx-ocr.json'), 8 * 1024 * 1024),
+      boundedFile(path.join(record.directory, 'normalized.png'), JOB_LIMITS.outputBytes),
+      boundedFile(path.join(record.directory, 'source' + sourceExtensions[record.state.mime]), JOB_LIMITS.inputBytes),
+    ]);
+    requireValue(imageMime(normalized) === 'image/png' && sha(original) === record.state.sourceSha256,
+      502, 'OUTPUT_INVALID', '판독 기록과 원본 이미지가 일치하지 않습니다.');
+    return { ocr, ocrSha256: sha(ocr), normalizedSha256: sha(normalized) };
+  }
+  async function publishTextInventory(record, evidence, assertCurrent) {
+    assertCurrent();
+    const { state } = record;
+    const assets = await readInventoryAssets(record);
+    requireValue(assets.normalizedSha256 === evidence?.normalizedSha256 && !state.textInventoryReceipt,
+      502, 'OUTPUT_INVALID', '판독 기록의 원본 또는 작업 시도를 확인하지 못했습니다.');
+    const reply = JSON.parse(assets.ocr.toString('utf8'));
+    requireValue(shaPattern.test(reply?.requestSha256 ?? ''), 502, 'OUTPUT_INVALID', '판독 응답을 확인하지 못했습니다.');
+    const inventory = textInventory.buildTextInventory(reply.data, {
+      ...evidence, jobId: state.id, pageId: state.pageId ?? state.id, processingGeneration: state.sequence,
+      sourceSha256: state.sourceSha256, width: state.width, height: state.height, ocrSha256: assets.ocrSha256,
+    });
+    const bytes = JSON.stringify(inventory, null, 2);
+    requireValue(Buffer.byteLength(bytes) <= JOB_LIMITS.reportBytes, 502, 'OUTPUT_INVALID', '글줄 목록 한도를 넘었습니다.');
+    await atomicState(record.directory, inventory, 'text-inventory.json', assertCurrent);
+    assertCurrent();
+    state.textInventoryReceipt = { jobId: state.id, generation: state.sequence, sourceSha256: state.sourceSha256,
+      normalizedSha256: assets.normalizedSha256, ocrSha256: assets.ocrSha256, sha256: sha(bytes) };
+    try { await persist(record); } catch (error) { delete state.textInventoryReceipt; throw error; }
+  }
+  async function verifiedTextInventory(record, inventoryAssets) {
+    const { state } = record, receipt = state.textInventoryReceipt;
+    const assets = inventoryAssets ?? await readInventoryAssets(record);
+    const bytes = await boundedFile(path.join(record.directory, 'text-inventory.json'), JOB_LIMITS.reportBytes);
+    requireValue(receipt?.jobId === state.id && receipt.generation === state.sequence && receipt.sourceSha256 === state.sourceSha256 &&
+      receipt.ocrSha256 === assets.ocrSha256 && receipt.normalizedSha256 === assets.normalizedSha256 && receipt.sha256 === sha(bytes),
+      502, 'OUTPUT_INVALID', '글줄 목록이 저장 기록과 일치하지 않습니다.');
+    const inventory = JSON.parse(bytes.toString('utf8'));
+    requireValue(inventory.jobId === state.id && inventory.pageId === (state.pageId ?? state.id) && inventory.sourceSha256 === state.sourceSha256 &&
+      inventory.processingGeneration === state.sequence, 502, 'OUTPUT_INVALID', '글줄 목록과 작업이 다릅니다.');
+    return inventory;
+  }
+  async function readNoteInputs(record) {
+    const [request, response] = await Promise.all([
+      boundedFile(path.join(record.directory, 'onnx-request.json'), 256 * 1024),
+      boundedFile(path.join(record.directory, 'onnx-response.json'), 8 * 1024 * 1024),
+    ]);
+    return { request, response, requestSha256: sha(request), responseSha256: sha(response) };
+  }
+  async function publishTextNotes(record, evidence, assertCurrent) {
+    assertCurrent();
+    const { state } = record, assets = await readInventoryAssets(record);
+    const inventory = await verifiedTextInventory(record, assets);
+    const inputs = await readNoteInputs(record);
+    requireValue(!state.textNotesReceipt && evidence?.contextFingerprint === inputs.requestSha256 &&
+      evidence.responseSha256 === inputs.responseSha256 && evidence.localGenerations === 1 &&
+      (evidence.contextSnapshotSha256 ?? null) === (state.contextSha256 ?? null),
+      502, 'OUTPUT_INVALID', '번역 주석의 요청·응답을 확인하지 못했습니다.');
+    const request = JSON.parse(inputs.request), reply = JSON.parse(inputs.response);
+    let translationInput;
+    if (Array.isArray(reply.data?.lines) && reply.data.lines.some(row => row?.flags?.length)) {
+      const context = await verifiedTranslationContext(record);
+      if (context) {
+        const { extraction } = extractionFromOnnx(JSON.parse(assets.ocr).data, {
+          jobId: inventory.ocrSourceJobId, sourceSha256: inventory.normalizedSha256,
+          pageNumber: context.pageNumber ?? 1, width: inventory.width, height: inventory.height,
+        });
+        translationInput = buildTranslationInput({ lines: onnxTranslationTargets(extraction.speechBubbles),
+          extraction, context, scope: translationScope(context) });
+      }
+    }
+    const notes = textInventory.buildTextNotes(inventory, request, reply,
+      inputs.requestSha256, inputs.responseSha256, translationInput);
+    const bytes = JSON.stringify(notes, null, 2);
+    await atomicState(record.directory, notes, 'text-notes.json', assertCurrent);
+    assertCurrent();
+    state.textNotesReceipt = { inventorySha256: state.textInventoryReceipt.sha256, sha256: sha(bytes),
+      requestSha256: inputs.requestSha256, responseSha256: inputs.responseSha256,
+      usage: usageFromReport({ translationRequests: [evidence], translations: [{ requestScope: 'page', requestId: evidence.requestId }] },
+        evidence.durationMs) };
+    try { await persist(record); } catch (error) { delete state.textNotesReceipt; throw error; }
+  }
+  async function verifiedTextNotes(record, inputs) {
+    const receipt = record.state.textNotesReceipt;
+    const bytes = await boundedFile(path.join(record.directory, 'text-notes.json'), JOB_LIMITS.reportBytes);
+    requireValue(receipt && receipt.inventorySha256 === record.state.textInventoryReceipt?.sha256 && receipt.sha256 === sha(bytes) &&
+      receipt.requestSha256 === inputs.requestSha256 && receipt.responseSha256 === inputs.responseSha256,
+      502, 'OUTPUT_INVALID', '번역 주석과 저장 기록이 일치하지 않습니다.');
+    return JSON.parse(bytes.toString('utf8'));
+  }
+  function translationScope({ owner, projectId, pageId, pageNumber, sourceSha256 }) {
+    return { owner, projectId, pageId, pageNumber, sourceSha256 };
+  }
+  async function verifiedTranslationContext(record) {
+    const { state } = record;
+    if (state.contextSha256 === undefined) return undefined;
+    const bytes = await boundedFile(path.join(record.directory, 'translation-context.json'), 1024 * 1024);
+    requireValue(shaPattern.test(state.contextSha256) && sha(bytes) === state.contextSha256,
+      502, 'OUTPUT_INVALID', '번역 문맥 파일이 실행 기록과 다릅니다.');
+    const context = JSON.parse(bytes.toString('utf8'));
+    // Batch admission can number an old page after its translation dispatched.
+    const dispatchNumber = Object.hasOwn(state, 'contextPageNumber') ? state.contextPageNumber
+      : context?.pageNumber === null ? null : state.pageNumber ?? null;
+    requireValue(context?.version === 1 && context.owner === state.owner && context.projectId === state.projectId &&
+      context.pageId === state.pageId && context.sourceSha256 === state.sourceSha256 && context.pageNumber === dispatchNumber,
+      502, 'OUTPUT_INVALID', '저장한 번역 문맥이 원본 또는 작업 범위와 일치하지 않습니다.');
+    return { ...context, snapshotSha256: state.contextSha256 };
+  }
   async function verify(record) {
     await regularDirectory(record.directory);
     const state = record.state;
@@ -335,15 +451,10 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
     const reportBytes = await boundedFile(path.join(record.directory, 'report.json'), JOB_LIMITS.reportBytes);
     requireValue(sha(reportBytes) === state.reportSha256, 502, 'OUTPUT_INVALID', '실행 보고서가 저장 기록과 일치하지 않습니다.');
     const report = JSON.parse(reportBytes.toString('utf8'));
-    if(state.contextSha256!==undefined){
-      const bytes=await boundedFile(path.join(record.directory,'translation-context.json'),1024*1024);
-      requireValue(shaPattern.test(state.contextSha256)&&sha(bytes)===state.contextSha256,502,'OUTPUT_INVALID','번역 문맥 파일이 실행 기록과 다릅니다.');
-      const context=JSON.parse(bytes.toString('utf8')),receipt=report.translationContext;
-      // Batch admission may assign a number to a legacy page after dispatch.
-      // Keep the number actually used for context separate from its later order.
-      const dispatchNumber=Object.hasOwn(state,'contextPageNumber')?state.contextPageNumber:context.pageNumber===null?null:state.pageNumber??null;
-      requireValue(context.version===1&&context.owner===state.owner&&context.projectId===state.projectId&&context.sourceSha256===state.sourceSha256&&context.pageNumber===dispatchNumber&&
-        receipt?.snapshotSha256===state.contextSha256&&receipt.glossaryRevision===context.glossaryRevision&&typeof receipt.consumed==='boolean',502,'OUTPUT_INVALID','실행 보고서와 저장한 번역 문맥이 일치하지 않습니다.');
+    const context = await verifiedTranslationContext(record);
+    if(context){
+      const receipt=report.translationContext;
+      requireValue(receipt?.snapshotSha256===state.contextSha256&&receipt.glossaryRevision===context.glossaryRevision&&typeof receipt.consumed==='boolean',502,'OUTPUT_INVALID','실행 보고서와 저장한 번역 문맥이 일치하지 않습니다.');
       if(receipt.consumed)requireValue(Array.isArray(report.translationRequests)&&report.translationRequests.length>0&&report.translationRequests.every(request=>request.scope==='page'&&request.contextSnapshotSha256===state.contextSha256),502,'OUTPUT_INVALID','문맥을 사용한 페이지 요청의 증거가 없습니다.');
     }
     requireValue(report?.version === 1 && report.evidenceKind === 'LOCAL_ENGINE_CANDIDATE' && report.jobId === state.id && report.originalPreserved === true &&
@@ -374,16 +485,39 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
       const verifiedStage15 = state.stage15 ? stage15.verifyReport(report,state) : undefined;
       let verifiedOnnx;
       if(report.translationRequests?.some(r=>r.transport==='onnx-cpu')){
-        const requestBytes=await boundedFile(path.join(record.directory,'onnx-request.json'),256*1024);
-        const responseBytes=await boundedFile(path.join(record.directory,'onnx-response.json'),8*1024*1024);
-        const request=JSON.parse(requestBytes),reply=JSON.parse(responseBytes);
-        verifiedOnnx={requestSha256:sha(requestBytes),responseSha256:sha(responseBytes)};
+        const inputs = await readNoteInputs(record);
+        const request=JSON.parse(inputs.request),reply=JSON.parse(inputs.response);
+        const declaredNotes = report.translationRequests[0].noteRegionIds ?? [];
+        let noteRegionIds = [];
+        if (request.purpose === 'image_and_text_notes') {
+          const inventory = await verifiedTextInventory(record);
+          const notes = await verifiedTextNotes(record, inputs);
+          noteRegionIds = notes.lines.map(note => note.lineId);
+          requireValue(inventory.jobId === notes.jobId && request.noteRegionIds.length === noteRegionIds.length &&
+            request.noteRegionIds.every((id, index) => noteRegionIds[index] === id),
+            502, 'OUTPUT_INVALID', 'ONNX 주석 대상과 실행 기록이 다릅니다.');
+        }
+        requireValue(Array.isArray(declaredNotes) && noteRegionIds.length === declaredNotes.length &&
+          declaredNotes.every((id, index) => id === noteRegionIds[index]),
+          502, 'OUTPUT_INVALID', '이미지와 주석의 번역 대상이 다릅니다.');
+        const noteIds = new Set(noteRegionIds);
+        const imageRequest = request.lines.filter(row => !noteIds.has(row.id));
+        const imageReply = reply.data.lines.filter(row => !noteIds.has(row.id));
+        let translationInput;
+        if (context && report.translationContext.consumed && imageReply.some(row => row?.flags?.length)) {
+          const lines = report.lines.map(({ aiTranslation, ...line }) => line);
+          translationInput = buildTranslationInput({ lines, extraction: report.ocr, selection: report.regionSelection,
+            context, scope: translationScope(context) });
+          requireValue(translationInput.fingerprint === report.translationInput?.fingerprint,
+            502, 'OUTPUT_INVALID', 'ONNX 번역 입력이 저장 기록과 다릅니다.');
+        }
+        verifiedOnnx={requestSha256:inputs.requestSha256,responseSha256:inputs.responseSha256,noteRegionIds};
         requireValue(reply.requestSha256===verifiedOnnx.requestSha256 && reply.data?.generation?.eos===true &&
           reply.data.revision===report.translationRequests[0].providerRevision &&
-          request.lines.length===report.lines.length && reply.data.lines.length===report.lines.length &&
-          report.lines.every((line,i)=>request.lines[i].id===line.id && request.lines[i].source===line.sourceText &&
-            reply.data.lines[i].id===line.id && reply.data.lines[i].source===line.sourceText && reply.data.lines[i].ko===line.aiTranslation &&
-            reply.data.lines[i].flags?.length===0),502,'OUTPUT_INVALID','ONNX 원문·번역·식자 대응이 다릅니다.');
+          imageRequest.length===report.lines.length && imageReply.length===report.lines.length &&
+          report.lines.every((line,i)=>imageRequest[i].id===line.id && imageRequest[i].source===line.sourceText &&
+            imageReply[i].id===line.id && imageReply[i].source===line.sourceText && imageReply[i].ko===line.aiTranslation &&
+            onnxFlagsAllowed(imageReply[i], translationInput)),502,'OUTPUT_INVALID','ONNX 원문·번역·식자 대응이 다릅니다.');
       }
       result = reportToStudioResult(report, { cleanedPng: buffers.cleaned, candidatePng: buffers.candidate, verifiedStage15, verifiedOnnx });
     }
@@ -449,6 +583,10 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
       const previous=state.retryOf?records.get(state.retryOf):undefined;
       let assertPublication;
       const isCurrent = () => !closed && record.state === state && state.status === 'running' && !state.cancelRequestedAt && currentPage(record);
+      const assertCurrentText = () => {
+        controller.signal.throwIfAborted();
+        requireValue(isCurrent(), 409, 'STALE_RESULT', '글줄 또는 주석을 저장할 현재 작업 시도가 변경되었습니다.');
+      };
       const withFence = install => contextStore.withRevision(state.owner,state.projectId,translationContext.glossaryRevision,async () => {
         requireValue(isCurrent() && sha(await boundedFile(inputPath,JOB_LIMITS.inputBytes)) === state.sourceSha256,
           409, 'STALE_RESULT', '원본 또는 현재 페이지가 변경되었습니다.');
@@ -477,6 +615,8 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
             try { await persist(record); } catch { throw failure(503,'RESULT_UNKNOWN','번역 시도 기록의 저장 여부가 미확정입니다.'); }
           })},stage)} : {}),
         ...(previous?.state.checkpoints?{resumeFrom:{directory:previous.directory,jobId:previous.state.id,checkpoints:structuredClone(previous.state.checkpoints)}}:{}),
+        onTextInventory: evidence => serial(() => publishTextInventory(record, evidence, assertCurrentText)),
+        onTextNotes: evidence => serial(() => publishTextNotes(record, evidence, assertCurrentText)),
         onCheckpoint:receipt=>serial(async()=>{
           controller.signal.throwIfAborted();requireValue(record.state===state&&state.status==='running'&&['ocr','translation','cleaned'].includes(receipt?.stage)&&shaPattern.test(receipt.sha256),502,'OUTPUT_INVALID','중간 결과 영수증을 확인하지 못했습니다.');
           state.checkpoints={...state.checkpoints,[receipt.stage]:structuredClone(receipt)};await persist(record);
@@ -490,6 +630,17 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
           state.message = typeof update.message === 'string' ? update.message.slice(0, 300) : '페이지를 처리하고 있습니다.'; await persist(record);
         }) });
       controller.signal.throwIfAborted();
+      if (value?.textOnly === true) {
+        await serial(async () => {
+          assertCurrentText();
+          requireValue(state.textNotesReceipt, 502, 'OUTPUT_INVALID', '저장된 번역 주석을 확인하지 못했습니다.');
+          Object.assign(state, { status: 'failed', stage: 'needs_review', usage: state.textNotesReceipt.usage,
+            recovery: { ...classifyFailure({ code: 'NO_TRANSLATABLE_REGIONS' }), manuallyRetryable: false },
+            errorCode: 'NO_TRANSLATABLE_REGIONS', message: '원본을 보존하고 번역 주석을 준비했습니다.' });
+          await persist(record);
+        });
+        return;
+      }
       requireValue(Buffer.isBuffer(value?.pngBytes) && value.pngBytes.length > 0 && value.pngBytes.length <= JOB_LIMITS.outputBytes && value.report,
         502, 'OUTPUT_INVALID', '처리 결과와 실행 보고서를 확인하지 못했습니다.');
       if(translationContext){
@@ -539,7 +690,18 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
           record.state.status='cancelled';record.state.stage='cancelled';record.state.cancelledAt=new Date().toISOString();record.state.errorCode='CANCELLED';record.state.message='작업 중단과 자원 반환을 확인했습니다.';await persist(record);
         }else{
           const code=controller.signal.aborted&&recovery.type!=='cleanup_unknown'?'INTERRUPTED':recovery.code;
-          await markFailed(record,code,'처리를 완료하지 못했습니다. 원본과 실행 기록은 보존했으며 자동으로 다시 실행하지 않습니다.');
+          const heldLines = code === 'PAGE_TRANSLATION_INVALID' && Array.isArray(error.semanticReview)
+            ? error.semanticReview.filter(row => row && Object.hasOwn(draftReviewNotices,row.code)) : [];
+          if (heldLines.length && state.textInventoryReceipt && shaPattern.test(error.translationEvidence?.requestSha256 ?? '') &&
+              shaPattern.test(error.translationEvidence?.responseSha256 ?? '')) {
+            state.heldTranslationReceipt = { inventorySha256: state.textInventoryReceipt.sha256,
+              requestSha256: error.translationEvidence.requestSha256, responseSha256: error.translationEvidence.responseSha256,
+              lineIds: heldLines.map(row => row.id) };
+          }
+          const message = heldLines.length ? draftReviewNotice(heldLines) :
+            code === 'SOURCE_RESIDUE_SUSPECTED' ? '원문의 어두운 획이 남아 있을 수 있어요. 복원 결과를 확인해 주세요.' :
+            '처리를 완료하지 못했습니다. 원본과 실행 기록은 보존했으며 자동으로 다시 실행하지 않습니다.';
+          await markFailed(record,code,message);
           record.state.stage=recovery.stage;await persist(record);
         }
       });
@@ -794,6 +956,26 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
         else record.controller?.abort(Object.assign(new Error('Cancelled'),{code:'CANCELLED'}));
         return publicJob(record);
       });
+    },
+    async getTextInventory(owner, id) {
+      await mutations;
+      const record = owned(owner, id), { state } = record, receipt = state.textInventoryReceipt;
+      if (!receipt) return { status: 'not_recorded', reason: 'TEXT_INVENTORY_NOT_RECORDED' };
+      try {
+        const inventory = await verifiedTextInventory(record), noteReceipt = state.textNotesReceipt;
+        const detail = { status: 'available', inventory };
+        const inputs = (noteReceipt || state.heldTranslationReceipt) && await readNoteInputs(record);
+        if (state.heldTranslationReceipt) {
+          requireValue(state.status === 'failed' && state.errorCode === 'PAGE_TRANSLATION_INVALID' &&
+            state.heldTranslationReceipt.inventorySha256 === receipt.sha256, 502, 'OUTPUT_INVALID', '검수할 번역과 작업이 다릅니다.');
+          detail.reviewCandidates = textInventory.heldTranslationCandidates(inventory, inputs, state.heldTranslationReceipt);
+        }
+        if (noteReceipt) {
+          detail.notes = await verifiedTextNotes(record, inputs);
+          detail.textStatus = 'ready';
+        }
+        return detail;
+      } catch { throw failure(502, 'OUTPUT_INVALID', '글줄 목록과 원본 판독 자료를 확인하지 못했습니다.'); }
     },
     async getResult(owner, id,{expectedGeneration}={}) {
       await mutations;

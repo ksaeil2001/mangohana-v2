@@ -48,6 +48,7 @@ export async function runWebBatch({rows,originals,output,siteOrigin,signal=new A
     throw Error('관리자 설정에서 loopback Sites 주소를 지정하세요.');
   const root=await fs.realpath(originals),inputs=await sources(rows,root);
   const {processProjectBatch}=await tsImport('../../apps/sites/lib/studio-batch-engine.ts',import.meta.url);
+  const {readTextInventory}=await tsImport('../../apps/sites/lib/studio-engine.ts',import.meta.url);
   return withOutput(output,async dir=>{
     const file=path.join(dir,'results.json'),sessionFile=path.join(dir,'.web-session');
     const old=await optional(file),identity=sha(JSON.stringify([site.origin,root,inputs.map(p=>[p.id,p.work,p.index,p.source,p.sha256])]));
@@ -70,6 +71,7 @@ export async function runWebBatch({rows,originals,output,siteOrigin,signal=new A
     for(const work of new Set(inputs.map(p=>p.work))){
       const group=inputs.filter(p=>p.work===work),byId=new Map(group.map(p=>[p.webId,p]));
       const ledger=new Map(state.pages.filter(p=>p.work===work).map(p=>[p.webId,p]));
+      const inventoriesRead = new Set();
       const pages=group.map(p=>({id:p.webId,name:p.name,image:'original:'+p.webId,blocks:[],enginePageNumber:p.index,
         jobId:ledger.get(p.webId).jobId,pendingBatch:ledger.get(p.webId).intent}));
       const request=async(url,init={})=>{
@@ -85,8 +87,41 @@ export async function runWebBatch({rows,originals,output,siteOrigin,signal=new A
       };
       await processProjectBatch({id:safeId(work),pages},pages,'/api/engine','ja','ko',signal,{
         async onIntent(intent){for(const m of intent.members){const row=ledger.get(m.pageId);row.intent=intent;row.reviewState=intent.phase==='sending'?'RESULT_UNKNOWN':'NOT_STARTED';}await save();},
-        async onJobs(bindings){for(const b of bindings){const row=ledger.get(b.pageId);row.jobId=b.jobId;delete row.intent;}await save();},
+        async onJobs(bindings){
+          for(const binding of bindings){
+            const row=ledger.get(binding.pageId);
+            if(row.jobId!==binding.jobId){
+              delete row.textInventoryFile;
+              delete row.textInventoryError;
+              delete row.textStatus;
+            }
+            row.jobId=binding.jobId;
+            delete row.intent;
+          }
+          await save();
+        },
         async onObservation(id,job){const row=ledger.get(id);if(job.sourceSha256!==row.sourceSha256)throw Error('페이지 원본 지문이 다릅니다.');
+          if (job.textInventoryAvailable === true && !['queued', 'running', 'processing'].includes(job.status) &&
+              row.jobId === job.id && !inventoriesRead.has(job.id)) {
+            try {
+              const inventory = await readTextInventory(job.id, signal, request);
+              if (!inventory || inventory.sourceSha256 !== row.sourceSha256) throw Error('글줄 목록의 원본 지문이 다릅니다.');
+              const relative = path.join('text-inventory', sha(job.id) + '.json');
+              const destination = path.join(dir, relative), content = JSON.stringify(inventory, null, 2) + '\n';
+              await fs.mkdir(path.dirname(destination), { recursive: true });
+              if (await fs.realpath(path.dirname(destination)) !== path.dirname(destination)) throw Error('글줄 저장 위치가 다릅니다.');
+              try { await fs.writeFile(destination, content, { flag: 'wx', mode: 0o600 }); }
+              catch (err) {
+                if (err.code !== 'EEXIST' || !(await fs.lstat(destination)).isFile() || await fs.readFile(destination, 'utf8') !== content) throw err;
+              }
+              row.textInventoryFile = relative;
+              if (inventory.notes) row.textStatus = 'ready';
+              delete row.textInventoryError;
+            } catch {
+              row.textInventoryError = '글줄 목록을 저장하거나 기존 파일을 확인하지 못했습니다.';
+            }
+            inventoriesRead.add(job.id);
+          }
           const outcome=job.reviewState??review.pageReviewState(job);
           row.reviewState=outcome==='CANDIDATE_READY'?'RUNNING':outcome;
           row.stage=job.stage;row.errorCode=job.errorCode??null;row.candidateSha256=job.candidateSha256??null;await save();},

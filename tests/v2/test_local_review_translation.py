@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -7,6 +8,26 @@ MODULE=Path(__file__).resolve().parents[2] / 'scripts/v2/local_review/translate.
 
 
 class LocalTranslationTest(unittest.TestCase):
+    def test_predicate_reduced_to_gasps_uses_the_same_examples_as_the_web_engine(self):
+        spec = importlib.util.spec_from_file_location('local_mt', MODULE)
+        mt = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mt)
+        examples = json.loads((Path(__file__).parent / 'fixtures/predicate-gasp.json').read_text('utf-8'))
+        for source, target, expected in examples:
+            with self.subTest(source=source):
+                self.assertEqual('PREDICATE_REDUCED_TO_GASP' in mt.review_flags(source, target, True), expected)
+
+    def test_repeated_numeric_fields_match_web_review(self):
+        from pathlib import Path
+        import json
+        spec = importlib.util.spec_from_file_location('local_mt', MODULE)
+        mt = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mt)
+        rows = json.loads((Path(__file__).parent / 'fixtures/repeated-numeric-fields.json').read_text('utf-8'))
+        for source, target, expected in rows:
+            with self.subTest(source=source, target=target):
+                self.assertEqual('REPEATED_NUMERIC_FIELDS' in mt.review_flags(source, target, True), expected)
+
     def test_translation_draft_preserves_early_end_and_uncertain_text(self):
         self.assertTrue(MODULE.exists(), 'local ONNX translation adapter is missing')
         spec=importlib.util.spec_from_file_location('local_mt',MODULE)

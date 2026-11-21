@@ -11,10 +11,11 @@ from pathlib import Path
 import re
 import sys
 import time
+import unicodedata
 from uuid import uuid4
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -23,7 +24,10 @@ from quality import review_flags
 
 FONT = ROOT / 'packages/ai-engine/vendor/trio/resources/font_ko_fallback/pretendard-1.3.9/PretendardVariable.ttf'
 FONT_SHA = '3090ccde0442bb347aa7685d9ba8b17436a60682df6e8f92a9a670de14056e22'
-VERSION = 'local-review-lettering-4'
+VERSION = 'local-review-lettering-5'
+CLOSING_MARKS = '.,:;!?~…。、！？～〜)]}】」』”’'
+SRGB = np.arange(256,dtype=np.float64)/255
+LINEAR_RGB = np.where(SRGB<=.04045,SRGB/12.92,((SRGB+.055)/1.055)**2.4)
 
 
 @lru_cache(maxsize=140)
@@ -31,36 +35,78 @@ def face(path, size):
     return ImageFont.truetype(str(path), size)
 
 
-def wrap_text(text, font, width):
-    """Prefer word boundaries. Split a long token into measured, complete pieces."""
+def word_units(word, font, width):
+    units = []
+    for char in word:
+        if units and (unicodedata.category(char).startswith('M') or char=='\u200d' or units[-1].endswith('\u200d')
+                      or len(unicodedata.normalize('NFC', units[-1]+char)) < len(unicodedata.normalize('NFC', units[-1]))+1):
+            units[-1] += char
+        else:
+            units.append(char)
+    suffix = len(units)
+    while suffix and (units[suffix-1].isspace() or units[suffix-1] in CLOSING_MARKS):
+        suffix -= 1
+    if 0 < suffix < len(units):
+        ending = ''.join(units[suffix-1:])
+        if font.getlength(ending) <= width:
+            units[suffix-1:] = [ending]
+    return units
+
+
+def wrapped_rows(text, font, width):
     lines = []
-    for paragraph in text.splitlines() or ['']:
+    split_closing_word = False
+    for paragraph in text.replace('\r\n','\n').replace('\r','\n').split('\n'):
+        if font.getlength(paragraph) <= width or not paragraph.strip():
+            lines.append(paragraph)
+            continue
+        words = []
+        end = 0
+        for match in re.finditer(r'\S+',paragraph):
+            word = match.group()
+            gap = paragraph[end:match.start()]
+            if words and all(c in CLOSING_MARKS for c in word):
+                previous_gap,previous_word = words[-1]
+                words[-1] = previous_gap,previous_word+gap+word
+            else:
+                words.append((gap,word))
+            end = match.end()
         current = ''
-        for word in paragraph.split():
-            joined = (current + ' ' + word).strip()
+        for index,(gap,word) in enumerate(words):
+            joined = current+gap+word
             if font.getlength(joined) <= width:
                 current = joined
                 continue
             if current:
                 lines.append(current)
             current = ''
-            for char in word:
-                if current and font.getlength(current + char) > width:
+            token = gap+word if index==0 else word
+            if font.getlength(token) <= width:
+                current = token
+                continue
+            if token[-1] in CLOSING_MARKS and any(c.isalnum() for c in token):
+                split_closing_word = True
+            for unit in word_units(token,font,width):
+                if current and font.getlength(current+unit) > width:
                     lines.append(current)
                     current = ''
-                current += char
-        if current:
-            lines.append(current)
-    return lines
+                current += unit
+        lines.append(current+paragraph[end:])
+    return lines,split_closing_word
+
+
+def wrap_text(text, font, width):
+    return wrapped_rows(text,font,width)[0]
 
 
 def measure(text, font, width):
-    rows = wrap_text(text, font, width)
-    boxes = [font.getbbox(v) for v in rows]
+    rows,split_closing_word = wrapped_rows(text, font, width)
+    boxes = [font.getbbox(v) if v.strip() else (0,0,0,font.size) for v in rows]
     gap = max(2, round(font.size * .23))
     height = sum(b[3]-b[1] for b in boxes) + max(0, len(rows)-1)*gap
     widest = max((b[2]-b[0] for b in boxes), default=0)
-    return dict(rows=rows, boxes=boxes, gap=gap, font=font, height=height, width=widest)
+    return dict(rows=rows, boxes=boxes, gap=gap, font=font, height=height, width=widest,
+                splitClosingWord=split_closing_word)
 
 
 def fit_text(text, width, height, font_path, largest, smallest):
@@ -69,6 +115,24 @@ def fit_text(text, width, height, font_path, largest, smallest):
     for size in dict.fromkeys([*range(largest,smallest-1,-2), smallest]):
         layout = measure(text, face(font_path, size), width)
         if layout['rows'] and layout['width'] <= width and layout['height'] <= height:
+            if layout['splitClosingWord']:
+                # A short exclamation can stay on one line. Longer dialogue
+                # keeps its original scale unless a small reduction saves a row.
+                short = not any(c.isspace() for c in text) and len(text) <= 16
+                minimum = max(smallest, math.floor(size*.8) if short else math.ceil(size*.9))
+                for candidate_size in range(size-1,minimum-1,-1):
+                    smaller = face(font_path,candidate_size)
+                    candidate = measure(text,smaller,width)
+                    if short and len(candidate['rows']) > 1:
+                        # Side bearings after dots use advance width but do not paint.
+                        mask,(dx,dy) = smaller.getmask2(text)
+                        ink = mask.getbbox()
+                        if ink and ink[2]-ink[0] <= width and ink[3]-ink[1] <= height:
+                            candidate.update(rows=[text],boxes=[(ink[0]+dx,ink[1]+dy,ink[2]+dx,ink[3]+dy)],
+                                             width=ink[2]-ink[0],height=ink[3]-ink[1],splitClosingWord=False)
+                    if (not candidate['splitClosingWord'] and len(candidate['rows']) < len(layout['rows'])
+                            and candidate['width'] <= width and candidate['height'] <= height):
+                        return candidate
             return layout
     return None
 
@@ -128,12 +192,52 @@ def layout_spaces(box,kind,bubbles,other_boxes,width,height):
 
 
 def measured_layouts(text,spaces,font_path,largest,smallest):
-    for cap in dict.fromkeys([largest,max(smallest,round(largest*.8)),smallest]):
+    seen = set()
+    step = max(1,round(largest*.06))
+    for cap in dict.fromkeys([*range(largest,smallest-1,-step),smallest]):
         for x,y,end_x,end_y in spaces:
             w,h=end_x-x,end_y-y
             layout=fit_text(text,w-4,h-4,font_path,cap,smallest)
             if layout:
+                key = (x,y,end_x,end_y,layout['font'].size,tuple(layout['rows']))
+                if key in seen:
+                    continue
+                seen.add(key)
                 yield layout,(x,y,end_x,end_y)
+
+
+def art_clearance(art, radius):
+    return np.asarray(Image.fromarray(art.astype(np.uint8)).filter(ImageFilter.MaxFilter(2*radius+1))) != 0
+
+
+def lettering_paint(paper, pixels):
+    luminances = LINEAR_RGB[pixels] @ [0.2126,0.7152,0.0722]
+    preferred,alternative = (22,245) if np.mean(paper)>=128 else (245,22)
+    scores = {}
+    for shade in (preferred,alternative,0,255):
+        light = LINEAR_RGB[shade]
+        minimum = float(np.min((np.maximum(luminances,light)+.05)/(np.minimum(luminances,light)+.05)))
+        if minimum>=4.5:
+            return shade,None,minimum
+        scores[shade] = minimum
+    foreground = max((0,255),key=scores.get)
+    return foreground,255-foreground,scores[foreground]
+
+
+def paint_coverage(glyph, font_size, outline):
+    if outline is None:
+        return glyph,0
+    radius = max(1,min(3,round(font_size*.045)))
+    # A clipped outline cannot provide the intended edge on all sides.
+    if any(band.any() for band in (glyph[:radius],glyph[-radius:],glyph[:,:radius],glyph[:,-radius:])):
+        return None,radius
+    return np.asarray(Image.fromarray(glyph).filter(ImageFilter.MaxFilter(2*radius+1))),radius
+
+
+def paint_glyph(area, glyph, shade):
+    ink = glyph!=0
+    weight = glyph[ink].astype(np.float32)[:,None]/255
+    area[ink] = np.rint(area[ink]*(1-weight)+shade*weight).astype(np.uint8)
 
 
 def preferred_font_size(row,width,height):
@@ -229,27 +333,50 @@ def place(pixels, used, row, other_boxes, bubbles, model, session, font_path):
     remaining_ink = np.count_nonzero(~near(source_area,30) & inside)
     if remaining_ink > max(3,original_ink*.035):
         return 'PROTECT_ART_OR_REMAINING_INK'
+    # The next pixel outside a layout can be the balloon outline. Read this
+    # margin independently of the model crop so the segmentation input stays identical.
+    halo = 5
+    gx,gy = max(0,cl-halo),max(0,ct-halo)
+    guard_image = pixels[gy:min(height,cb+halo),gx:min(width,cr+halo)]
+    obstacles = ~near(guard_image[:,:,:3],55) | (guard_image[:,:,3]!=255) | used[gy:gy+guard_image.shape[0],gx:gx+guard_image.shape[1]]
+    obstacles[ct-gy:cb-gy,cl-gx:cr-gx] = ~near(clean,55) | border | protected | (crop[:,:,3]!=255)
+    clearances = {}
     # Only accept a centered layout whose glyph pixels fall on clean paper.
     for layout,(x,y,end_x,end_y) in measured_layouts(text,spaces,font_path,largest,scale):
         w,h=end_x-x,end_y-y
         target_area=clean[y-ct:end_y-ct,x-cl:end_x-cl]
         glyph = ink_layer(layout,w,h)
-        ink = glyph != 0
-        if (not ink.any() or np.any(used[y:end_y,x:end_x] & ink) or intersects(glyph,(x,y),other_boxes)
+        body = glyph!=0
+        if not body.any():
+            continue
+        size = layout['font'].size
+        foreground,outline,contrast = lettering_paint(color,target_area[body])
+        coverage,outline_width = paint_coverage(glyph,size,outline)
+        if coverage is None:
+            continue
+        ink = coverage!=0
+        if (np.any(used[y:end_y,x:end_x] & ink) or intersects(coverage,(x,y),other_boxes)
                 or np.any(border[y-ct:end_y-ct,x-cl:end_x-cl] & ink)):
+            continue
+        radius = max(2,min(5,round(size*.09)))
+        if radius not in clearances:
+            clearances[radius] = art_clearance(obstacles,radius)
+        if np.any(clearances[radius][y-gy:end_y-gy,x-gx:end_x-gx] & ink):
             continue
         if (np.mean(near(target_area[ink],30)) < .997 or
                 not np.all(pixels[y:end_y,x:end_x,3][ink] == 255)):
             continue
-        foreground = 22 if np.mean(color) >= 128 else 245
         crop[:,:,:3][core] = color
         area = pixels[y:end_y,x:end_x,:3]
-        weight = glyph[ink].astype(np.float32)[:,None]/255
-        area[ink] = np.rint(area[ink]*(1-weight) + foreground*weight).astype(np.uint8)
+        if outline is not None:
+            paint_glyph(area,coverage,outline)
+        paint_glyph(area,glyph,foreground)
         protected |= core
         used[y:end_y,x:end_x] |= ink
         row.update(fontPx=layout['font'].size, textRows=layout['rows'], maskPixels=int(core.sum()),
-                   glyphPixels=int(ink.sum()), layoutBox=[x,y,end_x,end_y])
+                   glyphPixels=int(body.sum()), layoutBox=[x,y,end_x,end_y],foreground=foreground,
+                   minimumPaperContrast=round(contrast,4),outline=outline,outlineWidthPx=outline_width,
+                   additionalOutlinePixels=int(ink.sum()-body.sum()))
         return ''
     return 'LAYOUT_ON_ART'
 

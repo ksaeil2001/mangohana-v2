@@ -51,3 +51,37 @@ test('a dark pixel in the retained margin rejects the proof even outside the tex
  const mask=new Uint8Array(100*100).fill(1),box={x:20,y:20,width:30,height:30};mask[30*100+18]=0;
  assert.equal(isInsetInteriorRectangle(mask,100,100,box),false);
 });
+
+test('first automatic layout can consider wider, disjoint rectangles inside a shared white balloon', () => {
+ const f = fixture();
+ const options = { protectedBoxes: [] };
+ const first = inferCandidateBox(f.context, f.line, f.boxes, width, height, undefined, options);
+ const other = { ...f.line, id: 'b', typesetting: { ...f.line.typesetting, bbox: f.boxes[1].bbox } };
+ const second = inferCandidateBox(f.context, other, f.boxes, width, height, undefined, options);
+ assert.deepEqual(first.bbox, f.line.typesetting.bbox);
+ assert.deepEqual(second.bbox, other.typesetting.bbox);
+ assert.ok(first.widerSharedBox?.width > f.line.typesetting.bbox.width * width);
+ assert.ok(second.widerSharedBox?.width > other.typesetting.bbox.width * width);
+ assert.ok(first.widerSharedBox.left + first.widerSharedBox.width < second.widerSharedBox.left);
+ for (const layout of [first, second]) {
+   const box = layout.widerSharedBox;
+   const interior = layout.interior;
+   assert.equal(isInsetInteriorRectangle(interior.mask, interior.width, interior.height, {
+     x: box.left - interior.left, y: box.top - interior.top, width: box.width, height: box.height,
+   }), true);
+ }
+});
+
+test('a protected neighbor, an explicit allowed box, or diagonal ownership leaves the original arrangement', () => {
+ const f = fixture();
+ const options = { protectedBoxes: [{ x: 46 / width, y: 41 / height, width: 3 / width, height: 30 / height }] };
+ const blocked = inferCandidateBox(f.context, f.line, f.boxes, width, height, undefined, options);
+ assert.equal(blocked.widerSharedBox, undefined);
+ assert.deepEqual(blocked.bbox, f.line.typesetting.bbox);
+ const bounded = inferCandidateBox(f.context, f.line, f.boxes, width, height, f.line.typesetting.bbox, { protectedBoxes: [] });
+ assert.equal(bounded.widerSharedBox, undefined);
+ f.boxes[1].bbox = { ...f.boxes[1].bbox, y: 142 / height, height: 22 / height };
+ const diagonal = inferCandidateBox(f.context, f.line, f.boxes, width, height, undefined, { protectedBoxes: [] });
+ assert.ok(diagonal.interior);
+ assert.equal(diagonal.widerSharedBox, undefined);
+});

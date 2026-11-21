@@ -26,6 +26,22 @@ function png(bytes, width, height) {
   return 'data:image/png;base64,' + bytes.toString('base64');
 }
 
+function editablePaint(layout) {
+  const paint=layout.paint;
+  if (!paint) return {weight:600,align:'center',color:'#202020',lineHeight:1.4};
+  const color=/^#[0-9a-f]{6}$/i.test(paint.color) ? paint.color : '#000000';
+  const strokeColor=/^#[0-9a-f]{6}$/i.test(paint.strokeColor) ? paint.strokeColor :
+    color.toLowerCase()==='#ffffff' ? '#000000' : '#ffffff';
+  return {
+    ...(/^bold\s+[\d.]+px\s+Pretendard(?:,|$)/i.test(paint.font) ? {font:'pretendard'} : {}),
+    weight:/^bold\s/i.test(paint.font) ? 700 : 600,
+    align:['left','center','right'].includes(paint.align) ? paint.align : 'center',
+    color, lineHeight:Number.isFinite(layout.lineHeight) && layout.lineHeight>=1 && layout.lineHeight<=2.5 ? layout.lineHeight : 1.4,
+    ...(Number.isFinite(paint.strokeWidth) && paint.strokeWidth>0 && paint.strokeWidth<=layout.fontSizePx/2 ?
+      {strokeWidth:paint.strokeWidth,strokeColor} : {}),
+  };
+}
+
 function pageRequestProofs(report, translations, stage15, onnxReceipt) {
   const requests = report.translationRequests ?? [];
   requireValue(Array.isArray(requests) && requests.length <= 128, '페이지 번역 요청 기록이 올바르지 않습니다.');
@@ -34,10 +50,13 @@ function pageRequestProofs(report, translations, stage15, onnxReceipt) {
     requireValue(typeof request?.requestId === 'string' && request.requestId.length > 0 && request.requestId.length <= 200 && !byId.has(request.requestId), '페이지 번역 요청 식별자가 중복되거나 누락됐습니다.');
     const synthetic = stage15 && request.requestId === stage15.publication.executionId && request.contextFingerprint === stage15.publication.inputFingerprint;
     if (request.transport === 'onnx-cpu') {
+      const noteIds = request.noteRegionIds ?? [], verifiedNoteIds = onnxReceipt?.noteRegionIds ?? [];
       requireValue(!stage15 && requests.length===1 && request.scope==='page' && onnxReceipt?.requestSha256===request.contextFingerprint &&
         onnxReceipt?.responseSha256===request.responseSha256 && request.providerRevision===onnxProvider.revision &&
         request.sourceImageSha256===report.hashes.normalized && request.localGenerations===1 && request.httpRequests===0 &&
-        request.usedImageContext===false && request.imageSha256===null, 'ONNX 페이지 번역의 원요청·응답 근거가 다릅니다.');
+        request.usedImageContext===false && request.imageSha256===null && Array.isArray(noteIds) &&
+        noteIds.length===verifiedNoteIds.length && noteIds.every((id,index)=>id===verifiedNoteIds[index]&&!request.regionIds?.includes(id)),
+        'ONNX 페이지 번역의 원요청·응답 근거가 다릅니다.');
     } else {
       requireValue(!onnxReceipt && request.scope === 'page' && (synthetic ? request.httpRequests === 0 && request.usedImageContext === false : request.httpRequests === 1 && request.usedImageContext === true) &&
         /^[a-f0-9]{64}$/.test(request.contextFingerprint) && /^[a-f0-9]{64}$/.test(request.imageSha256) &&
@@ -88,8 +107,9 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng, verifie
   const blocks = [...lines.values()].sort((a,b) => (a.order ?? 0)-(b.order ?? 0)).map(line => {
     const translation = translations.get(line.id), layout = layouts.get(line.id);
     requireValue(ocr.has(line.id) && translation && layout, '원문과 번역/식자 영역 ID가 다릅니다.');
-    if(line.sourceLineIds!==undefined){
-      const group=ocr.get(line.id),expected=group.ocrRefinement?.sourceDetectionIds??group.productionOcrProvenance?.sourceDetectionIds??[];
+    const group=ocr.get(line.id);
+    if(line.sourceLineIds!==undefined||group.inventoryLineIds!==undefined){
+      const expected=group.ocrRefinement?.sourceDetectionIds??group.productionOcrProvenance?.sourceDetectionIds??group.inventoryLineIds??[];
       requireValue(Array.isArray(line.sourceLineIds)&&new Set(line.sourceLineIds).size===line.sourceLineIds.length&&
         line.sourceLineIds.length===expected.length&&line.sourceLineIds.every(id=>expected.includes(id)), '원본 글줄과 재OCR 자식의 대응이 변경되었습니다.');
     }
@@ -117,7 +137,7 @@ export function reportToStudioResult(report, { cleanedPng, candidatePng, verifie
     return {
       id:line.id, source:line.sourceText, text:effectiveText,
       x:bbox.x*100, y:bbox.y*100, w:bbox.width*100, h:bbox.height*100,
-      font:'sans', size:layout.fontSizePx, weight:600, align:'center', color:'#202020', lineHeight:1.4, fill:false,
+      font:'sans', size:layout.fontSizePx, ...editablePaint(layout), fill:false,
       ...(Number.isFinite(line.parseConfidence) ? { confidence:Math.min(1,Math.max(0,line.parseConfidence)) } : {}),
       sourceBox:{x:sourceBbox.x*100,y:sourceBbox.y*100,w:sourceBbox.width*100,h:sourceBbox.height*100},
       readingOrder:line.order,

@@ -10,11 +10,34 @@ app.whenReady().then(async()=>{let window;try{
  window=await createRenderer(font,await fs.readFile(input.productionBundle,'utf8')+'\n'+await fs.readFile(input.bundle,'utf8')+'\nvoid 0;',new AbortController().signal);
  const rgba=base64=>{const b=Buffer.from(nativeImage.createFromBuffer(Buffer.from(base64,'base64')).toBitmap());for(let i=0;i<b.length;i+=4){const r=b[i];b[i]=b[i+2];b[i+2]=r;}return b;},results=[];
  for(const item of input.cases){
-  try{const rendered=await window.webContents.executeJavaScript(`SyntheticBackground.renderCandidate(${JSON.stringify('data:image/png;base64,'+item.cleaned)},${JSON.stringify(item.lines)},${JSON.stringify(item.options)})`,true);
+  try{
+   const expression=`SyntheticBackground.renderCandidate(${JSON.stringify('data:image/png;base64,'+item.cleaned)},${JSON.stringify(item.lines)},${JSON.stringify(item.options)})`;
+   const {rendered,failure}=await window.webContents.executeJavaScript(`${expression}.then(rendered=>({rendered}),error=>({failure:{message:error.message,code:error.code,layoutDiagnostics:error.layoutDiagnostics}}))`,true);
+   if(failure)throw Object.assign(new Error(failure.message),failure);
+   if (item.options.backgroundContext.nonWhiteFallback) {
+    const source = rgba(item.cleaned), final = rgba(rendered.pngBase64);
+    const regions = rendered.layoutReport.map(row => ({ id: row.id, bbox: row.bbox, text: row.textEvidence.sourceText,
+      complete: row.textEvidence.complete, fontSizePx: row.fontSizePx, lineCount: row.actualLayout.lines.length,
+      lines: row.actualLayout.lines.map(line => line.text),
+      basis: row.safeAreaEvidence.basis,
+      missingGlyphs: row.glyphEvidence.missingGlyphOccurrences,
+      safe: row.raster.paintedPixels > 0 && [row.raster.outsideInteriorPixels, row.raster.clippedPixels,
+        row.raster.overlappingInkPixels, row.raster.otherRegionCollisionPixels].every(value => value === 0) }));
+    let changedOutsideBoxes = 0;
+    for (let at = 0; at < source.length; at += 4) {
+      if (source.readUInt32LE(at) === final.readUInt32LE(at)) continue;
+      const x = (at / 4 % input.width + 0.5) / input.width;
+      const y = (Math.floor(at / (4 * input.width)) + 0.5) / input.height;
+      if (!regions.some(({ bbox }) => x >= bbox.x && x < bbox.x + bbox.width && y >= bbox.y && y < bbox.y + bbox.height)) changedOutsideBoxes++;
+    }
+    results.push({ name: item.name, ok: true, changedOutsideBoxes, regions });
+    continue;
+   }
    const m=item.options.backgroundContext,maskEvidence={width:input.width,height:input.height,maskSha256:m.maskSha256,layoutRegions:item.lines.map(l=>({id:l.id,bbox:l.typesetting.bbox,allowedBbox:m.allowedBoxes.find(r=>r.id===l.id).bbox})),extraction:{nonSpeechText:item.options.protectedBoxes??[]}},inputs={current:{normalizedSha256:m.sourceSha256},lines:item.lines.map(l=>({id:l.id,bbox:l.typesetting.bbox,userTranslation:l.aiTranslation})),...(m.manualEntries.length?{layoutReview:{planSha256:m.manualApprovalSha256}}:{})};
    const validation=verifyRenderedBackgrounds({layouts:rendered.layoutReport,inputs,maskEvidence,manualEntries:m.manualEntries,sourcePixels:rgba(m.sourcePngBase64),cleanedPixels:rgba(item.cleaned),maskPixels:rgba(m.maskPngBase64),finalPixels:rgba(rendered.pngBase64),cleanedSha256:m.cleanedSha256});
    verifyImportedLayout(rendered.layoutReport,inputs.lines,validation);results.push({name:item.name,ok:true,basis:rendered.layoutReport[0].safeAreaEvidence.basis,color:rendered.layoutReport[0].paint.color,independentPixels:validation.independentPixels,manualFont:rendered.layoutReport[0].fontSizePx,bbox:rendered.layoutReport[0].bbox});
-  }catch(e){results.push({name:item.name,ok:false,message:e.message,code:e.code??null});}
+  }catch(e){results.push({name:item.name,ok:false,message:e.message,code:e.code??(e.message.startsWith('MANUAL_LAYOUT_REQUIRED:')?'MANUAL_LAYOUT_REQUIRED':null),
+    ...(item.name.startsWith('shared-auto-')?{measurements:(e.layoutDiagnostics?.regions??[]).map(({id,bbox,fontSizePx})=>({id,bbox,fontSizePx}))}:{})});}
  }
  const item=input.cases.find(c=>c.name==='texture'),bbox=item.lines[0].typesetting.bbox,polygon=[{x:bbox.x,y:bbox.y},{x:bbox.x+bbox.width,y:bbox.y},{x:bbox.x+bbox.width,y:bbox.y+bbox.height},{x:bbox.x,y:bbox.y+bbox.height}],jobId='synthetic-structured-failure';
  const ocr={pageNumber:1,warnings:[],nonSpeechText:[],speechBubbles:[{id:item.lines[0].id,readingOrder:1,bbox,polygon,text:item.lines[0].sourceText,language:'ja',confidence:1,type:'speech_bubble'}]},sha=b=>require('node:crypto').createHash('sha256').update(b).digest('hex');

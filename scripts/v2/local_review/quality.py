@@ -1,18 +1,56 @@
 """Mechanical checks before an OCR/translation result may replace source lettering."""
 import re
 import unicodedata
+from collections import Counter
 
 JAPANESE=re.compile(r'[\u3041-\u3096\u30a1-\u30fa\u3400-\u9fff]')
 HANGUL=re.compile(r'[가-힣ㄱ-ㅎㅏ-ㅣᄀ-ᇿ]')
 RUN=re.compile(r'(.{1,10}?)\1{5,}',re.DOTALL)
 REQUEST_END=re.compile(r'(?:って|いて|いで|んで|して|ないで|[けげせぜてでねへべめれえみきぎびじり見来]て)(?:ね|よ)?$')
 SENTENCE_END='。．.!！?？…〜～「」『』“” '
+COMPLETED_PREDICATE = re.compile(r'[ぁ-ん一-龯々](?:[ちじ]ゃ(?:う|った)|[てで]しま(?:う|った))(?:んだ)?(?:よ|ね|ぞ|わ|かも)?$')
 KINSHIP_ARGUMENT=re.compile(r'(?<![\u3400-\u9fff々])([兄姉弟妹])(が|は|に)')
 KINSHIP={'兄':('손위 남자 형제','형 오빠 형님 오라버니'), '姉':('손위 여자 형제','언니 누나 누님'),
          '弟':('손아래 남자 형제','남동생 동생 아우'), '妹':('손아래 여자 형제','여동생 동생 누이')}
 KOREAN_KIN=re.compile(r'(?<![가-힣])(형님|형|오빠|오라버니|언니|누나|누님|남동생|여동생|동생|아우|누이|아내|남편)(에게|한테|께|은|는|이|가)(?=\s|$)')
 MORAU=re.compile(r'(?:て|で)(?:もら|貰|いただ|頂)')
 ACTOR_TERMS={'先生':('선생님','선생','교사','스승'), '友達':('친구',), '母':('어머니','엄마'), '父':('아버지','아빠')}
+
+def has_completed_predicate(source):
+    clause = unicodedata.normalize('NFKC', source).rstrip().rstrip(SENTENCE_END + '~\t\r\n')
+    return bool(COMPLETED_PREDICATE.search(clause))
+
+
+def predicate_reduced_to_gasp(source, target):
+    if not has_completed_predicate(source):
+        return False
+    syllables = ''.join(c for c in unicodedata.normalize('NFKC', target)
+                        if not c.isspace() and not unicodedata.category(c).startswith('P') and c not in '~〜～')
+    return bool(re.fullmatch('[흐윽헉하아으헥후우휴허억]+', syllables)
+                and re.search('흐|윽|헉|헥|하아|허억|후우|으으', syllables))
+
+
+def numeric_ratios(text):
+    return [re.sub(r'\s+', '', value) for value in re.findall(r'[0-9]+\s*/\s*[0-9]+', text)]
+
+
+def repeated_numeric_fields(source, target):
+    source = unicodedata.normalize('NFKC', source)
+    if source.count('【') + source.count('[') < 2:
+        return False
+    target = unicodedata.normalize('NFKC', target)
+    original = numeric_ratios(source)
+    if len(original) < 2 or len(numeric_ratios(target)) < len(original) + 3:
+        return False
+    original_counts, field_counts = Counter(original), Counter()
+    for square, corner in re.findall(r'\[([^\[\]\r\n]{1,120})\]|【([^【】\r\n]{1,120})】', target):
+        field = re.sub(r'\s+', '', square or corner)
+        ratios = numeric_ratios(field)
+        if len(ratios) == 1 and re.search('[가-힣]', field):
+            field_counts[field] += 1
+            if field_counts[field] >= original_counts[ratios[0]] + 3:
+                return True
+    return False
 
 
 def kinship_argument(source):
@@ -77,6 +115,10 @@ def review_flags(source,target,ended):
             flags.append('KINSHIP_RECIPIENT_CONFLICT' if recipient else 'KINSHIP_SUBJECT_CONFLICT')
     if reversed_benefactive(source,target):
         flags.append('BENEFACTIVE_ACTOR_REVERSED')
+    if predicate_reduced_to_gasp(source, target):
+        flags.append('PREDICATE_REDUCED_TO_GASP')
+    if repeated_numeric_fields(source, target):
+        flags.append('REPEATED_NUMERIC_FIELDS')
     if re.search(r'[가-힣][이가]\s+않(?:아|았|으|다|습|는|네|고)',target):
         flags.append('MALFORMED_KOREAN_NEGATION')
     compact=lambda value: ''.join(unicodedata.normalize('NFKC',value).split())

@@ -13,6 +13,31 @@ const m=await import(new URL('studio-model.mjs',directory));
 const f=await import(new URL('studio-files.mjs',directory));
 const engine=await import(new URL('studio-engine.mjs',directory));
 
+test('valid sub-percent engine rectangles and user edits survive reload at their original coordinates',()=>{
+ const b=m.makeBlock({x:99.25,y:10,w:.7,h:20/2880*100});
+ const [copy]=m.validateBlocks([b]);
+ assert.deepEqual([copy.x,copy.y,copy.w,copy.h],[b.x,b.y,b.w,b.h]);
+});
+
+test('manual Korean wrapping keeps words and punctuation together and preserves explicit breaks',()=>{
+ const width=s=>[...new Intl.Segmenter('ko',{granularity:'grapheme'}).segment(s)].reduce((n,{segment})=>n+(segment===' '?0.4:1),0);
+ const shown=(s,n)=>m.wrapStudioText(s,n,width).map(line=>line.text);
+ assert.deepEqual(shown('잠깐 설명을 들으세요.',4.5),['잠깐','설명을','들으세','요.']);
+ assert.deepEqual(shown('히로 군의 설명은',4.6),['히로 군의','설명은']);
+ assert.deepEqual(shown('  네.\r\n\n그래  좋아.\n',20),['  네.','','그래  좋아.','']);
+ assert.deepEqual(shown('가족 👨‍👩‍👧‍👦!',3),['가족','👨‍👩‍👧‍👦!']);
+ const spaced='잠깐   설명을\t들으세요.';
+ assert.equal(m.wrapStudioText(spaced,4.5,width).map(line=>line.text+line.softSpace).join(''),spaced);
+ const detached='앞날이 밝다 ...';
+ assert.deepEqual(shown(detached,6),['앞날이','밝다 ...']);
+ assert.deepEqual(shown('한참 기다렸어요 :',5.6),['한참','기다렸어','요 :']);
+ assert.equal(m.wrapStudioText(detached,6,width).map(line=>line.text+line.softSpace).join(''),detached);
+ const pauses='…'.repeat(19);
+ const pauseLines=shown(pauses,6);
+ assert.equal(pauseLines.join(''),pauses);
+ assert.ok(pauseLines.every(line=>width(line)<=6));
+});
+
 test('sample exposes one real geometry/text warning of each requested kind',()=>{
  const p=m.sampleProject();assert.deepEqual(p.pages.map(pg=>m.getIssues(pg).map(i=>i.kind)),[['linebreak'],['overlap'],['missing'],[]]);
 });

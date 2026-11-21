@@ -3,19 +3,22 @@ export const DEFAULT_ENGINE_ENDPOINT = '/api/engine';
 export type Mode = "online";
 export type PageStatus = "ready" | "processing" | "paused" | "review" | "completed" | "failed";
 export type IssueKind = "missing" | "overlap" | "linebreak" | "error" | "engine";
-export type EngineReview = {warnings:string[];soundEffects?:{preserved:number;translated:number}};
+export type MeasuredLettering = {width:number;height:number;regions:{id:string;signature:string}[]};
+export type EngineReview = {warnings:string[];soundEffects?:{preserved:number;translated:number};measuredLettering?:MeasuredLettering};
 export type StudioBox={x:number;y:number;w:number;h:number};
 export type TextBlock = {
   sourceBox?:StudioBox;userSourceBox?:StudioBox;
   id: string; source: string; text: string; x: number; y: number; w: number; h: number;
   font: string; size: number; weight: number; align: "left" | "center" | "right";
   color: string; lineHeight: number; confidence?: number; fill: boolean;
+  strokeColor?: string; strokeWidth?: number;
 };
 export type PendingBatch={key:string;projectId:string;source:'ja'|'auto';target:'ko';phase:'prepared'|'sending';members:{pageId:string;pageNumber?:number;generation:number;sourceSha256:string;name:string}[]};
 export type StudioPage = {
   reviewedWarningSignature?:string;
   engineOutcome?: EngineOutcome;
   engineReview?:EngineReview;
+  textInventoryJobId?: string;
   id: string; name: string; image: string; cleanImage?: string; finalImage?: string; finalImageSignature?: string; width: number; height: number;
   blocks: TextBlock[]; status: PageStatus; error?: string; reviewed: boolean; jobId?: string; jobEndpoint?: string; requestId?: string; processed?: boolean; engineGeneration?: number;enginePageNumber?:number;pendingBatch?:PendingBatch;
 };
@@ -43,11 +46,12 @@ export type Project = {
 };
 export type Issue = { id: string; kind: IssueKind; pageId: string; blockId?: string; title: string; description: string };
 export const FONTS: Record<string, string> = {
+  pretendard: '"Trio Pretendard", sans-serif',
   sans: '"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
   serif: '"Noto Serif CJK KR", "Batang", serif',
   rounded: '"Arial Rounded MT Bold", "Noto Sans KR", sans-serif',
 };
-export const FONT_NAMES: Record<string, string> = { sans: "기본 고딕", serif: "명조", rounded: "라운드 고딕" };
+export const FONT_NAMES: Record<string, string> = { sans: "기본 고딕", pretendard:"프리텐다드", serif: "명조", rounded: "라운드 고딕" };
 export const ISSUE_NAMES: Record<IssueKind, string> = { missing: "대사 누락", overlap: "텍스트 겹침", linebreak: "줄바꿈", error: "처리 오류", engine:"엔진 검토" };
 export const STATUS_NAMES: Record<PageStatus, string> = {ready:"처리 대기", processing:"처리 중", paused:"조회 중지", review:"검토 필요", completed:"검수 완료", failed:"처리 오류"};
 export function uid() { return crypto.randomUUID(); }
@@ -63,33 +67,124 @@ export function ocrBox(block:TextBlock):StudioBox {
   return {x,y,w,h};
 }
 /** Fixed visual fields and layer order bind an engine bitmap to its editable content. */
+function visualFields(b: TextBlock) {
+  const fields = [b.text,b.x,b.y,b.w,b.h,b.font,b.size,b.weight,b.align,b.color,b.lineHeight,b.fill];
+  if (b.strokeWidth && b.strokeColor) fields.push(b.strokeWidth,b.strokeColor);
+  return fields;
+}
 export function blockVisualSignature(blocks:readonly TextBlock[]):string {
-  return JSON.stringify({version:1,blocks:blocks.map(b=>[b.text,b.x,b.y,b.w,b.h,b.font,b.size,b.weight,b.align,b.color,b.lineHeight,b.fill])});
+  return JSON.stringify({version:1,blocks:blocks.map(visualFields)});
 }
 export function canUseFinalImage(page:StudioPage|undefined):page is StudioPage&{finalImage:string;finalImageSignature:string} {
   return !!page&&typeof page.finalImage==="string"&&/^data:image\/png;base64,/.test(page.finalImage)&&typeof page.finalImageSignature==="string"&&page.finalImageSignature===blockVisualSignature(page.blocks);
 }
-export function lineCount(b: TextBlock, width: number) {
-  const available = Math.max(1, b.w / 100 * width - 12);
-  let lines = 0;
-  for (const paragraph of b.text.split("\n")) {
-    let used = 0; lines++;
-    for (const char of paragraph) {
-      const unit = /[\u0000-\u00ff]/.test(char) ? (char === " " ? .3 : .56) : 1;
-      if (used + unit * b.size > available && used > 0) {lines++; used=0;}
-      used += unit * b.size;
+type PixelCrop = { left:number; top:number; width:number; height:number };
+
+/** Copy a crop only if its old content and coordinates match exactly and
+ * neither the old nor the edited page has another layer touching its pixels. */
+export function unchangedFinalCrops(page:StudioPage, editingId?:string|null): Map<string, PixelCrop> {
+  const keep = new Map<string, PixelCrop>();
+  if (!page.cleanImage || !page.finalImage?.startsWith('data:image/png;base64,') || !page.finalImageSignature ||
+      !page.blocks.length || page.blocks.length>1000) return keep;
+  let saved;
+  try { saved = JSON.parse(page.finalImageSignature); } catch { return keep; }
+  if (saved?.version!==1 || !Array.isArray(saved.blocks) || saved.blocks.length>1000) return keep;
+  const crop = (x:number,y:number,w:number,h:number) => {
+    const left=Math.max(0, Math.floor(x*page.width/100)), top=Math.max(0, Math.floor(y*page.height/100));
+    return {left,top,width:Math.min(page.width,Math.ceil((x+w)*page.width/100))-left,
+      height:Math.min(page.height,Math.ceil((y+h)*page.height/100))-top};
+  };
+  const touches = (a:PixelCrop,b:PixelCrop) => a.left<b.left+b.width && a.left+a.width>b.left && a.top<b.top+b.height && a.top+a.height>b.top;
+  const originals: PixelCrop[] = [], byVisual = new Map<string,number>();
+  for (const fields of saved.blocks) {
+    if (!Array.isArray(fields) || ![12,14].includes(fields.length) || typeof fields[0]!=='string' || typeof fields[5]!=='string' ||
+        !Number.isFinite(fields[6]) || !Number.isFinite(fields[7]) || typeof fields[8]!=='string' ||
+        typeof fields[9]!=='string' || !Number.isFinite(fields[10]) || typeof fields[11]!=='boolean') return keep;
+    if (fields.length===14 && (!Number.isFinite(fields[12]) || fields[12]<=0 || !/^#[0-9a-f]{6}$/i.test(fields[13]))) return keep;
+    const [,x,y,w,h]=fields;
+    if (!validOcrBox({x,y,w,h})) return keep;
+    byVisual.set(JSON.stringify(fields),originals.length);
+    originals.push(crop(x,y,w,h));
+  }
+  const current=page.blocks.map(b=>crop(b.x,b.y,b.w,b.h));
+  for (const [i,block] of page.blocks.entries()) {
+    const index=byVisual.get(JSON.stringify(visualFields(block)));
+    if (block.id===editingId || index===undefined) continue;
+    const region=originals[index];
+    if (!originals.some((other,j)=>j!==index && touches(region,other)) &&
+        !current.some((other,j)=>j!==i && touches(region,other))) keep.set(block.id,region);
+  }
+  return keep;
+}
+const graphemes = new Intl.Segmenter("ko",{granularity:"grapheme"});
+const closingMark = /^[!?.,:;~…。、！？～〜)\]】」』”’]/u;
+const closingMarksOnly = /^[!?.,:;~…。、！？～〜)\]】」』”’]+$/u;
+const openingMark = /[(\[【「『“‘]$/u;
+
+/** Keep spaces inside a line and preserve explicit paragraphs, including empty ones.
+ * Only an individual word wider than a whole line needs grapheme-level wrapping. */
+export function wrapStudioText(text:string,available:number,measure:(value:string)=>number) {
+  const lines:{text:string;softSpace:string}[]=[];
+  for (const paragraph of text.replace(/\r\n?/g,"\n").split("\n")) {
+    if (measure(paragraph)<=available) { lines.push({text:paragraph,softSpace:""}); continue; }
+    let line="",end=0;
+    const words:{word:string;gap:string}[]=[];
+    for (const match of paragraph.matchAll(/[^ \t]+/gu)) {
+      const word=match[0], gap=paragraph.slice(end,match.index);
+      end=match.index+word.length;
+      const previous=words.at(-1);
+      if(previous && closingMarksOnly.test(word))previous.word+=gap+word;
+      else words.push({word,gap});
     }
+    for (const [index,{word,gap}] of words.entries()) {
+      if (line && measure(line+gap+word)<=available) { line+=gap+word; continue; }
+      if (line) { lines.push({text:line,softSpace:gap}); line=""; }
+      const token=index===0 ? gap+word : word;
+      if (measure(token)<=available) { line=token; continue; }
+      const units:string[]=[];
+      for (const {segment} of graphemes.segment(token)) {
+        const previous=units.at(-1);
+        if (previous && (closingMark.test(segment) || /^[ \t]+$/u.test(segment) || openingMark.test(previous)) &&
+            measure(previous+segment)<=available) units[units.length-1]+=segment;
+        else units.push(segment);
+      }
+      for (const unit of units) {
+        if (line && measure(line+unit)>available) { lines.push({text:line,softSpace:""}); line=""; }
+        line+=unit;
+      }
+    }
+    lines.push({text:line+paragraph.slice(end),softSpace:""});
   }
   return lines;
 }
-export function getIssues(page: StudioPage): Issue[] {
+export function lineCount(b: TextBlock, width: number) {
+  const available=Math.max(1,b.w/100*width-12-2*(b.strokeWidth??0));
+  const estimate=(s:string)=>{
+    let em=0;
+    for(const {segment} of graphemes.segment(s))em+=segment===" " ? .3 : /^[\u0000-\u00ff]$/u.test(segment) ? .56 : 1;
+    return em*b.size;
+  };
+  return wrapStudioText(b.text,available,estimate).length;
+}
+export function measuredLetteringIds(page:StudioPage) {
+  const measured=page.engineReview?.measuredLettering;
+  const ids=new Set<string>();
+  if(!measured || measured.width!==page.width || measured.height!==page.height)return ids;
+  const proofs=new Map(measured.regions.map(r=>[r.id,r.signature]));
+  const kept=canUseFinalImage(page) ? undefined : unchangedFinalCrops(page);
+  for(const b of page.blocks)if((!kept || kept.has(b.id)) && proofs.get(b.id)===blockVisualSignature([b]))ids.add(b.id);
+  return ids;
+}
+export function getIssues(page: StudioPage, manualFits?:ReadonlyMap<string,boolean>): Issue[] {
   const issues: Issue[] = [];
+  const measured=measuredLetteringIds(page);
   page.engineReview?.warnings.forEach((warning,index)=>issues.push({id:page.id+"-engine-"+index,kind:"engine",pageId:page.id,title:warning,description:"엔진 결과에 기록된 경고입니다."}));
   if (page.status === "failed") issues.push({id:page.id+"-error",kind:"error",pageId:page.id,title:"처리를 완료하지 못했어요",description:page.error || "엔진 연결과 처리 기록을 확인해 주세요."});
   for (const b of page.blocks) {
     if (!b.text.trim()) {
       issues.push({id:b.id+"-missing",kind:"missing",pageId:page.id,blockId:b.id,title:"번역문이 비어 있어요",description:"인식한 원문을 확인하고 이미지 위에서 입력해 주세요."});
-    } else if (lineCount(b,page.width) * b.size * b.lineHeight > b.h/100 * page.height - 8) {
+    } else if (!measured.has(b.id) &&
+        !(manualFits?.get(b.id) ?? (lineCount(b,page.width) * b.size * b.lineHeight <= b.h/100 * page.height - 8))) {
       issues.push({id:b.id+"-linebreak",kind:"linebreak",pageId:page.id,blockId:b.id,title:"말풍선에 문장이 꽉 차요",description:"글자 크기를 맞추거나 줄바꿈을 다듬어 주세요."});
     }
     for (const other of page.blocks) {
@@ -161,11 +256,20 @@ export function readEngineReview(value:unknown):EngineReview|undefined {
   if(value===undefined)return undefined;
   if(!value||typeof value!=='object'||!('warnings' in value)||!Array.isArray(value.warnings)||!value.warnings.every(w=>typeof w==='string'))throw new Error("저장된 엔진 경고를 확인해 주세요.");
   const warnings=[...value.warnings];
-  if(!('soundEffects' in value)||value.soundEffects===undefined)return {warnings};
+  const review:EngineReview={warnings};
+  if('measuredLettering' in value && value.measuredLettering!==undefined){
+    const fit=value.measuredLettering as MeasuredLettering;
+    if(!fit || !Number.isSafeInteger(fit.width) || fit.width<=0 || !Number.isSafeInteger(fit.height) || fit.height<=0 ||
+        fit.width*fit.height>40_000_000 || !Array.isArray(fit.regions) || fit.regions.length>1000 ||
+        !fit.regions.every(r=>r && isStudioId(r.id) && typeof r.signature==='string') ||
+        new Set(fit.regions.map(r=>r.id)).size!==fit.regions.length)throw new Error("저장된 식자 측정 기록을 확인해 주세요.");
+    review.measuredLettering={width:fit.width,height:fit.height,regions:fit.regions.map(({id,signature})=>({id,signature}))};
+  }
+  if(!('soundEffects' in value)||value.soundEffects===undefined)return review;
   const s=value.soundEffects;
   if(!s||typeof s!=='object'||!('preserved' in s)||!('translated' in s)||
     typeof s.preserved!=='number'||typeof s.translated!=='number'||!Number.isSafeInteger(s.preserved)||!Number.isSafeInteger(s.translated)||s.preserved<0||s.translated<0)throw new Error("효과음 처리 기록을 확인해 주세요.");
-  return {warnings,soundEffects:{preserved:s.preserved,translated:s.translated}};
+  return {...review,soundEffects:{preserved:s.preserved,translated:s.translated}};
 }
 function normalizeProject(value:unknown,imported:boolean):Project {
   let p=value as Project;
@@ -185,6 +289,7 @@ function normalizeProject(value:unknown,imported:boolean):Project {
     // Project backups include manual regions; OCR's per-response limit is separate.
     const page:StudioPage={...raw,blocks:validateBlocks(raw.blocks,{preserveContent:true}),error:typeof raw.error==="string"?raw.error:undefined,processed:raw.processed===true||((raw.status==="review"||raw.status==="completed")&&!!raw.cleanImage),requestId:undefined};
     if(raw.engineReview!==undefined)page.engineReview=readEngineReview(raw.engineReview);
+    page.textInventoryJobId=!imported&&isStudioId(raw.textInventoryJobId)?raw.textInventoryJobId:undefined;
     if(imported){page.jobId=undefined;page.jobEndpoint=undefined;page.pendingBatch=undefined;page.enginePageNumber=undefined;}
     else if(raw.jobId){
       if(!isStudioId(raw.jobId)||typeof raw.jobEndpoint!=="string")throw new Error("저장된 작업 ID와 엔진 주소를 확인해 주세요.");
@@ -221,10 +326,15 @@ export function validateBlocks(value: unknown,options:{preserveContent?:boolean}
   return value.map((b:Partial<TextBlock>)=>{
     if (!b || ![b.x,b.y,b.w,b.h].every(n=>typeof n==="number" && Number.isFinite(n)) || typeof b.text!=="string") throw new Error("텍스트 좌표와 번역문을 확인해 주세요.");
     if(b.userSourceBox!==undefined&&!validOcrBox(b.userSourceBox))throw new Error("수정한 OCR 영역이 페이지 범위를 벗어났어요.");
+    if ((b.strokeWidth!==undefined || b.strokeColor!==undefined) && (typeof b.strokeWidth!=='number' ||
+        !Number.isFinite(b.strokeWidth) || b.strokeWidth<=0 || b.strokeWidth>80 ||
+        typeof b.strokeColor!=='string' || !/^#[0-9a-f]{6}$/i.test(b.strokeColor))) throw new Error("식자 외곽선의 색과 두께를 확인해 주세요.");
     const id=typeof b.id==="string"&&b.id.trim().length>0?b.id:uid();
     if(seen.has(id))throw new Error("같은 ID의 텍스트 영역이 중복돼요.");
     seen.add(id);
-    const x=clamp(b.x!,0,99), y=clamp(b.y!,0,99);
-    return makeBlock({...b,fill:b.fill===true,id,source:typeof b.source==="string"?b.source:"",text:b.text,x,y,w:clamp(b.w!,1,100-x),h:clamp(b.h!,1,100-y),font:b.font && FONTS[b.font]?b.font:"sans",size:clamp(Number(b.size)||32,10,160),weight:[400,500,600,700,800].includes(b.weight!)?b.weight!:600,lineHeight:clamp(Number(b.lineHeight)||1.4,1,2.5),color:/^#[0-9a-f]{6}$/i.test(b.color||"")?b.color!:"#202020",align:["left","center","right"].includes(b.align!)?b.align!:"center",confidence:typeof b.confidence==="number"&&Number.isFinite(b.confidence)?clamp(b.confidence,0,1):undefined});
+    const exact=validOcrBox({x:b.x!,y:b.y!,w:b.w!,h:b.h!}) && b.x!<100 && b.y!<100;
+    const x=exact?b.x!:clamp(b.x!,0,99), y=exact?b.y!:clamp(b.y!,0,99);
+    const w=exact?Math.min(b.w!,100-x):clamp(b.w!,1,100-x), h=exact?Math.min(b.h!,100-y):clamp(b.h!,1,100-y);
+    return makeBlock({...b,fill:b.fill===true,id,source:typeof b.source==="string"?b.source:"",text:b.text,x,y,w,h,font:b.font && FONTS[b.font]?b.font:"sans",size:clamp(Number(b.size)||32,10,160),weight:[400,500,600,700,800].includes(b.weight!)?b.weight!:600,lineHeight:clamp(Number(b.lineHeight)||1.4,1,2.5),color:/^#[0-9a-f]{6}$/i.test(b.color||"")?b.color!:"#202020",align:["left","center","right"].includes(b.align!)?b.align!:"center",confidence:typeof b.confidence==="number"&&Number.isFinite(b.confidence)?clamp(b.confidence,0,1):undefined});
   });
 }

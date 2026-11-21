@@ -99,6 +99,57 @@ test('undoing a text edit can reuse the original candidate without deleting the 
  assert.equal(workspace.histories[project.id].future.length,1);
 });
 
+test('editing, moving, removing or adding one block preserves isolated unchanged lettering at its original pixels',()=>{
+ const b=(id,x)=>model.makeBlock({id,x,y:10,w:15,h:20,text:id});
+ const [one,two,three]=[b('one',5),b('two',35),b('three',75)];
+ const page={...candidatePage(),width:300,height:400,blocks:[one,two,three],finalImageSignature:model.blockVisualSignature([one,two,three])};
+ const keep=(blocks,editing)=>[...model.unchangedFinalCrops({...page,blocks},editing).keys()];
+ assert.deepEqual(keep([{...one,text:'수정'},two,three]),['two','three']);
+ assert.deepEqual(keep([one,two,three],'one'),['two','three']);
+ assert.deepEqual(keep([two,three]),['two','three']);
+ assert.deepEqual(keep([one,two,three,b('new',54)]),['one','two','three']);
+ assert.deepEqual(keep([{...one,x:36},two,three]),['three']);
+ assert.deepEqual(keep([three,two,one]),['three','two','one']);
+ const colliding=[one,{...two,x:7},three];
+ assert.deepEqual([...model.unchangedFinalCrops({...page,blocks:[one,three],finalImageSignature:model.blockVisualSignature(colliding)}).keys()],['three']);
+ for(const bad of [undefined,'invalid',JSON.stringify({version:1,blocks:[['bad']]})]){
+  assert.equal(model.unchangedFinalCrops({...page,finalImageSignature:bad}).size,0);
+ }
+});
+
+test('outlines round-trip and edited strokes invalidate only the affected bitmap crop',()=>{
+ const a=model.makeBlock({id:'a',text:'저기요',x:5,y:5,w:20,h:20,font:'pretendard',strokeWidth:2,strokeColor:'#ffffff'});
+ const b=model.makeBlock({id:'b',x:55,y:5,w:20,h:20});
+ const page={...candidatePage(),width:500,height:500,blocks:[a,b],finalImageSignature:model.blockVisualSignature([a,b])};
+ const [copy]=model.validateBlocks(JSON.parse(JSON.stringify([a])));
+ assert.equal(copy.font,'pretendard');assert.equal(copy.strokeWidth,2);assert.equal(copy.strokeColor,'#ffffff');
+ for(const patch of [{strokeWidth:1},{strokeColor:'#000000'},{strokeWidth:undefined,strokeColor:undefined}]){
+  const edited={...page,blocks:[{...a,...patch},b]};
+  assert.equal(model.canUseFinalImage(edited),false);
+  assert.deepEqual([...model.unchangedFinalCrops(edited).keys()],['b']);
+ }
+ assert.deepEqual([...model.unchangedFinalCrops(page,'b').keys()],['a']);
+ for(const bad of [{strokeWidth:-2},{strokeWidth:Infinity},{strokeColor:'red'},{strokeWidth:undefined}])assert.throws(()=>model.validateBlocks([{...a,...bad}]));
+});
+
+test('manual font fitting keeps a size whose ink fits, and refuses to apply an unusable minimum',async()=>{
+ const oldDocument=globalThis.document;
+ const ctx={font:'',measureText(text){
+  const size=Number(this.font.match(/([\d.]+)px/)[1]),width=[...text].length*size*.7;
+  return {width,actualBoundingBoxLeft:width/2,actualBoundingBoxRight:width/2,actualBoundingBoxAscent:size*.3,actualBoundingBoxDescent:size*.3};
+ }};
+ globalThis.document={fonts:{ready:Promise.resolve()},createElement:()=>({getContext:()=>ctx})};
+ try{
+  const block=model.makeBlock({id:'small',text:'네.',size:28,x:10,y:10,w:40,h:10,align:'center'});
+  const page={width:200,height:200};
+  assert.ok(model.fitBlock(block,page).size<block.size);
+  assert.equal(await files.fitStudioBlock(block,page),28);
+  assert.equal(await files.fitStudioBlock({...block,h:7},page),23);
+  await assert.rejects(files.fitStudioBlock({...block,h:1},page),/영역/);
+  assert.equal(block.size,28);
+ }finally{if(oldDocument===undefined)delete globalThis.document;else globalThis.document=oldDocument;}
+});
+
 test('save and backup restoration preserve candidate associations and never bless an edited or unsigned image',()=>{
  const project=model.emptyProject('round trip');project.pages=[candidatePage()];
  const saved=model.restoreProject(JSON.parse(JSON.stringify(project))),imported=model.validateProject(JSON.parse(JSON.stringify(project)));

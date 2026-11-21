@@ -39,6 +39,18 @@ function stage12Report(){
 test('Stage12 adapter keeps candidate-only identity, full text and measured raster evidence without approving it',()=>{
  const r=stage12Report(),out=reportToStudioResult(r,assets);assert.deepEqual(out.evidence.typesetting_input_identity,r.typesetting.inputIdentity);assert.equal(out.evidence.typesetting_layouts[0].fitStatus,'FIT_WARNING');assert.equal(out.evidence.quality_status,'pending');
 });
+test('editing starts with the measured ink, outline, weight and line spacing from the candidate',()=>{
+ const r=stage12Report(),layout=r.typesetting.layoutReport[0];
+ layout.lineHeight=1.25;
+ layout.paint={font:'bold 14px Pretendard, sans-serif',align:'right',color:'#ffffff',strokeColor:'#080808',strokeWidth:1.5};
+ const [b]=reportToStudioResult(r,assets).blocks;
+ assert.deepEqual([b.font,b.color,b.strokeColor,b.strokeWidth,b.weight,b.align,b.lineHeight],['pretendard','#ffffff','#080808',1.5,700,'right',1.25]);
+ layout.paint={font:'bold 14px Pretendard, sans-serif',align:'center',strokeWidth:1};
+ const [defaultInk]=reportToStudioResult(r,assets).blocks;
+ assert.deepEqual([defaultInk.color,defaultInk.strokeColor],['#000000','#ffffff']);
+ const [legacy]=reportToStudioResult(report(),assets).blocks;
+ assert.deepEqual([legacy.color,legacy.weight,legacy.lineHeight,legacy.strokeWidth],['#202020',600,1.4,undefined]);
+});
 test('Stage12 adapter refuses contradictory source, text, glyph or raster claims and missing binding',()=>{
  for(const mutate of [r=>delete r.typesetting.inputIdentity,r=>r.typesetting.inputIdentity.cleanedImageSha256='0'.repeat(64),r=>r.typesetting.inputIdentity.pageNumber=2,r=>r.typesetting.layoutReport[0].textEvidence.sourceText='다른 대사',r=>r.typesetting.layoutReport[0].textEvidence.complete=false,r=>r.typesetting.layoutReport[0].actualLayout.lines=[],r=>r.typesetting.layoutReport[0].glyphEvidence.missingGlyphOccurrences=1,r=>r.typesetting.layoutReport[0].raster.clippedPixels=1,r=>r.typesetting.layoutReport[0].raster.paintedPixels=0]){const r=stage12Report();mutate(r);assert.throws(()=>reportToStudioResult(r,assets),{code:'INVALID_ENGINE_RESULT'});}
 });

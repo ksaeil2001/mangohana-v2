@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { evaluateAutomationQuality, stages } from '../../../apps/desktop/scripts/evaluate-automation-quality.mjs';
 import { hash, requireValue } from './contract.mjs';
+import { summarizeTextCoverage } from './text-coverage.mjs';
 
 /** Stage02 is the sole implementation of IoU assignment, CER and micro CER. */
 export async function evaluateOcrPages({runId,split,workspace,pages}) {
@@ -21,5 +22,14 @@ export async function evaluateOcrPages({runId,split,workspace,pages}) {
     }
     run.pages.push(entry);
   }
-  return evaluateAutomationQuality(corpus,run,workspace);
+  const report = await evaluateAutomationQuality(corpus, run, workspace);
+  const textCoverage = pages.filter(page => page.textCoverageEvidence !== undefined).map(page => {
+    const evidence = page.textCoverageEvidence;
+    requireValue(evidence && typeof evidence === 'object' && [evidence.annotation, evidence.inventory]
+      .every(value => !value || value.pageId === page.pageId && value.sourceSha256 === page.source.sha256),
+      'TEXT_COVERAGE_COMPARISON_INVALID');
+    const stage02Page = report.pages.find(row => row.pageId === page.pageId);
+    return { pageId: page.pageId, evidenceKind: page.evidenceKind, ...summarizeTextCoverage({ ...evidence, stage02Page }) };
+  });
+  return textCoverage.length ? { ...report, textCoverage } : report;
 }

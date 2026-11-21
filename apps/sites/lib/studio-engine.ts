@@ -1,4 +1,4 @@
-import { blockVisualSignature, DEFAULT_ENGINE_ENDPOINT, isStudioId, readEngineReview, readEngineOutcome, validateBlocks, type StudioPage, type EngineOutcome } from "./studio-model";
+import { blockVisualSignature, DEFAULT_ENGINE_ENDPOINT, isStudioId, readEngineReview, readEngineOutcome, validateBlocks, type StudioPage, type EngineOutcome, type TextBlock, type MeasuredLettering } from "./studio-model";
 export { DEFAULT_ENGINE_ENDPOINT } from "./studio-model";
 export class TerminalJobError extends Error { terminal=true;retryableJob=false;outcome?:EngineOutcome; }
 function unconfirmedJob(cause?:unknown) {
@@ -29,6 +29,60 @@ async function jsonResponse(response:Response):Promise<Record<string,unknown>> {
   if(!response.ok)throw new Error(`엔진 응답 오류 (${response.status}). 연결 설정과 엔진 기록을 확인해 주세요.`);
   return engineObject(await response.json());
 }
+type PixelBox = [number, number, number, number];
+type InventoryLine = { lineId: string; source: string; pixelBox: PixelBox; status: 'read' | 'needs_review' };
+type UncoveredBubble = { observationId: string; pixelBox: PixelBox | null };
+export const reviewCandidateLabels = {
+  PREDICATE_REDUCED_TO_GASP:'검토할 번역 후보',
+  REPEATED_NUMERIC_FIELDS:'검토할 번역 후보 · 수치 항목 반복',
+  PUNCTUATION_EXPANDED:'검토할 번역 후보 · 문장부호에 단어 추가',
+} as const;
+export type TextInventory = { version: 1; jobId: string; sourceSha256: string; width: number; height: number;
+  lines: InventoryLine[]; uncoveredBubbles: UncoveredBubble[];
+  independentSearch?: { plannedTiles: number; processedTiles: number; unsearchedPixelBoxes: PixelBox[] };
+  notes?: { lines: { lineId: string; source: string; translation: string }[] };
+  reviewCandidates?: { lines: { lineId: string; source: string; translation: string; reason: keyof typeof reviewCandidateLabels }[] } };
+
+export async function readTextInventory(jobId: string, signal: AbortSignal, request: typeof fetch = fetch): Promise<TextInventory | null> {
+  if (!isStudioId(jobId)) throw new Error('작업 번호가 올바르지 않아요.');
+  const response = await request(`${DEFAULT_ENGINE_ENDPOINT}/jobs/${encodeURIComponent(jobId)}/text-inventory`,
+    { signal: AbortSignal.any([signal, AbortSignal.timeout(15000)]) });
+  const data = await jsonResponse(response);
+  if (data.status === 'not_recorded') return null;
+  const value = engineObject(data.inventory);
+  const { width, height } = value;
+  const good = typeof width === 'number' && Number.isSafeInteger(width) && width > 0 &&
+    typeof height === 'number' && Number.isSafeInteger(height) && height > 0;
+  const box = (b: unknown) => good && Array.isArray(b) && b.length === 4 && b.every(Number.isSafeInteger) &&
+    b[0] >= 0 && b[1] >= 0 && b[2] > b[0] && b[3] > b[1] && b[2] <= width && b[3] <= height;
+  if (data.status !== 'available' || value.version !== 1 || value.jobId !== jobId ||
+      typeof value.sourceSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(value.sourceSha256) || !good ||
+      !Array.isArray(value.lines) || !value.lines.every(line => line && isStudioId(line.lineId) &&
+        typeof line.source === 'string' && ['read', 'needs_review'].includes(line.status) && box(line.pixelBox)) ||
+      !Array.isArray(value.uncoveredBubbles) || !value.uncoveredBubbles.every(bubble => bubble &&
+        isStudioId(bubble.observationId) && (bubble.pixelBox === null || box(bubble.pixelBox))))
+    throw new Error('글줄 목록이 현재 작업과 일치하지 않아요.');
+  const inventory = { ...value, notes: undefined, reviewCandidates: undefined } as TextInventory;
+  if (inventory.independentSearch && (!Array.isArray(inventory.independentSearch.unsearchedPixelBoxes) ||
+      !inventory.independentSearch.unsearchedPixelBoxes.every(box))) throw new Error('미탐색 위치가 올바르지 않아요.');
+  if (data.reviewCandidates !== undefined) {
+    const review = engineObject(data.reviewCandidates);
+    if (review.jobId !== jobId || review.sourceSha256 !== inventory.sourceSha256 || !Array.isArray(review.lines) ||
+        !review.lines.length || !review.lines.every(row => row && typeof row.reason==='string' && Object.hasOwn(reviewCandidateLabels,row.reason) &&
+          typeof row.translation === 'string' && row.translation.trim() &&
+          inventory.lines.some(line => line.status === 'read' && line.lineId === row.lineId && line.source === row.source)) ||
+        new Set(review.lines.map(row => row.lineId)).size !== review.lines.length)
+      throw new Error('검수할 번역 후보와 원문 글줄이 일치하지 않아요.');
+    inventory.reviewCandidates = { lines: review.lines };
+  }
+  if (data.textStatus !== 'ready') return inventory;
+  const notes = engineObject(data.notes);
+  if (notes.jobId !== jobId || notes.sourceSha256 !== value.sourceSha256 || !Array.isArray(notes.lines) ||
+      !notes.lines.every(note => note && typeof note.translation === 'string' && note.translation.trim() &&
+        inventory.lines.some(line => line.lineId === note.lineId && line.source === note.source)))
+    throw new Error('번역 주석과 원문 글줄이 일치하지 않아요.');
+  return { ...inventory, notes: notes as TextInventory['notes'] };
+}
 export async function checkEngine(endpoint:string,signal?:AbortSignal,request:typeof fetch=fetch) {
   const data=await jsonResponse(await request(endpointURL(endpoint)+"/health",{signal:signal?AbortSignal.any([signal,AbortSignal.timeout(8000)]):AbortSignal.timeout(8000)}));
   if(data.status!=="ok"&&data.status!=="healthy")throw new Error("엔진이 준비 상태를 응답하지 않았어요. 연결 규격을 확인해 주세요.");
@@ -48,10 +102,43 @@ function resultImage(value:unknown):string|undefined{
   return value;
 }
 export type PageEngineResult=Pick<StudioPage,'blocks'|'cleanImage'|'finalImage'|'finalImageSignature'|'engineReview'>;
+
+function recordedLettering(evidence:Record<string,unknown>,blocks:TextBlock[]):MeasuredLettering|undefined {
+ const identity=evidence.typesetting_input_identity;
+ if(!identity || typeof identity!=='object' || !('contract' in identity) || identity.contract!=='stage12-input-v1' ||
+    !('coordinateSpace' in identity) || identity.coordinateSpace!=='normalized-page-pixels' ||
+    !('width' in identity) || !('height' in identity))return;
+ const {width,height}=identity,layouts=evidence.typesetting_layouts;
+ if(typeof width!=='number' || typeof height!=='number' || !Number.isSafeInteger(width) || !Number.isSafeInteger(height) ||
+    width<=0 || height<=0 || width*height>40_000_000 || !Array.isArray(layouts) || layouts.length!==blocks.length)return;
+ const byId=new Map(layouts.map(row=>[row?.id,row]));
+ if(byId.size!==layouts.length)return;
+ const regions:MeasuredLettering['regions']=[];
+ for(const block of blocks){
+   const row=byId.get(block.id),box=row?.bbox,raster=row?.raster,ink=raster?.inkBounds,text=row?.textEvidence;
+   if(row?.contractVersion!=='stage12-layout-v1' || row.fitStatus!=='FIT_VERIFIED' || row.fontSizePx!==block.size ||
+      row.standard?.stage!=='FINAL_RASTER' || row.standard.finalRasterVerified!==true || row.standard.hardViolations?.length!==0 ||
+      text?.sourceText!==block.text || text.complete!==true || text.missingCharacters!==0 || text.extraCharacters!==0 ||
+      !Array.isArray(text.renderedLines) || !text.renderedLines.length || !Array.isArray(row.actualLayout?.lines) ||
+      !text.renderedLines.every((s:unknown,i:number)=>typeof s==='string' && s===row.actualLayout.lines[i]?.text) ||
+      row.actualLayout.lines.length!==text.renderedLines.length || !box || !ink || raster.hasInk!==true ||
+      ![box.x,box.y,box.width,box.height].every(Number.isFinite) ||
+      ![ink.x,ink.y,ink.width,ink.height,raster.paintedPixels].every(Number.isSafeInteger))continue;
+   const recorded=[box.x,box.y,box.width,box.height].map(v=>v*100);
+   if([block.x,block.y,block.w,block.h].some((v,i)=>Math.abs(v-recorded[i]!)>1e-8) ||
+      ink.width<=0 || ink.height<=0 || raster.paintedPixels<=0 || raster.paintedPixels>ink.width*ink.height ||
+      ink.x<Math.floor(box.x*width) || ink.y<Math.floor(box.y*height) ||
+      ink.x+ink.width>Math.ceil((box.x+box.width)*width) || ink.y+ink.height>Math.ceil((box.y+box.height)*height) ||
+      [raster.outsideInteriorPixels,raster.clippedPixels,raster.canvasEdgePixels,raster.overlappingInkPixels,raster.otherRegionCollisionPixels].some(n=>n!==0))continue;
+   regions.push({id:block.id,signature:blockVisualSignature([block])});
+ }
+ if(regions.length)return {width,height,regions};
+}
 export function validatePageEngineResult(value:unknown):PageEngineResult {
  const result=engineObject(value),blocks=validateBlocks(result.blocks),cleanImage=resultImage(result.clean_image),finalImage=resultImage(result.final_image);
- const soundEffects=result.evidence&&typeof result.evidence==='object'&&'sound_effects' in result.evidence?result.evidence.sound_effects:undefined;
- const engineReview=result.warnings===undefined&&soundEffects===undefined?undefined:readEngineReview({warnings:result.warnings??[],soundEffects});
+ const evidence=result.evidence && typeof result.evidence==='object' ? result.evidence as Record<string,unknown> : {};
+ const soundEffects=evidence.sound_effects,measuredLettering=cleanImage && finalImage?.startsWith('data:image/png;base64,') ? recordedLettering(evidence,blocks) : undefined;
+ const engineReview=result.warnings===undefined&&soundEffects===undefined&&!measuredLettering?undefined:readEngineReview({warnings:result.warnings??[],soundEffects,measuredLettering});
  return {blocks,cleanImage,finalImage,finalImageSignature:finalImage?blockVisualSignature(blocks):undefined,...(engineReview?{engineReview}:{})};
 }
 export async function processPage(page:StudioPage,endpoint:string,source:string,target:string,signal:AbortSignal,onJob:(id:string)=>void|Promise<void>,onStage:(stage:string)=>void,options:ProcessPageOptions={}):Promise<PageEngineResult> {

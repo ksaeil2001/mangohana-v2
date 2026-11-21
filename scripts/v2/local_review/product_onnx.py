@@ -16,6 +16,9 @@ def main():
     request = json.loads(raw)
     if stage == 'ocr':
         from ocr import load_ocr_models, recognize
+        text_tile_limit = request.get('textTileLimit', 0)
+        if type(text_tile_limit) is not int or not 0 <= text_tile_limit <= 16:
+            raise ValueError('invalid independent text tile limit')
         source = Path(request['normalized']).read_bytes()
         if hashlib.sha256(source).hexdigest() != request['sourceSha256']:
             raise ValueError('normalized image identity changed')
@@ -27,15 +30,21 @@ def main():
         except (ImportError, OSError, RuntimeError, ValueError):
             data = dict(failure='OCR_UNAVAILABLE', inferenceStarted=False)
         else:
-            data = recognize(source, {'id':request['jobId']}, None, *loaded)
+            search = {'text_tile_limit': text_tile_limit} if text_tile_limit else {}
+            data = recognize(source, {'id':request['jobId']}, None, *loaded, **search)
     elif stage == 'translate':
-        from context_translation import PageTranslator
+        from context_translation import PageInputLimit, PageTranslator, load_context_tokenizer, prepare_page_tokens
+        root = models / 'MangohanaV2-semantic/qwen3-4b-instruct-onnx-41a4dd4d'
         try:
-            model = PageTranslator(models / 'MangohanaV2-semantic/qwen3-4b-instruct-onnx-41a4dd4d')
+            tokenizer = load_context_tokenizer(root)
+            ids = prepare_page_tokens(tokenizer, request['lines'], request['context'])
+            model = PageTranslator(root, tokenizer=tokenizer)
+        except PageInputLimit as error:
+            data = dict(failure='TRANSLATION_INPUT_LIMIT', inferenceStarted=False, inputTokens=error.input_tokens)
         except (ImportError, OSError, RuntimeError, ValueError):
             data = dict(failure='TRANSLATION_PROVIDER_UNAVAILABLE', inferenceStarted=False)
         else:
-            rows = model.translate(request['lines'], request['context'])
+            rows = model.translate_prepared(request['lines'], ids)
             data = dict(lines=rows, generation=model.last_generation, revision=model.revision)
     else:
         raise ValueError('unknown product stage')

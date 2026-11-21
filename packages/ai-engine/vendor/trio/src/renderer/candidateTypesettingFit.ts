@@ -1,4 +1,5 @@
 import type { DialogueTypesetting } from "../shared/projectTypes.js";
+import type { ShapePadding } from "../shared/typesettingShape.js";
 import type { TypesettingLayoutResult } from "../shared/typesettingGeometry.js";
 import {
   autoFitFontSizeForBubbleShape,
@@ -34,7 +35,7 @@ export function isInsetInteriorRectangle(
 /** 연결된 내부 픽셀을 침식한 뒤 그 안에 완전히 들어가는 사각형을 찾는다. */
 export function findInteriorRectangle(
   mask: Uint8Array, width: number, height: number, anchor: { x: number; y: number },
-  bounds?: { x: number; y: number; width: number; height: number }
+  bounds?: { x: number; y: number; width: number; height: number }, requireAnchor = false
 ): InteriorRectangle | undefined {
   if (mask.length !== width * height || width < 1 || height < 1) throw new Error("말풍선 내부 크기가 올바르지 않습니다.");
   if (bounds && (![bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isSafeInteger) ||
@@ -71,6 +72,7 @@ export function findInteriorRectangle(
         const h = heights[stack[--tail]!]!, left = tail ? stack[tail - 1]! + 1 : 0, w = x - left;
         if (w < 10 || h < 10) continue;
         const top = y - h + 1, area = w * h;
+        if (requireAnchor && (anchor.x < left || anchor.x >= x || anchor.y < top || anchor.y > y)) continue;
         const dx = Math.max(left - anchor.x, 0, anchor.x - (x - 1));
         const dy = Math.max(top - anchor.y, 0, anchor.y - y);
         const score = area / (1 + 0.25 * Math.abs(Math.log(w / h))) / (1 + (dx * dx + dy * dy) / area);
@@ -116,16 +118,56 @@ export function inspectTypesettingText(source: string, lines: readonly string[])
     extraCharacters: Math.max(0, rendered.length - original.length), sourceText: source, renderedLines: [...lines] };
 }
 
+const titleWord = /^(?:선배님?|후배님?|선생님|씨|군|양|님)(?:께서는|에게서|에게|한테|께서|께|에서|이랑|하고|처럼|까지|부터|이라도|을|를|은|는|이|가|의|와|과|도|만)?[\p{P}~～]*$/u;
+function isAddressPair(previous: string, next: string) {
+  return /^[가-힣]{1,6}$/u.test(previous) && !/(?:세요|니다|예요|에요)$/u.test(previous) && titleWord.test(next);
+}
+
+export function containsKoreanAddress(line: string): boolean {
+  const words = line.match(/\S+/gu) ?? [];
+  return words.some((word, index) => index > 0 && isAddressPair(words[index - 1]!, word));
+}
+
+/** Move a soft break to either side of a short word and its title. Slice the
+ * original text so spacing, including spacing inside the joined phrase, survives. */
+export function honorificWrapAlternatives(text: string, lines: readonly string[]): string[][] {
+  if (lines.length < 2 || /[\r\n]/u.test(text)) return [];
+  const words = [...text.matchAll(/\S+/gu)];
+  let count = 0;
+  const breaks = lines.slice(0, -1).map(line => (count += line.match(/\S+/gu)?.length ?? 0));
+  const detached = new Set(breaks.filter(end => isAddressPair(words[end - 1]?.[0] ?? "", words[end]?.[0] ?? "")));
+  if (!detached.size || !inspectTypesettingText(text, lines).complete) return [];
+  const alternatives: string[][] = [];
+  const proposedBreaks = [1, -1].map(direction => breaks.map(end => detached.has(end) ? end + direction : end));
+  // Release the other soft breaks as a third option. The regular shape fitter
+  // can then balance the words before and after the intact form of address.
+  proposedBreaks.push([...detached].flatMap(end => [end - 1, end + 1]));
+  for (const proposal of proposedBreaks) {
+    const ends = [...new Set(proposal.filter(end => end > 0 && end < words.length))].sort((a, b) => a - b);
+    ends.push(words.length);
+    let start = 0;
+    const rows = ends.map(end => {
+      const last = words[end - 1]!;
+      const row = text.slice(start ? words[start]!.index : 0, end === words.length ? text.length : last.index + last[0].length);
+      start = end;
+      return row;
+    });
+    if (!alternatives.some(other => other.length === rows.length && other.every((row, i) => row === rows[i]))) alternatives.push(rows);
+  }
+  return alternatives;
+}
+
 /** 최종 Canvas와 같은 반올림·굵은 글꼴·외곽선을 측정한다. 사용자 크기는 유지한다. */
 export function measureCandidateFit(
   context: CanvasRenderingContext2D, text: string, style: DialogueTypesetting,
-  imageWidth: number, imageHeight: number,scope:{dialogueType?:string}={}
+  imageWidth: number, imageHeight: number,scope:{dialogueType?:string; preferredFontSizePx?:number; padding?:ShapePadding; softLines?:readonly string[]}={}
 ): MeasuredCandidateFit {
   if (![imageWidth, imageHeight].every(v => Number.isSafeInteger(v) && v > 0) || !isValidTypesettingGeometry(style) ||
       style.strokeWidth !== undefined && (!Number.isFinite(style.strokeWidth) || style.strokeWidth < 0)) throw new Error("식자 좌표·크기·행간이 유효하지 않습니다.");
   const width = style.bbox.width * imageWidth, height = style.bbox.height * imageHeight;
   const general=isGeneralKorean({text,...style,...scope}),minimum=general?13:10;
-  const options = { shape: style.shape ?? "ellipse", boxAspectRatio: width / height,preserveEojeol:general,
+  const layoutText = scope.softLines?.join("\n") ?? text;
+  const options = { shape: style.shape ?? "ellipse", boxAspectRatio: width / height,preserveEojeol:general,padding:scope.padding,
     measureTextWidth: (value: string, ratio: number) => {
       const px = Math.max(1, Math.round(ratio * height));
       context.font = `bold ${px}px ${getRecommendedFontFallbackChain("ko", style.fontFamily || "Pretendard")}`;
@@ -139,9 +181,14 @@ export function measureCandidateFit(
   try {
     context.textBaseline = "middle"; context.textAlign = style.align ?? "center";
     const initial = style.fontSizeRatio !== undefined
-      ? layoutTextForBubbleShape(text, { ...options, fontSizeRatio: style.fontSizeRatio })
-      : autoFitFontSizeForBubbleShape(text, options);
-    const initialPx = Math.max(style.fontSizeRatio === undefined ? 10 : 1, Math.round(initial.fontSizeRatio * height));
+      ? layoutTextForBubbleShape(layoutText, { ...options, fontSizeRatio: style.fontSizeRatio })
+      : autoFitFontSizeForBubbleShape(layoutText, options);
+    // The estimate's ratio cap can be smaller than the readable minimum in a
+    // shallow box. Measure that minimum once against the same ink/shape bounds.
+    const requestedStart = scope.preferredFontSizePx ?? 0;
+    const preferred = Number.isSafeInteger(requestedStart) ? requestedStart : 0;
+    const initialPx = Math.max(style.fontSizeRatio === undefined ? Math.max(minimum, preferred) : 1,
+      Math.round(initial.fontSizeRatio * height));
     for (let px = initialPx; px >= Math.min(minimum, initialPx); px--) {
       const ratio = style.fontSizeRatio ?? px / height;
       const fontSizePx = Math.max(1, Math.round(ratio * height));
@@ -150,7 +197,7 @@ export function measureCandidateFit(
       const fullMetrics = context.measureText(text);
       const lineHeight = style.lineHeight ?? Math.max(1.25,
         (fullMetrics.actualBoundingBoxAscent + fullMetrics.actualBoundingBoxDescent + 2 * strokeWidthPx + 1) / fontSizePx);
-      const layout = layoutTextForBubbleShape(text, { ...options, fontSizeRatio: ratio, lineHeight });
+      const layout = layoutTextForBubbleShape(layoutText, { ...options, fontSizeRatio: ratio, lineHeight });
       const completeText = inspectTypesettingText(text, layout.lines.map(line => line.text)).complete;
       const bounds = layout.lines.filter(line => line.text.trim()).map(line => {
         const metrics = context.measureText(line.text);

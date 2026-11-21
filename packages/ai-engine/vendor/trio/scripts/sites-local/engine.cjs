@@ -10,10 +10,10 @@ const { createRunMetrics } = require('./run-metrics.cjs');
 const { llamaArguments, llamaStartupMs, pageTemplateFile } = require('./translation-launch.cjs');
 const { selectDialogueRegions } = require('../../../../quality/region-selection.cjs');
 const { buildPageTranslationRequest, parsePageTranslation, parsePageTranslationResponse } = require('../../../../quality/page-translation.cjs');
-const { buildTranslationInput, linePromptData, regionResponseFormat, validateTranslationBatch } = require('../../../../quality/translation-contract.cjs');
+const { buildTranslationInput, linePromptData, regionResponseFormat, validateTranslationBatch, assertDraftPredicates } = require('../../../../quality/translation-contract.cjs');
 const { assertKoreanOutputBatch } = require('../../../../quality/korean-output.cjs');
-const {productOnnx,extractionFromOnnx,translationRequest,translatedPage} = require('../../../../quality/product-onnx.cjs');
-const { verifyLearnedMask, verifySourceTextMask, protectedOcrRegions } = require('../../../../quality/mask-evidence.cjs');
+const {productOnnx,extractionFromOnnx,onnxTranslationTargets,translationRequest,translatedPage} = require('../../../../quality/product-onnx.cjs');
+const { verifyLearnedMask, verifySourceTextMask, protectedOcrRegions, inspectRestorationInk } = require('../../../../quality/mask-evidence.cjs');
 const { runtimeReuseFlags, createOwnedRuntimeCache } = require('../../../../quality/owned-runtime.cjs');
 const { createOcrFailureDiagnostic } = require('../../../../quality/ocr-diagnostic.cjs');
 const { prepareOcrEnvironmentPolicy } = require('../../../../quality/ocr-environment.cjs');
@@ -271,10 +271,17 @@ async function createEngine(options) {
         } finally { detectorSignal.removeEventListener('abort', cancel); if (!record.closed) await owner.terminate(record, true); }
       });
       let rawExtraction, ocrRefinement, regionSelection, regionDetection,extraction,preSelectionExtraction;
+      const preserveOnnxOcr = async (bytes, ocrSourceJobId) => {
+        await fs.writeFile(path.join(output, 'onnx-ocr.json'), bytes, { flag: 'wx' });
+        await args.onTextInventory?.({ normalizedSha256: normalizedHash, ocrSourceJobId, configuration: ocrIdentity.configuration });
+      };
       if(savedOcr){
         ({rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction}=savedOcr.payload);
         validateExtraction(extraction);
-        if(onnx)await fs.writeFile(path.join(output,'onnx-ocr.json'),savedOcr.assets['onnx-ocr.json'],{flag:'wx'});
+        if (onnx) {
+          const bytes = savedOcr.assets['onnx-ocr.json'];
+          await preserveOnnxOcr(bytes, JSON.parse(bytes.toString('utf8')).data.page);
+        }
       }
       else {
       if (config.refineConnectedOcr) {
@@ -287,7 +294,8 @@ async function createEngine(options) {
           const request={jobId,pageNumber:args.pageNumber??1,sourceSha256:normalizedHash,normalized:path.join(output,'normalized.png'),width:dimensions.width,height:dimensions.height};
           await runtimeEvent('onnx_ocr_start');
           const reply=await onnx.execute('ocr',request,owner,ocrSignal,path.join(profile,'engine-temp'));
-          await fs.writeFile(path.join(output,'onnx-ocr.json'),JSON.stringify(reply),{flag:'wx'});
+          if (reply.data.failure) await fs.writeFile(path.join(output, 'onnx-ocr.json'), JSON.stringify(reply), { flag: 'wx' });
+          else await preserveOnnxOcr(JSON.stringify(reply), jobId);
           const detected=extractionFromOnnx(reply.data,request);
           regionDetection=detected.detection;
           await runtimeEvent('onnx_ocr_complete',{regions:detected.extraction.speechBubbles.length});
@@ -351,11 +359,57 @@ async function createEngine(options) {
           await fs.writeFile(path.join(output, 'ocr-review.json'), JSON.stringify({version:1,status:'needs_review',reason:'UNRESOLVED_OCR_OR_ROI',sourceSha256:originalHash,sourceImageSha256:normalizedHash,extraction:preSelectionExtraction,selection:regionSelection},null,2), {flag:'wx'});
           throw failure('OCR_REVIEW_REQUIRED', '대사 글줄 또는 말풍선 대응을 확인해야 합니다. 원문·재인식 후보를 보존했으며 번역·원문 제거 전에 중단했습니다.');
         }
-        if (!extraction.speechBubbles.length) throw failure('NO_TRANSLATABLE_REGIONS', '확실한 대사를 찾지 못했습니다. 원본과 말풍선 밖 원문을 보존했습니다.');
       }
+      }
+      const textOnly = !extraction.speechBubbles.length;
+      const preservedIds = new Set((regionSelection?.decisions ?? []).filter(decision => decision.action === 'preserve').map(decision => decision.id));
+      const noteTargets = onnx && !reviewed && !args.translateStage && typeof args.onTextNotes === 'function'
+        ? onnxTranslationTargets(preSelectionExtraction.speechBubbles.filter(group => preservedIds.has(group.id))) : [];
+      const noteRegionIds = noteTargets.map(target => target.id);
+      if (textOnly && !noteTargets.length) {
+        throw failure('NO_TRANSLATABLE_REGIONS', '확실한 대사를 찾지 못했습니다. 원본과 말풍선 밖 원문을 보존했습니다.');
       }
       await fs.writeFile(path.join(output, 'ocr.json'), JSON.stringify(extraction, null, 2), { flag: 'wx' });
       if(!ocrRead.compatibility)await saveCheckpoint('ocr',ocrIdentity,{rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction},onnx?['onnx-ocr.json']:[]);
+      const translationScope = { owner: args.ownerScope, projectId: args.projectId, pageId: args.pageId,
+        pageNumber: args.pageNumber ?? null, sourceSha256: originalHash };
+      let translationRequestInFlight=false;
+      const translateOnnxPage = async (input, targets, translationSignal) => {
+        const request = translationRequest(input, targets), requestId = randomUUID(), started = Date.now();
+        if (noteRegionIds.length) {
+          request.purpose = textOnly ? 'text_notes' : 'image_and_text_notes';
+          request.noteRegionIds = noteRegionIds;
+          for (const cue of request.context.scene) if (preservedIds.has(cue.id)) cue.role = 'translation_note';
+        }
+        await fs.writeFile(path.join(output, 'onnx-request.json'), JSON.stringify(request), { flag: 'wx' });
+        await runtimeEvent('onnx_translation_start', { requestId });
+        const reply = await onnx.execute('translate', request, owner, translationSignal, path.join(profile, 'engine-temp'),
+          () => { translationRequestInFlight = true; });
+        const responseBytes = Buffer.from(JSON.stringify(reply));
+        await fs.writeFile(path.join(output, 'onnx-response.json'), responseBytes, { flag: 'wx' });
+        translationRequestInFlight = false;
+        const result = translatedPage(reply, targets, qaApi.inspectTranslationQuality, { requestId, durationMs: Date.now() - started,
+          modelAlias: 'Qwen3-4B-Instruct-2507-ONNX-q4', sourceImageSha256: normalizedHash, responseSha256: sha(responseBytes),
+          ...(input.context.snapshotSha256 ? { contextSnapshotSha256: input.context.snapshotSha256 } : {}) }, input);
+        await runtimeEvent('onnx_translation_complete', { requestId, regions: result.records.length });
+        return result;
+      };
+      if (textOnly) {
+        const input = buildTranslationInput({ lines: noteTargets, extraction: preSelectionExtraction,
+          context: args.translationContext, scope: translationScope });
+        await fs.writeFile(path.join(output, 'translation-input.json'), JSON.stringify(input, null, 2), { flag: 'wx' });
+        await progress('translate', '원본을 보존하며 번역 주석을 만듭니다.', 25);
+        try {
+          const translated = await deadline(signal, LIMITS.translationMs, 'TRANSLATION_TIMEOUT',
+            translationSignal => translateOnnxPage(input, noteTargets, translationSignal));
+          assertKoreanOutputBatch(validateTranslationBatch({ input, results: translated.pending }));
+          await args.onTextNotes(translated.request);
+        } catch (error) {
+          if (translationRequestInFlight && error.code !== 'CLEANUP_FAILED') throw failure('RESULT_UNKNOWN', '번역 주석의 응답을 확인하지 못했습니다.');
+          throw error;
+        }
+        return { textOnly: true };
+      }
       window = await createRenderer(font, rendererSource, signal);
       const preparationStarted = performance.now();
       // A job is an immutable source incarnation. Bind its renderer mask to the
@@ -372,7 +426,7 @@ async function createEngine(options) {
       const lines = validateDrafts(prepared.lines, extraction);
       for (const line of lines) {
         const group=extraction.speechBubbles.find(g=>g.id===line.id);
-        line.sourceLineIds=structuredClone(group.ocrRefinement?.sourceDetectionIds??group.productionOcrProvenance?.sourceDetectionIds??[]);
+        line.sourceLineIds=structuredClone(group.ocrRefinement?.sourceDetectionIds??group.productionOcrProvenance?.sourceDetectionIds??group.inventoryLineIds??[]);
       }
       if(reviewed)humanReview=await resolveEngineReview({resolve:args.resolveTranslationReview,snapshot:reviewSnapshot,lines,phase:'prepared-source',previousReceipt:humanReview.receipt});
       let mask = decodeBase64(prepared.mask?.maskPngBase64, LIMITS.outputBytes);
@@ -418,14 +472,15 @@ async function createEngine(options) {
       await progress('translate', '전용 로컬 번역 모델을 준비합니다.', 25);
       // Snapshot source/context once. Earlier AI candidates must never become
       // authoritative context for later lines in this same job.
-      const translationInput=buildTranslationInput({lines,extraction,selection:regionSelection,context:args.translationContext,
-        scope:{owner:args.ownerScope,projectId:args.projectId,pageId:args.pageId,pageNumber:args.pageNumber??null,sourceSha256:originalHash}});
+      const translationInput=buildTranslationInput({lines,extraction,selection:regionSelection,context:args.translationContext,scope:translationScope});
+      const requestTargets = noteTargets.length ? [...lines, ...noteTargets].sort((a, b) => a.order - b.order) : lines;
+      const requestInput = noteTargets.length ? buildTranslationInput({ lines: requestTargets, extraction: preSelectionExtraction,
+        context: args.translationContext, scope: translationScope }) : translationInput;
       await fs.writeFile(path.join(output,'translation-input.json'),JSON.stringify(translationInput,null,2),{flag:'wx'});
       const pendingTranslations=[];
       let stage15Receipt;
-      const translationIdentity=reviewed || args.translateStage ? null : {configuration:await configuration('translation'),translationInputFingerprint:translationInput.fingerprint};
+      const translationIdentity=reviewed || args.translateStage ? null : {configuration:await configuration('translation'),translationInputFingerprint:requestInput.fingerprint};
       const savedTranslation=reviewed || args.translateStage ? null : await checkpoint.load('translation',translationIdentity);
-      let translationRequestInFlight=false;
       try {
       if(reviewed){
         humanReview=await resolveEngineReview({resolve:args.resolveTranslationReview,snapshot:reviewSnapshot,lines,phase:'translation',previousReceipt:humanReview.receipt});
@@ -455,22 +510,21 @@ async function createEngine(options) {
       if(savedTranslation){
         pendingTranslations.push(...savedTranslation.payload.pendingTranslations);records.push(...savedTranslation.payload.records);translationRequests.push(...savedTranslation.payload.translationRequests);
         if(onnx) for(const [file,bytes] of Object.entries(savedTranslation.assets)) await fs.writeFile(path.join(output,file),bytes,{flag:'wx'});
+        if (noteTargets.length) await args.onTextNotes(translationRequests[0]);
       }
       else {
       await deadline(signal, LIMITS.translationMs, 'TRANSLATION_TIMEOUT', async (translationSignal) => {
         if (onnx) {
-          const request=translationRequest(translationInput,lines),requestId=randomUUID(), started=Date.now();
-          await fs.writeFile(path.join(output,'onnx-request.json'),JSON.stringify(request),{flag:'wx'});
-          await runtimeEvent('onnx_translation_start',{requestId});
-          const reply=await onnx.execute('translate',request,owner,translationSignal,path.join(profile,'engine-temp'),()=>{translationRequestInFlight=true;});
-          const responseBytes=Buffer.from(JSON.stringify(reply));
-          await fs.writeFile(path.join(output,'onnx-response.json'),responseBytes,{flag:'wx'});
-          translationRequestInFlight=false;
-          const result=translatedPage(reply,lines,qaApi.inspectTranslationQuality,{requestId,durationMs:Date.now()-started,
-            modelAlias:'Qwen3-4B-Instruct-2507-ONNX-q4',sourceImageSha256:normalizedHash,responseSha256:sha(responseBytes),
-            ...(translationInput.context.snapshotSha256?{contextSnapshotSha256:translationInput.context.snapshotSha256}:{})});
-          pendingTranslations.push(...result.pending);records.push(...result.records);translationRequests.push(result.request);
-          await runtimeEvent('onnx_translation_complete',{requestId,regions:records.length});
+          const result = await translateOnnxPage(requestInput, requestTargets, translationSignal);
+          if (noteTargets.length) {
+            assertKoreanOutputBatch(validateTranslationBatch({ input: requestInput, results: result.pending }));
+            await args.onTextNotes(result.request);
+            result.request.regionIds = lines.map(line => line.id);
+            result.request.noteRegionIds = noteRegionIds;
+          }
+          pendingTranslations.push(...result.pending.filter(row => !preservedIds.has(row.id)));
+          records.push(...result.records.filter(row => !preservedIds.has(row.id)));
+          translationRequests.push(result.request);
           return;
         }
         const translate = async translationServer => {
@@ -563,6 +617,7 @@ async function createEngine(options) {
       const validated=validateTranslationBatch({input:translationInput,results:pendingTranslations});
       assertKoreanOutputBatch(validated);
       if(reviewed)assertReviewedRisks(humanReview.receipt,validated);
+      else assertDraftPredicates(validated);
       // Commit AI candidates only after the entire response set is validated.
       for(let i=0;i<lines.length;i++){
         lines[i].aiTranslation=reviewed?humanReview.lines[i].aiTranslation:validated[i].translatedText;lines[i].aiProposedSource=validated[i].proposedSource;
@@ -573,7 +628,10 @@ async function createEngine(options) {
       if(reviewed)await fs.writeFile(path.join(output,'human-translation-review.json'),JSON.stringify(humanReview.receipt,null,2),{flag:'wx'});
       } catch(error) {
         if(translationRequestInFlight&&error.code!=='CLEANUP_FAILED'&&(onnx||!signal.aborted))error=failure('RESULT_UNKNOWN','번역 실행에 대한 응답을 확인하지 못했습니다.');
-        const review={version:1,status:error.code==='RESULT_UNKNOWN'?'result_unknown':'needs_review',reason:error.code??'TRANSLATION_RESPONSE_INVALID',outputCompliance:error.outputCompliance??null,translationInputFingerprint:translationInput.fingerprint,receivedCandidateIds:pendingTranslations.map(r=>r.id),expectedIds:lines.map(r=>r.id),partialApplied:false,automaticRetry:false,semanticAccuracy:null,humanSemanticVerified:null};
+        const expectedIds = lines.map(row => row.id);
+        const receivedCandidateIds = Array.isArray(error.receivedCandidateIds) && error.semanticReview
+          ? expectedIds.filter(id => error.receivedCandidateIds.includes(id)) : pendingTranslations.map(row => row.id);
+        const review={version:1,status:error.code==='RESULT_UNKNOWN'?'result_unknown':'needs_review',reason:error.code??'TRANSLATION_RESPONSE_INVALID',outputCompliance:error.outputCompliance??null,...(error.semanticReview?{semanticReview:error.semanticReview}:{}),translationInputFingerprint:translationInput.fingerprint,receivedCandidateIds,expectedIds,partialApplied:false,automaticRetry:false,semanticAccuracy:null,humanSemanticVerified:null};
         try{await fs.writeFile(path.join(output,'translation-review.json'),JSON.stringify(review,null,2),{flag:'wx'});}
         catch(writeError){if(error.code!=='RESULT_UNKNOWN')throw writeError;}
         throw error;
@@ -630,13 +688,13 @@ async function createEngine(options) {
       });
       bridgeRecord = undefined;
       // Pillow 검증에 더해 Electron 디코딩으로 mask 밖 RGB와 전체 alpha를 실측한다.
-      const restorationPixels = comparePixels(normalized, inpainting.bytes, mask, dimensions);
+      const restorationPixels = comparePixels(normalized, inpainting.bytes, mask, dimensions, extraction.speechBubbles);
       if (restorationPixels.outsideMaskChangedPixels || restorationPixels.alphaChangedPixels) {
         throw failure('INPAINT_PIXELS', '복원 결과가 마스크 밖 픽셀 또는 투명도를 변경했습니다.');
       }
       // 번역을 고정한 배치 회귀를 모델 재호출 없이 재현할 수 있도록 파생 원본을 보존한다.
       await fs.writeFile(path.join(output, 'cleaned.png'), inpainting.bytes, { flag: 'wx' });
-      if (restorationPixels.maskedDarkPixels && !restorationPixels.changedDarkPixels) {
+      if ((restorationPixels.maskedDarkPixels && !restorationPixels.changedDarkPixels) || restorationPixels.unchangedDarkRegionIds.length) {
         await fs.writeFile(path.join(output,'restoration-review.json'),JSON.stringify({reason:'SOURCE_RESIDUE_SUSPECTED',pixels:restorationPixels,residualJapanese:'NOT_MEASURED'}),{flag:'wx'});
         throw failure('SOURCE_RESIDUE_SUSPECTED','제거 마스크 안의 어두운 원본 획이 그대로 남아 복원 검토가 필요합니다.');
       }
@@ -652,8 +710,13 @@ async function createEngine(options) {
         workId: args.projectId ?? null, pageId: args.pageId ?? null, ownerScope: args.ownerScope ?? null,
         translationContextRevision: translationInput.context.revision, fontResourceIdentity: 'Pretendard Std Variable@1.3.9',
         mode: 'unreviewed_candidate', maskReview: 'candidate_validated_not_human_approved' };
+      const backgroundContext = reviewed ? undefined : {
+        sourcePngBase64: normalized.toString('base64'), maskPngBase64: mask.toString('base64'),
+        sourceSha256: normalizedHash, maskSha256: typesettingIdentity.maskSha256,
+        cleanedSha256: typesettingIdentity.cleanedImageSha256, allowedBoxes: [], nonWhiteFallback: true, widenSharedBalloon: true,
+      };
       const rendered = await deadline(signal, LIMITS.renderMs, 'TYPESET_TIMEOUT', (renderSignal) => rendererCall(window, 'render', {
-        jobId, cleanedPngBase64: inpainting.bytes.toString('base64'), lines:renderLines, typesettingIdentity, returnStructuredFailure:true,
+        jobId, cleanedPngBase64: inpainting.bytes.toString('base64'), lines:renderLines, typesettingIdentity, backgroundContext, returnStructuredFailure:true,
       }, renderSignal));
       if(rendered?.jobId===jobId&&['MANUAL_LAYOUT_REQUIRED','FONT_OR_GLYPH_ERROR'].includes(rendered.failure?.code)){
         const details=rendered.failure.layoutDiagnostics;
@@ -992,7 +1055,7 @@ async function runImageWorker(config, worker, model, payload, owner, signal, tem
   } finally { signal.removeEventListener('abort', cancel); if (!record.closed) await owner.terminate(record, true); }
 }
 
-function comparePixels(sourceBytes, resultBytes, maskBytes, dimensions) {
+function comparePixels(sourceBytes, resultBytes, maskBytes, dimensions, regions) {
   const source = decode(sourceBytes, dimensions).toBitmap(), result = decode(resultBytes, dimensions).toBitmap();
   const mask = decode(maskBytes, dimensions).toBitmap();
   if (source.length !== dimensions.width * dimensions.height * 4 || source.length !== result.length || source.length !== mask.length) {
@@ -1013,7 +1076,9 @@ function comparePixels(sourceBytes, resultBytes, maskBytes, dimensions) {
       if (alpha !== 0) outsideMaskChangedPixels++;
     }
   }
-  return { measured: true, decodedPixels: dimensions.width * dimensions.height, maskedPixels, changedPixels, outsideMaskChangedPixels, alphaChangedPixels, maskedDarkPixels, changedDarkPixels };
+  const ink = regions && inspectRestorationInk({ source, result, mask, ...dimensions, regions });
+  return { measured: true, decodedPixels: dimensions.width * dimensions.height, maskedPixels, changedPixels, outsideMaskChangedPixels, alphaChangedPixels, maskedDarkPixels, changedDarkPixels,
+    ...(ink ? { unchangedDarkRegionIds: ink.unchangedRegionIds, unchangedDarkSourceLines: ink.unchangedSourceLines } : {}) };
 }
 
 async function createRenderer(font, bundle, signal) {

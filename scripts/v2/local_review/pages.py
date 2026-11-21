@@ -70,12 +70,12 @@ def load_pages(manifest, original_root):
     return result
 
 
-def select_regions(regions):
+def select_regions(regions, *, duplicate_owners=None):
     """Keep both speech and free text while removing duplicate predictions."""
     def from_tile(region):
         return bool(re.match(r'^tile\d+-', region['id']))
 
-    text = sorted((r for r in regions if r['kind'] in ('text_bubble','text_free')),
+    text = sorted((r for r in regions if r['kind'] in ('text_bubble','text_free') and not r.get('refinedBy')),
                   key=lambda r: (from_tile(r), -r['confidence']))
     selected, duplicates = [], []
     for item in text:
@@ -91,6 +91,8 @@ def select_regions(regions):
             tile_fragment = from_tile(item) and not from_tile(kept) and overlap / area >= .90
             if tile_fragment or overlap / (area+b['width']*b['height']-overlap) >= .65:
                 duplicates.append(item['id'])
+                if duplicate_owners is not None:
+                    duplicate_owners[item['id']] = kept['id']
                 break
         else:
             selected.append(item)

@@ -1,8 +1,8 @@
 "use client";
-import {useCallback,useEffect,useLayoutEffect,useMemo,useReducer,useRef,useState,type CSSProperties,type ReactNode} from 'react';
+import {useCallback,useEffect,useId,useLayoutEffect,useMemo,useReducer,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 import {flushSync} from 'react-dom';
 import {AlignCenter,AlignLeft,AlignRight,ArrowDownToLine,ArrowLeft,ArrowUpRight,Check,ChevronDown,ChevronLeft,ChevronRight,CircleCheck,Copy,Download,FileArchive,FileImage,FolderOpen,ImagePlus,Info,Keyboard,Layers,LoaderCircle,Maximize,Minus,MousePointer2,Plus,Redo2,Sparkles,SquareDashed,Trash2,Type,Undo2,Upload,WandSparkles,X,AlertTriangle} from 'lucide-react';
-import {approvePageCandidate,pageReviewState,readEngineOutcome,canUseFinalImage,clamp,emptyProject,fitBlock,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
+import {approvePageCandidate,pageReviewState,readEngineOutcome,canUseFinalImage,unchangedFinalCrops,clamp,emptyProject,measuredLetteringIds,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
 import {canExportPage,exportAvailability,pageActivity,type ExportFormat} from '@/lib/studio-presentation';
 import {resolveStudioShortcut} from '@/lib/studio-shortcuts';
 import {type SavedWorkspace} from '@/lib/studio-storage';
@@ -14,9 +14,10 @@ import ProjectOverview from '@/components/project-overview';
 import type {CanvasLocation,ProjectSort} from '@/lib/studio-browser';
 import StudioContextDialog from '@/components/studio-context-dialog';
 import StudioTranslationReviewDialog from '@/components/studio-translation-review-dialog';
+import StudioTextInventory from '@/components/studio-text-inventory';
 import type {ContextScope} from '@/lib/studio-context';
 import {DEFAULT_ENGINE_ENDPOINT,localStudioEndpoint,processPage,RETIRED_JOB_NOTICE,TerminalJobError} from '@/lib/studio-engine';
-import {download,downloadPages,extractImages,fileDataURL,fileToPage,renderPage} from '@/lib/studio-files';
+import {download,downloadPages,extractImages,fileDataURL,fileToPage,fitStudioBlock,measureManualPreview,renderPage} from '@/lib/studio-files';
 import {captureReadingAnchor,readingSelection,ReadingViewportSession,type ReadingAnchor,type ReadingPatch,type ReadingView} from '@/lib/studio-reading';
 import {BatchPendingError,getBatchRunTargets,processProjectBatch,requestPagePriority,type BatchJobBinding} from '@/lib/studio-batch-engine';
 type Modal='download'|'shortcuts'|'translation-review'|{kind:'delete-project';projectId:string}|{kind:'context';scope:ContextScope}|null;
@@ -30,6 +31,25 @@ function Dialog({title,eyebrow,children,onClose,wide=false,busy=false,descriptio
  return <dialog ref={ref} className={`dialog ${wide?'wide':''}`} onCancel={e=>{e.preventDefault();if(!busy)onClose();}} onClick={e=>{if(e.target===e.currentTarget&&!busy)onClose();}} aria-label={title} aria-describedby={descriptionId} aria-busy={busy}><div className="dialog-inner"><header className="dialog-header"><div>{eyebrow&&<span className="eyebrow">{eyebrow}</span>}<h2>{title}</h2></div><IconButton label="닫기" disabled={busy} onClick={onClose}><X size={19}/></IconButton></header>{children}</div></dialog>;
 }
 function errorText(error:unknown){return error instanceof Error?error.message:'작업을 완료하지 못했어요. 다시 시도해 주세요.';}
+
+function ManualLettering({block,pageWidth,pageHeight,scale,outline,onMeasure}:{block:TextBlock;pageWidth:number;pageHeight:number;scale:number;outline?:CSSProperties;onMeasure:(id:string,fits:boolean)=>void}) {
+ const [layout,setLayout]=useState<{block:TextBlock;width:number;lines:string[]}|null>(null);
+ useEffect(()=>{
+   if(!block.text)return;
+   const ctx=document.createElement('canvas').getContext('2d');
+   if(!ctx)return;
+   let active=true;
+   measureManualPreview(ctx,block,{width:pageWidth,height:pageHeight}).then(({lines,fits})=>{
+     if(active){setLayout({block,width:pageWidth,lines:lines.map(line=>line.text)});onMeasure(block.id,fits);}
+   }).catch(()=>{if(active)setLayout(null);});
+   return ()=>{active=false;};
+ },[block,pageWidth,pageHeight,onMeasure]);
+ const lines=layout?.block===block && layout.width===pageWidth ? layout.lines : undefined;
+ return <div className={`block-text ${block.text?'':'missing-text'}`}
+   style={{...outline,paddingInline:Math.max(0,(6+(block.strokeWidth??0))*scale-1),whiteSpace:lines?'pre':'pre-wrap',wordBreak:'keep-all'}}>
+   {lines?.join('\n')??(block.text||'번역문 추가')}
+ </div>;
+}
 
 export default function Studio(){
  const [workspace,dispatch]=useReducer(workspaceReducer,undefined,()=>createWorkspaceState([sampleProject()],'trio-sample-journey'));
@@ -82,8 +102,23 @@ export default function Studio(){
  const contextScope=modal&&typeof modal==='object'&&modal.kind==='context'?modal.scope:undefined;
  const lastDeletedProject=workspace.deletedProjects.at(-1);
  const page=project.pages.find(p=>p.id===pageId)||project.pages[0];
+ const letteringClipId=useId();
+ const letterCrops=useMemo(()=>page && (editingId || !canUseFinalImage(page)) ? unchangedFinalCrops(page,editingId) : undefined,[page,editingId]);
+ const cropPath=useMemo(()=>page && letterCrops && Array.from(letterCrops.values(),r=>
+   `M${r.left/page.width} ${r.top/page.height}h${r.width/page.width}v${r.height/page.height}h${-r.width/page.width}z`).join(' '),[letterCrops,page]);
+ const textInventoryJobId=page?.status==='processing'?undefined:
+  page?.jobEndpoint===DEFAULT_ENGINE_ENDPOINT?page.jobId:page?.textInventoryJobId;
  const retiredJob=!!page?.jobId&&!localStudioEndpoint(page);
- const issues=useMemo(()=>page?getIssues(page):[],[page]);
+ const [manualFits,setManualFits]=useState<{page:StudioPage;blocks:Map<string,boolean>}|null>(null);
+ const recordManualFit=useCallback((id:string,fits:boolean)=>{
+   if(!page)return;
+   setManualFits(current=>{
+     if(current?.page===page && current.blocks.get(id)===fits)return current;
+     const blocks=new Map(current?.page===page ? current.blocks : []);
+     blocks.set(id,fits);return {page,blocks};
+   });
+ },[page]);
+ const issues=useMemo(()=>page?getIssues(page,manualFits?.page===page?manualFits.blocks:undefined):[],[page,manualFits]);
  const effects=page?.engineReview?.soundEffects;
  const selected=canvasLocation==='editor'?page?.blocks.find(b=>b.id===selectedId):undefined;
  const pageIndex=page?project.pages.findIndex(p=>p.id===page.id):0;
@@ -101,6 +136,8 @@ export default function Studio(){
  const saveState=persistence.hydration.phase==='loading'?'loading':persistence.hydration.phase==='recovery'?'recovery':persistence.save.phase==='error'?'error':persistence.save.phase==='saved'?'saved':'saving';
  const running=activity.kind==='processing',uploading=activity.kind==='importing',exporting=activity.kind==='exporting',busy=activity.kind!=='idle';
  const canManageProjects=ready&&!busy,canMutate=canManageProjects&&hasActiveProject,canExport=loaded&&!busy&&hasActiveProject,canDeleteProjects=canManageProjects&&!(persistence.save.phase==='error'&&persistence.save.conflict),canEditCurrent=canvasLocation==='editor'&&canMutate&&canEditPage(page);
+ const fitTarget=useRef<{page:StudioPage;block:TextBlock}|null>(null);
+ useLayoutEffect(()=>{fitTarget.current=canEditCurrent && selected && page ? {page,block:selected} : null;return ()=>{fitTarget.current=null;};},[canEditCurrent,selected,page]);
  const canStoreContext=canEditCurrent&&!project.sample&&project.target==='ko'&&['ja','auto'].includes(project.source)&&/^[A-Za-z0-9_-]{1,128}$/.test(project.id)&&!!selected;
  const contextSelectionMatches=!!contextScope&&ready&&canvasLocation==='editor'&&project.id===contextScope.projectId&&page?.id===contextScope.pageId&&selected?.id===contextScope.regionId&&selected.source===contextScope.source&&selected.text===contextScope.translation;
  useEffect(()=>{if(contextScope&&!contextSelectionMatches)setModalState(null);},[contextScope,contextSelectionMatches]);
@@ -204,6 +241,16 @@ export default function Studio(){
   updateProject(p=>({...p,pages:p.pages.map(pg=>{if(pg.id!==id||!canEditPage(pg))return pg;const next=updater(pg);return next.blocks!==pg.blocks?{...next,status:next.blocks.length||next.processed?'review' as const:'ready' as const,reviewed:false,error:undefined}:next;})}),label,record);
  }
  function patchBlock(patch:Partial<TextBlock>,label='텍스트 스타일'){if(!selected||!canEditCurrent)return;updatePage(p=>({...p,blocks:p.blocks.map(b=>b.id===selected.id?{...b,...patch}:b)}),label==='텍스트 스타일'?`${page.name} · 텍스트 스타일 수정`:label);}
+ async function fitSelected() {
+  const target=fitTarget.current;
+  if(!page || !selected || target?.page!==page || target.block!==selected)return;
+  try {
+   const size=measuredLetteringIds(page).has(selected.id) ? selected.size : await fitStudioBlock(selected,page);
+   if(fitTarget.current!==target || activityRef.current.kind!=='idle')return;
+   if(size===selected.size){notify('현재 글자 크기로 말풍선 안에 들어가요.');return;}
+   patchBlock({size},page.name+' · 말풍선에 글자 맞춤');
+  }catch(error){if(fitTarget.current===target)notify(errorText(error),true);}
+ }
  const undo=useCallback(()=>{if(!ready||activityRef.current.kind!=='idle')return;finishEditing();cancelDrag();dispatch({type:'history.undo',projectId:activeId,at:new Date().toISOString(),id:uid()});setEditingId(null);},[activeId,ready]);
  const redo=useCallback(()=>{if(!ready||activityRef.current.kind!=='idle')return;finishEditing();cancelDrag();dispatch({type:'history.redo',projectId:activeId,at:new Date().toISOString(),id:uid()});setEditingId(null);},[activeId,ready]);
  function selectPage(id:string,blockId?:string,force=false){
@@ -411,10 +458,17 @@ export default function Studio(){
  }
  function openProjectBackup(){setExportFormat('project');setModal('download');}
    function renderCanvas(original=false){if(!page)return null;const showFinal=!original&&!editingId&&canUseFinalImage(page);return <div className={`manga-frame ${original?"is-original":""}`} style={{width:page.width*safeScale,height:page.height*safeScale}}>
-     <img className="manga-image" src={original?page.image:showFinal?page.finalImage:(page.cleanImage||page.image)} alt={`${page.name} ${original?"원본":"식자 미리보기"}`} draggable={false}/>
-     {(!original||showOCR)&&page.blocks.map((b,index)=>{const active=b.id===selectedId&&(!original||showOCR), rect=original?ocrBox(b):b;return <div key={b.id} data-block-id={b.id} data-selected={active} role="group" tabIndex={original&&!showOCR?-1:0} aria-label={`텍스트 영역 ${index+1}`} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(original){if(showOCR&&e.key==="Enter"){e.preventDefault();setSelectedId(b.id);}return;}if(e.key==="Enter"&&canEditCurrent){e.preventDefault();setSelectedId(b.id);beginEditing(b);}}} className={`text-block ${active?"selected":""} ${showOCR?"ocr-visible":""} ${editingId===b.id?"editing":""} ${original?"ocr-only":""}`} style={{left:rect.x+"%",top:rect.y+"%",width:rect.w+"%",height:rect.h+"%",background:!original&&!showFinal&&b.fill?"#fff":undefined,fontSize:b.size*safeScale,fontWeight:b.weight,lineHeight:b.lineHeight,fontFamily:FONTS[b.font],color:b.color,textAlign:b.align} as CSSProperties} onClick={e=>{e.stopPropagation();if(!original||showOCR){setSelectedId(b.id);}}} onDoubleClick={e=>{e.stopPropagation();if(!original&&canEditCurrent){setSelectedId(b.id);beginEditing(b);}}} onPointerDown={e=>{if(!original)startDrag(e,b);}} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}>
+     {!original&&!showFinal&&cropPath ? <>
+       <svg width="0" height="0" aria-hidden="true" focusable="false" style={{position:'absolute'}}><defs>
+         <clipPath id={letteringClipId} clipPathUnits="objectBoundingBox"><path d={cropPath}/></clipPath>
+         <clipPath id={letteringClipId+'-clean'} clipPathUnits="objectBoundingBox"><path clipRule="evenodd" d={`M0 0h1v1H0z ${cropPath}`}/></clipPath>
+       </defs></svg>
+       <img className="manga-image" src={page.cleanImage} alt="" draggable={false} style={{clipPath:`url(#${letteringClipId}-clean)`}}/>
+       <img className="manga-image" src={page.finalImage} alt={page.name+' 식자 미리보기'} draggable={false} style={{position:'absolute',inset:0,clipPath:`url(#${letteringClipId})`}}/>
+     </> : <img className="manga-image" src={original?page.image:showFinal?page.finalImage:(page.cleanImage||page.image)} alt={`${page.name} ${original?"원본":"식자 미리보기"}`} draggable={false}/>}
+     {(!original||showOCR)&&page.blocks.map((b,index)=>{const active=b.id===selectedId&&(!original||showOCR), rect=original?ocrBox(b):b;const outline:CSSProperties|undefined=b.strokeWidth && b.strokeColor ? {WebkitTextStroke:(2*b.strokeWidth*safeScale)+"px "+b.strokeColor,paintOrder:"stroke fill"} : undefined;return <div key={b.id} data-block-id={b.id} data-selected={active} role="group" tabIndex={original&&!showOCR?-1:0} aria-label={`텍스트 영역 ${index+1}`} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(original){if(showOCR&&e.key==="Enter"){e.preventDefault();setSelectedId(b.id);}return;}if(e.key==="Enter"&&canEditCurrent){e.preventDefault();setSelectedId(b.id);beginEditing(b);}}} className={`text-block ${active?"selected":""} ${showOCR?"ocr-visible":""} ${editingId===b.id?"editing":""} ${original?"ocr-only":""}`} style={{left:rect.x+"%",top:rect.y+"%",width:rect.w+"%",height:rect.h+"%",background:!original&&!showFinal&&!letterCrops?.has(b.id)&&b.fill?"#fff":undefined,fontSize:b.size*safeScale,fontWeight:b.weight,lineHeight:b.lineHeight,fontFamily:FONTS[b.font],color:b.color,textAlign:b.align} as CSSProperties} onClick={e=>{e.stopPropagation();if(!original||showOCR){setSelectedId(b.id);}}} onDoubleClick={e=>{e.stopPropagation();if(!original&&canEditCurrent){setSelectedId(b.id);beginEditing(b);}}} onPointerDown={e=>{if(!original)startDrag(e,b);}} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}>
       {(active||showOCR)&&<span className="block-label">{original?"OCR":"T"} {String(index+1).padStart(2,"0")}{showOCR&&b.confidence!==undefined?` · ${(b.confidence*100).toFixed(1)}%`:""}</span>}
-       {!original&&(editingId===b.id?<div key={b.id+"-edit"} ref={editableRef} contentEditable="plaintext-only" onInput={e=>recordDraft(e.currentTarget)} suppressContentEditableWarning className="block-text editable" role="textbox" aria-label={`번역문 ${index+1} 직접 편집`} onPointerDown={e=>e.stopPropagation()} onBlur={e=>commitText(e.currentTarget,b)} onKeyDown={e=>{if(e.nativeEvent.isComposing)return;if(e.key==="Escape"){e.preventDefault();e.stopPropagation();cancelEditing();}if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();e.currentTarget.blur();}}}>{editingRef.current?.target.block.id===b.id?editingRef.current.target.block.text:b.text}</div>:<div className={`block-text ${!b.text?"missing-text":""}`} style={showFinal?{opacity:0}:undefined}>{b.text||"번역문 추가"}</div>)}
+       {!original&&(editingId===b.id?<div key={b.id+"-edit"} ref={editableRef} contentEditable="plaintext-only" onInput={e=>recordDraft(e.currentTarget)} suppressContentEditableWarning className="block-text editable" style={{...outline,wordBreak:"keep-all",paddingInline:Math.max(0,(6+(b.strokeWidth??0))*safeScale-1)}} role="textbox" aria-label={`번역문 ${index+1} 직접 편집`} onPointerDown={e=>e.stopPropagation()} onBlur={e=>commitText(e.currentTarget,b)} onKeyDown={e=>{if(e.nativeEvent.isComposing)return;if(e.key==="Escape"){e.preventDefault();e.stopPropagation();cancelEditing();}if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();e.currentTarget.blur();}}}>{editingRef.current?.target.block.id===b.id?editingRef.current.target.block.text:b.text}</div>:(showFinal||letterCrops?.has(b.id)?<div className="block-text" style={{opacity:0}}>{b.text||"번역문 추가"}</div>:<ManualLettering block={b} pageWidth={page.width} pageHeight={page.height} onMeasure={recordManualFit} scale={safeScale} outline={outline}/>))}
       {active&&!original&&editingId!==b.id&&<><span className="handle tl"/><span className="handle tr"/><span className="handle bl"/><span className="handle br" onPointerDown={e=>{e.stopPropagation();startDrag(e,b,true);}}/></>}
 
     </div>;})}
@@ -489,10 +543,11 @@ export default function Studio(){
               {issues.length>0&&<ul>{issues.map((issue,i)=><li key={i}>{issue.blockId?<button type="button" onClick={()=>{setSelectedId(issue.blockId!);setCanvasLocation('editor');closeDrawer();}}>{issue.title}</button>:issue.title}</li>)}</ul>}
               {pageReviewState(page)==='CANDIDATE_READY'&&<button type="button" disabled={!canEditCurrent||issues.some(issue=>issue.kind!=='engine')} onClick={()=>updatePage(approvePageCandidate,page.name+' · 사용자가 원문·번역·식자 검수 완료')}>원문·번역·식자 확인 후 검수 완료</button>}
             </details>}
+            {page&&textInventoryJobId&&<StudioTextInventory key={textInventoryJobId} jobId={textInventoryJobId} image={page.image}/>}
             <section className="inspector-section typography-section" data-expanded={typographyOpen}><div className="section-title typography-title"><h3><button type="button" className="typography-disclosure" aria-label={typographyOpen?"글꼴 스타일 접기":"글꼴 스타일 펼치기"} aria-expanded={typographyOpen} aria-controls="typography-controls" onClick={()=>setTypographyOpen(open=>!open)}><ChevronDown size={14} aria-hidden="true"/><span>글꼴 스타일</span><span className="tiny-caps" aria-hidden="true">TYPOGRAPHY</span></button></h3>{selected&&<IconButton label="선택한 텍스트 삭제" disabled={!canEditCurrent} onClick={()=>{updatePage(p=>({...p,blocks:p.blocks.filter(b=>b.id!==selected.id),reviewed:false}),`${page.name} · 텍스트 삭제`);setSelectedId(null);}}><Trash2 size={14}/></IconButton>}</div><fieldset id="typography-controls" className="style-fieldset" hidden={!typographyOpen} disabled={!selected||!canEditCurrent}><label className="field-label" htmlFor="font-select">글꼴</label><select id="font-select" className="form-select font-select" value={selected?.font||"sans"} onChange={e=>patchBlock({font:e.target.value})}>{Object.entries(FONT_NAMES).map(([k,v])=><option value={k} key={k}>{v}</option>)}</select><div className="field-grid"><div><label className="field-label" htmlFor="font-size">크기</label><div className="number-field"><Type size={13}/><input id="font-size" aria-label="글자 크기" type="number" min={10} max={160} value={selected?.size||32} onChange={e=>patchBlock({size:clamp(Number(e.target.value)||10,10,160)})}/><span>px</span></div></div><div><label className="field-label" htmlFor="font-weight">굵기</label><select id="font-weight" className="form-select" value={selected?.weight||600} onChange={e=>patchBlock({weight:Number(e.target.value)})}><option value={400}>Regular</option><option value={500}>Medium</option><option value={600}>Semi Bold</option><option value={700}>Bold</option><option value={800}>Extra Bold</option></select></div></div>
               <div className="field-grid alignment-color"><div><label className="field-label">정렬</label><div className="alignment-control">{(["left","center","right"] as const).map((a,i)=>{const Icon=[AlignLeft,AlignCenter,AlignRight][i];return <button key={a} title={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-label={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-pressed={selected?.align===a} className={selected?.align===a?"active":""} onClick={()=>patchBlock({align:a})}><Icon size={15}/></button>;})}</div></div><div><label className="field-label" htmlFor="text-color">색상</label><div className="color-field"><input id="text-color" type="color" value={selected?.color||"#202020"} onChange={e=>patchBlock({color:e.target.value})}/><span>{(selected?.color||"#202020").slice(1).toUpperCase()}</span><ChevronDown size={11}/></div></div></div>
               <div className="line-height-label"><label className="field-label" htmlFor="line-height">줄 간격</label><span>{(selected?.lineHeight||1.4).toFixed(2)}</span></div><input id="line-height" className="range-input" type="range" min={1} max={2.5} step={.05} value={selected?.lineHeight||1.4} onChange={e=>patchBlock({lineHeight:Number(e.target.value)})}/><div className="range-labels"><span>촘촘하게</span><span>여유롭게</span></div>
-              <button className="fit-button" onClick={()=>selected&&patchBlock(fitBlock(selected,page),`${page.name} · 말풍선에 글자 맞춤`)}><WandSparkles size={14}/>말풍선에 글자 맞춤<ArrowUpRight size={13}/></button><label className="checkbox-row"><input type="checkbox" checked={selected?.fill||false} onChange={e=>patchBlock({fill:e.target.checked})}/>텍스트 영역을 흰색으로 채우기</label>
+              <button className="fit-button" disabled={!selected||!canEditCurrent} onClick={()=>void fitSelected()}><WandSparkles size={14}/>말풍선에 글자 맞춤<ArrowUpRight size={13}/></button><label className="checkbox-row"><input type="checkbox" checked={selected?.fill||false} onChange={e=>patchBlock({fill:e.target.checked})}/>텍스트 영역을 흰색으로 채우기</label>
             </fieldset></section><fieldset disabled={!selected||!canEditCurrent} className="style-fieldset"><section className="inspector-section apply-section" aria-label="스타일 적용 범위"><button type="button" className="apply-style" onClick={()=>applyStyle('page')}><Copy size={13}/><span>이 페이지에 스타일 적용</span></button><button type="button" className="apply-style" onClick={()=>applyStyle('all')}><Layers size={13}/><span>모든 페이지에 스타일 적용</span></button>{selected&&!project.sample&&<button type="button" className="apply-style" disabled={!canStoreContext} onClick={openContextDialog}><Type size={13}/><span>인명·용어 표기 저장</span></button>}</section></fieldset>
         </div>
         <div className="manual-canvas-note"><MousePointer2 size={13}/><span>캔버스에서 직접 확인하고 수정하세요.</span></div>

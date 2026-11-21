@@ -1,5 +1,5 @@
 import { unzipSync, zipSync, strToU8 } from "fflate";
-import { canUseFinalImage, FONTS, type StudioPage } from "./studio-model";
+import { canUseFinalImage, unchangedFinalCrops, wrapStudioText, FONTS, type StudioPage, type TextBlock } from "./studio-model";
 const LIMIT=8*1024*1024;
 export const MAX_PAGES=100;
 export async function extractImages(files:File[]):Promise<File[]> {
@@ -47,7 +47,68 @@ export async function fileToPage(file:File):Promise<StudioPage> {
   if(img.naturalWidth*img.naturalHeight>40_000_000) throw new Error("이미지 한 장은 4천만 화소 이하로 올려 주세요.");
   return {id:crypto.randomUUID(),name:file.name,image,width:img.naturalWidth,height:img.naturalHeight,blocks:[],status:"ready",reviewed:false};
 }
-function wrap(ctx:CanvasRenderingContext2D,text:string,max:number) {const lines:string[]=[];for(const paragraph of text.replace(/\r\n?/g,"\n").split("\n")){let line="";for(const {segment:char} of new Intl.Segmenter("ko",{granularity:"grapheme"}).segment(paragraph)){if(line && ctx.measureText(line+char).width>max){lines.push(line);line="";}line+=char;}lines.push(line);}return lines;}
+function studioFont(b:TextBlock) {
+  return `${b.weight} ${b.size}px ${FONTS[b.font]||FONTS.sans}`;
+}
+async function loadStudioFont(b:TextBlock) {
+  const font=studioFont(b);
+  const faces=await document.fonts.load?.(font,b.text);
+  if((b.font==="pretendard" && b.text.trim() && !faces?.some(face=>face.status==="loaded" && face.family.replace(/["']/g,"")==="Trio Pretendard")) ||
+      (document.fonts.check&&!document.fonts.check(font,b.text)))throw new Error("식자 글꼴을 불러오지 못했어요.");
+}
+function studioLines(ctx:CanvasRenderingContext2D,b:TextBlock,pageWidth:number) {
+  const font=studioFont(b);
+  ctx.font=font;
+  const innerWidth=Math.max(1,b.w/100*pageWidth-12-2*(b.strokeWidth??0));
+  return {font,lines:wrapStudioText(b.text,innerWidth,s=>ctx.measureText(s).width)};
+}
+
+export async function measureStudioLines(ctx:CanvasRenderingContext2D,b:TextBlock,pageWidth:number) {
+  await loadStudioFont(b);
+  return studioLines(ctx,b,pageWidth);
+}
+
+function manualLetteringPlan(ctx:CanvasRenderingContext2D,b:TextBlock,page:Pick<StudioPage,"width"|"height">,wrapped=studioLines(ctx,b,page.width)) {
+  if(![b.x,b.y,b.w,b.h,b.size,b.weight,b.lineHeight].every(Number.isFinite)||b.x<0||b.y<0||b.w<=0||b.h<=0||b.x+b.w>100||b.y+b.h>100||b.size<10||b.lineHeight<=0)throw new Error("식자 위치·글자 크기를 검토해 주세요.");
+  const x=b.x/100*page.width,y=b.y/100*page.height,w=b.w/100*page.width,h=b.h/100*page.height;
+  const {font,lines}=wrapped;
+  ctx.textAlign=b.align;ctx.textBaseline="middle";
+  const stroke=b.strokeWidth??0;
+  const step=b.size*b.lineHeight,xx=b.align==="center"?x+w/2:b.align==="right"?x+w-6-stroke:x+6+stroke,start=y+(h-(lines.length-1)*step)/2;
+  let lastBottom=-Infinity;
+  const draws=[];
+  for (const [i,{text:visible,softSpace}] of lines.entries()) {
+    const text=visible+softSpace,yy=start+i*step,m=ctx.measureText(text);
+    // Hang a soft separator beyond the visible ink. It belongs to the
+    // source text but must not move a centered or right-aligned phrase.
+    const gap=softSpace ? m.width-ctx.measureText(visible).width : 0;
+    const drawX=xx+(b.align==="center"?gap/2:b.align==="right"?gap:0);
+    if(![m.actualBoundingBoxLeft,m.actualBoundingBoxRight,m.actualBoundingBoxAscent,m.actualBoundingBoxDescent].every(Number.isFinite))throw new Error("실제 식자 글꼴 측정값을 확인하지 못했어요.");
+    const bounds={left:drawX-m.actualBoundingBoxLeft-stroke,right:drawX+m.actualBoundingBoxRight+stroke,top:yy-m.actualBoundingBoxAscent-stroke,bottom:yy+m.actualBoundingBoxDescent+stroke};
+    if(text.trim()&&(bounds.left<x-1e-6||bounds.right>x+w+1e-6||bounds.top<y-1e-6||bounds.bottom>y+h+1e-6||bounds.top<lastBottom))return null;
+    if(text.trim())lastBottom=bounds.bottom;
+    draws.push({text,xx:drawX,yy});
+  }
+  return {b,x,y,w,h,font,draws};
+}
+
+export async function measureManualPreview(ctx:CanvasRenderingContext2D,block:TextBlock,page:Pick<StudioPage,"width"|"height">) {
+  const wrapped=await measureStudioLines(ctx,block,page.width);
+  return {lines:wrapped.lines,fits:manualLetteringPlan(ctx,block,page,wrapped)!==null};
+}
+
+export async function fitStudioBlock(block:TextBlock,page:Pick<StudioPage,"width"|"height">):Promise<number> {
+  const ctx=document.createElement("canvas").getContext("2d");
+  if(!ctx)throw new Error("식자 Canvas를 사용할 수 없어요.");
+  await loadStudioFont(block);
+  let size=block.size;
+  while (true) {
+    if (manualLetteringPlan(ctx,{...block,size},page)) return size;
+    if (size<=10) throw new Error("최소 글자 크기에서도 대사가 들어가지 않아요. 영역을 넓히거나 줄바꿈을 조정해 주세요.");
+    size=Math.max(10,Math.ceil(size)-1);
+  }
+}
+
 export async function renderPage(page:StudioPage):Promise<Blob> {
   if(![page.width,page.height].every(v=>Number.isSafeInteger(v)&&v>0)||page.width*page.height>40_000_000)throw new Error("이미지가 내보내기 크기 한도를 초과해요.");
   if(canUseFinalImage(page)){
@@ -60,28 +121,35 @@ export async function renderPage(page:StudioPage):Promise<Blob> {
   const ctx=canvas.getContext("2d");if(!ctx)throw new Error("식자 Canvas를 사용할 수 없어요.");
   const img=await loadImage(page.cleanImage||page.image);
   if(typeof img.naturalWidth==="number"&&(img.naturalWidth!==page.width||img.naturalHeight!==page.height))throw new Error("배경 이미지 해상도와 식자 좌표계의 크기가 달라요.");
-  // Validate every block before painting/serializing. User size, position and
-  // hard breaks are inputs, never silently shrunk or hidden behind a clip.
+  const crops=unchangedFinalCrops(page);
+  const final=crops.size ? await loadImage(page.finalImage!) : undefined;
+  if(final && (final.naturalWidth!==page.width || final.naturalHeight!==page.height))throw new Error("보존할 최종 이미지와 식자 좌표계의 크기가 달라요.");
+  // User size, position and hard breaks are inputs. Only measure the blocks
+  // that actually need a new paint operation.
   const plans=[];
   for(const b of page.blocks){
-    if(![b.x,b.y,b.w,b.h,b.size,b.weight,b.lineHeight].every(Number.isFinite)||b.x<0||b.y<0||b.w<=0||b.h<=0||b.x+b.w>100||b.y+b.h>100||b.size<10||b.lineHeight<=0)throw new Error("식자 위치·글자 크기를 검토해 주세요.");
-    const x=b.x/100*page.width,y=b.y/100*page.height,w=b.w/100*page.width,h=b.h/100*page.height,font=`${b.weight} ${b.size}px ${FONTS[b.font]||FONTS.sans}`;
-    await document.fonts.load?.(font,b.text);if(document.fonts.check&&!document.fonts.check(font,b.text))throw new Error("식자 글꼴을 불러오지 못했어요.");
-    ctx.font=font;ctx.textAlign=b.align;ctx.textBaseline="middle";
-    const lines=wrap(ctx,b.text,Math.max(1,w-12)),step=b.size*b.lineHeight,xx=b.align==="center"?x+w/2:b.align==="right"?x+w-6:x+6,start=y+(h-(lines.length-1)*step)/2;
-    let lastBottom=-Infinity;
-    const draws=lines.map((text,i)=>{
-      const yy=start+i*step,m=ctx.measureText(text);
-      if(![m.actualBoundingBoxLeft,m.actualBoundingBoxRight,m.actualBoundingBoxAscent,m.actualBoundingBoxDescent].every(Number.isFinite))throw new Error("실제 식자 글꼴 측정값을 확인하지 못했어요.");
-      const bounds={left:xx-m.actualBoundingBoxLeft,right:xx+m.actualBoundingBoxRight,top:yy-m.actualBoundingBoxAscent,bottom:yy+m.actualBoundingBoxDescent};
-      if(text.trim()&&(bounds.left<x-1e-6||bounds.right>x+w+1e-6||bounds.top<y-1e-6||bounds.bottom>y+h+1e-6||bounds.top<lastBottom))throw new Error("식자 글자가 영역을 넘거나 글줄과 겹쳐요. 위치·크기·줄바꿈을 조정해 주세요.");
-      if(text.trim())lastBottom=bounds.bottom;
-      return {text,xx,yy,bounds};
-    });
-    plans.push({b,x,y,w,h,font,draws});
+    if(crops.has(b.id))continue;
+    await loadStudioFont(b);
+    const plan=manualLetteringPlan(ctx,b,page);
+    if(!plan)throw new Error("식자 글자가 영역을 넘거나 글줄과 겹쳐요. 위치·크기·줄바꿈을 조정해 주세요.");
+    plans.push(plan);
   }
   ctx.drawImage(img,0,0,canvas.width,canvas.height);
-  for(const {b,x,y,w,h,font,draws} of plans){ctx.save();if(b.fill){ctx.fillStyle="#ffffff";ctx.fillRect(x,y,w,h);}ctx.font=font;ctx.fillStyle=b.color;ctx.textAlign=b.align;ctx.textBaseline="middle";for(const {text,xx,yy}of draws)ctx.fillText(text,xx,yy);ctx.restore();}
+  if(final) for(const {left,top,width,height} of crops.values()){
+    ctx.clearRect(left,top,width,height);
+    ctx.drawImage(final,left,top,width,height,left,top,width,height);
+  }
+  for(const {b,x,y,w,h,font,draws} of plans){
+    ctx.save();
+    if(b.fill){ctx.fillStyle="#ffffff";ctx.fillRect(x,y,w,h);}
+    ctx.font=font;ctx.fillStyle=b.color;ctx.textAlign=b.align;ctx.textBaseline="middle";
+    if(b.strokeWidth && b.strokeColor){ctx.lineWidth=2*b.strokeWidth;ctx.lineJoin="round";ctx.strokeStyle=b.strokeColor;}
+    for(const {text,xx,yy} of draws){
+      if(b.strokeWidth && b.strokeColor)ctx.strokeText(text,xx,yy);
+      ctx.fillText(text,xx,yy);
+    }
+    ctx.restore();
+  }
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("이미지 생성에 실패했어요.")),"image/png"));
 }
 export function download(blob:Blob,name:string) {const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}

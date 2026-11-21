@@ -1,5 +1,6 @@
 'use strict';
 const {createHash}=require('node:crypto');
+const {retainedSourceLines}=require('./restoration-source-lines.cjs');
 const invalid=()=>Object.assign(new Error('제거 마스크와 원본·보호 영역의 대응을 확인하지 못했습니다.'),{code:'TEXT_MASK_INVALID'});
 const requireValue=condition=>{if(!condition)throw invalid();};
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -105,4 +106,35 @@ function verifyLearnedMask({reply,request,bytes,grayBytes,bitmap,grayBitmap,prot
  });
  return {maskedPixels,outsideSelectedRegions,protectedRegionPixels,grayAlphaCorrespondence:true,members,qualityStatus:'REQUIRES_REVIEW'};
 }
-module.exports={verifyLearnedMask,verifySourceTextMask,protectedOcrRegions};
+function inspectRestorationInk(input){
+ const {source,result,mask,width,height,regions}=input;
+ requireValue(Number.isSafeInteger(width)&&width>0&&Number.isSafeInteger(height)&&height>0&&
+  [source,result,mask].every(bytes=>bytes instanceof Uint8Array&&bytes.length===width*height*4));
+ const boxes=regions.map(region=>({id:region.id,...bounds(region.bbox,width,height,0),hadDark:false,changed:false}));
+ const darkPrefix=new Uint32Array(width+1),changedPrefix=new Uint32Array(width+1);
+ for(let y=0;y<height;y++){
+  const active=boxes.filter(box=>!box.changed&&box.top<=y&&y<box.bottom);
+  if(!active.length)continue;
+  for(let x=0;x<width;x++){
+   const p=(y*width+x)*4;
+   const dark=mask[p+3]===0&&source[p+3]===255&&Math.max(source[p],source[p+1],source[p+2])<96;
+   const changed=dark&&(source[p]!==result[p]||source[p+1]!==result[p+1]||source[p+2]!==result[p+2]||source[p+3]!==result[p+3]);
+   darkPrefix[x+1]=darkPrefix[x]+Number(dark);
+   changedPrefix[x+1]=changedPrefix[x]+Number(changed);
+  }
+  for(const box of active){
+   box.hadDark ||= darkPrefix[box.right]>darkPrefix[box.left];
+   box.changed ||= changedPrefix[box.right]>changedPrefix[box.left];
+  }
+ }
+ const unchangedSourceLines=retainedSourceLines(input);
+ const retainedLineRegions=new Set(unchangedSourceLines.map(row=>row.regionId));
+ const unchangedRegionIds=boxes.filter(box=>(box.hadDark&&!box.changed)||retainedLineRegions.has(box.id)).map(box=>box.id);
+ return {unchangedRegionIds,unchangedSourceLines};
+}
+
+function unchangedRestorationRegions(input){
+ return inspectRestorationInk(input).unchangedRegionIds;
+}
+
+module.exports={verifyLearnedMask,verifySourceTextMask,protectedOcrRegions,inspectRestorationInk,unchangedRestorationRegions};

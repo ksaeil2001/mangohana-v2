@@ -22,14 +22,15 @@ function buildTranslationInput({lines,extraction,selection,context,scope={}}){
   const group=groups[i];must(line&&text(line.id,200)&&!seen.has(line.id)&&line.id===group.id&&line.sourceText===group.text&&text(line.sourceText,2000));seen.add(line.id);
   must(line.userTranslation===undefined&&line.aiTranslation===undefined&&(!line.ocrEditStatus||line.ocrEditStatus==='ai_proposed'));
   must(Number.isSafeInteger(line.order)&&line.order>0&&line.order===(group.readingOrder??i+1)&&(i===0||line.order>lines[i-1].order)&&(!line.pageNumber||line.pageNumber===extraction.pageNumber));
-  const ids=group.ocrRefinement?.sourceDetectionIds??group.productionOcrProvenance?.sourceDetectionIds??[];
+  const ids=group.ocrRefinement?.sourceDetectionIds??group.productionOcrProvenance?.sourceDetectionIds??group.inventoryLineIds??[];
   must(Array.isArray(ids)&&ids.every(id=>text(id,200)&&!sourceIds.has(id))&&new Set(ids).size===ids.length&&same(line.sourceLineIds??[],ids));ids.forEach(id=>sourceIds.add(id));
   const decision=selection?.decisions?.find(d=>d.id===line.id);if(selection)must(decision?.action==='translate'&&(!decision.sourceLineIds||same(decision.sourceLineIds,ids)));
   const candidates=(group.speakerCandidates??[]).filter(s=>text(s,200));
   const speaker=userOwnedSpeaker(line)?{name:line.speaker,status:'USER_MODIFIED',confirmed:true,origin:'ocr_user_owned_speaker'}:
    {name:candidates.length===1?candidates[0]:null,status:candidates.length?'AI_PROPOSED':'UNKNOWN',confirmed:false,origin:'ocr_speaker_candidates',candidates};
   characters+=line.sourceText.length;
-  return {id:line.id,order:line.order,pageNumber:extraction.pageNumber,sourceText:line.sourceText,sourceLanguage:line.sourceLanguage??'auto',dialogueType:line.dialogueType??'speech',sourceLineIds:[...ids],mappingKind:ids.length?'explicit_source_line_group':'legacy_group_without_source_line_evidence',roiId:decision?.detectorRegionId??group.ocrRefinement?.roiId??null,speaker,addressee:{name:null,status:'UNKNOWN',origin:'not_observed'}};
+  return {id:line.id,order:line.order,pageNumber:extraction.pageNumber,sourceText:line.sourceText,sourceLanguage:line.sourceLanguage??'auto',dialogueType:line.dialogueType??'speech',sourceLineIds:[...ids],mappingKind:ids.length?'explicit_source_line_group':'legacy_group_without_source_line_evidence',roiId:decision?.detectorRegionId??group.ocrRefinement?.roiId??null,speaker,addressee:{name:null,status:'UNKNOWN',origin:'not_observed'},
+   ...(Number.isSafeInteger(group.panelOrder)&&group.panelOrder>0?{panelOrder:group.panelOrder}:{})};
  });
  must(characters<=8000);
  const safe={revision:null,snapshotSha256:null,terms:[],profiles:[],previousVerified:[],excluded:[]};
@@ -106,8 +107,12 @@ function linePromptData(input,id,{budget=4096}={}){
  return {...data,budget:{unit:'utf8_bytes',limit:budget,selectedBytes:Buffer.byteLength(JSON.stringify(data),'utf8'),tokenCount:null},excluded:[...input.context.excluded,...excluded]};
 }
 
-function pagePromptData(input,{budget=12000}={}){
- const data={promptVersion:PAGE_PROMPT,revision:input.context.revision,targets:input.regions,...(input.pageContext?{currentPage:input.pageContext}:{}),terms:[],profiles:[],previousVerified:[],excludedCounts:{}};
+function pagePromptData(input,{budget=12000,compact=false}={}){
+ const targets=compact?{scene:input.regions.map(r=>({id:r.id,order:r.order,
+   ...(r.panelOrder?{panelOrder:r.panelOrder}:{}),
+   ...(r.speaker.confirmed?{speaker:r.speaker.name,...(r.speaker.speechStyle?{speechStyle:r.speaker.speechStyle}:{})}:{})
+ }))}:{targets:input.regions};
+ const data={promptVersion:compact?'onnx-page-ja-ko-v1':PAGE_PROMPT,revision:input.context.revision,...targets,...(input.pageContext?{currentPage:input.pageContext}:{}),terms:[],profiles:[],previousVerified:[],excludedCounts:{}};
  must(Buffer.byteLength(JSON.stringify(data),'utf8')<=budget,'TRANSLATION_INPUT_LIMIT');
  const omitted=[...input.context.excluded];
  const offer=(list,item,kind)=>{list.push(item);if(Buffer.byteLength(JSON.stringify(data),'utf8')>budget){list.pop();omitted.push({kind,reason:'PROMPT_BUDGET_EXCLUDED'});}};
@@ -121,6 +126,67 @@ function pagePromptData(input,{budget=12000}={}){
 
 function regionResponseFormat(regions){
  return {type:'json_schema',json_schema:{name:regions.length===1?'manga_dialogue_line':'manga_dialogue_page',strict:true,schema:{type:'object',properties:{regions:{type:'array',minItems:regions.length,maxItems:regions.length,items:{type:'object',properties:{id:{type:'string',enum:regions.map(r=>r.id)},source_reading:{type:'string',minLength:1},translation:{type:'string',minLength:1},uncertain:{type:'boolean'}},required:['id','source_reading','translation','uncertain'],additionalProperties:false}}},required:['regions'],additionalProperties:false}}};
+}
+
+const gaspRisk = 'PREDICATE_REDUCED_TO_GASP';
+const repeatedFieldsRisk = 'REPEATED_NUMERIC_FIELDS';
+const punctuationRisk = 'PUNCTUATION_EXPANDED';
+const draftReviewNotices = Object.freeze({
+ [gaspRisk]: '숨소리만 남아 대사의 동작이나 상태가 생략됐을 수 있어요. 원문과 번역을 확인해 주세요.',
+ [repeatedFieldsRisk]: '같은 수치 항목이 원문보다 여러 번 반복됐어요. 원문과 번역을 확인해 주세요.',
+ [punctuationRisk]: '판독한 원문에는 문장부호만 있고 번역에는 단어가 생겼어요. 원문과 번역을 확인해 주세요.',
+});
+function draftReviewNotice(rows) {
+ const code=rows[0]?.code;
+ return Object.hasOwn(draftReviewNotices,code) && rows.every(row=>row.code===code) ? draftReviewNotices[code] :
+  '표시한 대사에 서로 다른 검토 사유가 있어요. 원문과 번역을 확인해 주세요.';
+}
+const completedPredicate = /[ぁ-ん一-龯々](?:[ちじ]ゃ(?:う|った)|[てで]しま(?:う|った))(?:んだ)?(?:よ|ね|ぞ|わ|かも)?$/u;
+function predicateReducedToGasp(source, target) {
+ if (typeof source !== 'string' || typeof target !== 'string') return false;
+ const clause = source.normalize('NFKC').replace(/[。．.!！?？…〜～~「」『』“”\s]+$/u, '');
+ if (!completedPredicate.test(clause)) return false;
+ const syllables = target.normalize('NFKC').replace(/[\p{P}\s~〜～]/gu, '');
+ return /^[흐윽헉하아으헥후우휴허억]+$/u.test(syllables) && /흐|윽|헉|헥|하아|허억|후우|으으/u.test(syllables);
+}
+function numericRatios(value) {
+ return (value.match(/[0-9]+\s*\/\s*[0-9]+/gu) ?? []).map(ratio => ratio.replace(/\s+/gu, ''));
+}
+function repeatedNumericFields(sourceText, translatedText) {
+ const source = sourceText.normalize('NFKC');
+ if ((source.match(/[【\[]/gu) ?? []).length < 2) return false;
+ const target = translatedText.normalize('NFKC');
+ const original = numericRatios(source);
+ if (original.length < 2 || numericRatios(target).length < original.length + 3) return false;
+ const originalCounts = new Map(), fieldCounts = new Map();
+ for (const ratio of original) originalCounts.set(ratio, (originalCounts.get(ratio) ?? 0) + 1);
+ for (const match of target.matchAll(/\[([^\[\]\r\n]{1,120})\]|【([^【】\r\n]{1,120})】/gu)) {
+  const field = (match[1] ?? match[2]).replace(/\s+/gu, '');
+  const ratios = numericRatios(field);
+  if (ratios.length !== 1 || !/[가-힣]/u.test(field)) continue;
+  const count = (fieldCounts.get(field) ?? 0) + 1;
+  if (count >= (originalCounts.get(ratios[0]) ?? 0) + 3) return true;
+  fieldCounts.set(field, count);
+ }
+ return false;
+}
+function draftReviewReason(source, target) {
+ if (typeof source !== 'string' || typeof target !== 'string') return null;
+ if (source.trim() && /^[\p{P}\s]+$/u.test(source) && /[\p{L}\p{N}]/u.test(target)) return punctuationRisk;
+ if (predicateReducedToGasp(source, target)) return gaspRisk;
+ return repeatedNumericFields(source, target) ? repeatedFieldsRisk : null;
+}
+function assertDraftPredicates(rows, translationEvidence) {
+ const semanticReview = [];
+ for (const { id, sourceText, translatedText, semantic } of rows) {
+  const code = draftReviewReason(sourceText, translatedText) ??
+    semantic?.signals?.find(signal => Object.hasOwn(draftReviewNotices,signal.code))?.code;
+  if (code) semanticReview.push({ id, sourceText, translatedText, code });
+ }
+ if (semanticReview.length) throw Object.assign(Error(draftReviewNotice(semanticReview)), {
+   code: 'PAGE_TRANSLATION_INVALID', regionIds: semanticReview.map(row => row.id), receivedCandidateIds: rows.map(row => row.id), semanticReview,
+   ...(translationEvidence ? { translationEvidence } : {}),
+ });
 }
 
 function assessSemanticRisk({region,translatedText,terms=[],proposedSource,uncertain=false,qaReport}){
@@ -137,6 +203,8 @@ function assessSemanticRisk({region,translatedText,terms=[],proposedSource,uncer
  if(/(?:です|ます|ください)/.test(source)&&!/(?:요|니다|시오|세요|죠)[.!?。…~\s]*$/.test(translatedText))warn('REGISTER_RISK','원문 경어의 한국어 말끝 검토');
  if(region.speaker?.confirmed&&region.speaker.speechStyle&&qaReport?.issues?.some(i=>i.type==='SPEECH_STYLE_MISMATCH'))warn('SPEAKER_STYLE_RISK','사용자 소유 화자·관계·상황의 말투 규칙 검토');
  const outputCompliance=assessKoreanOutput({sourceText:source,translatedText,terms});
+ const draftHold = draftReviewReason(source, translatedText);
+ if (draftHold) warn(draftHold,draftReviewNotices[draftHold]);
  for(const code of outputCompliance.codes)warn(code,'한국어 출력 준수 검토; 의미 정확도 판정과 독립');
  // Japanese benefactive auxiliaries encode who acts and who receives help.
  // The presence/absence of Korean morphology cannot prove that direction.
@@ -144,7 +212,7 @@ function assessSemanticRisk({region,translatedText,terms=[],proposedSource,uncer
  if(/(?:[一二三四五六七八九十百]+(?:人|個|回|本|枚|つ)|ふたり|ひとり)/.test(source))warn('QUANTITY_EXPRESSION_REVIEW','한자·일본어 수량과 한국어 수사 대응은 문자 숫자 검사로 확정 불가');
  if(proposedSource!==undefined&&proposedSource!==source)warn('INTERPRETED_SOURCE_CHANGED','모델이 제안한 원문 읽기가 OCR 관측과 다름; 원본은 유지');
  if(uncertain)warn('MODEL_UNCERTAIN','모델 자체 불확실 표시');
- return {version:'stage11-risk-v1',riskPolicyVersion:'stage14r3-risk-v1',outputCompliance,signals,statuses:[...(qaReport?.passed?['RULE_QA_PASSED']:[]),...(signals.length?['SEMANTIC_RISK_FLAGGED']:[]),'SEMANTIC_REVIEW_REQUIRED','SEMANTIC_NOT_MEASURED'],semanticReviewRequired:true,humanReviewRequired:true,humanSemanticVerified:null,semanticAccuracy:null,independentSemanticEvaluation:null,automaticQualityApproval:false,draftUsable:outputCompliance.status==='PASS',notMeasured:['omission_addition','speaker_addressee_meaning','honorific_relationship','tense_aspect','context_contradiction','role_classification','ambiguity_irony_wordplay','kanji_korean_number_equivalence']};
+ return {version:'stage11-risk-v1',riskPolicyVersion:'stage14r3-risk-v2',outputCompliance,signals,statuses:[...(qaReport?.passed?['RULE_QA_PASSED']:[]),...(signals.length?['SEMANTIC_RISK_FLAGGED']:[]),'SEMANTIC_REVIEW_REQUIRED','SEMANTIC_NOT_MEASURED'],semanticReviewRequired:true,humanReviewRequired:true,humanSemanticVerified:null,semanticAccuracy:null,independentSemanticEvaluation:null,automaticQualityApproval:false,draftUsable:outputCompliance.status==='PASS'&&!draftHold,notMeasured:['omission_addition','speaker_addressee_meaning','honorific_relationship','tense_aspect','context_contradiction','role_classification','ambiguity_irony_wordplay','kanji_korean_number_equivalence']};
 }
 
 function validateTranslationBatch({input,results,currentContextRevision=input.context.revision}){
@@ -155,4 +223,4 @@ function validateTranslationBatch({input,results,currentContextRevision=input.co
   if(resolved.conflicts.length){semantic.signals.push({code:'GLOSSARY_POLICY_CONFLICT',classification:'CONFIRMED_POLICY_CONFLICT_NOT_SEMANTIC_ORACLE',confirmedError:false,severity:'warning',detail:resolved.conflicts});if(!semantic.statuses.includes('SEMANTIC_RISK_FLAGGED'))semantic.statuses.push('SEMANTIC_RISK_FLAGGED');}
   semantic.statuses.unshift('OUTPUT_SCHEMA_VALID','REGION_MAPPING_VALID');return {...structuredClone(r),semantic};});
 }
-module.exports={VERSION,TEXT_PROMPT,PAGE_PROMPT,buildTranslationInput,linePromptData,pagePromptData,regionResponseFormat,assessSemanticRisk,validateTranslationBatch};
+module.exports={VERSION,TEXT_PROMPT,PAGE_PROMPT,buildTranslationInput,resolveTerms,linePromptData,pagePromptData,regionResponseFormat,assessSemanticRisk,draftReviewReason,draftReviewNotices,draftReviewNotice,assertDraftPredicates,validateTranslationBatch};

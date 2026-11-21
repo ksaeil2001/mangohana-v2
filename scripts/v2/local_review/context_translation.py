@@ -7,11 +7,11 @@ import sys
 import time
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-from quality import MORAU, kinship_argument, review_flags, speech_form
+from quality import MORAU, has_completed_predicate, kinship_argument, review_flags, speech_form
 
 SPEC=json.loads(Path(__file__).with_name('context-model.json').read_text('utf8'))
 MODEL='Qwen/Qwen3-4B-Instruct-2507'
-SETTINGS='page-json-ja-ko-v4'
+SETTINGS='page-json-ja-ko-v5'
 SYSTEM=('일본어 만화 편집자 겸 한국어 번역가다. 아래 JSON은 읽기 순서의 OCR 대사다. '
         '페이지 문맥으로 생략된 주체를 해석하고, 대화체 한국어로 자연스럽게 옮긴다. '
         '부정·수량·이름·행위의 방향·존댓말과 반말을 보존한다. 화자가 상대에게 행동을 부탁하면 한국어도 상대에게 '
@@ -24,11 +24,23 @@ SYSTEM=('일본어 만화 편집자 겸 한국어 번역가다. 아래 JSON은 �
 
 def page_prompt(lines, context=None):
     source={}
+    scene = {row['id']: row for row in context.get('scene', [])} if isinstance(context, dict) else {}
     for i,row in enumerate(lines,1):
         utterance={'원문':row['source']}
+        cue = scene.get(row['id'], {})
+        if cue.get('panelOrder'):
+            utterance['컷'] = cue['panelOrder']
+        if cue.get('speaker'):
+            utterance['확정 화자'] = cue['speaker']
+            if cue.get('speechStyle'):
+                utterance['확정 말투'] = cue['speechStyle']
+        if cue.get('role') == 'translation_note':
+            utterance['글의 용도'] = '원화를 유지하는 짧은 번역 주석'
         form=speech_form(row['source'])
         if form:
             utterance['발화 단서']=form
+        if has_completed_predicate(row['source']):
+            utterance['서술 단서']='말더듬이나 숨소리 뒤에서 어떤 일이 일어나거나 어떤 상태가 되는지도 대사에 옮긴다. 불확실한 어휘를 단정하지 않는다.'
         kin=kinship_argument(row['source'])
         if kin:
             utterance['に가 가리키는 인물' if kin[0]=='に' else '원문의 주어']=kin[1]+' ('+', '.join(kin[2].split())+')'
@@ -39,7 +51,8 @@ def page_prompt(lines, context=None):
             utterance['부정 표현']='「'+adjective[1]+'い」의 부정. 한국어 용언으로 “안 …” 또는 “…지 않다”를 써서 원문의 뜻을 살린다.'
         source[str(i)]=utterance
     if context is not None:
-        source={'대사': source, '참고할 작품 문맥': context}
+        scene_context = {key: value for key, value in context.items() if key != 'scene'} if isinstance(context, dict) else context
+        source={'대사': source, '참고할 작품 문맥': scene_context}
     encoded=json.dumps(source,ensure_ascii=False).replace('<',r'\u003c').replace('>',r'\u003e')
     return f'<|im_start|>system\n{SYSTEM}<|im_end|>\n<|im_start|>user\n{encoded}<|im_end|>\n<|im_start|>assistant\n'
 
@@ -73,19 +86,53 @@ def copyedit(target):
     return text,changes
 
 
+def verify_asset(root, relative, size, pin):
+    file = root / relative
+    if file.stat().st_size != size:
+        raise ValueError('context model file size mismatch: ' + relative)
+    digest = hashlib.sha256() if len(pin) == 64 else hashlib.sha1()
+    if len(pin) == 40:
+        digest.update(('blob ' + str(size) + '\0').encode())
+    with file.open('rb') as stream:
+        for chunk in iter(lambda: stream.read(2**20), b''):
+            digest.update(chunk)
+    if digest.hexdigest() != pin:
+        raise ValueError('context model file checksum mismatch: ' + relative)
+
+
 def verify_assets(root):
-    for relative,size,pin in SPEC['files']:
-        file=root/relative
-        if file.stat().st_size!=size:
-            raise ValueError('context model file size mismatch: '+relative)
-        digest=hashlib.sha256() if len(pin)==64 else hashlib.sha1()
-        if len(pin)==40:
-            digest.update(('blob '+str(size)+'\0').encode())
-        with file.open('rb') as stream:
-            for chunk in iter(lambda:stream.read(2**20),b''):
-                digest.update(chunk)
-        if digest.hexdigest()!=pin:
-            raise ValueError('context model file checksum mismatch: '+relative)
+    for asset in SPEC['files']:
+        verify_asset(root, *asset)
+
+
+def load_context_tokenizer(root):
+    tokenizer_asset = next(asset for asset in SPEC['files'] if asset[0] == 'tokenizer.json')
+    verify_asset(root, *tokenizer_asset)
+    deps = (root / 'tokenizer-deps').resolve(strict=True)
+    sys.path.insert(0, str(deps))
+    import tokenizers
+    if tokenizers.__version__ != '0.22.2' or not Path(tokenizers.__file__).resolve().is_relative_to(deps):
+        raise ValueError('unexpected local tokenizer')
+    return tokenizers.Tokenizer.from_file(str(root / 'tokenizer.json'))
+
+
+class PageInputLimit(ValueError):
+    def __init__(self, input_tokens):
+        super().__init__('page exceeds local context budget')
+        self.input_tokens = input_tokens
+
+
+def prepare_page_tokens(tokenizer, lines, context, *, max_input=8192):
+    if len(lines) > 128 or len({row['id'] for row in lines}) != len(lines):
+        raise ValueError('duplicate or excess source regions')
+    selected = context
+    ids = tokenizer.encode(page_prompt(lines, selected), add_special_tokens=False).ids
+    if len(ids) > max_input and isinstance(selected, dict) and selected.get('previousVerified'):
+        selected = {**selected, 'previousVerified': []}
+        ids = tokenizer.encode(page_prompt(lines, selected), add_special_tokens=False).ids
+    if len(ids) > max_input:
+        raise PageInputLimit(len(ids))
+    return ids
 
 
 class PageTranslator:
@@ -94,16 +141,11 @@ class PageTranslator:
     revision=SPEC['revision']
     settings=SETTINGS
 
-    def __init__(self,root):
+    def __init__(self,root, *, tokenizer=None):
         import numpy as np
         import onnxruntime as ort
         verify_assets(root)
-        deps=(root/'tokenizer-deps').resolve(strict=True)
-        sys.path.insert(0,str(deps))
-        import tokenizers
-        if tokenizers.__version__!='0.22.2' or not Path(tokenizers.__file__).resolve().is_relative_to(deps):
-            raise ValueError('unexpected local tokenizer')
-        self.tokenizer=tokenizers.Tokenizer.from_file(str(root/'tokenizer.json'))
+        self.tokenizer = tokenizer if tokenizer is not None else load_context_tokenizer(root)
         self.end={self.tokenizer.token_to_id(s) for s in ('<|im_end|>','<|endoftext|>')}
         self.cfg=json.loads((root/'config.json').read_text('utf8'))
         opts=ort.SessionOptions()
@@ -154,11 +196,10 @@ class PageTranslator:
         self.last_generation=None
         if not lines:
             return []
-        if len({r['id'] for r in lines})!=len(lines) or len(lines)>128:
-            raise ValueError('duplicate or excess source regions')
-        ids=self.tokenizer.encode(page_prompt(lines,context),add_special_tokens=False).ids
-        if len(ids)>8192:
-            raise ValueError('page exceeds local context budget')
+        return self.translate_prepared(lines, prepare_page_tokens(self.tokenizer, lines, context))
+
+    def translate_prepared(self, lines, ids):
+        self.last_generation = None
         limit=min(4096,max(120,(len(ids)+16*len(lines))*2))
         started=time.monotonic()
         raw,ended,count=self.generate(ids,limit)

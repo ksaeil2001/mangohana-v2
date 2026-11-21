@@ -5,7 +5,23 @@ import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url);
 let api={};try{api=require('../../packages/ai-engine/quality/translation-contract.cjs');}catch(e){if(e.code!=='MODULE_NOT_FOUND')throw e;}
 const {parsePageTranslation}=require('../../packages/ai-engine/quality/page-translation.cjs');
+const {translationRequest}=require('../../packages/ai-engine/quality/product-onnx.cjs');
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+test('words added to punctuation-only OCR need a source check before automatic lettering',()=>{
+ for(const [sourceText,translatedText,hold] of [
+  ['、','그리고',true],['！？','그럼 !',true],['…','1명',true],['！？','!?',false],['…','……',false],
+  ['え？','어?',false],['第2話','제2화',false],['♥','하트',false],['','',false],
+ ]){
+  const row={id:'line',sourceText,translatedText};
+  const risk=api.assessSemanticRisk({region:row,translatedText});
+  assert.equal(risk.signals.some(s=>s.code==='PUNCTUATION_EXPANDED'),hold);
+  if(hold){
+   assert.equal(risk.draftUsable,false);
+   assert.equal(risk.humanSemanticVerified,null);
+   assert.throws(()=>api.assertDraftPredicates([row]),error=>error.semanticReview[0].code==='PUNCTUATION_EXPANDED');
+  }else assert.doesNotThrow(()=>api.assertDraftPredicates([row]));
+ }
+});
 export function fixture(){
  const scope={owner:'a'.repeat(64),projectId:'book',pageId:'p2',pageNumber:2,sourceSha256:'b'.repeat(64)};
  const groups=[{id:'a',text:'田中は3個持っていない。',readingOrder:1,productionOcrProvenance:{sourceDetectionIds:['s1','s2']},speakerCandidates:['田中']},{id:'b',text:'待ってください。',readingOrder:2,productionOcrProvenance:{sourceDetectionIds:['s3']},speakerCandidates:[]}];
@@ -17,6 +33,30 @@ export function fixture(){
 const build=f=>{assert.equal(typeof api.buildTranslationInput,'function','Stage11 immutable input contract required');return api.buildTranslationInput(f);};
 const seal=f=>{delete f.context.snapshotSha256;f.context.snapshotSha256=hash(f.context);return f;};
 const result=(id,translation,source_reading)=>({id,translatedText:translation,proposedSource:source_reading??'unchanged',uncertain:false});
+
+test('the ONNX request carries panel order and confirmed speaker cues without repeating or changing source text', () => {
+  const f = fixture();
+  for (const [index, group] of f.extraction.speechBubbles.entries()) {
+    delete group.productionOcrProvenance;
+    group.inventoryLineIds = [group.id];
+    group.panelOrder = index + 1;
+    f.lines[index].sourceLineIds = [group.id];
+  }
+  f.lines[1].speaker = '花子';
+  f.lines[1].ocrUserOwnedFields = ['speaker'];
+  f.context.profiles = [{ id: 'hanako', name: '花子', aliases: [], speechStyle: 'polite', status: 'USER_CONFIRMED' }];
+  const input = build(seal(f));
+  const request = translationRequest(input, f.lines);
+  assert.deepEqual(request.lines, f.lines.map(({ id, sourceText }) => ({ id, source: sourceText })));
+  assert.deepEqual(request.context.scene, [
+    { id: 'a', order: 1, panelOrder: 1 },
+    { id: 'b', order: 2, panelOrder: 2, speaker: '花子', speechStyle: 'polite' },
+  ]);
+  assert.equal(request.context.targets, undefined);
+  assert.equal(JSON.stringify(request.context).includes(f.lines[0].sourceText), false);
+  assert.deepEqual(request.context.terms[0].targetRegionIds, ['a']);
+  assert.deepEqual(input.regions[0].sourceLineIds, ['a']);
+});
 test('source identities, multiline group, reading order and preserve observations survive immutable input',()=>{
  const f=fixture(),before=structuredClone(f),x=build(f);
  assert.deepEqual(x.regions.map(r=>r.id),['a','b']);assert.deepEqual(x.regions[0].sourceLineIds,['s1','s2']);

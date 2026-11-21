@@ -4,10 +4,21 @@ import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import {tsImport} from 'tsx/esm/api';
 const require=createRequire(import.meta.url),{applyOcrRefinement}=require('../../packages/ai-engine/quality/ocr-refinement.cjs'),{selectDialogueRegions}=require('../../packages/ai-engine/quality/region-selection.cjs'),{buildTranslationInput}=require('../../packages/ai-engine/quality/translation-contract.cjs');
+const {extractionFromOnnx}=require('../../packages/ai-engine/quality/product-onnx.cjs');
 const {draftLines}=await tsImport('../../packages/ai-engine/vendor/trio/scripts/local-preview/renderer.ts',import.meta.url);
 const dir=new URL('./fixtures/stage09/',import.meta.url),read=p=>JSON.parse(fs.readFileSync(new URL(p,dir),'utf8'));
 test('real renderer draft adapter retains the absolute page number rather than silently defaulting to page one',()=>{
  const ocr=read('raw-ocr.json');ocr.pageNumber=2;const lines=draftLines(ocr);assert.ok(lines.length);assert.ok(lines.every(l=>l.pageNumber===2));
+});
+test('the real renderer draft keeps the ONNX source line through the same translation contract',()=>{
+ const identity={jobId:'lineage-page',pageNumber:2,sourceSha256:'a'.repeat(64),width:160,height:240};
+ const row={id:'onnx-one',kind:'text_bubble',source:'日',confidence:.98,bbox:{x:.25,y:.25,width:.3,height:.4}};
+ const ocr=extractionFromOnnx({page:identity.jobId,...identity,lines:[row],detections:[row],uncoveredBubbles:[]},identity);
+ const {extraction,selection}=selectDialogueRegions(ocr.extraction,ocr.detection);
+ const lines=draftLines(extraction);
+ assert.deepEqual(lines.map(line=>line.sourceLineIds),[[row.id]]);
+ const input=buildTranslationInput({lines,extraction,selection});
+ assert.deepEqual(input.regions.map(region=>region.sourceLineIds),[[row.id]]);
 });
 test('source reading order may have preserve gaps while remaining exact and increasing',()=>{
  const ocr=read('raw-ocr.json');ocr.speechBubbles=ocr.speechBubbles.slice(0,2);ocr.speechBubbles[0].readingOrder=2;ocr.speechBubbles[1].readingOrder=5;

@@ -28,6 +28,44 @@ def bounds(bbox, width, height):
             min(height, math.ceil((bbox['y']+bbox['height'])*height)))
 
 
+def map_tile_detection(candidate, tile, page_size, prefix):
+    left, top, right, bottom = tile
+    width, height = page_size
+    box = candidate['bbox']
+    if ((left and box['x'] < .008) or (top and box['y'] < .008) or
+            (right < width and box['x'] + box['width'] > .992) or
+            (bottom < height and box['y'] + box['height'] > .992)):
+        return None
+    tile_width, tile_height = right - left, bottom - top
+    return {**candidate, 'id': prefix + candidate['id'], 'bbox': {
+        'x': (left + box['x'] * tile_width) / width, 'y': (top + box['y'] * tile_height) / height,
+        'width': box['width'] * tile_width / width, 'height': box['height'] * tile_height / height,
+    }}
+
+
+def detect_independent_text(image, detect, *, max_tiles):
+    observations = list(detect(image))
+    side, overlap = 1536, 192
+    width, height = image.size
+    if max(width, height) <= side:
+        return observations, {'plannedTiles': 0, 'processedTiles': 0, 'unsearchedPixelBoxes': []}
+
+    def starts(length):
+        last = max(0, length - side)
+        return [*range(0, last, side - overlap), last]
+
+    tiles = [(x, y, min(x + side, width), min(y + side, height))
+             for y in starts(height) for x in starts(width)]
+    for index, tile in enumerate(tiles[:max_tiles]):
+        with image.crop(tile) as crop:
+            for line in detect(crop):
+                observation = map_tile_detection(line, tile, image.size, f'db-view{index}-')
+                if observation is not None:
+                    observations.append(observation)
+    return observations, {'plannedTiles': len(tiles), 'processedTiles': min(len(tiles), max_tiles),
+                          'unsearchedPixelBoxes': [list(tile) for tile in tiles[max_tiles:]]}
+
+
 def detect_page(image, detect, session):
     """Keep the full-page layout and inspect overlapping views for small print."""
     width,height=image.size
@@ -40,14 +78,9 @@ def detect_page(image, detect, session):
     for i,(l,t,r,b) in enumerate(regions):
         crop=image.crop((l,t,r,b))
         for candidate in detect(session,crop):
-            box=candidate['bbox']
-            # Truncated words at an interior tile edge must not replace a full observation.
-            if ((l and box['x']<.008) or (t and box['y']<.008)
-                or (r<width and box['x']+box['width']>.992) or (b<height and box['y']+box['height']>.992)):
-                continue
-            bounds=dict(x=(l+box['x']*crop.width)/width,y=(t+box['y']*crop.height)/height,
-                        width=box['width']*crop.width/width,height=box['height']*crop.height/height)
-            observations.append({**candidate,'id':f'tile{i}-'+candidate['id'],'bbox':bounds})
+            observation = map_tile_detection(candidate, (l, t, r, b), image.size, f'tile{i}-')
+            if observation is not None:
+                observations.append(observation)
     return observations,1+len(regions)
 
 
@@ -59,7 +92,9 @@ def coverage(inner, outer):
 
 
 def crosscheck_text(observations, independent):
-    text,_=select_regions(observations)
+    duplicate_owners = {}
+    text, _ = select_regions(observations, duplicate_owners=duplicate_owners)
+    primary = {line['id']: line for line in text}
     bubbles=sorted((r for r in observations if r['kind']=='bubble'),key=lambda x:-x['confidence'])
     unique_bubbles=[]
     for bubble in bubbles:
@@ -67,22 +102,122 @@ def crosscheck_text(observations, independent):
             unique_bubbles.append(bubble)
     combined=list(observations)
     supports={}
+    contained_lines = {}
     for line in sorted(independent,key=lambda r:-r['confidence']):
         matches=[q for q in text if max(coverage(line,q),coverage(q,line))>=.74]
         if matches:
             if len(matches)==1 and coverage(line,matches[0])>=.90:
-                supports.setdefault(matches[0]['id'],[]).append(line['bbox'])
+                owner = matches[0]['id']
+                supports.setdefault(owner, []).append(line['bbox'])
+                if owner in primary:
+                    contained_lines.setdefault(owner, []).append(line)
             continue
         inside=any(coverage(line,b)>.7 for b in unique_bubbles)
         added={**line,'kind':'text_bubble' if inside else 'text_free'}
         combined.append(added)
         text.append(added)
         supports[added['id']]=[line['bbox']]
+
+    refinements = {}
+    for owner, candidates in contained_lines.items():
+        lines = separate_parallel_lines(candidates)
+        if not lines:
+            continue
+        refinements[owner] = [line['id'] for line in lines]
+        for line in lines:
+            detection = {**line, 'kind': primary[owner]['kind'], 'refinedFrom': owner}
+            combined.append(detection)
+            text.append(detection)
+            supports[line['id']] = [line['bbox']]
+    text = [line for line in text if line['id'] not in refinements]
     missing=[b['id'] for b in unique_bubbles if not any(coverage(q,b)>.5 for q in text)]
-    return [{**r,'inkSupport':supports[r['id']]} if r['id'] in supports else r for r in combined],missing
+    for index, observation in enumerate(combined):
+        region_id = observation['id']
+        replacement_ids = refinements.get(duplicate_owners.get(region_id, region_id))
+        if replacement_ids:
+            observation = {**observation, 'refinedBy': replacement_ids}
+        if region_id in supports:
+            observation = {**observation, 'inkSupport': supports[region_id]}
+        combined[index] = observation
+    return combined, missing
 
 
-def recognize(source_bytes, page, workdir, detector, session, reader, pins, db_detector=None):
+def separate_parallel_lines(candidates):
+    """Split a broad observation only when distinct supports are clearly side by side."""
+    lines = []
+    for candidate in candidates:
+        if not any(max(coverage(candidate, line), coverage(line, candidate)) >= .74 for line in lines):
+            lines.append(candidate)
+    if len(lines) < 2:
+        return []
+
+    boxes = [line['bbox'] for line in lines]
+    if all(box['height'] >= 1.2 * box['width'] for box in boxes):
+        along, length, across, extent = 'y', 'height', 'x', 'width'
+    elif all(box['width'] >= 1.2 * box['height'] for box in boxes):
+        along, length, across, extent = 'x', 'width', 'y', 'height'
+    else:
+        return []
+
+    across_boxes = sorted(boxes, key=lambda box: box[across])
+    for first, second in zip(across_boxes, across_boxes[1:]):
+        if first[across] + first[extent] >= second[across]:
+            return []
+    for index, first in enumerate(boxes):
+        for second in boxes[index + 1:]:
+            overlap = min(first[along] + first[length], second[along] + second[length]) - max(first[along], second[along])
+            if overlap < .5 * min(first[length], second[length]):
+                return []
+    return lines
+
+
+def panel_reading_order(image, regions):
+    """Use clearly bordered page gutters. Keep OCR order when the image is ambiguous."""
+    import numpy as np
+
+    page_width, page_height = image.size
+    if len(regions) < 2:
+        return regions
+    pixels = np.asarray(image.convert('L'))
+
+    def partition(left, top, right, bottom, members, depth):
+        if len(members) < 2 or depth == 8:
+            return [members]
+        crop = pixels[top:bottom, left:right]
+        for axis, extent, offset, page_size, collapse in (
+            ('y', 'height', top, page_height, 1), ('x', 'width', left, page_width, 0),
+        ):
+            white_share = (crop >= 245).mean(axis=collapse)
+            edge_share = (crop <= 96).mean(axis=collapse)
+            white = white_share >= .98
+            borders = np.flatnonzero(np.diff(np.pad(white, (1, 1))))
+            gutters = []
+            for start, end in zip(borders[::2], borders[1::2]):
+                if start < 2 or end > white.size - 2 or end - start < max(3, page_size * .008):
+                    continue
+                if max(edge_share[start - 2:start]) >= .70 and max(edge_share[end:end + 2]) >= .70:
+                    gutters.append((start, end))
+            for start, end in sorted(gutters, key=lambda span: span[1] - span[0], reverse=True):
+                cut = int(offset + (start + end) // 2)
+                boundary = cut / page_size
+                before = [region for region in members if region['bbox'][axis] + region['bbox'][extent] <= boundary]
+                after = [region for region in members if region['bbox'][axis] >= boundary]
+                if not before or not after or len(before) + len(after) != len(members):
+                    continue
+                if axis == 'y':
+                    return (partition(left, top, right, cut, before, depth + 1) +
+                            partition(left, cut, right, bottom, after, depth + 1))
+                return (partition(cut, top, right, bottom, after, depth + 1) +
+                        partition(left, top, cut, bottom, before, depth + 1))
+        return [members]
+
+    panels = partition(0, 0, page_width, page_height, regions, 0)
+    if len(panels) == 1:
+        return regions
+    return [{**region, 'panelOrder': order} for order, panel in enumerate(panels, 1) for region in panel]
+
+
+def recognize(source_bytes, page, workdir, detector, session, reader, pins, db_detector=None, *, text_tile_limit=0):
     from PIL import Image
     import numpy as np
     with Image.open(io.BytesIO(source_bytes)) as opened:
@@ -103,9 +238,14 @@ def recognize(source_bytes, page, workdir, detector, session, reader, pins, db_d
         with (workdir/'source.png').open('xb') as out:
             out.write(png_bytes)
     region_list,views=detect_page(image,detector.detect,session)
-    extra=db_detector(image) if db_detector else []
+    independent_search = None
+    if db_detector and text_tile_limit:
+        extra, independent_search = detect_independent_text(image, db_detector, max_tiles=text_tile_limit)
+    else:
+        extra = db_detector(image) if db_detector else []
     region_list,uncovered=crosscheck_text(region_list,extra)
     selected,duplicates=select_regions(region_list)
+    selected=panel_reading_order(image,selected)
     lines=[]
     for region in selected:
         left, top, right, bottom = bounds(region['bbox'],width,height)
@@ -114,12 +254,13 @@ def recognize(source_bytes, page, workdir, detector, session, reader, pins, db_d
         crop=image.crop((max(0,left-pad_x),max(0,top-pad_y),min(width,right+pad_x),min(height,bottom+pad_y)))
         raw=reader(crop)
         text=unicodedata.normalize('NFC',raw).strip()
-        lines.append({**region,'source': text,'pixelBox':[left,top,right,bottom],
+        lines.append({**region,'source': text,'rawSource':raw,'pixelBox':[left,top,right,bottom],
                       'supportBoxes':[bounds(box,width,height) for box in region.get('inkSupport',[])]})
     return {'page':page['id'],'width':width,'height':height,'sourceSha256':hashlib.sha256(source_bytes).hexdigest(),
             'pngSha256':hashlib.sha256(png_bytes).hexdigest(), 'models':pins,'views':views,
             'detections':region_list,'duplicates':duplicates,'lines':lines,'uncoveredBubbles':uncovered,
-            'independentTextRegions':len(extra)}
+            'independentTextRegions':len(extra),
+            **({'independentSearch': independent_search} if independent_search is not None else {})}
 
 
 def load_ocr_models(pack, detector_file, db_file):
