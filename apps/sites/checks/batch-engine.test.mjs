@@ -18,6 +18,8 @@ async function batchResponse(form,p,offset=0){
  return {id:'11111111-1111-4111-8111-111111111111',projectId:p.id,sourceLanguage:'ja',status:'queued',totalPages:manifest.length,pages:await Promise.all(manifest.map(async(member,i)=>({key:member.key,name:files[i].name,pageId:member.page_id,pageNumber:member.page_number??offset+i+1,jobId:jobId(offset+i),sourceSha256:sha(Buffer.from(await files[i].arrayBuffer())),status:'queued',job:{id:jobId(offset+i),pageId:member.page_id,projectId:p.id,pageNumber:member.page_number??offset+i+1,status:'queued',stage:'queued'}})))};
 }
 function completed(binding,p){return {id:binding.jobId,projectId:p.id,pageId:binding.pageId,pageNumber:binding.pageNumber,status:'completed',stage:'completed',result:{blocks:[model.makeBlock({id:binding.pageId+'-new',source:'原文',text:'실제 AI 증거가 아닌 합성 응답'})]}};}
+function batchCompletedView(receipt){return {...receipt,status:'completed',pages:receipt.pages.map(page=>({...page,status:'completed',job:{...page.job,status:'completed',stage:'completed'}}))};}
+const jobResult=url=>/\/jobs\/([^/]+)\/result$/.exec(String(url))?.[1];
 const callbacks=overrides=>({onIntent:async()=>{},onJobs:async()=>{},onResult:()=>{},onError:()=>{},onStage:()=>{},...overrides});
 const options=current=>({currentPageId:()=>current,concurrency:3,pollIntervalMs:0});
 
@@ -32,6 +34,9 @@ test('a partial batch receipt preserves both bindings, applies its completed pag
    for(const [i,status] of ['completed','result_unknown'].entries()){receipt.pages[i].status=status;receipt.pages[i].job.status=status;}
    return Response.json(receipt);
   }
+  if(String(url).endsWith('/batches/'+receipt.id))return Response.json(receipt);
+  const id=jobResult(url);
+  if(id){const entry=receipt.pages.find(item=>item.jobId===id);assert.ok(entry);return Response.json(completed(entry,p).result);}
   const entry=receipt.pages.find(item=>String(url).endsWith(item.jobId));assert.ok(entry);
   return Response.json(entry.status==='completed'?completed(entry,p):{...entry.job,stage:'result_unknown'});
  };
@@ -45,19 +50,21 @@ test('a partial batch receipt preserves both bindings, applies its completed pag
  }finally{globalThis.fetch=originalFetch;}
 });
 
-test('ten pages use one durable multipart submission then bounded current+next-two polling',async()=>{
+test('ten pages use one durable multipart submission then batch status and bounded result fetching',async()=>{
  required();const p=project(),calls=[],results=[],intents=[];let response,durable=false,active=0,maximum=0;
  globalThis.fetch=async(url,init={})=>{
   if(String(url).startsWith('data:'))return originalFetch(url,init);
   calls.push([String(url),init.method||'GET']);
   if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
   if(String(url).endsWith('/batches')){assert.equal(intents.at(-1).phase,'sending');response=await batchResponse(init.body,p);return Response.json(response);}
-  if(String(url).includes('/jobs/')){assert.equal(durable,true);active++;maximum=Math.max(maximum,active);await new Promise(resolve=>setTimeout(resolve,3));active--;return Response.json(completed(response.pages.find(value=>String(url).endsWith(value.jobId)),p));}
+  if(String(url).endsWith('/batches/'+response.id)){assert.equal(durable,true);return Response.json(batchCompletedView(response));}
+  const id=jobResult(url);
+  if(id){assert.equal(durable,true);active++;maximum=Math.max(maximum,active);await new Promise(resolve=>setTimeout(resolve,3));active--;return Response.json(completed(response.pages.find(value=>value.jobId===id),p).result);}
   throw new Error('unexpected '+url);
  };
  try{const summary=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:async intent=>intents.push(intent),onJobs:async bindings=>{assert.equal(bindings.length,10);await Promise.resolve();durable=true;},onResult:(id,result)=>results.push([id,result])}),options('page-6'));
-  assert.equal(calls.filter(([url,method])=>url.endsWith('/batches')&&method==='POST').length,1);assert.equal(results.length,10);assert.equal(summary.completed,10);assert.equal(maximum,3);
-  assert.deepEqual(calls.filter(([url])=>url.includes('/jobs/')).slice(0,3).map(([url])=>url.split('/').at(-1)),[jobId(5),jobId(6),jobId(7)]);
+  assert.equal(calls.filter(([url,method])=>url.endsWith('/batches')&&method==='POST').length,1);assert.equal(calls.filter(([url,method])=>url.endsWith('/batches/'+response.id)&&method==='GET').length,1);assert.equal(results.length,10);assert.equal(summary.completed,10);assert.equal(maximum,3);
+  assert.deepEqual(calls.filter(([url])=>url.endsWith('/result')).slice(0,3).map(([url])=>url.split('/').at(-2)),[jobId(5),jobId(6),jobId(7)]);
   assert.deepEqual(intents.map(intent=>intent.phase),['prepared','sending']);
  }finally{globalThis.fetch=originalFetch;}
 });
@@ -121,7 +128,7 @@ test('a failed durable receipt prevents another delayed failed GET from creating
 });
 test('a fresh batch omits an already-completed or saved current page that is outside its manifest',async()=>{
  required();for(const selected of ['page-1','page-2']){const p=project(3);p.pages[0].processed=true;p.pages[1]={...p.pages[1],jobId:jobId(0),jobEndpoint:'/api/engine',status:'paused'};let receipt,currentHint;
-  globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:'))return originalFetch(url,init);if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});if(String(url).endsWith('/batches')){currentHint=init.body.get('current_page_id');receipt=await batchResponse(init.body,p,2);if(currentHint&&!receipt.pages.some(page=>page.pageId===currentHint))return Response.json({error:'current page must belong to manifest'},{status:422});return Response.json(receipt);}const binding=String(url).endsWith(jobId(0))?{pageId:'page-2',jobId:jobId(0),pageNumber:1}:receipt.pages.find(page=>String(url).endsWith(page.jobId));return Response.json(completed(binding,p));};
+  globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:'))return originalFetch(url,init);if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});if(String(url).endsWith('/batches')){currentHint=init.body.get('current_page_id');receipt=await batchResponse(init.body,p,2);if(currentHint&&!receipt.pages.some(page=>page.pageId===currentHint))return Response.json({error:'current page must belong to manifest'},{status:422});return Response.json(receipt);}if(String(url).endsWith('/batches/'+receipt?.id))return Response.json(batchCompletedView(receipt));const id=jobResult(url);if(id)return Response.json(completed(receipt.pages.find(page=>page.jobId===id),p).result);const binding=String(url).endsWith(jobId(0))?{pageId:'page-2',jobId:jobId(0),pageNumber:1}:receipt.pages.find(page=>String(url).endsWith(page.jobId));return Response.json(completed(binding,p));};
   try{const summary=await batch.processProjectBatch(p,state.getRunTargets(p,'all'),'','ja','ko',new AbortController().signal,callbacks(),options(selected));assert.equal(summary.completed,2);assert.equal(summary.paused,0);assert.equal(currentHint,null);}finally{globalThis.fetch=originalFetch;}
  }
 });
@@ -140,7 +147,8 @@ test('lost batch response restores original membership by key without any file r
    if(String(url).startsWith('data:'))throw new Error('must not read originals for resolve');
    if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
    if(String(url).endsWith('/batches/resolve')){resolveCount++;assert.deepEqual(JSON.parse(init.body),{project_id:p.id,idempotency_key:intent.key});return Response.json(response);}
-   if(String(url).includes('/jobs/'))return Response.json(completed(response.pages.find(value=>String(url).endsWith(value.jobId)),p));
+   if(String(url).endsWith('/batches/'+response.id))return Response.json(batchCompletedView(response));
+   const id=jobResult(url);if(id)return Response.json(completed(response.pages.find(value=>value.jobId===id),p).result);
    throw new Error('must not reupload');
   };
   const result=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks(),options('page-7'));assert.equal(result.completed,10);assert.equal(postCount,1);assert.equal(resolveCount,1);
@@ -150,7 +158,7 @@ test('pages added after an unknown response get a separate key while the origina
  required();let p=project(2),intent,original;const posted=[];let resolved=0;
  globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:'))return originalFetch(url,init);if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});original=await batchResponse(init.body,p);throw new TypeError('unknown response');};
  try{await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:value=>intent=value}),options('page-1'));p={...p,pages:[...p.pages.map(page=>({...page,pendingBatch:intent,status:'paused'})),project(3).pages[2]]};
-  const receipts=[original];globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:')){assert.equal(String(url),p.pages[2].image);return originalFetch(url,init);}if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});if(String(url).endsWith('/batches/resolve')){resolved++;assert.equal(JSON.parse(init.body).idempotency_key,intent.key);return Response.json(original);}if(String(url).endsWith('/batches')){posted.push({key:init.body.get('idempotency_key'),members:JSON.parse(init.body.get('manifest'))});const receipt=await batchResponse(init.body,p,2);receipts.push(receipt);return Response.json(receipt);}const binding=receipts.flatMap(receipt=>receipt.pages).find(page=>String(url).endsWith(page.jobId));return Response.json(completed(binding,p));};
+  const receipts=[original];globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:')){assert.equal(String(url),p.pages[2].image);return originalFetch(url,init);}if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});if(String(url).endsWith('/batches/resolve')){resolved++;assert.equal(JSON.parse(init.body).idempotency_key,intent.key);return Response.json(original);}if(String(url).endsWith('/batches')){posted.push({key:init.body.get('idempotency_key'),members:JSON.parse(init.body.get('manifest'))});const receipt={...await batchResponse(init.body,p,2),id:'22222222-2222-4222-8222-222222222222'};receipts.push(receipt);return Response.json(receipt);}const batchHit=receipts.find(r=>String(url).endsWith('/batches/'+r.id));if(batchHit)return Response.json(batchCompletedView(batchHit));const id=jobResult(url);if(id)return Response.json(completed(receipts.flatMap(r=>r.pages).find(page=>page.jobId===id),p).result);throw new Error('unexpected '+url);};
   const summary=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks(),options('page-3'));assert.equal(summary.completed,3);assert.equal(resolved,1);assert.equal(posted.length,1);assert.notEqual(posted[0].key,intent.key);assert.deepEqual(posted[0].members.map(member=>member.page_id),['page-3']);
  }finally{globalThis.fetch=originalFetch;}
 });
@@ -158,7 +166,7 @@ test('resolving an old receipt cannot reattach a member that continued editing i
  required();for(const scope of ['current','all']){let p=project(2),intent,oldReceipt,newReceipt;const gets=[];
   globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:'))return originalFetch(url,init);if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});oldReceipt=await batchResponse(init.body,p);throw new TypeError('unknown accepted response');};
   try{await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:value=>intent=value}),options('page-2'));p={...p,pages:p.pages.map(page=>({...page,pendingBatch:intent,status:'paused'}))};p.pages[0]={...state.transitionPage(p.pages[0],{type:'continue-editing'}),engineGeneration:1,processed:false,blocks:[{...p.pages[0].blocks[0],text:'분리 후 새 수동 대사'}]};const baseline=p.pages,requestId='resolve-after-manual';let live=p;
-   globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:'))return originalFetch(url,init);if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});if(String(url).endsWith('/batches/resolve'))return Response.json(oldReceipt);if(String(url).endsWith('/batches')){newReceipt=await batchResponse(init.body,p,20);Object.assign(newReceipt.pages[0],{jobId:oldReceipt.pages[0].jobId,pageNumber:1});Object.assign(newReceipt.pages[0].job,{id:oldReceipt.pages[0].jobId,pageNumber:1});return Response.json(newReceipt);}const binding=[...oldReceipt.pages,...(newReceipt?.pages||[])].find(page=>String(url).endsWith(page.jobId));gets.push(binding.jobId);return Response.json(completed(binding,p));};
+   globalThis.fetch=async(url,init={})=>{if(String(url).startsWith('data:'))return originalFetch(url,init);if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});if(String(url).endsWith('/batches/resolve'))return Response.json(oldReceipt);if(String(url).endsWith('/batches')){newReceipt={...await batchResponse(init.body,p,20),id:'22222222-2222-4222-8222-222222222222'};Object.assign(newReceipt.pages[0],{jobId:oldReceipt.pages[0].jobId,pageNumber:1});Object.assign(newReceipt.pages[0].job,{id:oldReceipt.pages[0].jobId,pageNumber:1});return Response.json(newReceipt);}const batchHit=[oldReceipt,newReceipt].filter(Boolean).find(r=>String(url).endsWith('/batches/'+r.id));if(batchHit)return Response.json(batchCompletedView(batchHit));const id=jobResult(url);if(id){const binding=[...oldReceipt.pages,...(newReceipt?.pages||[])].find(page=>page.jobId===id);gets.push(binding.jobId);return Response.json(completed(binding,p).result);}throw new Error('unexpected '+url);};
    const result=await batch.processProjectBatch(p,scope==='current'?[p.pages[1]]:p.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:value=>{live=state.bindProjectBatch(live,baseline,requestId,{intent:value,pollPageIds:scope==='current'?['page-2']:['page-1','page-2']});},onJobs:bindings=>{for(const binding of bindings)if(binding.pageId==='page-1'){assert.notEqual(binding.batchKey,intent.key);assert.equal(binding.generation,1);}live=state.bindProjectBatch(live,baseline,requestId,{bindings,pollPageIds:scope==='current'?['page-2']:['page-1','page-2']});},onResult:(id,result)=>{live={...live,pages:live.pages.map(page=>page.id===id?state.transitionPage(page,{type:'result',requestId,result}):page)};}}),options('page-2'));
    assert.equal(result.completed,scope==='current'?1:2);if(scope==='current'){assert.ok(!gets.includes(oldReceipt.pages[0].jobId));assert.equal(live.pages[0].jobId,undefined);assert.equal(live.pages[0].blocks[0].text,'분리 후 새 수동 대사');assert.equal(live.pages[0].engineGeneration,1);assert.equal(state.canEditPage(live.pages[0]),true);}else{assert.ok(newReceipt);assert.equal(newReceipt.pages[0].jobId,oldReceipt.pages[0].jobId);assert.ok(gets.includes(newReceipt.pages[0].jobId));}
   }finally{globalThis.fetch=originalFetch;}
@@ -246,4 +254,133 @@ test('pending metadata survives local restore but imported backups cannot inheri
  const restored=model.restoreProject(pendingProject);assert.equal(restored.pages[0].pendingBatch.key,intent.key);assert.equal(restored.pages[0].status,'paused');assert.equal(state.canEditPage(restored.pages[0]),false);
  const imported=model.validateProject(pendingProject);assert.equal(imported.pages[0].pendingBatch,undefined);assert.equal(imported.pages[0].jobId,undefined);
  const corrupt=structuredClone(pendingProject);corrupt.pages[0].pendingBatch.members.push({...corrupt.pages[0].pendingBatch.members[0]});assert.throws(()=>model.restoreProject(corrupt),/배치/);
+});
+
+test('BATCH_UPLOAD_BUSY 429 reverts intent to prepared so resume resubmits once with the same key',async()=>{
+ required();let p=project(3);const intents=[],posts=[];let resolves=0,response;
+ globalThis.fetch=async(url,init={})=>{
+  if(String(url).startsWith('data:'))return originalFetch(url,init);
+  if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
+  if(String(url).endsWith('/batches/resolve')){resolves++;throw new Error('must not resolve pre-admission busy rejection');}
+  if(String(url).endsWith('/batches')){
+   posts.push(init.body.get('idempotency_key'));
+   if(posts.length===1)return Response.json({code:'BATCH_UPLOAD_BUSY',error:'다른 배치 업로드를 저장하고 있습니다. 잠시 후 다시 시도해 주세요.'},{status:429});
+   response=await batchResponse(init.body,p);return Response.json(response,{status:202});
+  }
+  if(String(url).endsWith('/batches/'+response.id))return Response.json(batchCompletedView(response));
+  const id=jobResult(url);
+  if(id)return Response.json(completed(response.pages.find(value=>value.jobId===id),p).result);
+  throw new Error('unexpected '+url);
+ };
+ try{
+  const first=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:intent=>{intents.push(intent);}}),options('page-1'));
+  assert.deepEqual(first,{completed:0,failed:0,paused:3});
+  assert.deepEqual(intents.map(intent=>intent.phase),['prepared','sending','prepared']);
+  assert.equal(resolves,0);
+  const prepared=intents.at(-1);
+  const resumedProject={...p,pages:p.pages.map(page=>({...page,pendingBatch:prepared,status:'paused'}))};
+  const second=await batch.processProjectBatch(resumedProject,resumedProject.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:intent=>{intents.push(intent);}}),options('page-1'));
+  assert.deepEqual(second,{completed:3,failed:0,paused:0});
+  assert.equal(posts.length,2);assert.equal(posts[0],posts[1]);assert.equal(resolves,0);
+ }finally{globalThis.fetch=originalFetch;}
+});
+
+test('non-busy 429 keeps sending phase and resolves without reuploading originals',async()=>{
+ required();let p=project(2);const intents=[];let posts=0,resolves=0,uploads=0,response;
+ globalThis.fetch=async(url,init={})=>{
+  if(String(url).startsWith('data:'))return originalFetch(url,init);
+  if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
+  if(String(url).endsWith('/batches')){posts++;response=await batchResponse(init.body,p);return Response.json({code:'BATCH_LIMIT',error:'보관할 수 있는 배치 수를 초과했습니다.'},{status:429});}
+  throw new Error('unexpected '+url);
+ };
+ try{
+  const first=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks({onIntent:intent=>{intents.push(intent);}}),options('page-1'));
+  assert.deepEqual(first,{completed:0,failed:0,paused:2});
+  assert.deepEqual(intents.map(intent=>intent.phase),['prepared','sending']);
+  const sending=intents.at(-1);
+  const resumedProject={...p,pages:p.pages.map(page=>({...page,pendingBatch:sending,status:'paused'}))};
+  globalThis.fetch=async(url,init={})=>{
+   if(String(url).startsWith('data:')){uploads++;return originalFetch(url,init);}
+   if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
+   if(String(url).endsWith('/batches/resolve')){resolves++;return Response.json(response);}
+   if(String(url).endsWith('/batches')){uploads++;throw new Error('must not reupload');}
+   if(String(url).endsWith('/batches/'+response.id))return Response.json(batchCompletedView(response));
+   const id=jobResult(url);
+   if(id)return Response.json(completed(response.pages.find(value=>value.jobId===id),p).result);
+   throw new Error('unexpected '+url);
+  };
+  const second=await batch.processProjectBatch(resumedProject,resumedProject.pages,'','ja','ko',new AbortController().signal,callbacks(),options('page-1'));
+  assert.deepEqual(second,{completed:2,failed:0,paused:0});assert.equal(posts,1);assert.equal(resolves,1);assert.equal(uploads,0);
+ }finally{globalThis.fetch=originalFetch;}
+});
+
+test('thirty fresh pages read each original image only once and poll batch status in 2 requests without images',async()=>{
+ required();const p=project(30);let dataReads=0,batchPosts=0,batchGets=0,jobStatusGets=0,resultGets=0,response;
+ globalThis.fetch=async(url,init={})=>{
+  if(String(url).startsWith('data:')){dataReads++;return originalFetch(url,init);}
+  if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
+  if(String(url).endsWith('/batches')){batchPosts++;response=await batchResponse(init.body,p);return Response.json(response);}
+  if(String(url).endsWith('/batches/'+response.id)){
+   batchGets++;
+   if(batchGets<3){
+    return Response.json({...response,status:'running',pages:response.pages.map(page=>({...page,status:'running',job:{...page.job,status:'running',stage:'translating'}}))});
+   }
+   return Response.json(batchCompletedView(response));
+  }
+  const id=jobResult(url);
+  if(id){resultGets++;return Response.json(completed(response.pages.find(value=>value.jobId===id),p).result);}
+  if(String(url).includes('/jobs/')){jobStatusGets++;}
+  throw new Error('unexpected '+url);
+ };
+ try{
+  const summary=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks(),options('page-1'));
+  assert.deepEqual(summary,{completed:30,failed:0,paused:0});
+  assert.equal(batchPosts,1);
+  assert.equal(dataReads,30);
+  assert.equal(batchGets,3);
+  assert.equal(jobStatusGets,0);
+  assert.equal(resultGets,30);
+ }finally{globalThis.fetch=originalFetch;}
+});
+
+test('incomplete batch status falls back to per-job polling without dropping pages and restored batchId resumes via batch endpoint',async()=>{
+ required();const p=project(3);let batchGets=0,jobGets=0,response;
+ globalThis.fetch=async(url,init={})=>{
+  if(String(url).startsWith('data:'))return originalFetch(url,init);
+  if(String(url).endsWith('/health'))return Response.json({status:'ok',batchSupported:true});
+  if(String(url).endsWith('/batches')){response=await batchResponse(init.body,p);return Response.json(response);}
+  if(String(url).endsWith('/batches/'+response.id)){
+   batchGets++;
+   // Deliberately omit page-3 so the batch falls back cleanly to per-job polling.
+   return Response.json({...response,pages:response.pages.slice(0,2)});
+  }
+  if(String(url).includes('/jobs/')){
+   jobGets++;
+   return Response.json(completed(response.pages.find(value=>String(url).endsWith(value.jobId)),p));
+  }
+  throw new Error('unexpected '+url);
+ };
+ try{
+  const summary=await batch.processProjectBatch(p,p.pages,'','ja','ko',new AbortController().signal,callbacks(),options('page-1'));
+  assert.deepEqual(summary,{completed:3,failed:0,paused:0});assert.equal(batchGets,1);assert.equal(jobGets,3);
+ }finally{globalThis.fetch=originalFetch;}
+
+ // Saved batchId survives restoreProject and resumes directly via GET /batches/:id
+ const savedBatchId='33333333-3333-4333-8333-333333333333';
+ const saved=model.restoreProject({...p,pages:p.pages.map((page,i)=>({...page,jobId:jobId(i),batchId:savedBatchId,jobEndpoint:'/api/engine',status:'paused'}))});
+ assert.equal(saved.pages[0].batchId,savedBatchId);
+ let resumedBatchGets=0,resumedResultGets=0;
+ globalThis.fetch=async(url)=>{
+  if(String(url).endsWith('/batches/'+savedBatchId)){
+   resumedBatchGets++;
+   return Response.json({id:savedBatchId,projectId:p.id,status:'completed',pages:saved.pages.map((page,i)=>({pageId:page.id,jobId:page.jobId,status:'completed',job:{id:page.jobId,projectId:p.id,pageId:page.id,pageNumber:i+1,status:'completed',stage:'completed'}}))});
+  }
+  const id=jobResult(url);
+  if(id){resumedResultGets++;return Response.json(completed({jobId:id,pageId:saved.pages.find(pg=>pg.jobId===id).id},p).result);}
+  throw new Error('unexpected '+url);
+ };
+ try{
+  const resumed=await batch.processProjectBatch(saved,saved.pages,'','ja','ko',new AbortController().signal,callbacks(),options('page-1'));
+  assert.deepEqual(resumed,{completed:3,failed:0,paused:0});assert.equal(resumedBatchGets,1);assert.equal(resumedResultGets,3);
+ }finally{globalThis.fetch=originalFetch;}
 });

@@ -6,12 +6,15 @@ export type IssueKind = "missing" | "overlap" | "linebreak" | "error" | "engine"
 export type MeasuredLettering = {width:number;height:number;regions:{id:string;signature:string}[]};
 export type EngineReview = {warnings:string[];soundEffects?:{preserved:number;translated:number};measuredLettering?:MeasuredLettering};
 export type StudioBox={x:number;y:number;w:number;h:number};
+export type WritingMode = "horizontal-tb" | "vertical-rl";
+export type CoverStroke = { id: string; color: string; size: number; points: { x: number; y: number }[] };
 export type TextBlock = {
   sourceBox?:StudioBox;userSourceBox?:StudioBox;
   id: string; source: string; text: string; x: number; y: number; w: number; h: number;
   font: string; size: number; weight: number; align: "left" | "center" | "right";
   color: string; lineHeight: number; confidence?: number; fill: boolean;
   strokeColor?: string; strokeWidth?: number;
+  writingMode?: WritingMode;
 };
 export type PendingBatch={key:string;projectId:string;source:'ja'|'auto';target:'ko';phase:'prepared'|'sending';members:{pageId:string;pageNumber?:number;generation:number;sourceSha256:string;name:string}[]};
 export type StudioPage = {
@@ -20,7 +23,7 @@ export type StudioPage = {
   engineReview?:EngineReview;
   textInventoryJobId?: string;
   id: string; name: string; image: string; cleanImage?: string; finalImage?: string; finalImageSignature?: string; width: number; height: number;
-  blocks: TextBlock[]; status: PageStatus; error?: string; reviewed: boolean; jobId?: string; jobEndpoint?: string; requestId?: string; processed?: boolean; engineGeneration?: number;enginePageNumber?:number;pendingBatch?:PendingBatch;
+  blocks: TextBlock[]; coverStrokes?: CoverStroke[]; status: PageStatus; error?: string; reviewed: boolean; jobId?: string; batchId?: string; jobEndpoint?: string; requestId?: string; processed?: boolean; engineGeneration?: number;enginePageNumber?:number;pendingBatch?:PendingBatch;
 };
 export type EngineOutcome='FAILED'|'RESULT_UNKNOWN'|'NEEDS_REVIEW'|'PARTIAL';
 export function readEngineOutcome(value:unknown):EngineOutcome|undefined {
@@ -68,15 +71,16 @@ export function ocrBox(block:TextBlock):StudioBox {
 }
 /** Fixed visual fields and layer order bind an engine bitmap to its editable content. */
 function visualFields(b: TextBlock) {
-  const fields = [b.text,b.x,b.y,b.w,b.h,b.font,b.size,b.weight,b.align,b.color,b.lineHeight,b.fill];
+  const fields: Array<string | number | boolean> = [b.text,b.x,b.y,b.w,b.h,b.font,b.size,b.weight,b.align,b.color,b.lineHeight,b.fill];
   if (b.strokeWidth && b.strokeColor) fields.push(b.strokeWidth,b.strokeColor);
+  if (b.writingMode === "vertical-rl") fields.push(b.writingMode);
   return fields;
 }
 export function blockVisualSignature(blocks:readonly TextBlock[]):string {
   return JSON.stringify({version:1,blocks:blocks.map(visualFields)});
 }
 export function canUseFinalImage(page:StudioPage|undefined):page is StudioPage&{finalImage:string;finalImageSignature:string} {
-  return !!page&&typeof page.finalImage==="string"&&/^data:image\/png;base64,/.test(page.finalImage)&&typeof page.finalImageSignature==="string"&&page.finalImageSignature===blockVisualSignature(page.blocks);
+  return !!page&&!(page.coverStrokes?.length)&&typeof page.finalImage==="string"&&/^data:image\/png;base64,/.test(page.finalImage)&&typeof page.finalImageSignature==="string"&&page.finalImageSignature===blockVisualSignature(page.blocks);
 }
 type PixelCrop = { left:number; top:number; width:number; height:number };
 
@@ -107,12 +111,18 @@ export function unchangedFinalCrops(page:StudioPage, editingId?:string|null): Ma
     originals.push(crop(x,y,w,h));
   }
   const current=page.blocks.map(b=>crop(b.x,b.y,b.w,b.h));
+  const strokeBoxes: PixelCrop[]=(page.coverStrokes??[]).map(s=>{
+    const xs=s.points.map(pt=>pt.x*page.width/100), ys=s.points.map(pt=>pt.y*page.height/100), pad=s.size/2+2;
+    const left=Math.max(0,Math.floor(Math.min(...xs)-pad)), top=Math.max(0,Math.floor(Math.min(...ys)-pad));
+    return {left,top,width:Math.min(page.width,Math.ceil(Math.max(...xs)+pad))-left,height:Math.min(page.height,Math.ceil(Math.max(...ys)+pad))-top};
+  });
   for (const [i,block] of page.blocks.entries()) {
     const index=byVisual.get(JSON.stringify(visualFields(block)));
     if (block.id===editingId || index===undefined) continue;
     const region=originals[index];
     if (!originals.some((other,j)=>j!==index && touches(region,other)) &&
-        !current.some((other,j)=>j!==i && touches(region,other))) keep.set(block.id,region);
+        !current.some((other,j)=>j!==i && touches(region,other)) &&
+        !strokeBoxes.some(box=>touches(region,box))) keep.set(block.id,region);
   }
   return keep;
 }
@@ -157,7 +167,33 @@ export function wrapStudioText(text:string,available:number,measure:(value:strin
   }
   return lines;
 }
-export function lineCount(b: TextBlock, width: number) {
+export function wrapVerticalColumns(text:string,availableHeight:number,charStep:number):string[] {
+  const maxChars=Math.max(1,Math.floor(availableHeight/Math.max(1,charStep)));
+  const columns:string[]=[];
+  for (const paragraph of text.replace(/\r\n?/g,"\n").split("\n")) {
+    const chars=[...graphemes.segment(paragraph)].map(s=>s.segment);
+    if (!chars.length) { columns.push(""); continue; }
+    let col="";
+    let count=0;
+    for (const ch of chars) {
+      if (count>0 && count>=maxChars && !closingMark.test(ch)) {
+        columns.push(col);
+        col=ch===" "?"":ch;
+        count=col?1:0;
+      } else {
+        col+=ch;
+        count++;
+      }
+    }
+    columns.push(col);
+  }
+  return columns;
+}
+export function lineCount(b: TextBlock, width: number, height?: number) {
+  if (b.writingMode==="vertical-rl") {
+    const availH=Math.max(1,b.h/100*(height??width)-12-2*(b.strokeWidth??0));
+    return wrapVerticalColumns(b.text,availH,b.size*1.06).length;
+  }
   const available=Math.max(1,b.w/100*width-12-2*(b.strokeWidth??0));
   const estimate=(s:string)=>{
     let em=0;
@@ -184,7 +220,9 @@ export function getIssues(page: StudioPage, manualFits?:ReadonlyMap<string,boole
     if (!b.text.trim()) {
       issues.push({id:b.id+"-missing",kind:"missing",pageId:page.id,blockId:b.id,title:"번역문이 비어 있어요",description:"인식한 원문을 확인하고 이미지 위에서 입력해 주세요."});
     } else if (!measured.has(b.id) &&
-        !(manualFits?.get(b.id) ?? (lineCount(b,page.width) * b.size * b.lineHeight <= b.h/100 * page.height - 8))) {
+        !(manualFits?.get(b.id) ?? (b.writingMode==="vertical-rl"
+          ? (lineCount(b,page.width,page.height) * b.size * b.lineHeight <= b.w/100 * page.width - 8)
+          : (lineCount(b,page.width) * b.size * b.lineHeight <= b.h/100 * page.height - 8)))) {
       issues.push({id:b.id+"-linebreak",kind:"linebreak",pageId:page.id,blockId:b.id,title:"말풍선에 문장이 꽉 차요",description:"글자 크기를 맞추거나 줄바꿈을 다듬어 주세요."});
     }
     for (const other of page.blocks) {
@@ -207,7 +245,10 @@ export function approvePageCandidate(page:StudioPage):StudioPage {
 }
 export function fitBlock(block: TextBlock, page: Pick<StudioPage,"width"|"height">): TextBlock {
   const b = {...block};
-  while (b.size > 10 && lineCount(b,page.width)*b.size*b.lineHeight > b.h/100*page.height-12) b.size--;
+  const fits = () => b.writingMode==="vertical-rl"
+    ? lineCount(b,page.width,page.height)*b.size*b.lineHeight <= b.w/100*page.width-12
+    : lineCount(b,page.width)*b.size*b.lineHeight <= b.h/100*page.height-12;
+  while (b.size > 10 && !fits()) b.size--;
   return b;
 }
 export function pageStatus(page: StudioPage): PageStatus {
@@ -287,12 +328,15 @@ function normalizeProject(value:unknown,imported:boolean):Project {
     if(raw.engineGeneration!==undefined&&(!Number.isSafeInteger(raw.engineGeneration)||raw.engineGeneration<0))throw new Error("저장된 처리 요청 세대를 확인해 주세요.");
     if(raw.enginePageNumber!==undefined&&(!Number.isSafeInteger(raw.enginePageNumber)||raw.enginePageNumber<1||raw.enginePageNumber>100000))throw new Error('저장된 서버 페이지 순서를 확인해 주세요.');
     // Project backups include manual regions; OCR's per-response limit is separate.
-    const page:StudioPage={...raw,blocks:validateBlocks(raw.blocks,{preserveContent:true}),error:typeof raw.error==="string"?raw.error:undefined,processed:raw.processed===true||((raw.status==="review"||raw.status==="completed")&&!!raw.cleanImage),requestId:undefined};
+    const coverStrokes=validateCoverStrokes(raw.coverStrokes);
+    const page:StudioPage={...raw,blocks:validateBlocks(raw.blocks,{preserveContent:true}),...(coverStrokes?{coverStrokes}:{}),error:typeof raw.error==="string"?raw.error:undefined,processed:raw.processed===true||((raw.status==="review"||raw.status==="completed")&&!!raw.cleanImage),requestId:undefined};
+    if(!coverStrokes)delete page.coverStrokes;
     if(raw.engineReview!==undefined)page.engineReview=readEngineReview(raw.engineReview);
     page.textInventoryJobId=!imported&&isStudioId(raw.textInventoryJobId)?raw.textInventoryJobId:undefined;
-    if(imported){page.jobId=undefined;page.jobEndpoint=undefined;page.pendingBatch=undefined;page.enginePageNumber=undefined;}
+    if(imported){page.jobId=undefined;page.batchId=undefined;page.jobEndpoint=undefined;page.pendingBatch=undefined;page.enginePageNumber=undefined;}
     else if(raw.jobId){
       if(!isStudioId(raw.jobId)||typeof raw.jobEndpoint!=="string")throw new Error("저장된 작업 ID와 엔진 주소를 확인해 주세요.");
+      page.batchId=isStudioId(raw.batchId)?raw.batchId:undefined;
       if(raw.jobEndpoint===DEFAULT_ENGINE_ENDPOINT)page.jobEndpoint=DEFAULT_ENGINE_ENDPOINT;
       else{
         let url:URL;try{url=new URL(raw.jobEndpoint);}catch{throw new Error("저장된 엔진 주소가 올바르지 않아요.");}
@@ -301,7 +345,7 @@ function normalizeProject(value:unknown,imported:boolean):Project {
         if(url.username||url.password||url.search||url.hash||(url.protocol!=="https:"&&!(url.protocol==="http:"&&local)))throw new Error("저장된 엔진 주소가 올바르지 않아요.");
         page.jobEndpoint=url.href.replace(/\/$/,"");
       }
-    }else{page.jobId=undefined;page.jobEndpoint=undefined;}
+    }else{page.jobId=undefined;page.batchId=undefined;page.jobEndpoint=undefined;}
     if(!imported&&raw.pendingBatch)page.pendingBatch=validatePendingBatch(raw.pendingBatch,p.id,raw.id);
     page.engineOutcome=readEngineOutcome(raw.engineOutcome);
     page.reviewed=raw.reviewed===true&&!page.engineOutcome&&reviewStillValid({...page,status:"review",jobId:undefined});
@@ -320,6 +364,29 @@ function normalizeProject(value:unknown,imported:boolean):Project {
 }
 export function validateProject(value:unknown):Project {return normalizeProject(value,true);}
 export function restoreProject(value:unknown):Project {return normalizeProject(value,false);}
+export function validateCoverStrokes(value: unknown): CoverStroke[] | undefined {
+  if (value === undefined) return undefined;
+  if (!Array.isArray(value) || value.length > 500) throw new Error("덮개 브러시 데이터가 올바르지 않아요.");
+  const seen = new Set<string>();
+  const strokes = value.map((raw: Partial<CoverStroke>) => {
+    if (!raw || typeof raw.color !== "string" || !/^#[0-9a-f]{6}$/i.test(raw.color) ||
+        typeof raw.size !== "number" || !Number.isFinite(raw.size) || raw.size < 2 || raw.size > 200 ||
+        !Array.isArray(raw.points) || !raw.points.length || raw.points.length > 5000) {
+      throw new Error("덮개 브러시 획 정보를 확인해 주세요.");
+    }
+    const id = typeof raw.id === "string" && raw.id.trim().length > 0 ? raw.id : uid();
+    if (seen.has(id)) throw new Error("덮개 브러시 ID가 중복돼요.");
+    seen.add(id);
+    const points = raw.points.map(pt => {
+      if (!pt || typeof pt.x !== "number" || typeof pt.y !== "number" || !Number.isFinite(pt.x) || !Number.isFinite(pt.y)) {
+        throw new Error("덮개 브러시 좌표가 올바르지 않아요.");
+      }
+      return { x: clamp(pt.x, 0, 100), y: clamp(pt.y, 0, 100) };
+    });
+    return { id, color: raw.color, size: Math.round(raw.size * 10) / 10, points };
+  });
+  return strokes.length ? strokes : undefined;
+}
 export function validateBlocks(value: unknown,options:{preserveContent?:boolean}={}): TextBlock[] {
   if (!Array.isArray(value) || (!options.preserveContent&&value.length>1000)) throw new Error("텍스트 영역 데이터가 올바르지 않아요.");
   const seen=new Set<string>();
@@ -329,12 +396,14 @@ export function validateBlocks(value: unknown,options:{preserveContent?:boolean}
     if ((b.strokeWidth!==undefined || b.strokeColor!==undefined) && (typeof b.strokeWidth!=='number' ||
         !Number.isFinite(b.strokeWidth) || b.strokeWidth<=0 || b.strokeWidth>80 ||
         typeof b.strokeColor!=='string' || !/^#[0-9a-f]{6}$/i.test(b.strokeColor))) throw new Error("식자 외곽선의 색과 두께를 확인해 주세요.");
+    if (b.writingMode!==undefined && b.writingMode!=="horizontal-tb" && b.writingMode!=="vertical-rl") throw new Error("글쓰기 방향을 확인해 주세요.");
     const id=typeof b.id==="string"&&b.id.trim().length>0?b.id:uid();
     if(seen.has(id))throw new Error("같은 ID의 텍스트 영역이 중복돼요.");
     seen.add(id);
     const exact=validOcrBox({x:b.x!,y:b.y!,w:b.w!,h:b.h!}) && b.x!<100 && b.y!<100;
     const x=exact?b.x!:clamp(b.x!,0,99), y=exact?b.y!:clamp(b.y!,0,99);
     const w=exact?Math.min(b.w!,100-x):clamp(b.w!,1,100-x), h=exact?Math.min(b.h!,100-y):clamp(b.h!,1,100-y);
-    return makeBlock({...b,fill:b.fill===true,id,source:typeof b.source==="string"?b.source:"",text:b.text,x,y,w,h,font:b.font && FONTS[b.font]?b.font:"sans",size:clamp(Number(b.size)||32,10,160),weight:[400,500,600,700,800].includes(b.weight!)?b.weight!:600,lineHeight:clamp(Number(b.lineHeight)||1.4,1,2.5),color:/^#[0-9a-f]{6}$/i.test(b.color||"")?b.color!:"#202020",align:["left","center","right"].includes(b.align!)?b.align!:"center",confidence:typeof b.confidence==="number"&&Number.isFinite(b.confidence)?clamp(b.confidence,0,1):undefined});
+    const {writingMode:rawWritingMode,...restBlock}=b;
+    return makeBlock({...restBlock,...(rawWritingMode==="vertical-rl"?{writingMode:"vertical-rl" as const}:{}),fill:b.fill===true,id,source:typeof b.source==="string"?b.source:"",text:b.text,x,y,w,h,font:b.font && FONTS[b.font]?b.font:"sans",size:clamp(Number(b.size)||32,10,160),weight:[400,500,600,700,800].includes(b.weight!)?b.weight!:600,lineHeight:clamp(Number(b.lineHeight)||1.4,1,2.5),color:/^#[0-9a-f]{6}$/i.test(b.color||"")?b.color!:"#202020",align:["left","center","right"].includes(b.align!)?b.align!:"center",confidence:typeof b.confidence==="number"&&Number.isFinite(b.confidence)?clamp(b.confidence,0,1):undefined});
   });
 }

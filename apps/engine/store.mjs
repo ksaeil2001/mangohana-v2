@@ -977,6 +977,87 @@ export async function createJobStore({ root, engine, contextStore, stage15, read
         return detail;
       } catch { throw failure(502, 'OUTPUT_INVALID', '글줄 목록과 원본 판독 자료를 확인하지 못했습니다.'); }
     },
+    async getPartialDraft(owner, id) {
+      await mutations;
+      const record = owned(owner, id), { state } = record;
+      requireValue(state.status === 'failed' && state.errorCode === 'PARTIAL_TYPESETTING', 409, 'PARTIAL_DRAFT_NOT_AVAILABLE', '수동 식자로 이어받을 부분 처리 결과가 없습니다.');
+      let cleanedBytes, translationsPayload, ocrPayload, review;
+      try {
+        cleanedBytes = await boundedFile(path.join(record.directory, 'cleaned.png'), JOB_LIMITS.outputBytes);
+        requireValue(imageMime(cleanedBytes) === 'image/png', 502, 'OUTPUT_INVALID', '원문 제거 이미지를 확인하지 못했습니다.');
+        await inspect(cleanedBytes, 'image/png', state);
+        const trBytes = await boundedFile(path.join(record.directory, 'translations.json'), JOB_LIMITS.reportBytes);
+        translationsPayload = JSON.parse(trBytes.toString('utf8'));
+      } catch (error) {
+        if (error?.status) throw error;
+        throw failure(502, 'OUTPUT_INVALID', '부분 처리의 원문 제거 이미지와 번역 초안을 확인하지 못했습니다.');
+      }
+      try {
+        const ocrBytes = await boundedFile(path.join(record.directory, 'ocr.json'), JOB_LIMITS.reportBytes);
+        ocrPayload = JSON.parse(ocrBytes.toString('utf8'));
+      } catch {}
+      try {
+        const revBytes = await boundedFile(path.join(record.directory, 'typesetting-review.json'), 1024 * 1024);
+        review = JSON.parse(revBytes.toString('utf8'));
+      } catch {}
+      const ocrBoxes = new Map((Array.isArray(ocrPayload?.speechBubbles) ? ocrPayload.speechBubbles : []).map(b => [b?.id, b?.bbox]));
+      const rawLines = translationsPayload?.lines;
+      requireValue(Array.isArray(rawLines) && rawLines.length > 0 && rawLines.length <= 1000, 502, 'OUTPUT_INVALID', '번역 초안 목록이 올바르지 않습니다.');
+      const validBox = box => box && ['x', 'y', 'width', 'height'].every(k => Number.isFinite(box[k])) &&
+        box.x >= 0 && box.y >= 0 && box.width > 0 && box.height > 0 && box.x + box.width <= 1.000001 && box.y + box.height <= 1.000001;
+      const seen = new Set();
+      const blocks = [...rawLines].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map(line => {
+        requireValue(typeof line?.id === 'string' && line.id.length > 0 && line.id.length <= 200 && !seen.has(line.id), 502, 'OUTPUT_INVALID', '번역 초안 영역 ID가 올바르지 않습니다.');
+        seen.add(line.id);
+        const bbox = line.typesetting?.bbox ?? ocrBoxes.get(line.id);
+        requireValue(validBox(bbox) && typeof line.sourceText === 'string' && typeof line.aiTranslation === 'string' && line.aiTranslation.trim(), 502, 'OUTPUT_INVALID', '번역 초안 좌표 또는 번역문이 누락되었습니다.');
+        const boxWidthPx = bbox.width * state.width, boxHeightPx = bbox.height * state.height;
+        const areaPx = boxWidthPx * boxHeightPx;
+        const trimmedText = line.aiTranslation.trim();
+        const charCount = Math.max(1, [...trimmedText].length);
+        const longestWord = Math.max(2, ...trimmedText.split(/\s+/).map(w => [...w].length));
+        const innerWidthPx = Math.max(24, boxWidthPx - 14);
+        const areaCap = Math.sqrt(areaPx / (charCount * 2.2));
+        const widthCap = innerWidthPx / Math.min(7, Math.max(3.5, longestWord * 0.96));
+        const estimatedSize = Math.max(12, Math.min(28, Math.floor(Math.min(areaCap, widthCap))));
+        return {
+          id: line.id,
+          source: line.sourceText,
+          text: line.aiTranslation,
+          x: bbox.x * 100,
+          y: bbox.y * 100,
+          w: bbox.width * 100,
+          h: bbox.height * 100,
+          font: 'pretendard',
+          size: estimatedSize,
+          weight: 600,
+          align: 'center',
+          color: '#202020',
+          lineHeight: 1.35,
+          fill: false,
+          ...(Number.isFinite(line.parseConfidence) ? { confidence: Math.min(1, Math.max(0, line.parseConfidence)) } : {}),
+          sourceBox: { x: bbox.x * 100, y: bbox.y * 100, w: bbox.width * 100, h: bbox.height * 100 },
+          readingOrder: line.order,
+        };
+      });
+      const rejectedRegionId = typeof review?.regionId === 'string' && seen.has(review.regionId) ? review.regionId : null;
+      const reasonCodes = Array.isArray(review?.reasonCodes) ? review.reasonCodes.filter(c => typeof c === 'string').slice(0, 25) : [];
+      const warnings = [
+        '자동 식자 단계에서 수동 확인이 필요한 영역이 있어 원문 제거 이미지와 번역 초안을 불러왔습니다. 캔버스에서 위치·크기를 조정한 뒤 확인해 주세요.',
+        ...(rejectedRegionId ? [`자동 식자 중단 영역: ${rejectedRegionId}${reasonCodes.length ? ` (${reasonCodes.join(', ')})` : ''}`] : []),
+      ];
+      return {
+        version: 1,
+        jobId: state.id,
+        width: state.width,
+        height: state.height,
+        clean_image: 'data:image/png;base64,' + cleanedBytes.toString('base64'),
+        rejectedRegionId,
+        reasonCodes,
+        blocks,
+        warnings,
+      };
+    },
     async getResult(owner, id,{expectedGeneration}={}) {
       await mutations;
       const record = owned(owner, id); requireValue(record.state.status === 'completed', 409, 'RESULT_NOT_READY', '완료된 결과가 아직 없습니다.');

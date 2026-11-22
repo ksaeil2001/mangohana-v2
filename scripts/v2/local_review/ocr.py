@@ -217,6 +217,83 @@ def panel_reading_order(image, regions):
     return [{**region, 'panelOrder': order} for order, panel in enumerate(panels, 1) for region in panel]
 
 
+def _join_ocr_columns(parts):
+    joined = ''
+    for part in parts:
+        if not part:
+            continue
+        if joined and joined[-1].isascii() and joined[-1].isalnum() and part[0].isascii() and part[0].isalnum():
+            joined += ' ' + part
+        else:
+            joined += part
+    return joined
+
+
+def merge_refined_bubble_lines(lines, region_list, width, height):
+    """Merge parallel OCR columns back into their enclosing RT-DETR speech bubble."""
+    detections_by_id = {r['id']: r for r in region_list}
+    grouped = {}
+    for index, line in enumerate(lines):
+        owner_id = line.get('refinedFrom')
+        owner = detections_by_id.get(owner_id) if owner_id else None
+        if owner and owner.get('kind') == 'text_bubble':
+            grouped.setdefault(owner_id, []).append((index, line))
+
+    mergeable = {}
+    for owner_id, members in grouped.items():
+        if len(members) >= 2 and all(m['source'] for _, m in members):
+            mergeable[owner_id] = members
+    if not mergeable:
+        return lines, region_list
+
+    merged_owners = {}
+    emitted = set()
+    result_lines = []
+    for index, line in enumerate(lines):
+        owner_id = line.get('refinedFrom')
+        if owner_id not in mergeable:
+            result_lines.append(line)
+            continue
+        if owner_id in emitted:
+            continue
+        emitted.add(owner_id)
+        owner = detections_by_id[owner_id]
+        children = [m for _, m in mergeable[owner_id]]
+        boxes = [c['bbox'] for c in children]
+        if all(b['height'] >= 1.2 * b['width'] for b in boxes):
+            ordered = sorted(children, key=lambda c: (-c['bbox']['x'], c['bbox']['y']))
+        else:
+            ordered = sorted(children, key=lambda c: (c['bbox']['y'], c['bbox']['x']))
+        all_boxes = [owner['bbox'], *[c['bbox'] for c in ordered]]
+        left = min(b['x'] for b in all_boxes)
+        top = min(b['y'] for b in all_boxes)
+        right = max(b['x'] + b['width'] for b in all_boxes)
+        bottom = max(b['y'] + b['height'] for b in all_boxes)
+        merged_bbox = {
+            'x': max(0.0, min(1.0, left)),
+            'y': max(0.0, min(1.0, top)),
+            'width': max(1e-6, min(1.0, right) - max(0.0, min(1.0, left))),
+            'height': max(1e-6, min(1.0, bottom) - max(0.0, min(1.0, top))),
+        }
+        updated_owner = {k: v for k, v in owner.items() if k != 'refinedBy'}
+        updated_owner['bbox'] = merged_bbox
+        merged_owners[owner_id] = updated_owner
+        panel_orders = [c['panelOrder'] for c in ordered if isinstance(c.get('panelOrder'), int) and c['panelOrder'] > 0]
+        merged_line = {
+            **updated_owner,
+            'source': _join_ocr_columns([c['source'] for c in ordered]),
+            'rawSource': _join_ocr_columns([c.get('rawSource', c['source']) for c in ordered]),
+            'pixelBox': bounds(merged_bbox, width, height),
+            'supportBoxes': [box for c in ordered for box in c.get('supportBoxes', [])],
+            'mergedLineIds': [c['id'] for c in ordered],
+            **({'panelOrder': min(panel_orders)} if panel_orders else {}),
+        }
+        result_lines.append(merged_line)
+
+    updated_detections = [merged_owners.get(r['id'], r) for r in region_list]
+    return result_lines, updated_detections
+
+
 def recognize(source_bytes, page, workdir, detector, session, reader, pins, db_detector=None, *, text_tile_limit=0):
     from PIL import Image
     import numpy as np
@@ -256,6 +333,7 @@ def recognize(source_bytes, page, workdir, detector, session, reader, pins, db_d
         text=unicodedata.normalize('NFC',raw).strip()
         lines.append({**region,'source': text,'rawSource':raw,'pixelBox':[left,top,right,bottom],
                       'supportBoxes':[bounds(box,width,height) for box in region.get('inkSupport',[])]})
+    lines, region_list = merge_refined_bubble_lines(lines, region_list, width, height)
     return {'page':page['id'],'width':width,'height':height,'sourceSha256':hashlib.sha256(source_bytes).hexdigest(),
             'pngSha256':hashlib.sha256(png_bytes).hexdigest(), 'models':pins,'views':views,
             'detections':region_list,'duplicates':duplicates,'lines':lines,'uncoveredBubbles':uncovered,

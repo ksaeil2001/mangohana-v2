@@ -17,6 +17,10 @@ const review=(args={})=>{assert.equal(typeof revision.reviewSelectiveReplacement
 for(const f of failures.cases.slice(0,4))test('saved untranslated output is held independently of JSON validity: '+f.source,()=>{
  const x=check(f.source,f.output);assert.equal(x.status,'REVIEW_REQUIRED');assert.equal(x.sourceResidue,true);assert.ok(x.codes.includes('SOURCE_LANGUAGE_RESIDUE'));assert.equal(x.semanticAccuracy,null);
 });
+test('a long repeated hangul response cannot pass script compliance',()=>{
+ assert.ok(check('来ないで。','그만 '.repeat(43)).codes.includes('DEGENERATE_REPETITION'));
+ assert.equal(check('ハハハ！','하하하!').status,'PASS');
+});
 test('benefactive reversal risk remains visible when the entire translation is Korean',()=>{
  const f=failures.cases[4],r=contract.assessSemanticRisk({region:{sourceText:f.source,sourceLanguage:'ja'},translatedText:f.output});
  assert.equal(r.signals.some(s=>s.code==='SOURCE_LANGUAGE_RESIDUE'),false);assert.ok(r.signals.some(s=>s.code==='BENEFACTIVE_DIRECTION_RISK'));assert.equal(r.semanticAccuracy,null);assert.equal(r.automaticQualityApproval,false);

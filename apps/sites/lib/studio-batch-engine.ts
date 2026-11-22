@@ -69,8 +69,9 @@ export async function processProjectBatch(project:Project,targets:StudioPage[],e
  const request=options.request??fetch;
  signal.throwIfAborted();const base=endpointURL(endpoint);protocol(base===DEFAULT_ENGINE_ENDPOINT&&idPattern.test(project.id)&&['ja','auto'].includes(source)&&target==='ko');
  protocol(targets.length>0&&targets.length<=100&&new Set(targets.map(page=>page.id)).size===targets.length&&targets.every(page=>idPattern.test(page.id)&&project.pages.some(item=>item.id===page.id)));
- const tasks=new Map(targets.filter(page=>page.jobId).map(page=>[page.id,{page,jobId:page.jobId!,retryRequested:options.retrySaved!==false,retried:false}]));
- const outcomes=new Map<string,'completed'|'failed'|'paused'>(),groups=new Map<string,PendingBatch>();
+ type BatchTask={page:StudioPage;jobId:string;batchId?:string;retryRequested:boolean;retried:boolean};
+ const tasks=new Map<string,BatchTask>(targets.filter(page=>page.jobId).map(page=>[page.id,{page,jobId:page.jobId!,batchId:page.batchId,retryRequested:options.retrySaved!==false,retried:false}]));
+ const outcomes=new Map<string,'completed'|'failed'|'paused'>(),groups=new Map<string,PendingBatch>(),fallbackBatches=new Set<string>();
  for(const page of targets)if(page.pendingBatch){const intent=validatePendingBatch(page.pendingBatch,project.id,page.id),previous=groups.get(intent.key);protocol(!previous||JSON.stringify(previous)===JSON.stringify(intent),'보관된 배치 멤버 연결 정보가 서로 달라요.');groups.set(intent.key,intent);}
  const fresh=targets.filter(page=>!page.jobId&&!page.pendingBatch),freshIntentKeys=new Set<string>();
  const accept=async(intent:PendingBatch,data:Record<string,unknown>)=>{
@@ -81,16 +82,24 @@ export async function processProjectBatch(project:Project,targets:StudioPage[],e
    return page.pendingBatch?.key===intent.key&&saved?.generation===binding.generation&&saved?.sourceSha256===binding.sourceSha256||freshIntentKeys.has(intent.key)&&fresh.some(member=>member.id===page.id);
   });
   if(bindings.length)await durable(()=>callbacks.onJobs(bindings));
-  for(const binding of bindings){const page=targets.find(page=>page.id===binding.pageId);if(page)tasks.set(page.id,{page,jobId:binding.jobId,retryRequested:!!page.jobId&&options.retrySaved!==false,retried:false});}
+  for(const binding of bindings){const page=targets.find(page=>page.id===binding.pageId);if(page)tasks.set(page.id,{page,jobId:binding.jobId,batchId:binding.batchId,retryRequested:!!page.jobId&&options.retrySaved!==false,retried:false});}
   signal.throwIfAborted();
  };
  const reportPending=(intent:PendingBatch,error:unknown)=>{
   for(const member of intent.members){if(targets.some(page=>page.id===member.pageId)&&!tasks.has(member.pageId)){outcomes.set(member.pageId,'paused');callbacks.onError(member.pageId,pending(error),false,false);}}
  };
+ const preparedBlobs=new Map<string,{blob:Blob;image:string;sha256:string}>();
  if(fresh.length){
   const health=await checkEngine(base,signal,request);if(health.batchSupported!==true)throw new BatchPendingError('서버의 여러 페이지 접수 기능이 아직 준비되지 않았어요. 이전 내용은 보존했어요.');
   const members:PendingBatch['members']=[];
-  for(const page of fresh){signal.throwIfAborted();const image=await request(page.image,{signal});if(!image.ok)throw new BatchPendingError('원본 이미지를 읽지 못했어요.');const blob=await image.blob();if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||!blob.size||blob.size>8*1024*1024)throw new BatchPendingError('PNG, JPG, WebP 이미지 한 장은 8MiB 이하여야 해요.');members.push({pageId:page.id,...(page.enginePageNumber?{pageNumber:page.enginePageNumber}:{}),generation:page.engineGeneration??0,sourceSha256:await digest(await blob.arrayBuffer()),name:page.name});}
+  for(const page of fresh){
+   signal.throwIfAborted();
+   const image=await request(page.image,{signal});if(!image.ok)throw new BatchPendingError('원본 이미지를 읽지 못했어요.');
+   const blob=await image.blob();if(!['image/png','image/jpeg','image/webp'].includes(blob.type)||!blob.size||blob.size>8*1024*1024)throw new BatchPendingError('PNG, JPG, WebP 이미지 한 장은 8MiB 이하여야 해요.');
+   const sourceSha256=await digest(await blob.arrayBuffer());
+   preparedBlobs.set(page.id,{blob,image:page.image,sha256:sourceSha256});
+   members.push({pageId:page.id,...(page.enginePageNumber?{pageNumber:page.enginePageNumber}:{}),generation:page.engineGeneration??0,sourceSha256,name:page.name});
+  }
   const key=await stableHash([project.id,source,target,members]);freshIntentKeys.add(key);groups.set(key,{key,projectId:project.id,source:source as 'ja'|'auto',target:'ko',phase:'prepared',members});
  }
  for(const original of groups.values()){
@@ -103,8 +112,17 @@ export async function processProjectBatch(project:Project,targets:StudioPage[],e
    const form=new FormData();let total=0;
    for(const member of intent.members){
     const page=project.pages.find(page=>page.id===member.pageId);if(!page||page.name!==member.name||(page.engineGeneration??0)!==member.generation)throw new BatchPendingError('이전 배치의 원본 또는 페이지 연결이 바뀌어 자동으로 다시 접수하지 않았어요.');
-    const image=await request(page.image,{signal});if(!image.ok)throw new BatchPendingError('이전 배치의 원본 이미지를 읽지 못했어요.');const blob=await image.blob();total+=blob.size;
-    if(!blob.size||blob.size>8*1024*1024||total>160*1024*1024||await digest(await blob.arrayBuffer())!==member.sourceSha256)throw new BatchPendingError('이전 배치와 원본 이미지가 달라 새 작업을 만들지 않았어요.');
+    const cached=preparedBlobs.get(member.pageId);
+    let blob:Blob;
+    if(cached&&cached.image===page.image&&cached.sha256===member.sourceSha256){
+     blob=cached.blob;preparedBlobs.delete(member.pageId);
+    }else{
+     const image=await request(page.image,{signal});if(!image.ok)throw new BatchPendingError('이전 배치의 원본 이미지를 읽지 못했어요.');
+     blob=await image.blob();
+     if(!blob.size||blob.size>8*1024*1024||await digest(await blob.arrayBuffer())!==member.sourceSha256)throw new BatchPendingError('이전 배치와 원본 이미지가 달라 새 작업을 만들지 않았어요.');
+    }
+    total+=blob.size;
+    if(!blob.size||blob.size>8*1024*1024||total>160*1024*1024)throw new BatchPendingError('이전 배치와 원본 이미지의 용량 한도를 확인해 주세요.');
     form.append('files',blob,member.name);
    }
    await durable(()=>callbacks.onIntent(intent));signal.throwIfAborted();
@@ -113,37 +131,154 @@ export async function processProjectBatch(project:Project,targets:StudioPage[],e
    form.append('project_id',project.id);form.append('source_language',intent.source);form.append('target_language',intent.target);form.append('idempotency_key',intent.key);
    form.append('manifest',JSON.stringify(intent.members.map((member,index)=>({key:'file:'+index,page_id:member.pageId,...(member.pageNumber===undefined?{}:{page_number:member.pageNumber})}))));
    const current=options.currentPageId?.();if(current&&intent.members.some(member=>member.pageId===current))form.append('current_page_id',current);
-   const response=await request(base+'/batches',{method:'POST',body:form,signal:AbortSignal.timeout(120000)});await accept(intent,await responseData(response));
+   const response=await request(base+'/batches',{method:'POST',body:form,signal:AbortSignal.timeout(120000)});
+   let body:Record<string,unknown>;
+   try{body=engineObject(await response.json());}catch{
+    if(!response.ok)throw new BatchPendingError('배치 접수 여부를 확인하지 못했어요. 새 작업을 만들지 않고 접수 정보를 보존했어요.');
+    throw new BatchProtocolError('배치 응답의 JSON 형식을 확인해 주세요.');
+   }
+   if(!response.ok){
+    // Server rejected pre-admission due to concurrent batch upload; revert to prepared with same key.
+    if(response.status===429&&body.code==='BATCH_UPLOAD_BUSY'){
+     const retryableIntent:PendingBatch={...intent,phase:'prepared'};
+     await durable(()=>callbacks.onIntent(retryableIntent));
+     intent=retryableIntent;
+    }
+    throw new BatchPendingError(typeof body.error==='string'&&body.error.trim()?body.error:'배치 접수 여부를 확인하지 못했어요. 새 작업을 만들지 않고 접수 정보를 보존했어요.');
+   }
+   await accept(intent,body);
   }catch(error){if(signal.aborted||error instanceof BatchProtocolError||error instanceof BatchPersistenceError)throw error;reportPending(intent,error);}
  }
  const concurrency=Math.max(1,Math.min(4,Math.trunc(options.concurrency??3))),deadline=Date.now()+60*60*1000;
+ const fetchJobResult=async(jobId:string)=>{
+  const response=await request(base+'/jobs/'+encodeURIComponent(jobId)+'/result',{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])});
+  if(!response.ok&&[404,405,501].includes(response.status)){
+   const fallback=await responseData(await request(base+'/jobs/'+encodeURIComponent(jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));
+   return fallback.result;
+  }
+  return responseData(response);
+ };
+ const applyTerminalOrRetry=async(task:BatchTask,data:Record<string,unknown>,canSubmit:()=>boolean):Promise<'completed'|'handled'|'pending'>=>{
+  const page=task.page;
+  callbacks.onStage(page.id,typeof data.stage==='string'?data.stage:'처리 중');
+  if(callbacks.onObservation)await durable(()=>callbacks.onObservation!(page.id,data));
+  if(data.errorCode==='RETRY_COMMIT_UNKNOWN'||data.stage==='retry_acceptance_unknown'){
+   callbacks.onError(page.id,new BatchPendingError('이전 재시도의 접수 저장을 확인하지 못했어요. 작업 ID를 보존했으며 새 작업을 자동으로 만들지 않아요.'),false,false);
+   outcomes.set(page.id,'paused');tasks.delete(page.id);return 'handled';
+  }
+  let current=data;
+  if(current.status==='failed'&&retryAllowed(current)&&task.retryRequested&&!task.retried){
+   task.retried=true;
+   task.jobId=await retrySavedPage({...page,jobId:task.jobId},project.id,signal,callbacks.onJobs,canSubmit,request);
+   current=await responseData(await request(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));
+   validateJob(current,project.id,page.id,task.jobId);signal.throwIfAborted();
+   if(callbacks.onObservation)await durable(()=>callbacks.onObservation!(page.id,current));
+  }
+  if(current.status==='completed'){
+   const rawResult=current.result!==undefined?current.result:await fetchJobResult(task.jobId);
+   const result=validatePageEngineResult(rawResult);signal.throwIfAborted();
+   await durable(()=>callbacks.onResult(page.id,result));outcomes.set(page.id,'completed');tasks.delete(page.id);return 'completed';
+  }
+  if(current.status==='cancelled'){callbacks.onError(page.id,new Error('서버에서 취소한 작업이에요. 기존 결과를 보존했어요.'),true,false);outcomes.set(page.id,'failed');tasks.delete(page.id);return 'handled';}
+  if(current.status==='result_unknown'){callbacks.onError(page.id,new BatchPendingError('이 페이지의 실행 결과 또는 정산이 미확정이에요. 기존 작업 ID로 상태를 확인할 수 있어요.'),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);return 'handled';}
+  if(current.status==='failed'){callbacks.onError(page.id,new Error(typeof current.error==='string'?current.error:'서버에서 이 페이지의 처리가 실패했어요.'),true,retryAllowed(current));outcomes.set(page.id,'failed');tasks.delete(page.id);return 'handled';}
+  return 'pending';
+ };
  while(tasks.size&&Date.now()<deadline){
-  signal.throwIfAborted();const visited=new Set<string>();let failedWorker=false;
-  const worker=async()=>{
-   while(true){
-    signal.throwIfAborted();if(failedWorker)return;const page=priorityOrder(project,[...tasks.values()].map(task=>task.page).filter(page=>!visited.has(page.id)),options.currentPageId?.())[0];if(!page)return;visited.add(page.id);const task=tasks.get(page.id);if(!task)continue;
-    try{
-     let data=await responseData(await request(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));validateJob(data,project.id,page.id,task.jobId);signal.throwIfAborted();
-     callbacks.onStage(page.id,typeof data.stage==='string'?data.stage:'처리 중');
-     if(callbacks.onObservation)await durable(()=>callbacks.onObservation!(page.id,data));
-     if(data.errorCode==='RETRY_COMMIT_UNKNOWN'||data.stage==='retry_acceptance_unknown'){callbacks.onError(page.id,new BatchPendingError('이전 재시도의 접수 저장을 확인하지 못했어요. 작업 ID를 보존했으며 새 작업을 자동으로 만들지 않아요.'),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);continue;}
-     if(data.status==='failed'&&retryAllowed(data)&&task.retryRequested&&!task.retried){
-      task.retried=true;
-      task.jobId=await retrySavedPage({...page,jobId:task.jobId},project.id,signal,callbacks.onJobs,()=>!failedWorker,request);
-      data=await responseData(await request(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));
-      validateJob(data,project.id,page.id,task.jobId);signal.throwIfAborted();
-      if(callbacks.onObservation)await durable(()=>callbacks.onObservation!(page.id,data));
-     }
-     if(data.status==='completed'){const result=validatePageEngineResult(data.result);signal.throwIfAborted();await durable(()=>callbacks.onResult(page.id,result));outcomes.set(page.id,'completed');tasks.delete(page.id);}
-     else if(data.status==='cancelled'){callbacks.onError(page.id,new Error('서버에서 취소한 작업이에요. 기존 결과를 보존했어요.'),true,false);outcomes.set(page.id,'failed');tasks.delete(page.id);}
-     else if(data.status==='result_unknown'){callbacks.onError(page.id,new BatchPendingError('이 페이지의 실행 결과 또는 정산이 미확정이에요. 기존 작업 ID로 상태를 확인할 수 있어요.'),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);}
-     else if(data.status==='failed'){callbacks.onError(page.id,new Error(typeof data.error==='string'?data.error:'서버에서 이 페이지의 처리가 실패했어요.'),true,retryAllowed(data));outcomes.set(page.id,'failed');tasks.delete(page.id);}
-    }catch(error){if(signal.aborted||error instanceof BatchPersistenceError){failedWorker=true;throw error;}callbacks.onError(page.id,pending(error),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);}
+  signal.throwIfAborted();
+  let failedWorker=false;
+  const batchGroups=new Map<string,BatchTask[]>(),individualTasks:BatchTask[]=[],completedTasks:BatchTask[]=[];
+  for(const task of tasks.values()){
+   if(task.batchId&&!fallbackBatches.has(task.batchId)){
+    const group=batchGroups.get(task.batchId);
+    if(group)group.push(task);else batchGroups.set(task.batchId,[task]);
+   }else{
+    individualTasks.push(task);
    }
-  };
-  // Retry POSTs deliberately outlive observer abort. Drain their durable ID callbacks before the caller pauses pages.
-  const workers=await Promise.allSettled(Array.from({length:Math.min(concurrency,tasks.size)},worker));
-  const rejected=workers.find((result):result is PromiseRejectedResult=>result.status==='rejected');if(rejected)throw rejected.reason;
+  }
+  for(const [batchId,groupTasks] of batchGroups){
+   signal.throwIfAborted();
+   try{
+    const response=await request(base+'/batches/'+encodeURIComponent(batchId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])});
+    if(!response.ok&&[404,405,501].includes(response.status)){fallbackBatches.add(batchId);individualTasks.push(...groupTasks);continue;}
+    const batchData=await responseData(response);
+    if(batchData.id!==batchId||batchData.projectId!==project.id||!Array.isArray(batchData.pages)){fallbackBatches.add(batchId);individualTasks.push(...groupTasks);continue;}
+    const byPage=new Map<string,Record<string,unknown>>();
+    let validEntries=true;
+    for(const rawEntry of batchData.pages){
+     if(!rawEntry||typeof rawEntry!=='object'||Array.isArray(rawEntry)){validEntries=false;break;}
+     const entry=rawEntry as Record<string,unknown>;
+     if(typeof entry.pageId!=='string'||!entry.job||typeof entry.job!=='object'||Array.isArray(entry.job)){validEntries=false;break;}
+     byPage.set(entry.pageId,entry);
+    }
+    if(!validEntries||groupTasks.some(task=>!byPage.has(task.page.id))){fallbackBatches.add(batchId);individualTasks.push(...groupTasks);continue;}
+    const orderedIds=new Set(priorityOrder(project,groupTasks.map(task=>task.page),options.currentPageId?.()).map(page=>page.id));
+    const orderedTasks=[...orderedIds].map(id=>groupTasks.find(task=>task.page.id===id)!).filter(Boolean);
+    for(const task of orderedTasks){
+     const entry=byPage.get(task.page.id)!;
+     const job=engineObject(entry.job);
+     try{
+      validateJob(job,project.id,task.page.id,job.id===task.jobId?task.jobId:undefined);
+      if(typeof job.id==='string'&&job.id!==task.jobId){
+       task.jobId=job.id;
+       await durable(()=>callbacks.onJobs([{pageId:task.page.id,jobId:task.jobId,batchId,...(job.pageNumber==null?{}:{pageNumber:job.pageNumber as number})}]));
+      }
+      if(job.status==='completed'){
+       callbacks.onStage(task.page.id,typeof job.stage==='string'?job.stage:'처리 중');
+       if(callbacks.onObservation)await durable(()=>callbacks.onObservation!(task.page.id,job));
+       completedTasks.push(task);
+      }else{
+       await applyTerminalOrRetry(task,job,()=>!failedWorker);
+      }
+     }catch(error){
+      if(signal.aborted||error instanceof BatchPersistenceError){failedWorker=true;throw error;}
+      callbacks.onError(task.page.id,pending(error),false,false);outcomes.set(task.page.id,'paused');tasks.delete(task.page.id);
+     }
+    }
+   }catch(error){
+    if(signal.aborted||error instanceof BatchPersistenceError)throw error;
+    for(const task of groupTasks){
+     if(!tasks.has(task.page.id))continue;
+     callbacks.onError(task.page.id,pending(error),false,false);outcomes.set(task.page.id,'paused');tasks.delete(task.page.id);
+    }
+   }
+  }
+  if(completedTasks.length){
+   const visitedCompleted=new Set<string>();
+   const completedWorker=async()=>{
+    while(true){
+     signal.throwIfAborted();if(failedWorker)return;
+     const nextPage=priorityOrder(project,completedTasks.map(task=>task.page).filter(page=>!visitedCompleted.has(page.id)),options.currentPageId?.())[0];
+     if(!nextPage)return;visitedCompleted.add(nextPage.id);
+     const task=completedTasks.find(item=>item.page.id===nextPage.id);if(!task||!tasks.has(task.page.id))continue;
+     try{
+      const rawResult=await fetchJobResult(task.jobId);
+      const result=validatePageEngineResult(rawResult);signal.throwIfAborted();
+      await durable(()=>callbacks.onResult(task.page.id,result));outcomes.set(task.page.id,'completed');tasks.delete(task.page.id);
+     }catch(error){
+      if(signal.aborted||error instanceof BatchPersistenceError){failedWorker=true;throw error;}
+      callbacks.onError(task.page.id,pending(error),false,false);outcomes.set(task.page.id,'paused');tasks.delete(task.page.id);
+     }
+    }
+   };
+   const doneWorkers=await Promise.allSettled(Array.from({length:Math.min(concurrency,completedTasks.length)},completedWorker));
+   const rejectedDone=doneWorkers.find((result):result is PromiseRejectedResult=>result.status==='rejected');if(rejectedDone)throw rejectedDone.reason;
+  }
+  if(individualTasks.length){
+   const visited=new Set<string>();
+   const worker=async()=>{
+    while(true){
+     signal.throwIfAborted();if(failedWorker)return;const page=priorityOrder(project,individualTasks.map(task=>task.page).filter(page=>!visited.has(page.id)&&tasks.has(page.id)),options.currentPageId?.())[0];if(!page)return;visited.add(page.id);const task=tasks.get(page.id);if(!task)continue;
+     try{
+      const data=await responseData(await request(base+'/jobs/'+encodeURIComponent(task.jobId),{signal:AbortSignal.any([signal,AbortSignal.timeout(15000)])}));validateJob(data,project.id,page.id,task.jobId);signal.throwIfAborted();
+      await applyTerminalOrRetry(task,data,()=>!failedWorker);
+     }catch(error){if(signal.aborted||error instanceof BatchPersistenceError){failedWorker=true;throw error;}callbacks.onError(page.id,pending(error),false,false);outcomes.set(page.id,'paused');tasks.delete(page.id);}
+    }
+   };
+   // Retry POSTs deliberately outlive observer abort. Drain their durable ID callbacks before the caller pauses pages.
+   const workers=await Promise.allSettled(Array.from({length:Math.min(concurrency,individualTasks.length)},worker));
+   const rejected=workers.find((result):result is PromiseRejectedResult=>result.status==='rejected');if(rejected)throw rejected.reason;
+  }
   if(tasks.size)await wait(options.pollIntervalMs??850,signal);
  }
  for(const [pageId]of tasks){callbacks.onError(pageId,new BatchPendingError('상태 조회 시간이 지나 작업 ID를 보존했어요. 조회를 재개할 수 있어요.'),false,false);outcomes.set(pageId,'paused');}

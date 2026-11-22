@@ -1,4 +1,4 @@
-export type StudioShortcut='consume'|'download'|'undo'|'redo'|'close-scope'|'close-drawer'|'cycle-drawer'|'select'|'add-text'|'toggle-ocr'|'clear-selection'|'previous-page'|'next-page'|'shortcuts';
+export type StudioShortcut='consume'|'download'|'undo'|'redo'|'close-scope'|'close-drawer'|'cycle-drawer'|'select'|'brush'|'add-text'|'toggle-ocr'|'clear-selection'|'previous-page'|'next-page'|'shortcuts';
 type KeyInput={key:string;ctrlKey?:boolean;metaKey?:boolean;altKey?:boolean;shiftKey?:boolean;isComposing?:boolean};
 type ShortcutContext={ready:boolean;busy:boolean;hasPage:boolean;modal:boolean;drawer:boolean;scopeMenu:boolean;editable:boolean;browsing?:boolean};
 
@@ -16,6 +16,7 @@ export function resolveStudioShortcut(event:KeyInput,context:ShortcutContext):St
  if(command||event.altKey||!context.ready)return null;
  switch(key){
   case 'v':return 'select';
+  case 'b':return 'brush';
   case 't':return 'add-text';
   case 'o':return 'toggle-ocr';
   case 'escape':return 'clear-selection';

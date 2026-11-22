@@ -29,6 +29,31 @@ test('text inventory is a read-only loopback job path and forwards the same sess
   }
 });
 
+test('completed job result endpoint is a read-only GET path and forwards the session cookie', async () => {
+  const before = process.env.MANGOHANA_ENGINE_URL;
+  process.env.MANGOHANA_ENGINE_URL = 'http://127.0.0.1:45678';
+  const calls = [];
+  globalThis.fetch = async (url, init) => {
+    calls.push({ url: String(url), method: init.method, cookie: init.headers.get('Cookie') });
+    return Response.json({ blocks: [] });
+  };
+  try {
+    const path = ['jobs', 'job-one', 'result'];
+    assert.equal((await invoke(path)).status, 200);
+    assert.equal((await invoke(path, 'POST')).status, 405);
+    const partialPath = ['jobs', 'job-one', 'partial-draft'];
+    assert.equal((await invoke(partialPath)).status, 200);
+    assert.equal((await invoke(partialPath, 'POST')).status, 405);
+    assert.deepEqual(calls, [
+      { url: 'http://127.0.0.1:45678/jobs/job-one/result', method: 'GET', cookie: 'mangohana_engine_session=synthetic-owner' },
+      { url: 'http://127.0.0.1:45678/jobs/job-one/partial-draft', method: 'GET', cookie: 'mangohana_engine_session=synthetic-owner' },
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (before === undefined) delete process.env.MANGOHANA_ENGINE_URL; else process.env.MANGOHANA_ENGINE_URL = before;
+  }
+});
+
 test('the fixed loopback proxy accepts a bounded multi-image body and preserves manifest/cookie bytes',async()=>{
  const before=process.env.MANGOHANA_ENGINE_URL;process.env.MANGOHANA_ENGINE_URL='http://127.0.0.1:45678';let forwarded;
  globalThis.fetch=async(url,init)=>{forwarded={url:String(url),init};return Response.json({id:'accepted'},{status:202,headers:{'Set-Cookie':'mangohana_engine_session=synthetic-owner; HttpOnly'}});};

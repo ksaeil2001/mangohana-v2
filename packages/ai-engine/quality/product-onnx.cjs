@@ -18,6 +18,9 @@ function requireStage(value,code) {
 function productOnnx(config) {
   if (config.onnxModelsRoot === undefined) return null;
   requireStage(typeof config.onnxModelsRoot==='string' && path.isAbsolute(config.onnxModelsRoot),'CONFIG_PATH');
+  const hasOcr = config.onnxOcr ?? true;
+  const hasTranslation = config.onnxTranslation ?? true;
+  requireStage(typeof hasOcr === 'boolean' && typeof hasTranslation === 'boolean' && (hasOcr || hasTranslation), 'CONFIG_PATH');
   const textTileLimit = config.onnxTextTileLimit ?? 0;
   requireStage(Number.isSafeInteger(textTileLimit) && textTileLimit >= 0 && textTileLimit <= 16, 'CONFIG_PATH');
   const root=path.resolve(config.onnxModelsRoot), pack=path.dirname(path.dirname(config.python));
@@ -31,9 +34,12 @@ function productOnnx(config) {
   };
   const scripts={ocr:['ocr.py','pages.py','text_detector.py','../vision/region_detector.py'],translation:['context_translation.py','context-model.json','quality.py']};
   async function preflight(){
-    await Promise.all([bridge,config.python,...assets.ocr,...assets.translation].map(async file=>requireStage((await fs.stat(file)).isFile(),'RESOURCE_MISSING')));
-    for(const [name,size] of spec.files) requireStage((await fs.stat(path.join(qwen,name))).size===size,'RESOURCE_MISSING');
-    requireStage((await fs.stat(path.join(qwen,'tokenizer-deps','tokenizers','__init__.py'))).isFile(),'RESOURCE_MISSING');
+    const required = [bridge, config.python, ...(hasOcr ? assets.ocr : []), ...(hasTranslation ? assets.translation : [])];
+    await Promise.all(required.map(async file=>requireStage((await fs.stat(file)).isFile(),'RESOURCE_MISSING')));
+    if (hasTranslation) {
+      for(const [name,size] of spec.files) requireStage((await fs.stat(path.join(qwen,name))).size===size,'RESOURCE_MISSING');
+      requireStage((await fs.stat(path.join(qwen,'tokenizer-deps','tokenizers','__init__.py'))).isFile(),'RESOURCE_MISSING');
+    }
   }
   async function configuration(stage,engineFile) {
     const files=[engineFile,config.python,bridge,...scripts[stage].map(s=>path.join(source,s)),...assets[stage]];
@@ -66,7 +72,7 @@ function productOnnx(config) {
       return {data:reply.data,requestSha256};
     } finally {signal.removeEventListener('abort',stop);if(!process.closed)await owner.terminate(process,true);}
   }
-  return {preflight,configuration,execute};
+  return {hasOcr,hasTranslation,preflight,configuration,execute};
 }
 
 function extractionFromOnnx(data,{jobId,pageNumber,sourceSha256,width,height}) {

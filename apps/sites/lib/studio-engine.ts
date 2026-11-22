@@ -134,6 +134,20 @@ function recordedLettering(evidence:Record<string,unknown>,blocks:TextBlock[]):M
  }
  if(regions.length)return {width,height,regions};
 }
+export type PartialDraftResult = PageEngineResult & { jobId: string; rejectedRegionId: string | null; reasonCodes: string[] };
+export async function readPartialDraft(jobId: string, signal?: AbortSignal, request: typeof fetch = fetch): Promise<PartialDraftResult> {
+ if (!isStudioId(jobId)) throw new Error('작업 번호가 올바르지 않아요.');
+ const timeout = AbortSignal.timeout(15000);
+ const response = await request(`${DEFAULT_ENGINE_ENDPOINT}/jobs/${encodeURIComponent(jobId)}/partial-draft`,
+  { signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
+ const data = await jsonResponse(response);
+ if (data.version !== 1 || data.jobId !== jobId) throw new Error('부분 처리 초안과 현재 작업이 일치하지 않아요.');
+ const parsed = validatePageEngineResult(data);
+ if (!parsed.cleanImage) throw new Error('부분 처리의 원문 제거 이미지를 확인하지 못했어요.');
+ const rejectedRegionId = typeof data.rejectedRegionId === 'string' && parsed.blocks.some(b => b.id === data.rejectedRegionId) ? data.rejectedRegionId : null;
+ const reasonCodes = Array.isArray(data.reasonCodes) ? data.reasonCodes.filter((c): c is string => typeof c === 'string') : [];
+ return { ...parsed, jobId, rejectedRegionId, reasonCodes };
+}
 export function validatePageEngineResult(value:unknown):PageEngineResult {
  const result=engineObject(value),blocks=validateBlocks(result.blocks),cleanImage=resultImage(result.clean_image),finalImage=resultImage(result.final_image);
  const evidence=result.evidence && typeof result.evidence==='object' ? result.evidence as Record<string,unknown> : {};

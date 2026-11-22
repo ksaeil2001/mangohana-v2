@@ -308,7 +308,7 @@ export async function renderCandidate(
     const allowed=background?.allowedBoxes.find(b=>b.id===line.id)?.bbox;if(allowed&&!inside(inferred.bbox,allowed))throw Object.assign(new Error('MANUAL_LAYOUT_REQUIRED: 식자 후보가 허용 ROI를 벗어났습니다.'),{code:'MANUAL_LAYOUT_REQUIRED',layoutDiagnostics:{reasonCodes:['AUTO_CANDIDATE_OUTSIDE_ALLOWED_ROI']}});
     let backgroundResult: BackgroundResult | undefined;
     let unresolvedBackground: BackgroundResult | undefined;
-    let widerUniform: BackgroundResult | undefined;
+    const widerUniforms: BackgroundResult[] = [];
     let uniformInsetPicked = false;
     const text = textFor(line);
     const automaticDialogue = background?.nonWhiteFallback && !allowed && !manualEntries.length &&
@@ -326,20 +326,29 @@ export async function renderCandidate(
       backgroundResult=manual?verifiedScene.inspectManual(args):verifiedScene.inspectUniform(args);
       if (!manual && background.nonWhiteFallback && backgroundResult.reasonCodes.includes('BACKGROUND_NOT_UNIFORM')) {
         const inset = findUniformSourceInset(context, sourceBbox, width, height);
-        if (inset) {
-          const verifiedInset = verifiedScene.inspectUniform({ ...args, bbox: inset });
-          if (verifiedInset.status === 'SAFE_PIXELS_VERIFIED') {
+        const candidatesToTry = inset ? [inset, sourceBbox] : [sourceBbox];
+        let verifiedInset: BackgroundResult | undefined;
+        for (const baseBox of candidatesToTry) {
+          for (const shrink of [0, 2, 4, 6, 8, 12]) {
+            const dx = shrink / width, dy = shrink / height;
+            if (baseBox.width - dx * 2 < 10 / width || baseBox.height - dy * 2 < 10 / height) break;
+            const box = shrink === 0 ? baseBox : { x: baseBox.x + dx, y: baseBox.y + dy, width: baseBox.width - dx * 2, height: baseBox.height - dy * 2 };
+            const checked = verifiedScene.inspectUniform({ ...args, bbox: box });
+            if (checked.status === 'SAFE_PIXELS_VERIFIED') { verifiedInset = checked; break; }
+          }
+          if (verifiedInset) break;
+        }
+        if (verifiedInset?.status === 'SAFE_PIXELS_VERIFIED') {
             backgroundResult = verifiedInset;
             uniformInsetPicked = true;
             inferred.reasons.push('원문 중심을 포함한 작은 영역에서 배경과 식자 여백을 다시 확인했습니다.');
             if (!allowed && verifiedInset.interior) {
-              const wider = findWiderUniformInset(context, verifiedInset.evidence.bbox, verifiedInset.interior, width, height);
-              if (wider) {
+              const refMean = verifiedInset.evidence.cleanedBackground?.mean;
+              for (const wider of findWiderUniformInsets(context, verifiedInset.evidence.bbox, verifiedInset.interior, width, height, refMean)) {
                 const expanded = verifiedScene.inspectUniform({ ...args, bbox: wider, allowedBbox: wider });
-                if (expanded.status === 'SAFE_PIXELS_VERIFIED') widerUniform = expanded;
+                if (expanded.status === 'SAFE_PIXELS_VERIFIED') widerUniforms.push(expanded);
               }
             }
-          }
         }
       }
       if (backgroundResult.status !== 'SAFE_PIXELS_VERIFIED' || !backgroundResult.interior) {
@@ -376,14 +385,37 @@ export async function renderCandidate(
         ? measureCandidateFit(context, text, { ...style, bbox: sourceBbox }, width, height, fitScope) : undefined;
       const preferredFontSizePx = sourceFit?.status === 'FIT_WARNING' ? sourceFit.fontSizePx : undefined;
       let measured = measureCandidateFit(context, text, style, width, height, { ...fitScope, preferredFontSizePx });
-      if (widerUniform?.interior && widerUniform.paint) {
-        const widerStyle = { ...style, ...widerUniform.paint, bbox: widerUniform.evidence.bbox };
-        const larger = measureInVerifiedBox(context, line, text, widerStyle, width, height, measured);
-        if (larger) {
-          measured = larger;
-          Object.assign(style, widerStyle);
-          backgroundResult = widerUniform;
-          interiors.set(line.id, widerUniform.interior);
+      if (widerUniforms.length) {
+        let bestWider: { fit: ReturnType<typeof measureCandidateFit>; style: DialogueTypesetting; uniform: BackgroundResult } | undefined;
+        const beats = (next: ReturnType<typeof measureCandidateFit>, current: ReturnType<typeof measureCandidateFit>, nextBox: NormalizedBbox, currentBox: NormalizedBbox) => {
+          if (current.status === "MANUAL_LAYOUT_REQUIRED") return next.status !== "MANUAL_LAYOUT_REQUIRED";
+          if (next.status === "MANUAL_LAYOUT_REQUIRED") return false;
+          if (next.fontSizePx !== current.fontSizePx) return next.fontSizePx > current.fontSizePx;
+          if (next.layout.lines.length !== current.layout.lines.length) return next.layout.lines.length < current.layout.lines.length;
+          return nextBox.height > currentBox.height;
+        };
+        for (const candidateUniform of widerUniforms) {
+          if (!candidateUniform.interior || !candidateUniform.paint) continue;
+          const widerStyle = { ...style, ...candidateUniform.paint, bbox: candidateUniform.evidence.bbox };
+          let candidateFit: ReturnType<typeof measureCandidateFit> | undefined;
+          if (measured.status === "MANUAL_LAYOUT_REQUIRED") {
+            const rescued = measureCandidateFit(context, text, widerStyle, width, height, { ...fitScope, preferredFontSizePx });
+            if (rescued.status !== "MANUAL_LAYOUT_REQUIRED" && paintFitsVerifiedBox(line, text, widerStyle, width, height, rescued)) {
+              candidateFit = measureInVerifiedBox(context, line, text, widerStyle, width, height, rescued) ?? rescued;
+            }
+          } else {
+            candidateFit = measureInVerifiedBox(context, line, text, widerStyle, width, height, measured);
+          }
+          if (!candidateFit) continue;
+          if (!bestWider || beats(candidateFit, bestWider.fit, widerStyle.bbox, bestWider.style.bbox)) {
+            bestWider = { fit: candidateFit, style: widerStyle, uniform: candidateUniform };
+          }
+        }
+        if (bestWider) {
+          measured = bestWider.fit;
+          Object.assign(style, bestWider.style);
+          backgroundResult = bestWider.uniform;
+          interiors.set(line.id, bestWider.uniform.interior!);
           inferred.expanded = true;
           inferred.reasons.push("중앙의 균일한 배경을 좌우로 다시 확인해 더 큰 글씨를 놓았습니다.");
         }
@@ -834,34 +866,58 @@ function findWiderCenteredBand(interior: CandidateInterior, bbox: NormalizedBbox
   return { left: oldLeft - grow, top, width: oldWidth + grow * 2, height: bottom - top };
 }
 
-/** Grow sideways from a verified band without moving its vertical center. */
-function findWiderUniformInset(context: Pick<CanvasRenderingContext2D, "getImageData">, bbox: NormalizedBbox,
-  box: LayoutPixelBox, width: number, height: number): NormalizedBbox | undefined {
-  const margin = Math.max(2, Math.ceil(box.height * .04));
-  const top = box.top - margin, rows = box.height + margin * 2;
-  if (top < 0 || top + rows > height) return undefined;
-  const extension = Math.floor(box.width / 2);
-  const left = Math.max(0, box.left - extension - margin);
-  const right = Math.min(width, box.left + box.width + extension + margin);
+/** Grow sideways from a verified band without moving its vertical center.
+ * Also checks centered waist bands so tall oval balloons aren't pinched by their tips. */
+function findWiderUniformInsets(context: Pick<CanvasRenderingContext2D, "getImageData">, bbox: NormalizedBbox,
+  box: LayoutPixelBox, width: number, height: number, referenceMean?: readonly (number | null)[] | null): NormalizedBbox[] {
+  const results: NormalizedBbox[] = [];
+  const seen = new Set<string>();
+  const centerY = box.top + box.height / 2;
+  const extension = Math.max(Math.floor(box.width * .75), Math.floor(Math.min(width, height) * .12));
+  const left = Math.max(0, box.left - extension);
+  const right = Math.min(width, box.left + box.width + extension);
   const stride = right - left;
-  const data = context.getImageData(left, top, stride, rows).data;
   const center = box.left + Math.floor(box.width / 2) - left;
-  const anchor = (Math.floor(rows / 2) * stride + center) * 4;
-  const uniformColumn = (x: number) => {
-    for (let y = 0; y < rows; y++) {
-      const at = (y * stride + x) * 4;
-      if (data[at + 3]! < 250 || Math.abs(data[at]! - data[anchor]!) > 4 ||
-          Math.abs(data[at + 1]! - data[anchor + 1]!) > 4 || Math.abs(data[at + 2]! - data[anchor + 2]!) > 4) return false;
-    }
-    return true;
-  };
-  if (!uniformColumn(center)) return undefined;
-  let start = center, end = center + 1;
-  while (start > 0 && uniformColumn(start - 1)) start--;
-  while (end < stride && uniformColumn(end)) end++;
-  const expandedLeft = left + start + margin, expandedRight = left + end - margin;
-  if (expandedLeft > box.left || expandedRight < box.left + box.width || expandedRight - expandedLeft <= box.width) return undefined;
-  return { ...bbox, x: expandedLeft / width, width: (expandedRight - expandedLeft) / width };
+  const hasMean = Array.isArray(referenceMean) && referenceMean.length >= 3 && referenceMean.slice(0, 3).every((v): v is number => typeof v === "number" && Number.isFinite(v));
+  for (const ratio of [1, .86, .72, .6]) {
+    const bandHeight = ratio === 1 ? box.height : Math.round(box.height * ratio);
+    if (bandHeight < 16) continue;
+    const bandTop = ratio === 1 ? box.top : Math.round(centerY - bandHeight / 2);
+    const scanMargin = Math.max(2, Math.ceil(Math.min(box.width, bandHeight) * .04));
+    const top = bandTop - scanMargin, rows = bandHeight + scanMargin * 2;
+    if (top < 0 || top + rows > height) continue;
+    const data = context.getImageData(left, top, stride, rows).data;
+    const anchor = (Math.floor(rows / 2) * stride + center) * 4;
+    const refR = hasMean ? referenceMean[0]! : data[anchor]!;
+    const refG = hasMean ? referenceMean[1]! : data[anchor + 1]!;
+    const refB = hasMean ? referenceMean[2]! : data[anchor + 2]!;
+    const uniformColumn = (x: number) => {
+      for (let y = 0; y < rows; y++) {
+        const at = (y * stride + x) * 4;
+        if (data[at + 3]! < 250 || Math.abs(data[at]! - refR) > 16 ||
+            Math.abs(data[at + 1]! - refG) > 16 || Math.abs(data[at + 2]! - refB) > 16) return false;
+      }
+      return true;
+    };
+    if (!uniformColumn(center)) continue;
+    let start = center, end = center + 1;
+    while (start > 0 && uniformColumn(start - 1)) start--;
+    while (end < stride && uniformColumn(end)) end++;
+    const rawWidth = end - start;
+    const outMargin = Math.max(scanMargin, Math.ceil(Math.min(rawWidth, bandHeight) * .04));
+    const extraY = outMargin - scanMargin;
+    const finalTop = bandTop + extraY;
+    const finalHeight = bandHeight - extraY * 2;
+    const expandedLeft = left + start + outMargin, expandedRight = left + end - outMargin;
+    const expandedWidth = expandedRight - expandedLeft;
+    if (finalHeight < 16 || expandedWidth <= box.width) continue;
+    if (expandedLeft > box.left + Math.floor(box.width * .25) || expandedRight < box.left + Math.ceil(box.width * .75)) continue;
+    const key = `${expandedLeft}:${finalTop}:${expandedWidth}:${finalHeight}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    results.push({ x: expandedLeft / width, y: finalTop / height, width: expandedWidth / width, height: finalHeight / height });
+  }
+  return results;
 }
 
 /** Propose a rectangle in the original OCR box. The caller still checks the original, mask and cleaned pixels. */
@@ -885,9 +941,9 @@ export function findUniformSourceInset(context: Pick<CanvasRenderingContext2D, '
   let matchingSourcePixels = 0;
   for (let y = 0; y < scanHeight; y++) for (let x = 0; x < scanWidth; x++) {
     const index = y * scanWidth + x, at = index * 4;
-    // Within four steps of the center gives at most the existing eight-step range.
-    if (pixels[at + 3]! < 250 || Math.abs(pixels[at]! - pixels[anchorAt]!) > 4 ||
-        Math.abs(pixels[at + 1]! - pixels[anchorAt + 1]!) > 4 || Math.abs(pixels[at + 2]! - pixels[anchorAt + 2]!) > 4) continue;
+    // Within sixteen steps of the center gives at most the uniform 32-step range.
+    if (pixels[at + 3]! < 250 || Math.abs(pixels[at]! - pixels[anchorAt]!) > 16 ||
+        Math.abs(pixels[at + 1]! - pixels[anchorAt + 1]!) > 16 || Math.abs(pixels[at + 2]! - pixels[anchorAt + 2]!) > 16) continue;
     mask[index] = 1;
     if (x >= bounds.x && x < bounds.x + bounds.width && y >= bounds.y && y < bounds.y + bounds.height) matchingSourcePixels++;
   }

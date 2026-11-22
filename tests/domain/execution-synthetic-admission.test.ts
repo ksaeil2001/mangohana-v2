@@ -28,7 +28,7 @@ describe('closed operational admission precedes checkpoint side effects',()=>{
   });
   it('retains checkpoint verification as the first synthetic authorization condition',async()=>{
     const f=fixture(true,true),checkpoints=vi.spyOn(f.execution,'validateCheckpoints').mockResolvedValue(false);
-    await expect(f.execution.authorize(f.claim)).resolves.toBeNull();expect(checkpoints).toHaveBeenCalledExactlyOnceWith(f.claim);expect(f.accountTransaction).not.toHaveBeenCalled();expect(f.provider.dispatch).not.toHaveBeenCalled();
+    await expect(f.execution.authorize(f.claim)).resolves.toBeNull();expect(checkpoints).toHaveBeenCalledExactlyOnceWith(f.claim,false);expect(f.accountTransaction).not.toHaveBeenCalled();expect(f.provider.dispatch).not.toHaveBeenCalled();
   });
   it('retains the original synthetic empty checkpoint capture without native work',async()=>{
     const f=fixture(true,true),query=vi.fn(async(sql:string)=>({rows:sql.startsWith('SELECT * FROM processing_requests')?[{request_id:f.claim.ref.requestId,state:'ACTIVE',hold_reasons:[]}]:[],rowCount:0}));

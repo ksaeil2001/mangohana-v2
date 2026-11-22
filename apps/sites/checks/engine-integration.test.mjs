@@ -156,7 +156,7 @@ test('cross-origin, unsupported paths and unsafe upstreams never reach the engin
   }
   assert.equal((await route.POST(request('jobs',{method:'POST',body:form()}),context('jobs'))).status,403);
   assert.equal((await route.GET(request('health',{headers:{'sec-fetch-site':'cross-site'}}),context('health'))).status,403);
-  for(const [path,parts] of [['jobs?url=http://evil.test',['jobs']],['jobs/bad%2Fid',['jobs','bad/id']],['jobs/job-one/result',['jobs','job-one','result']],['secrets',['secrets']]]){
+  for(const [path,parts] of [['jobs?url=http://evil.test',['jobs']],['jobs/bad%2Fid',['jobs','bad/id']],['jobs/job-one/unknown',['jobs','job-one','unknown']],['secrets',['secrets']]]){
    assert.equal((await route.GET(request(path),context(...parts))).status,400);
   }
   assert.equal((await route.POST(request('health',{method:'POST',headers:{Origin:studioOrigin},body:form()}),context('health'))).status,405);

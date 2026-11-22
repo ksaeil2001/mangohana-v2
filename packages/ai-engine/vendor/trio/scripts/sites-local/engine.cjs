@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('node:fs/promises');
+const { createReadStream } = require('node:fs');
 const path = require('node:path');
 const { createHash, randomBytes, randomUUID } = require('node:crypto');
 const { pathToFileURL } = require('node:url');
@@ -45,28 +46,76 @@ async function createEngine(options) {
   const lamaBridge = path.join(root, 'scripts', 'sites-local', 'lama-stdio.py');
   const releaseHooks = acquireHooks();
   let closed = false, blocked, active, closePromise, font, ocr, registry, payloadApi, qaApi, rendererSource, ocrCache, translationCache, ocrEnvironmentPolicy;
-  let reuse = { ocr: false, translation: false }, onnx;
+  let reuse = { ocr: false, translation: false }, onnx, onnxOcr = false, onnxTranslation = false;
   let state = '파일 준비 확인 중입니다.';
+  // In-memory content hash cache for immutable large model weights (.gguf/.onnx >= 64MiB)
+  // keyed by exact lstat identity (ino/dev/size/mtimeMs/ctimeMs) so any file modification
+  // immediately invalidates the entry while avoiding 7.8GiB+ redundant hashing per page.
+  const largeModelHashCache = new Map();
+  const hashLargeFileOnce = async (filePath) => {
+    const resolved = path.resolve(filePath);
+    let stat;
+    try { stat = await fs.lstat(resolved); } catch (error) { if (error.code === 'ENOENT') return [resolved, null]; throw error; }
+    if (stat.isSymbolicLink()) throw failure('CHECKPOINT_INVALID', 'Checkpoint dependency is a link');
+    if (!stat.isFile()) throw new Error('Checkpoint dependency must be a file');
+    const stamp = `${resolved}|${stat.ino}|${stat.dev}|${stat.size}|${stat.mtimeMs}|${stat.ctimeMs}`;
+    const cached = largeModelHashCache.get(stamp);
+    if (cached) return [resolved, cached];
+    const hash = createHash('sha256');
+    for await (const bytes of createReadStream(resolved)) hash.update(bytes);
+    const digest = hash.digest('hex');
+    const after = await fs.lstat(resolved);
+    if (after.isSymbolicLink() || after.ino !== stat.ino || after.dev !== stat.dev || after.size !== stat.size || after.mtimeMs !== stat.mtimeMs) {
+      throw failure('CHECKPOINT_INVALID', 'Checkpoint dependency changed during hashing');
+    }
+    largeModelHashCache.set(stamp, digest);
+    return [resolved, digest];
+  };
+  const fingerprintWithModelCache = async (files, options = {}) => {
+    const regular = [], largeModels = [];
+    for (const file of files.filter(Boolean)) {
+      if (/\.(?:gguf|onnx)$/i.test(file)) {
+        try {
+          const stat = await fs.lstat(path.resolve(file));
+          if (!stat.isSymbolicLink() && stat.isFile() && stat.size >= 64 * 1024 * 1024) { largeModels.push(file); continue; }
+        } catch {}
+      }
+      regular.push(file);
+    }
+    if (!largeModels.length) return fingerprintFiles(regular, options);
+    let capturedRows = [];
+    await fingerprintFiles(regular, { ...options, capture: c => { capturedRows = c.rows; } });
+    const rowMap = new Map(capturedRows);
+    for (const file of largeModels) {
+      const [resolved, digest] = await hashLargeFileOnce(file);
+      if (!rowMap.has(resolved)) rowMap.set(resolved, digest);
+    }
+    const rows = [...rowMap.entries()].sort(([a], [b]) => a.localeCompare(b));
+    return checkpointKey(rows);
+  };
 
   const load = (relative) => import(pathToFileURL(path.join(compiled, 'src', relative)).href);
   try {
     if (!app.isReady()) throw failure('APP_NOT_READY', 'app.whenReady() 이후 엔진을 생성해야 합니다.');
     reuse = runtimeReuseFlags(config);
     onnx = productOnnx(config);
+    onnxOcr = Boolean(onnx?.hasOcr);
+    onnxTranslation = Boolean(onnx?.hasTranslation);
     if (onnx) {
-      if (reuse.ocr || reuse.translation || config.refineConnectedOcr || config.mangaOcr)
+      if ((onnxOcr && (reuse.ocr || config.refineConnectedOcr || config.mangaOcr)) || (onnxTranslation && reuse.translation))
         throw failure('CONFIG_PATH','ONNX 프로필과 native OCR 재인식·런타임 재사용 설정을 함께 사용할 수 없습니다.');
       await onnx.preflight();
-    } else llamaArguments(config,0);
+    }
+    if (!onnxTranslation) llamaArguments(config,0);
     if(config.pageContextTranslation!==undefined&&typeof config.pageContextTranslation!=='boolean')throw failure('CONFIG_PATH','페이지 문맥 번역 설정은 boolean이어야 합니다.');
     llamaStartupMs(config);
     await fs.mkdir(path.join(profile, 'engine-temp'), { recursive: true });
     if (Boolean(config.regionDetectorWorker) !== Boolean(config.regionDetectorModel)) throw failure('CONFIG_PATH', '영역 탐지 실행기와 모델 경로가 함께 필요합니다.');
     if (config.refineConnectedOcr !== undefined && typeof config.refineConnectedOcr !== 'boolean' || config.refineConnectedOcr && !config.regionDetectorWorker) throw failure('CONFIG_PATH', '연결 대사 재인식은 boolean 설정과 학습 영역 탐지가 필요합니다.');
-    if (Boolean(config.textMaskWorker) !== Boolean(config.textMaskModel) || config.textMaskWorker && !config.regionDetectorWorker && !onnx) throw failure('CONFIG_PATH', '학습 마스크에는 픽셀 모델·실행기와 대사 영역 탐지가 모두 필요합니다.');
+    if (Boolean(config.textMaskWorker) !== Boolean(config.textMaskModel) || config.textMaskWorker && !config.regionDetectorWorker && !onnxOcr) throw failure('CONFIG_PATH', '학습 마스크에는 픽셀 모델·실행기와 대사 영역 탐지가 모두 필요합니다.');
     if(config.textMaskAlgorithm!==undefined&&(!config.textMaskWorker||!['dual-context-consensus-v1','source-ink-radial-halo-v3-experimental'].includes(config.textMaskAlgorithm)))throw failure('CONFIG_PATH','지원하는 학습 마스크 알고리즘과 실행기를 확인하세요.');
-    if (config.pageContextTranslation && !config.mmproj && !onnx) throw failure('CONFIG_PATH', '페이지 그림 번역에는 대응하는 그림 인코더가 필요합니다.');
-    for (const key of [...(onnx ? [] : ['llamaServer','gemmaModel']), 'python', 'lamaWorker', 'lamaModel', 'lamaTileWrapper', ...(!onnx && config.regionDetectorWorker ? ['regionDetectorWorker','regionDetectorModel'] : []), ...(config.textMaskWorker ? ['textMaskWorker','textMaskModel'] : []), ...(!onnx && config.mmproj ? ['mmproj'] : [])]) {
+    if (config.pageContextTranslation && !config.mmproj && !onnxTranslation) throw failure('CONFIG_PATH', '페이지 그림 번역에는 대응하는 그림 인코더가 필요합니다.');
+    for (const key of [...(onnxTranslation ? [] : ['llamaServer','gemmaModel']), 'python', 'lamaWorker', 'lamaModel', 'lamaTileWrapper', ...(!onnxOcr && config.regionDetectorWorker ? ['regionDetectorWorker','regionDetectorModel'] : []), ...(config.textMaskWorker ? ['textMaskWorker','textMaskModel'] : []), ...(!onnxTranslation && config.mmproj ? ['mmproj'] : [])]) {
       const name = absolute(config[key], key);
       if (!(await fs.stat(name)).isFile()) throw failure('RESOURCE_MISSING', `${key} 파일이 준비되지 않았습니다.`);
     }
@@ -84,7 +133,7 @@ async function createEngine(options) {
       resourcesPath: resources, initialResourceRoot: resourceRoot,
       ...(config.mangaOcr ? { mangaOcr: config.mangaOcr } : {}),
     });
-    if (!onnx) ocr = createOcr();
+    if (!onnxOcr) ocr = createOcr();
     if (reuse.ocr) ocrCache = createOwnedRuntimeCache({
       kind: 'ocr', createOwner: () => new ProcessOwner(), create: createOcr,
       prepare: async (service, { signal, context }) => {
@@ -111,7 +160,7 @@ async function createEngine(options) {
 
   function health() {
     return { ready: !closed && !blocked && !active, message: closed ? '엔진이 종료되었습니다.' : blocked ?? state,
-      providerProfile:onnx?'onnx-cpu':'native',modelLoading:'ON_JOB',savedContextSupported:!closed&&!blocked };
+      providerProfile:onnxTranslation?'onnx-cpu':'native',modelLoading:'ON_JOB',savedContextSupported:!closed&&!blocked };
   }
 
   async function inspectImage(bytes, mime) {
@@ -124,10 +173,10 @@ async function createEngine(options) {
   const ocrContext=()=>({engineFile:__filename,repositoryRoot:path.resolve(root,'../../../..'),config,compiled,resources,resourceRoot,
     environmentIdentity:ocrEnvironmentPolicy.identity,reuseOcrRuntime:reuse.ocr});
   const ocrCompatibilityAccess=createOcrCompatibilityAccess();
-  const ocrConfiguration=context=>onnx?onnx.configuration('ocr',__filename):computeOcrConfiguration(context);
+  const ocrConfiguration=context=>onnxOcr?onnx.configuration('ocr',__filename):computeOcrConfiguration(context);
   async function readOcrCheckpoint(args,checkpoint,identity,scope,signal,context=ocrContext()){
     if(args.resolveOcrCompatibility!==undefined&&typeof args.resolveOcrCompatibility!=='function')throw failure('OCR_COMPATIBILITY_REJECTED','호환 출처는 신뢰된 controller 함수로만 전달할 수 있습니다.');
-    if(onnx)return {value:await checkpoint.load('ocr',identity),compatibility:null};
+    if(onnxOcr)return {value:await checkpoint.load('ocr',identity),compatibility:null};
     return ocrCompatibilityAccess.load({session:checkpoint,identity,context,scope,resumeFrom:args.resumeFrom,sourceEvidence:args.resolveOcrCompatibility,signal});
   }
 
@@ -238,10 +287,10 @@ async function createEngine(options) {
       const checkpoint=createCheckpointSession({directory:output,jobId,signal,onCheckpoint:args.onCheckpoint,resumeFrom:args.resumeFrom,scope:ocrScope});
       const checkpointsEnabled=typeof args.onCheckpoint==='function'||!!args.resumeFrom;
       const jobOcrContext=ocrContext();
-      const configuration=async stage=>!checkpointsEnabled?null:stage==='ocr'?ocrConfiguration(jobOcrContext):stage==='translation'&&onnx?onnx.configuration(stage,__filename):checkpointKey({stage,settings:stage==='ocr'?{
+      const configuration=async stage=>!checkpointsEnabled?null:stage==='ocr'?ocrConfiguration(jobOcrContext):stage==='translation'&&onnxTranslation?onnx.configuration(stage,__filename):checkpointKey({stage,settings:stage==='ocr'?{
         mangaOcr:config.mangaOcr??null,refineConnectedOcr:config.refineConnectedOcr??false,ocrEnvironment:ocrEnvironmentPolicy.identity,reuseOcrRuntime:reuse.ocr,
       }:stage==='translation'?{modelAlias:config.modelAlias??'gemma4-e2b-local',arguments:llamaArguments(config,0),pageContextTranslation:config.pageContextTranslation===true,reuseTranslationServer:reuse.translation}:{},
-        files:await fingerprintFiles(stage==='ocr'?[__filename,config.python,config.regionDetectorWorker,config.regionDetectorModel,
+        files:await fingerprintWithModelCache(stage==='ocr'?[__filename,config.python,config.regionDetectorWorker,config.regionDetectorModel,
           path.join(compiled,'src/main/productionOcrService.js'),resources,resourceRoot,config.mangaOcr?.assetsRoot,config.mangaOcr?.detectorModelPath,
           path.resolve(__dirname,'../../../../quality/ocr-refinement.cjs'),path.resolve(__dirname,'../../../../quality/region-selection.cjs')]:stage==='translation'?
           [__filename,config.llamaServer,config.gemmaModel,config.mmproj,pageTemplateFile(config),path.join(compiled,'src/main/translation/translationEngineRegistry.js'),path.join(compiled,'src/main/translation/adapters/localAiAdapter.js'),path.join(compiled,'src/shared/translation/translationPayload.js'),path.join(compiled,'src/shared/translation/translationQa.js'),path.resolve(__dirname,'../../../../quality/translation-contract.cjs'),path.resolve(__dirname,'../../../../quality/page-translation.cjs')]:
@@ -278,7 +327,7 @@ async function createEngine(options) {
       if(savedOcr){
         ({rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction}=savedOcr.payload);
         validateExtraction(extraction);
-        if (onnx) {
+        if (onnxOcr) {
           const bytes = savedOcr.assets['onnx-ocr.json'];
           await preserveOnnxOcr(bytes, JSON.parse(bytes.toString('utf8')).data.page);
         }
@@ -290,7 +339,7 @@ async function createEngine(options) {
       }
       await progress('ocr', '기존 OCR로 원문과 읽기 순서를 인식합니다.', 5);
       extraction = await deadline(signal, LIMITS.ocrMs, 'OCR_TIMEOUT', async (ocrSignal) => {
-        if (onnx) {
+        if (onnxOcr) {
           const request={jobId,pageNumber:args.pageNumber??1,sourceSha256:normalizedHash,normalized:path.join(output,'normalized.png'),width:dimensions.width,height:dimensions.height};
           await runtimeEvent('onnx_ocr_start');
           const reply=await onnx.execute('ocr',request,owner,ocrSignal,path.join(profile,'engine-temp'));
@@ -346,7 +395,7 @@ async function createEngine(options) {
       // selection. Keeping the old connected parent here would protect the
       // entire parent envelope and block all newly recognized child masks.
       preSelectionExtraction = structuredClone(extraction);
-      if (config.regionDetectorWorker || onnx) {
+      if (config.regionDetectorWorker || onnxOcr) {
         if (!config.refineConnectedOcr) await fs.writeFile(path.join(output, 'raw-ocr.json'), JSON.stringify(rawExtraction, null, 2), { flag: 'wx' });
         regionDetection ??= await detectRegions();
         const selected = selectDialogueRegions(extraction, regionDetection);
@@ -363,14 +412,14 @@ async function createEngine(options) {
       }
       const textOnly = !extraction.speechBubbles.length;
       const preservedIds = new Set((regionSelection?.decisions ?? []).filter(decision => decision.action === 'preserve').map(decision => decision.id));
-      const noteTargets = onnx && !reviewed && !args.translateStage && typeof args.onTextNotes === 'function'
+      const noteTargets = onnxTranslation && !reviewed && !args.translateStage && typeof args.onTextNotes === 'function'
         ? onnxTranslationTargets(preSelectionExtraction.speechBubbles.filter(group => preservedIds.has(group.id))) : [];
       const noteRegionIds = noteTargets.map(target => target.id);
       if (textOnly && !noteTargets.length) {
         throw failure('NO_TRANSLATABLE_REGIONS', '확실한 대사를 찾지 못했습니다. 원본과 말풍선 밖 원문을 보존했습니다.');
       }
       await fs.writeFile(path.join(output, 'ocr.json'), JSON.stringify(extraction, null, 2), { flag: 'wx' });
-      if(!ocrRead.compatibility)await saveCheckpoint('ocr',ocrIdentity,{rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction},onnx?['onnx-ocr.json']:[]);
+      if(!ocrRead.compatibility)await saveCheckpoint('ocr',ocrIdentity,{rawExtraction,ocrRefinement,regionSelection,regionDetection,extraction,preSelectionExtraction},onnxOcr?['onnx-ocr.json']:[]);
       const translationScope = { owner: args.ownerScope, projectId: args.projectId, pageId: args.pageId,
         pageNumber: args.pageNumber ?? null, sourceSha256: originalHash };
       let translationRequestInFlight=false;
@@ -509,12 +558,12 @@ async function createEngine(options) {
       } else {
       if(savedTranslation){
         pendingTranslations.push(...savedTranslation.payload.pendingTranslations);records.push(...savedTranslation.payload.records);translationRequests.push(...savedTranslation.payload.translationRequests);
-        if(onnx) for(const [file,bytes] of Object.entries(savedTranslation.assets)) await fs.writeFile(path.join(output,file),bytes,{flag:'wx'});
+        if(onnxTranslation) for(const [file,bytes] of Object.entries(savedTranslation.assets)) await fs.writeFile(path.join(output,file),bytes,{flag:'wx'});
         if (noteTargets.length) await args.onTextNotes(translationRequests[0]);
       }
       else {
       await deadline(signal, LIMITS.translationMs, 'TRANSLATION_TIMEOUT', async (translationSignal) => {
-        if (onnx) {
+        if (onnxTranslation) {
           const result = await translateOnnxPage(requestInput, requestTargets, translationSignal);
           if (noteTargets.length) {
             assertKoreanOutputBatch(validateTranslationBatch({ input: requestInput, results: result.pending }));
@@ -624,10 +673,10 @@ async function createEngine(options) {
         if(reviewed)lines[i].userTranslation=humanReview.lines[i].userTranslation;
         records[i].semantic=validated[i].semantic;
       }
-      if(!reviewed && !stage15Receipt)await saveCheckpoint('translation',translationIdentity,{pendingTranslations,records,translationRequests},onnx?['onnx-request.json','onnx-response.json']:[]);
+      if(!reviewed && !stage15Receipt)await saveCheckpoint('translation',translationIdentity,{pendingTranslations,records,translationRequests},onnxTranslation?['onnx-request.json','onnx-response.json']:[]);
       if(reviewed)await fs.writeFile(path.join(output,'human-translation-review.json'),JSON.stringify(humanReview.receipt,null,2),{flag:'wx'});
       } catch(error) {
-        if(translationRequestInFlight&&error.code!=='CLEANUP_FAILED'&&(onnx||!signal.aborted))error=failure('RESULT_UNKNOWN','번역 실행에 대한 응답을 확인하지 못했습니다.');
+        if(translationRequestInFlight&&error.code!=='CLEANUP_FAILED'&&(onnxTranslation||!signal.aborted))error=failure('RESULT_UNKNOWN','번역 실행에 대한 응답을 확인하지 못했습니다.');
         const expectedIds = lines.map(row => row.id);
         const receivedCandidateIds = Array.isArray(error.receivedCandidateIds) && error.semanticReview
           ? expectedIds.filter(id => error.receivedCandidateIds.includes(id)) : pendingTranslations.map(row => row.id);

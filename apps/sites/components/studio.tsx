@@ -1,8 +1,8 @@
 "use client";
 import {useCallback,useEffect,useId,useLayoutEffect,useMemo,useReducer,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 import {flushSync} from 'react-dom';
-import {AlignCenter,AlignLeft,AlignRight,ArrowDownToLine,ArrowLeft,ArrowUpRight,Check,ChevronDown,ChevronLeft,ChevronRight,CircleCheck,Copy,Download,FileArchive,FileImage,FolderOpen,ImagePlus,Info,Keyboard,Layers,LoaderCircle,Maximize,Minus,MousePointer2,Plus,Redo2,Sparkles,SquareDashed,Trash2,Type,Undo2,Upload,WandSparkles,X,AlertTriangle} from 'lucide-react';
-import {approvePageCandidate,pageReviewState,readEngineOutcome,canUseFinalImage,unchangedFinalCrops,clamp,emptyProject,measuredLetteringIds,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
+import {AlignCenter,AlignLeft,AlignRight,ArrowDownToLine,ArrowLeft,ArrowUpRight,Check,ChevronDown,ChevronLeft,ChevronRight,CircleCheck,Copy,Download,FileArchive,FileImage,FolderOpen,ImagePlus,Info,Keyboard,Layers,LoaderCircle,Maximize,Minus,MousePointer2,Paintbrush,Pipette,Plus,Redo2,Sparkles,SquareDashed,Trash2,Type,Undo2,Upload,WandSparkles,X,AlertTriangle} from 'lucide-react';
+import {approvePageCandidate,pageReviewState,readEngineOutcome,canUseFinalImage,unchangedFinalCrops,clamp,emptyProject,measuredLetteringIds,FONT_NAMES,FONTS,getIssues,makeBlock,ocrBox,sampleProject,uid,validateProject,type CoverStroke,type PendingBatch,type Project,type StudioPage,type TextBlock} from '@/lib/studio-model';
 import {canExportPage,exportAvailability,pageActivity,type ExportFormat} from '@/lib/studio-presentation';
 import {resolveStudioShortcut} from '@/lib/studio-shortcuts';
 import {type SavedWorkspace} from '@/lib/studio-storage';
@@ -16,8 +16,8 @@ import StudioContextDialog from '@/components/studio-context-dialog';
 import StudioTranslationReviewDialog from '@/components/studio-translation-review-dialog';
 import StudioTextInventory from '@/components/studio-text-inventory';
 import type {ContextScope} from '@/lib/studio-context';
-import {DEFAULT_ENGINE_ENDPOINT,localStudioEndpoint,processPage,RETIRED_JOB_NOTICE,TerminalJobError} from '@/lib/studio-engine';
-import {download,downloadPages,extractImages,fileDataURL,fileToPage,fitStudioBlock,measureManualPreview,renderPage} from '@/lib/studio-files';
+import {DEFAULT_ENGINE_ENDPOINT,localStudioEndpoint,processPage,readPartialDraft,RETIRED_JOB_NOTICE,TerminalJobError} from '@/lib/studio-engine';
+import {download,downloadPages,extractImages,fileDataURL,fileToPage,fitStudioBlock,loadImage,measureManualPreview,renderPage} from '@/lib/studio-files';
 import {captureReadingAnchor,readingSelection,ReadingViewportSession,type ReadingAnchor,type ReadingPatch,type ReadingView} from '@/lib/studio-reading';
 import {BatchPendingError,getBatchRunTargets,processProjectBatch,requestPagePriority,type BatchJobBinding} from '@/lib/studio-batch-engine';
 type Modal='download'|'shortcuts'|'translation-review'|{kind:'delete-project';projectId:string}|{kind:'context';scope:ContextScope}|null;
@@ -45,8 +45,10 @@ function ManualLettering({block,pageWidth,pageHeight,scale,outline,onMeasure}:{b
    return ()=>{active=false;};
  },[block,pageWidth,pageHeight,onMeasure]);
  const lines=layout?.block===block && layout.width===pageWidth ? layout.lines : undefined;
- return <div className={`block-text ${block.text?'':'missing-text'}`}
-   style={{...outline,paddingInline:Math.max(0,(6+(block.strokeWidth??0))*scale-1),whiteSpace:lines?'pre':'pre-wrap',wordBreak:'keep-all'}}>
+ const vertical=block.writingMode==="vertical-rl";
+ const pad=Math.max(0,(6+(block.strokeWidth??0))*scale-1);
+ return <div className={`block-text ${block.text?'':'missing-text'} ${vertical?'is-vertical':''}`}
+   style={{...outline,...(vertical?{writingMode:'vertical-rl',textOrientation:'upright',paddingBlock:pad}:{paddingInline:pad}),whiteSpace:lines?'pre':'pre-wrap',wordBreak:'keep-all'}}>
    {lines?.join('\n')??(block.text||'번역문 추가')}
  </div>;
 }
@@ -84,6 +86,16 @@ export default function Studio(){
  const drawerTriggerRef=useRef<HTMLButtonElement|null>(null);
  const [scopeMenu,setScopeMenu]=useState(false);
  const [runScope,setRunScope]=useState<'all'|'current'>('all');
+ const [showDevReview,setShowDevReview]=useState(false);
+ const [batchProgress,setBatchProgress]=useState<{projectId:string;total:number;done:number;failed:number;pageName:string}|null>(null);
+ const [tool,setTool]=useState<'select'|'brush'>('select');
+ const [brushColor,setBrushColor]=useState('#ffffff');
+ const [brushSize,setBrushSize]=useState(20);
+ const [pipetteActive,setPipetteActive]=useState(false);
+ const [draftStroke,setDraftStroke]=useState<CoverStroke|null>(null);
+ const brushRef=useRef<{stroke:CoverStroke;pageId:string}|null>(null);
+ const samplerCacheRef=useRef<{src:string;canvas:HTMLCanvasElement;ctx:CanvasRenderingContext2D}|null>(null);
+ const inspectorTextRef=useRef<{projectId:string;target:BlockRestoreTarget;changed:boolean}|null>(null);
  const fileInput=useRef<HTMLInputElement>(null),projectInput=useRef<HTMLInputElement>(null);
  const stageRef=useRef<HTMLDivElement>(null),editableRef=useRef<HTMLDivElement>(null),runMenuRef=useRef<HTMLDivElement>(null),controllerRef=useRef<AbortController|null>(null);
  const viewportSession=useRef<ReadingViewportSession|null>(null);if(viewportSession.current===null){viewportSession.current=new ReadingViewportSession();}
@@ -188,10 +200,10 @@ export default function Studio(){
   return()=>{cancelAnimationFrame(frame);if(restoringViewport.current===key)restoringViewport.current=null;};
  },[ready,canvasLocation,project.id,page?.id,page?.width,page?.height,page?.image,page?.cleanImage,page?.finalImage,zoom,view,stageSize.width,stageSize.height]);
  useEffect(()=>{
-  if(!ready||project.sample||!page?.id||!(page.jobId||page.pendingBatch?.key||page.processed))return;
+  if(!ready||project.sample||!page?.id||!page.jobId)return;
   const controller=new AbortController();void requestPagePriority(project.id,page.id,controller.signal).catch(()=>{});
   return()=>controller.abort();
- },[ready,project.id,project.sample,page?.id,page?.jobId,page?.pendingBatch?.key,page?.processed]);
+ },[ready,project.id,project.sample,page?.id,page?.jobId]);
  function sendActivity(event:ActivityEvent){const next=activityTransition(activityRef.current,event);activityRef.current=next;setActivity(next);return next;}
  function beginActivity(operation:ActiveOperation){if((!ready&&!(operation.kind==='exporting'&&loaded))||activityRef.current.kind!=='idle'){notify('진행 중인 작업이 끝난 뒤 다시 시도해 주세요.');return false;}setDragOver(false);setPageDragOver(false);finishEditing();cancelDrag();sendActivity({type:'start',operation});return true;}
  function closeDrawer(restoreFocus=true){setScopeMenu(false);sendPanel({type:'drawer.close'});if(restoreFocus)requestAnimationFrame(()=>drawerTriggerRef.current?.focus());}
@@ -200,8 +212,9 @@ export default function Studio(){
   if(compactPanels){toggleDrawer(side==='left'?'pages':'inspector',trigger);return;}
   finishEditing();cancelDrag();setScopeMenu(false);sendPanel({type:'panel.toggle',panel:side});
  }
- function chooseCanvasView(next:View){navigationRevision.current++;finishEditing();cancelDrag();setCanvasLocation('editor');setView(next);if(next!=='original')setZoom(1);if(compactPanels)closeDrawer();}
- function chooseCanvasSelection(){navigationRevision.current++;finishEditing();cancelDrag();setCanvasLocation('editor');if(compactPanels)closeDrawer();}
+ function chooseCanvasView(next:View){navigationRevision.current++;finishEditing();cancelDrag();setCanvasLocation('editor');setView(next);if(next==='original'){setTool('select');setPipetteActive(false);}else setZoom(1);if(compactPanels)closeDrawer();}
+ function chooseCanvasSelection(){navigationRevision.current++;finishEditing();cancelDrag();brushRef.current=null;setDraftStroke(null);setPipetteActive(false);setTool('select');setCanvasLocation('editor');if(compactPanels)closeDrawer();}
+ function chooseBrushTool(){if(!canEditCurrent||view==='original')return;navigationRevision.current++;finishEditing();cancelDrag();setSelectedId(null);setPipetteActive(false);setTool('brush');setCanvasLocation('editor');if(compactPanels)closeDrawer();}
  function toggleCanvasOCR(){navigationRevision.current++;setCanvasLocation('editor');setShowOCR(value=>!value);if(compactPanels)closeDrawer();}
  function dropFiles(event:React.DragEvent<HTMLElement>){
   event.preventDefault();event.stopPropagation();setDragOver(false);setPageDragOver(false);if(canMutate)void importFiles(event.dataTransfer.files);
@@ -219,6 +232,7 @@ export default function Studio(){
   closeDrawer(false);setScopeMenu(false);setModalState(next);
  }
  useEffect(()=>{const viewport=window.matchMedia('(max-width:760px)');setCompactPanels(viewport.matches);const change=()=>{setCompactPanels(viewport.matches);setScopeMenu(false);sendPanel({type:'drawer.close'});};viewport.addEventListener('change',change);return()=>viewport.removeEventListener('change',change);},[]);
+ useEffect(()=>{setShowDevReview(new URLSearchParams(window.location.search).get('devReview')==='1');},[]);
  useEffect(()=>{const preventFileNavigation=(event:DragEvent)=>{if(event.dataTransfer?.types.includes('Files'))event.preventDefault();};window.addEventListener('dragover',preventFileNavigation);window.addEventListener('drop',preventFileNavigation);return()=>{window.removeEventListener('dragover',preventFileNavigation);window.removeEventListener('drop',preventFileNavigation);};},[]);
  useEffect(()=>{if(drawer)document.getElementById(drawer==='pages'?'page-panel':'inspector-panel')?.querySelector<HTMLButtonElement>('button')?.focus();},[drawer]);
  useEffect(()=>()=>{controllerRef.current?.abort();},[]);
@@ -320,9 +334,10 @@ export default function Studio(){
     case 'redo':redo();return;
     case 'shortcuts':setModal('shortcuts');return;
     case 'select':chooseCanvasSelection();return;
+    case 'brush':chooseBrushTool();return;
     case 'add-text':addText();return;
     case 'toggle-ocr':setShowOCR(value=>!value);return;
-    case 'clear-selection':cancelDrag();setSelectedId(null);setEditingId(null);return;
+    case 'clear-selection':cancelDrag();brushRef.current=null;setDraftStroke(null);setPipetteActive(false);if(tool==='brush')setTool('select');setSelectedId(null);setEditingId(null);return;
     case 'next-page':if(project.pages[pageIndex+1]){event.preventDefault();navigatePage(1);}return;
     case 'previous-page':if(project.pages[pageIndex-1]){event.preventDefault();navigatePage(-1);}return;
    }
@@ -353,6 +368,9 @@ export default function Studio(){
   const endpoint=DEFAULT_ENGINE_ENDPOINT;
   const operation:ActiveOperation={kind:'processing',id:uid(),projectId:project.id};if(!beginActivity(operation))return;
   const controller=new AbortController();controllerRef.current=controller;const targetProject=project;let success=0,failed=0,stopped=0;
+  const pageNameById=new Map(targets.map(item=>[item.id,item.name]));
+  setBatchProgress({projectId:targetProject.id,total:targets.length,done:0,failed:0,pageName:targets[0]?.name||''});
+  const syncBatchProgress=(activeId?:string)=>setBatchProgress(current=>current?{...current,done:success,failed,pageName:activeId?(pageNameById.get(activeId)??current.pageName):current.pageName}:current);
   const observed=new Map<string,StudioPage['engineOutcome']>();
   const settled=new Set<string>(),pendingKnown=new Set(targets.filter(page=>page.jobId||page.pendingBatch).map(page=>page.id));
   const pageEvent=(id:string,event:PageEvent,label?:string)=>{
@@ -375,33 +393,56 @@ export default function Studio(){
     await processProjectBatch(targetProject,batchTargets,DEFAULT_ENGINE_ENDPOINT,targetProject.source,targetProject.target,controller.signal,{
      onIntent:intent=>storeReceipt({intent}),onJobs:bindings=>storeReceipt({bindings}),
      onObservation:(id,job)=>{observed.set(id,readEngineOutcome(job.reviewState));},
-     onStage:(id,stage)=>sendActivity({type:'stage',id:operation.id,pageId:id,stage}),
-     onResult:(id,result)=>{settled.add(id);if(pageEvent(id,{type:'result',requestId:operation.id,result},'OCR·번역 결과 수신'))success++;else stopped++;},
-     onError:(id,error,terminal,retryableJob)=>{settled.add(id);if(error instanceof BatchPendingError)stopped++;else failed++;pageEvent(id,error instanceof BatchPendingError?{type:'pause',requestId:operation.id,error:errorText(error),outcome:observed.get(id)??'RESULT_UNKNOWN'}:{type:'failure',requestId:operation.id,error:errorText(error),terminal,retryableJob,outcome:observed.get(id)},errorText(error));},
+     onStage:(id,stage)=>{sendActivity({type:'stage',id:operation.id,pageId:id,stage});syncBatchProgress(id);},
+     onResult:(id,result)=>{settled.add(id);if(pageEvent(id,{type:'result',requestId:operation.id,result},'OCR·번역 결과 수신'))success++;else stopped++;syncBatchProgress(id);},
+     onError:(id,error,terminal,retryableJob)=>{settled.add(id);if(error instanceof BatchPendingError)stopped++;else failed++;pageEvent(id,error instanceof BatchPendingError?{type:'pause',requestId:operation.id,error:errorText(error),outcome:observed.get(id)??'RESULT_UNKNOWN'}:{type:'failure',requestId:operation.id,error:errorText(error),terminal,retryableJob,outcome:observed.get(id)},errorText(error));syncBatchProgress(id);},
     },{currentPageId:()=>workspaceRef.current.reading?.[targetProject.id]?.pageId});
    }
    for(const target of targets.filter(page=>!batchIds.has(page.id))){
     if(controller.signal.aborted)break;const base=endpoint;
-    pageEvent(target.id,{type:'start',requestId:operation.id});sendActivity({type:'stage',id:operation.id,pageId:target.id,stage:target.jobId?'저장한 작업 조회':'엔진 연결 중'});
+    pageEvent(target.id,{type:'start',requestId:operation.id});sendActivity({type:'stage',id:operation.id,pageId:target.id,stage:target.jobId?'저장한 작업 조회':'엔진 연결 중'});syncBatchProgress(target.id);
     // Background pages can finish while the reader stays on the chosen page.
     try{
-      const result=await processPage(target,base,targetProject.source,targetProject.target,controller.signal,id=>storeReceipt({bindings:[{pageId:target.id,jobId:id}]}),stage=>sendActivity({type:'stage',id:operation.id,pageId:target.id,stage}),{projectId:targetProject.id});
+      const result=await processPage(target,base,targetProject.source,targetProject.target,controller.signal,id=>storeReceipt({bindings:[{pageId:target.id,jobId:id}]}),stage=>{sendActivity({type:'stage',id:operation.id,pageId:target.id,stage});syncBatchProgress(target.id);},{projectId:targetProject.id});
      if(controller.signal.aborted){pageEvent(target.id,{type:'pause',requestId:operation.id});stopped++;break;}
-     if(pageEvent(target.id,{type:'result',requestId:operation.id,result},`${target.name} · OCR·번역 결과 수신`))success++;else stopped++;settled.add(target.id);
+     if(pageEvent(target.id,{type:'result',requestId:operation.id,result},`${target.name} · OCR·번역 결과 수신`))success++;else stopped++;settled.add(target.id);syncBatchProgress(target.id);
     }catch(error){
      if(controller.signal.aborted){pageEvent(target.id,{type:'pause',requestId:operation.id},`${target.name} · 상태 조회 중지 (엔진 작업 취소 아님)`);stopped++;break;}
-     pageEvent(target.id,error instanceof TerminalJobError&&error.outcome==='RESULT_UNKNOWN'?{type:'pause',requestId:operation.id,error:errorText(error),outcome:error.outcome}:{type:'failure',requestId:operation.id,error:errorText(error),terminal:error instanceof TerminalJobError&&error.terminal,retryableJob:error instanceof TerminalJobError&&error.retryableJob,outcome:error instanceof TerminalJobError?error.outcome:undefined},`${target.name} · ${errorText(error)}`);failed++;settled.add(target.id);
+     pageEvent(target.id,error instanceof TerminalJobError&&error.outcome==='RESULT_UNKNOWN'?{type:'pause',requestId:operation.id,error:errorText(error),outcome:error.outcome}:{type:'failure',requestId:operation.id,error:errorText(error),terminal:error instanceof TerminalJobError&&error.terminal,retryableJob:error instanceof TerminalJobError&&error.retryableJob,outcome:error instanceof TerminalJobError?error.outcome:undefined},`${target.name} · ${errorText(error)}`);failed++;settled.add(target.id);syncBatchProgress(target.id);
     }
    }
   }catch(error){
    for(const target of targets){if(settled.has(target.id))continue;if(controller.signal.aborted||pendingKnown.has(target.id)){pageEvent(target.id,{type:'pause',requestId:operation.id,error:controller.signal.aborted?undefined:errorText(error)});stopped++;}else{pageEvent(target.id,{type:'failure',requestId:operation.id,error:errorText(error),terminal:false});failed++;}}
   }finally{
+   setBatchProgress(null);
    sendActivity({type:'finish',id:operation.id});if(controllerRef.current===controller)controllerRef.current=null;
    notify(controller.signal.aborted?`조회 중지 · 완료 ${success}, 오류 ${failed}, 대기 ${targets.length-success-failed}. 엔진 작업은 취소하지 않았어요.`:`처리 결과 · 완료 ${success}, 오류 ${failed}${stopped?`, 조회 대기 ${stopped}`:''}. ${failed?'오류 페이지에서 재시도할 수 있어요.':stopped?'보관한 접수 정보로 조회를 재개할 수 있어요.':'캔버스에서 결과를 직접 확인해 주세요.'}`,failed>0);
   }
  }
  function stopRun(){const current=activityRef.current;if(current.kind!=='processing')return;sendActivity({type:'stop',id:current.id});controllerRef.current?.abort();}
   function continueEditing(){if(!page||!canMutate)return;commitProject(project.id,p=>({...p,pages:p.pages.map(pg=>pg.id===page.id?{...transitionPage(pg,{type:'continue-editing'}),engineGeneration:(pg.engineGeneration??0)+1}:pg)}),`${page.name} · 이전 결과로 편집 계속 (엔진 작업 취소 아님)`,'barrier');notify('이전 결과로 편집을 계속해요. 엔진 작업은 취소하지 않았어요.');}
+  async function loadPartialDraft(){
+   if(!page||!page.jobId||!canMutate||retiredJob)return;
+   const targetProjectId=project.id,targetPageId=page.id,targetPageName=page.name,targetJobId=page.jobId;
+   const operation:ActiveOperation={kind:'processing',id:uid(),projectId:targetProjectId,pageId:targetPageId,stage:'부분 처리 초안 불러오는 중'};
+   if(!beginActivity(operation))return;
+   const controller=new AbortController();controllerRef.current=controller;
+   try{
+    const draft=await readPartialDraft(targetJobId,controller.signal);
+    if(controller.signal.aborted)return;
+    commitProject(targetProjectId,p=>({...p,pages:p.pages.map(pg=>{
+     if(pg.id!==targetPageId||pg.jobId!==targetJobId)return pg;
+     return {...pg,cleanImage:draft.cleanImage,finalImage:undefined,finalImageSignature:undefined,blocks:draft.blocks,
+      engineReview:draft.engineReview,status:'review' as const,reviewed:false,processed:true,
+      jobId:undefined,batchId:undefined,jobEndpoint:undefined,pendingBatch:undefined,requestId:undefined,
+      error:undefined,engineOutcome:undefined,textInventoryJobId:targetJobId,engineGeneration:(pg.engineGeneration??0)+1};
+    })}),`${targetPageName} · 원문 제거·번역 초안 불러와 수동 식자`,'barrier');
+    setSelectedId(draft.rejectedRegionId??draft.blocks[0]?.id??null);
+    setView('preview');
+    notify(draft.rejectedRegionId?`원문 제거 이미지와 번역 ${draft.blocks.length}개를 불러왔어요. 수동 확인 영역(${draft.rejectedRegionId})을 조정해 주세요.`:`원문 제거 이미지와 번역 ${draft.blocks.length}개를 불러왔어요. 캔버스에서 식자를 조정해 주세요.`);
+   }catch(error){notify(errorText(error),true);}
+   finally{sendActivity({type:'finish',id:operation.id});if(controllerRef.current===controller)controllerRef.current=null;}
+  }
  async function exportResult(){
   const allowed=exportAvailability(exportFormat,project,page);if(!allowed.allowed){notify(allowed.reason!,true);return;}
   const format=exportFormat,target=project,targetPage=page;const operation:ActiveOperation={kind:'exporting',id:uid(),projectId:target.id,pageId:targetPage?.id,format};if(!beginActivity(operation))return;
@@ -436,10 +477,21 @@ export default function Studio(){
   const text=element.innerText.replace(/\r/g,'').replace(/\n$/,'');const changed=text!==session.target.block.text;session.changed=changed;
   commitProject(session.projectId,p=>changed?({...p,pages:p.pages.map(pg=>pg.id===session.target.pageId&&canEditPage(pg)?{...pg,status:'review',reviewed:false,error:undefined,blocks:pg.blocks.map(b=>b.id===session.target.block.id?{...b,text}:b)}:pg)}):restoreText(p,session.target),undefined,'preserve');
  }
+ function commitInspectorText(){
+  const session=inspectorTextRef.current;if(!session)return;inspectorTextRef.current=null;
+  if(session.changed){dispatch({type:'history.block',projectId:session.projectId,fields:'text',target:session.target});commitProject(session.projectId,p=>p,`${session.target.beforePage?.name||'페이지'} · 번역문 직접 수정`,'preserve');}
+ }
  function finishEditing(){
+  commitInspectorText();
   const session=editingRef.current;if(!session)return;editingRef.current=null;
   if(session.changed){dispatch({type:'history.block',projectId:session.projectId,fields:'text',target:session.target});commitProject(session.projectId,p=>p,`${session.target.beforePage?.name||'페이지'} · 번역문 직접 수정`,'preserve');}
   setEditingId(null);
+ }
+ function patchStroke(width:number,color?:string){
+  if(!selected||!page||!canEditCurrent)return;
+  if(!Number.isFinite(width)||width<=0){patchBlock({strokeWidth:undefined,strokeColor:undefined},`${page.name} · 글자 외곽선 해제`);return;}
+  const nextColor=color||selected.strokeColor||(selected.color?.toLowerCase()==='#ffffff'?'#000000':'#ffffff');
+  patchBlock({strokeWidth:clamp(Math.round(width*2)/2,.5,8),strokeColor:nextColor},`${page.name} · 글자 외곽선 수정`);
  }
  function cancelEditing(){
   const session=editingRef.current;if(!session)return;editingRef.current=null;
@@ -457,7 +509,63 @@ export default function Studio(){
   notify(scope==='all'?`${applied}개 페이지의 텍스트에 스타일을 적용했어요.${skipped?` 편집할 수 없는 ${skipped}개 페이지는 제외했어요.`:''}`:'이 페이지의 모든 텍스트에 적용했어요.');
  }
  function openProjectBackup(){setExportFormat('project');setModal('download');}
-   function renderCanvas(original=false){if(!page)return null;const showFinal=!original&&!editingId&&canUseFinalImage(page);return <div className={`manga-frame ${original?"is-original":""}`} style={{width:page.width*safeScale,height:page.height*safeScale}}>
+ async function sampleBrushColor(pctX:number,pctY:number){
+  if(!page)return;
+  const src=page.cleanImage||page.image;
+  try{
+   let cached=samplerCacheRef.current;
+   if(!cached||cached.src!==src){
+    const img=await loadImage(src);
+    const canvas=document.createElement('canvas');canvas.width=img.naturalWidth||page.width;canvas.height=img.naturalHeight||page.height;
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx)return;
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    cached={src,canvas,ctx};samplerCacheRef.current=cached;
+   }
+   const px=clamp(Math.floor(pctX/100*cached.canvas.width),0,cached.canvas.width-1);
+   const py=clamp(Math.floor(pctY/100*cached.canvas.height),0,cached.canvas.height-1);
+   const d=cached.ctx.getImageData(px,py,1,1).data;
+   const hex='#'+[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+   setBrushColor(hex);setPipetteActive(false);notify(`배경색 ${hex.toUpperCase()}를 추출했어요.`);
+  }catch{notify('배경색을 추출하지 못했어요.',true);}
+ }
+ function brushPointFromEvent(event:React.PointerEvent<HTMLDivElement>){
+  const rect=event.currentTarget.getBoundingClientRect();
+  return {x:clamp((event.clientX-rect.left)/Math.max(1,rect.width)*100,0,100),y:clamp((event.clientY-rect.top)/Math.max(1,rect.height)*100,0,100)};
+ }
+ function onBrushPointerDown(event:React.PointerEvent<HTMLDivElement>){
+  if(!page||!canEditCurrent||tool!=='brush'||event.button!==0)return;
+  event.preventDefault();event.stopPropagation();
+  const pt=brushPointFromEvent(event);
+  if(pipetteActive){void sampleBrushColor(pt.x,pt.y);return;}
+  event.currentTarget.setPointerCapture(event.pointerId);
+  const stroke:CoverStroke={id:uid(),color:brushColor,size:brushSize,points:[pt]};
+  brushRef.current={stroke,pageId:page.id};setDraftStroke(stroke);
+ }
+ function onBrushPointerMove(event:React.PointerEvent<HTMLDivElement>){
+  const active=brushRef.current;if(!active||!page||active.pageId!==page.id)return;
+  const pt=brushPointFromEvent(event),last=active.stroke.points.at(-1);
+  if(last&&Math.hypot(pt.x-last.x,pt.y-last.y)<0.22)return;
+  if(active.stroke.points.length>=4999)return;
+  active.stroke={...active.stroke,points:[...active.stroke.points,pt]};
+  setDraftStroke(active.stroke);
+ }
+ function commitBrushStroke(event:React.PointerEvent<HTMLDivElement>){
+  const active=brushRef.current;if(!active)return;
+  brushRef.current=null;setDraftStroke(null);
+  if(event.currentTarget.hasPointerCapture?.(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
+  if(!page||active.pageId!==page.id||!canEditCurrent)return;
+  const stroke=active.stroke;
+  updatePage(p=>({...p,coverStrokes:[...(p.coverStrokes??[]),stroke],reviewed:false}),`${page.name} · 덮개 브러시`);
+ }
+ function cancelBrushStroke(){brushRef.current=null;setDraftStroke(null);}
+ function clearCoverStrokes(){if(!page||!canEditCurrent||!page.coverStrokes?.length)return;updatePage(p=>({...p,coverStrokes:undefined,reviewed:false}),`${page.name} · 덮개 브러시 지우기`);notify('이 페이지의 덮개 브러시를 모두 지웠어요.');}
+ function renderStrokeElement(stroke:CoverStroke,width:number,height:number){
+  if(!stroke.points.length)return null;
+  if(stroke.points.length===1){const p0=stroke.points[0]!;return <circle key={stroke.id} cx={p0.x/100*width} cy={p0.y/100*height} r={stroke.size/2} fill={stroke.color}/>;}
+  const d=stroke.points.map((pt,i)=>`${i===0?'M':'L'}${(pt.x/100*width).toFixed(1)} ${(pt.y/100*height).toFixed(1)}`).join(' ');
+  return <path key={stroke.id} d={d} fill="none" stroke={stroke.color} strokeWidth={stroke.size} strokeLinecap="round" strokeLinejoin="round"/>;
+ }
+   function renderCanvas(original=false){if(!page)return null;const showFinal=!original&&!editingId&&canUseFinalImage(page);const activeDraft=draftStroke&&brushRef.current?.pageId===page.id?draftStroke:null;const strokes=!original?[...(page.coverStrokes??[]),...(activeDraft?[activeDraft]:[])]:[];return <div className={`manga-frame ${original?"is-original":""}`} style={{width:page.width*safeScale,height:page.height*safeScale}}>
      {!original&&!showFinal&&cropPath ? <>
        <svg width="0" height="0" aria-hidden="true" focusable="false" style={{position:'absolute'}}><defs>
          <clipPath id={letteringClipId} clipPathUnits="objectBoundingBox"><path d={cropPath}/></clipPath>
@@ -466,16 +574,18 @@ export default function Studio(){
        <img className="manga-image" src={page.cleanImage} alt="" draggable={false} style={{clipPath:`url(#${letteringClipId}-clean)`}}/>
        <img className="manga-image" src={page.finalImage} alt={page.name+' 식자 미리보기'} draggable={false} style={{position:'absolute',inset:0,clipPath:`url(#${letteringClipId})`}}/>
      </> : <img className="manga-image" src={original?page.image:showFinal?page.finalImage:(page.cleanImage||page.image)} alt={`${page.name} ${original?"원본":"식자 미리보기"}`} draggable={false}/>}
-     {(!original||showOCR)&&page.blocks.map((b,index)=>{const active=b.id===selectedId&&(!original||showOCR), rect=original?ocrBox(b):b;const outline:CSSProperties|undefined=b.strokeWidth && b.strokeColor ? {WebkitTextStroke:(2*b.strokeWidth*safeScale)+"px "+b.strokeColor,paintOrder:"stroke fill"} : undefined;return <div key={b.id} data-block-id={b.id} data-selected={active} role="group" tabIndex={original&&!showOCR?-1:0} aria-label={`텍스트 영역 ${index+1}`} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(original){if(showOCR&&e.key==="Enter"){e.preventDefault();setSelectedId(b.id);}return;}if(e.key==="Enter"&&canEditCurrent){e.preventDefault();setSelectedId(b.id);beginEditing(b);}}} className={`text-block ${active?"selected":""} ${showOCR?"ocr-visible":""} ${editingId===b.id?"editing":""} ${original?"ocr-only":""}`} style={{left:rect.x+"%",top:rect.y+"%",width:rect.w+"%",height:rect.h+"%",background:!original&&!showFinal&&!letterCrops?.has(b.id)&&b.fill?"#fff":undefined,fontSize:b.size*safeScale,fontWeight:b.weight,lineHeight:b.lineHeight,fontFamily:FONTS[b.font],color:b.color,textAlign:b.align} as CSSProperties} onClick={e=>{e.stopPropagation();if(!original||showOCR){setSelectedId(b.id);}}} onDoubleClick={e=>{e.stopPropagation();if(!original&&canEditCurrent){setSelectedId(b.id);beginEditing(b);}}} onPointerDown={e=>{if(!original)startDrag(e,b);}} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}>
+     {strokes.length>0&&<svg className="cover-strokes-svg" viewBox={`0 0 ${page.width} ${page.height}`} preserveAspectRatio="none" aria-hidden="true">{strokes.map(s=>renderStrokeElement(s,page.width,page.height))}</svg>}
+     {(!original||showOCR)&&page.blocks.map((b,index)=>{const active=b.id===selectedId&&(!original||showOCR), rect=original?ocrBox(b):b, vertical=b.writingMode==="vertical-rl";const outline:CSSProperties|undefined=b.strokeWidth && b.strokeColor ? {WebkitTextStroke:(2*b.strokeWidth*safeScale)+"px "+b.strokeColor,paintOrder:"stroke fill"} : undefined;return <div key={b.id} data-block-id={b.id} data-selected={active} role="group" tabIndex={original&&!showOCR?-1:0} aria-label={`텍스트 영역 ${index+1}`} onKeyDown={e=>{if(e.target!==e.currentTarget)return;if(original){if(showOCR&&e.key==="Enter"){e.preventDefault();setSelectedId(b.id);}return;}if(e.key==="Enter"&&canEditCurrent){e.preventDefault();setSelectedId(b.id);beginEditing(b);}}} className={`text-block ${active?"selected":""} ${showOCR?"ocr-visible":""} ${editingId===b.id?"editing":""} ${original?"ocr-only":""} ${vertical?"is-vertical":""}`} style={{left:rect.x+"%",top:rect.y+"%",width:rect.w+"%",height:rect.h+"%",background:!original&&!showFinal&&!letterCrops?.has(b.id)&&b.fill?"#fff":undefined,fontSize:b.size*safeScale,fontWeight:b.weight,lineHeight:b.lineHeight,fontFamily:FONTS[b.font],color:b.color,textAlign:b.align} as CSSProperties} onClick={e=>{e.stopPropagation();if(!original||showOCR){setSelectedId(b.id);}}} onDoubleClick={e=>{e.stopPropagation();if(!original&&canEditCurrent){setSelectedId(b.id);beginEditing(b);}}} onPointerDown={e=>{if(!original&&tool==='select')startDrag(e,b);}} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag}>
       {(active||showOCR)&&<span className="block-label">{original?"OCR":"T"} {String(index+1).padStart(2,"0")}{showOCR&&b.confidence!==undefined?` · ${(b.confidence*100).toFixed(1)}%`:""}</span>}
-       {!original&&(editingId===b.id?<div key={b.id+"-edit"} ref={editableRef} contentEditable="plaintext-only" onInput={e=>recordDraft(e.currentTarget)} suppressContentEditableWarning className="block-text editable" style={{...outline,wordBreak:"keep-all",paddingInline:Math.max(0,(6+(b.strokeWidth??0))*safeScale-1)}} role="textbox" aria-label={`번역문 ${index+1} 직접 편집`} onPointerDown={e=>e.stopPropagation()} onBlur={e=>commitText(e.currentTarget,b)} onKeyDown={e=>{if(e.nativeEvent.isComposing)return;if(e.key==="Escape"){e.preventDefault();e.stopPropagation();cancelEditing();}if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();e.currentTarget.blur();}}}>{editingRef.current?.target.block.id===b.id?editingRef.current.target.block.text:b.text}</div>:(showFinal||letterCrops?.has(b.id)?<div className="block-text" style={{opacity:0}}>{b.text||"번역문 추가"}</div>:<ManualLettering block={b} pageWidth={page.width} pageHeight={page.height} onMeasure={recordManualFit} scale={safeScale} outline={outline}/>))}
-      {active&&!original&&editingId!==b.id&&<><span className="handle tl"/><span className="handle tr"/><span className="handle bl"/><span className="handle br" onPointerDown={e=>{e.stopPropagation();startDrag(e,b,true);}}/></>}
+       {!original&&(editingId===b.id?<div key={b.id+"-edit"} ref={editableRef} contentEditable="plaintext-only" onInput={e=>recordDraft(e.currentTarget)} suppressContentEditableWarning className={`block-text editable ${vertical?"is-vertical":""}`} style={{...outline,wordBreak:"keep-all",...(vertical?{writingMode:"vertical-rl",textOrientation:"upright",paddingBlock:Math.max(0,(6+(b.strokeWidth??0))*safeScale-1)}:{paddingInline:Math.max(0,(6+(b.strokeWidth??0))*safeScale-1)})}} role="textbox" aria-label={`번역문 ${index+1} 직접 편집`} onPointerDown={e=>e.stopPropagation()} onBlur={e=>commitText(e.currentTarget,b)} onKeyDown={e=>{if(e.nativeEvent.isComposing)return;if(e.key==="Escape"){e.preventDefault();e.stopPropagation();cancelEditing();}if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();e.currentTarget.blur();}}}>{editingRef.current?.target.block.id===b.id?editingRef.current.target.block.text:b.text}</div>:(showFinal||letterCrops?.has(b.id)?<div className="block-text" style={{opacity:0}}>{b.text||"번역문 추가"}</div>:<ManualLettering block={b} pageWidth={page.width} pageHeight={page.height} onMeasure={recordManualFit} scale={safeScale} outline={outline}/>))}
+      {active&&!original&&editingId!==b.id&&tool==='select'&&<><span className="handle tl"/><span className="handle tr"/><span className="handle bl"/><span className="handle br" onPointerDown={e=>{e.stopPropagation();startDrag(e,b,true);}}/></>}
 
     </div>;})}
+    {!original&&tool==='brush'&&canEditCurrent&&<div className={`brush-surface ${pipetteActive?"is-pipette":""}`} role="application" aria-label={pipetteActive?"배경색 스포이드":"덮개 브러시 캔버스"} onPointerDown={onBrushPointerDown} onPointerMove={onBrushPointerMove} onPointerUp={commitBrushStroke} onPointerCancel={cancelBrushStroke} onClick={e=>e.stopPropagation()}/>}
     {view==="compare"&&<span className="compare-caption">{original?"원본":"식자 결과"}</span>}
   </div>;}
 
-  return <main className={`studio-shell ${!loaded?"loading-workspace":""}`} aria-busy={!loaded||busy} data-workspace-state={persistence.hydration.phase} data-operation={activity.kind} data-operation-id={activity.kind==='idle'?'':activity.id} data-operation-project-id={activity.kind==='idle'?'':activity.projectId} data-operation-page-id={activity.kind==='idle'?'':activity.pageId||''} data-stop-requested={activity.kind==='processing'&&!!activity.stopRequested} data-modal={modalName||'closed'} data-deleted-project-count={workspace.deletedProjects.length} data-inspector-view="text" data-canvas-location={canvasLocation} data-save-conflict={persistence.save.phase==='error'&&!!persistence.save.conflict} data-save-state={saveState} data-project-id={activeId} data-page-id={page?.id||""} data-page-state={page?pageActivity(page):"empty"} data-mode={project.mode} data-view={view} data-tool="select" data-drawer={drawer||"closed"} data-editor-state={editingId?"editing":"idle"} data-undo-count={undoCount} data-redo-count={redoCount} data-panel-layout={compactPanels?"overlay":"docked"}>
+  return <main className={`studio-shell ${!loaded?"loading-workspace":""}`} aria-busy={!loaded||busy} data-workspace-state={persistence.hydration.phase} data-operation={activity.kind} data-operation-id={activity.kind==='idle'?'':activity.id} data-operation-project-id={activity.kind==='idle'?'':activity.projectId} data-operation-page-id={activity.kind==='idle'?'':activity.pageId||''} data-stop-requested={activity.kind==='processing'&&!!activity.stopRequested} data-modal={modalName||'closed'} data-deleted-project-count={workspace.deletedProjects.length} data-inspector-view="text" data-canvas-location={canvasLocation} data-save-conflict={persistence.save.phase==='error'&&!!persistence.save.conflict} data-save-state={saveState} data-project-id={activeId} data-page-id={page?.id||""} data-page-state={page?pageActivity(page):"empty"} data-mode={project.mode} data-view={view} data-tool={tool} data-drawer={drawer||"closed"} data-editor-state={editingId?"editing":"idle"} data-undo-count={undoCount} data-redo-count={redoCount} data-panel-layout={compactPanels?"overlay":"docked"}>
     <input ref={fileInput} type="file" accept=".zip,.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" multiple hidden onChange={e=>importFiles(e.target.files)}/>
     <input ref={projectInput} type="file" accept=".trio,.json" hidden onChange={e=>importProject(e.target.files?.[0])}/>
     <div className={`workspace ${!leftOpen?"left-collapsed":""} ${!rightOpen?"right-collapsed":""}`}>
@@ -487,15 +597,15 @@ export default function Studio(){
     {ready&&persistence.save.phase==="error"&&<section className="storage-recovery-banner" role="alert"><AlertTriangle size={17}/><div><strong>아직 저장하지 못한 변경사항이 있어요.</strong><span>{persistence.save.conflict?"다른 탭의 저장 내용은 보호했어요. 현재 창에서 수정한 프로젝트를 각각 백업한 뒤 새로고침해 주세요.":"현재 편집은 보관 중이에요. 다시 저장하거나 프로젝트를 내려받아 주세요."}</span></div>{!persistence.save.conflict&&<button onClick={persistence.retrySave}>다시 저장</button>}<button onClick={openProjectBackup}>프로젝트 백업</button></section>}
         {canvasLocation==='projects'&&hasActiveProject?<ProjectOverview project={project} canNavigate={ready&&!uploading&&!exporting} onOpenPage={id=>selectPage(id)} onOpenPages={()=>showCanvasLocation('pages')}/>:<><section className="sidebar-canvas-controls" aria-label="캔버스 도구">
           <div className="sidebar-view-controls"><div className="view-tabs" role="tablist" aria-label="미리보기 방식"><button role="tab" disabled={!hasActiveProject} aria-selected={view==="preview"} className={view==="preview"?"active":""} onClick={()=>chooseCanvasView("preview")}>미리보기</button><button role="tab" disabled={!hasActiveProject} aria-selected={view==="original"} className={view==="original"?"active":""} onClick={()=>chooseCanvasView("original")}>원본</button><button role="tab" disabled={!hasActiveProject} aria-selected={view==="compare"} className={view==="compare"?"active":""} onClick={()=>chooseCanvasView("compare")}>비교</button></div><IconButton label="OCR 영역 표시 · O" disabled={!hasActiveProject} active={showOCR} onClick={toggleCanvasOCR}><SquareDashed size={15}/></IconButton></div>
-          <button type="button" className="button secondary full-width" disabled={!canManageProjects} onClick={()=>setModal('translation-review')}>선택 번역 13개 저장</button>
-          <div className="sidebar-tool-row" role="group" aria-label="편집 도구"><IconButton label="선택 · V" disabled={!hasActiveProject} active={true} onClick={chooseCanvasSelection}><MousePointer2 size={16}/></IconButton><IconButton label="텍스트 추가 · T" disabled={!canEditCurrent} onClick={addText}><Type size={17}/></IconButton><IconButton label="되돌리기 · Ctrl+Z" onClick={()=>{undo();if(compactPanels)closeDrawer();}} disabled={!undoCount||!canMutate||canvasLocation!=='editor'}><Undo2 size={16}/></IconButton><IconButton label="다시 실행 · Ctrl+Shift+Z" onClick={()=>{redo();if(compactPanels)closeDrawer();}} disabled={!redoCount||!canMutate||canvasLocation!=='editor'}><Redo2 size={16}/></IconButton><IconButton label="단축키 안내" onClick={()=>setModal("shortcuts")}><Keyboard size={16}/></IconButton></div>
+          {showDevReview&&<button type="button" className="button secondary full-width" disabled={!canManageProjects} onClick={()=>setModal('translation-review')}>선택 번역 13개 저장</button>}
+          <div className="sidebar-tool-row" role="group" aria-label="편집 도구"><IconButton label="선택 · V" disabled={!hasActiveProject} active={tool==='select'} onClick={chooseCanvasSelection}><MousePointer2 size={16}/></IconButton><IconButton label="덮개 브러시 · B" disabled={!canEditCurrent||view==='original'} active={tool==='brush'} onClick={chooseBrushTool}><Paintbrush size={16}/></IconButton><IconButton label="텍스트 추가 · T" disabled={!canEditCurrent} onClick={()=>{setTool('select');setPipetteActive(false);addText();}}><Type size={17}/></IconButton><IconButton label="되돌리기 · Ctrl+Z" onClick={()=>{undo();if(compactPanels)closeDrawer();}} disabled={!undoCount||!canMutate||canvasLocation!=='editor'}><Undo2 size={16}/></IconButton><IconButton label="다시 실행 · Ctrl+Shift+Z" onClick={()=>{redo();if(compactPanels)closeDrawer();}} disabled={!redoCount||!canMutate||canvasLocation!=='editor'}><Redo2 size={16}/></IconButton><IconButton label="단축키 안내" onClick={()=>setModal("shortcuts")}><Keyboard size={16}/></IconButton></div>
         </section>
         <div className="panel-heading"><h2><Layers size={13}/>페이지 <span className="count">{project.pages.length.toString().padStart(2,"0")}</span></h2>
           {page&&project.pages.length>1&&<div role="group" aria-label="선택한 페이지 순서">{([-1,1] as const).map(step=><IconButton key={step} label={step===-1?'선택한 페이지를 앞으로':'선택한 페이지를 뒤로'}
             disabled={!canMutate||!project.pages[pageIndex+step]||!project.pages.every(canEditPage)} onClick={()=>{finishEditing();cancelDrag();updateProject(p=>moveStudioPage(p,page.id,step),page.name+' · 순서 변경');}}>
             {step===-1?<ChevronLeft size={15}/>:<ChevronRight size={15}/>}</IconButton>)}</div>}
         </div>
-        <div className="page-list">{project.pages.map((p,index)=><button key={p.id} type="button" data-page-id={p.id} data-page-state={pageActivity(p)} aria-busy={pageActivity(p)==='processing'} aria-label={`${index+1}페이지 · ${p.name}`} aria-current={page?.id===p.id?"page":undefined} disabled={!ready||uploading||exporting} className={`page-card ${page?.id===p.id?"selected":""}`} onClick={()=>selectPage(p.id)}><img className="page-preview-image" src={p.cleanImage||p.image} alt="" loading="lazy" width={p.width} height={p.height}/></button>)}
+        <div className="page-list">{project.pages.map((p,index)=>{const st=pageActivity(p),approved=p.reviewed&&p.status==='completed',partial=p.engineOutcome==='PARTIAL',badge=st==='processing'?'처리중':st==='failed'?(partial?'부분':'오류'):st==='paused'?'대기':approved?'완료':p.processed||p.blocks.length?'검토':'';return <button key={p.id} type="button" data-page-id={p.id} data-page-state={st} aria-busy={st==='processing'} aria-label={`${index+1}페이지 · ${p.name}${badge?` · ${badge}`:''}`} aria-current={page?.id===p.id?"page":undefined} disabled={!ready||uploading||exporting} className={`page-card ${page?.id===p.id?"selected":""}`} onClick={()=>selectPage(p.id)}><img className="page-preview-image" src={p.cleanImage||p.image} alt="" loading="lazy" width={p.width} height={p.height}/><span className="page-card-num" aria-hidden="true">{String(index+1).padStart(2,"0")}</span>{badge&&<span className={`page-card-badge state-${st}${partial?' is-partial':''}${approved?' is-approved':''}`} aria-hidden="true">{badge}</span>}</button>;})}
         {!project.pages.length&&<div id="page-list-empty" className="empty-pages" tabIndex={-1}><FileImage size={28}/>{hasActiveProject&&<strong className="empty-project-name" title={project.name}>{project.name}</strong>}<p>첫 페이지를 추가해 주세요.</p><span>JPG, PNG, WebP · ZIP</span></div>}
         </div>
         </>}
@@ -508,12 +618,12 @@ export default function Studio(){
         <CanvasProjectPath projectName={project.name} pageCount={project.pages.length} pageIndex={pageIndex} page={page} location={canvasLocation} hasProject={hasActiveProject} onOpenProjects={()=>showCanvasLocation('projects')} onOpenPages={()=>showCanvasLocation('pages')} onOpenEditor={()=>showCanvasLocation('editor')} controls={canvasLocation!=='editor'&&<CanvasBrowserControls location={canvasLocation} sort={projectSort} onSort={setProjectSort} searchOpen={browserSearchOpen||!!(canvasLocation==='projects'?projectSearch:pageSearch)} onSearch={()=>{if(browserSearchOpen||(canvasLocation==='projects'?projectSearch:pageSearch)){setBrowserSearchOpen(false);canvasLocation==='projects'?setProjectSearch(''):setPageSearch('');}else setBrowserSearchOpen(true);}}/>}/>
         {(persistence.hydration.phase==="recovery"||persistence.save.phase==="error")&&<div className="canvas-storage-alert" role="alert"><AlertTriangle size={15}/><span>{persistence.hydration.phase==="recovery"?"저장 내용을 불러오지 못했어요.":"아직 저장하지 못한 변경사항이 있어요."}</span><button onClick={e=>showStorageRecovery(e.currentTarget)}>저장 복구 열기</button></div>}
         {canvasLocation!=='editor'?<CanvasBrowser key={canvasLocation} location={canvasLocation} projects={projects} project={project} query={canvasLocation==='projects'?projectSearch:pageSearch} onQuery={canvasLocation==='projects'?setProjectSearch:setPageSearch} sort={projectSort} searchOpen={browserSearchOpen||!!(canvasLocation==='projects'?projectSearch:pageSearch)} ready={ready} canNavigate={ready&&!uploading&&!exporting} canCreate={canManageProjects} newName={newProjectName} onNewName={setNewProjectName} onCreate={createProject} onImport={()=>projectInput.current?.click()} onAddImages={()=>fileInput.current?.click()} onOpenProject={id=>selectProject(id,false,'pages')} onSelectProject={selectProjectCard} onOpenPage={openProjectPage} canDelete={canDeleteProjects} canRestoreDeleted={canManageProjects} onDelete={requestProjectDeletion} deletedProjectName={lastDeletedProject?.project.name} onUndoDelete={undoProjectDeletion}/>:<>
-        <div id="canvas-editor" className="canvas-body">{page&&canMutate&&(page.jobId||page.pendingBatch||pageActivity(page)==="paused"||pageActivity(page)==="failed")&&<div className="paused-notice" role="status"><Info size={14}/><div><strong>{retiredJob?"이전 연결의 작업이 보관되어 있어요":page.jobId?"저장한 작업을 다시 조회할 수 있어요":page.pendingBatch?"이전 접수 정보를 확인할 수 있어요":"이전 내용은 그대로 보관했어요"}</strong><span>{retiredJob?RETIRED_JOB_NOTICE:page.error||"조회 중지는 엔진 작업을 취소하지 않아요."}</span></div>{!retiredJob&&<button onClick={()=>run("current")}>{page.jobId?(page.status==="failed"?"실패 페이지 재시도":"조회 재개"):page.pendingBatch?"접수 확인":"다시 처리"}</button>}<button onClick={continueEditing}>이전 결과로 편집</button></div>}
+        <div id="canvas-editor" className="canvas-body">{page&&canMutate&&(page.jobId||page.pendingBatch||pageActivity(page)==="paused"||pageActivity(page)==="failed")&&<div className="paused-notice" role="status"><Info size={14}/><div><strong>{retiredJob?"이전 연결의 작업이 보관되어 있어요":page.engineOutcome==="PARTIAL"&&page.jobId?"원문 제거·번역이 끝난 초안을 수동 식자로 이어받을 수 있어요":page.jobId?"저장한 작업을 다시 조회할 수 있어요":page.pendingBatch?"이전 접수 정보를 확인할 수 있어요":"이전 내용은 그대로 보관했어요"}</strong><span>{retiredJob?RETIRED_JOB_NOTICE:page.error||"조회 중지는 엔진 작업을 취소하지 않아요."}</span></div>{!retiredJob&&page.engineOutcome==="PARTIAL"&&page.jobId&&<button onClick={()=>void loadPartialDraft()}>원문 제거·번역 초안 불러오기</button>}{!retiredJob&&<button onClick={()=>run("current")}>{page.jobId?(page.status==="failed"?"실패 페이지 재시도":"조회 재개"):page.pendingBatch?"접수 확인":"다시 처리"}</button>}<button onClick={continueEditing}>이전 결과로 편집</button></div>}
           <div ref={stageRef} tabIndex={-1} className={`canvas-stage ${dragOver?"drag-over":""}`} onScroll={()=>captureViewportReading(false)} onWheel={readingInteraction} onPointerDown={readingInteraction} onKeyDown={readingInteraction} onClick={()=>{if(!editingId)setSelectedId(null);}} onDragOver={e=>{e.preventDefault();e.dataTransfer.dropEffect=canMutate?'copy':'none';setDragOver(canMutate);}} onDragLeave={e=>{if(!(e.relatedTarget instanceof Node)||!e.currentTarget.contains(e.relatedTarget))setDragOver(false);}} onDrop={dropFiles}>
-            {page?<><div className={`canvas-pages ${view==="compare"?"comparing":""}`} style={{minWidth:page.width*safeScale*(view==="compare"?2:1)+(view==="compare"?70:80),minHeight:page.height*safeScale+64,"--canvas-art-width":`${page.width*safeScale*(view==="compare"?2:1)+(view==="compare"?20:0)}px`} as CSSProperties}><button type="button" className="canvas-margin-nav canvas-margin-previous" data-canvas-margin="previous" aria-label="이전 이미지" disabled={!ready||uploading||exporting||!project.pages[pageIndex-1]} onClick={e=>{e.stopPropagation();navigatePage(-1);}}></button>{view==="compare"&&renderCanvas(true)}{renderCanvas(view==="original")}<button type="button" className="canvas-margin-nav canvas-margin-next" data-canvas-margin="next" aria-label="다음 이미지" disabled={!ready||uploading||exporting||!project.pages[pageIndex+1]} onClick={e=>{e.stopPropagation();navigatePage(1);}}></button></div>{running&&activity.projectId===project.id&&activity.pageId===page.id&&<div className="processing-banner"><LoaderCircle size={15} className="spin"/>{processingStage||"엔진 연결 중"} · {page.name}</div>}</>:<div className="empty-canvas"><span className="empty-art"><ImagePlus size={42} strokeWidth={1.1}/><i><FileArchive size={20}/></i></span><span className="eyebrow">YOUR NEXT STORY</span><h1>어떤 이야기를 옮겨볼까요?</h1><p>이미지 한 장부터 ZIP 한 권까지.<br/>파일을 여기에 놓고 작업을 시작하세요.</p><button className="button primary" onClick={()=>fileInput.current?.click()} disabled={!canMutate}><Plus size={16}/>{uploading?"파일을 준비하는 중…":"파일 선택"}</button><small>이미지 8MiB/장 · 한 번에 100페이지</small></div>}
+            {page?<><div className={`canvas-pages ${view==="compare"?"comparing":""}`} style={{minWidth:page.width*safeScale*(view==="compare"?2:1)+(view==="compare"?70:80),minHeight:page.height*safeScale+64,"--canvas-art-width":`${page.width*safeScale*(view==="compare"?2:1)+(view==="compare"?20:0)}px`} as CSSProperties}><button type="button" className="canvas-margin-nav canvas-margin-previous" data-canvas-margin="previous" aria-label="이전 이미지" disabled={!ready||uploading||exporting||!project.pages[pageIndex-1]} onClick={e=>{e.stopPropagation();navigatePage(-1);}}></button>{view==="compare"&&renderCanvas(true)}{renderCanvas(view==="original")}<button type="button" className="canvas-margin-nav canvas-margin-next" data-canvas-margin="next" aria-label="다음 이미지" disabled={!ready||uploading||exporting||!project.pages[pageIndex+1]} onClick={e=>{e.stopPropagation();navigatePage(1);}}></button></div>{running&&activity.projectId===project.id&&<div className="processing-banner batch-progress-banner" role="status" aria-live="polite"><div className="batch-progress-row"><LoaderCircle size={15} className="spin"/><span>{batchProgress&&batchProgress.total>1?`처리 중 · ${batchProgress.done}/${batchProgress.total}페이지${batchProgress.failed?` (오류 ${batchProgress.failed})`:''} · ${batchProgress.pageName?`${batchProgress.pageName} · `:''}${processingStage||"엔진 연결 중"}`:`${processingStage||"엔진 연결 중"} · ${batchProgress?.pageName||page.name}`}</span></div>{batchProgress&&batchProgress.total>1&&<div className="batch-progress-track" aria-hidden="true"><span style={{width:`${Math.min(100,Math.round(((batchProgress.done+batchProgress.failed)/batchProgress.total)*100))}%`}}/></div>}</div>}</>:<div className="empty-canvas"><span className="empty-art"><ImagePlus size={42} strokeWidth={1.1}/><i><FileArchive size={20}/></i></span><span className="eyebrow">YOUR NEXT STORY</span><h1>어떤 이야기를 옮겨볼까요?</h1><p>이미지 한 장부터 ZIP 한 권까지.<br/>파일을 여기에 놓고 작업을 시작하세요.</p><button className="button primary" onClick={()=>fileInput.current?.click()} disabled={!canMutate}><Plus size={16}/>{uploading?"파일을 준비하는 중…":"파일 선택"}</button><small>이미지 8MiB/장 · 한 번에 100페이지</small></div>}
             {dragOver&&<div className="drop-overlay"><Upload size={38}/><h2>여기에 파일을 놓아 주세요</h2><p>이미지 또는 이미지가 담긴 ZIP</p></div>}
           </div>
-          {page&&<>{editingId&&<div className="canvas-bottom-hint">입력 중에도 자동 저장돼요 · 편집 완료 <kbd>Ctrl ↵</kbd></div>}<div className="zoom-control"><IconButton label="축소" onClick={()=>setZoom(z=>clamp(z-.15,.4,3))}><Minus size={15}/></IconButton><button className="zoom-number" title="화면에 맞춤" onClick={fitReadingViewport}>{Math.round(safeScale*100)}<span>%</span></button><IconButton label="확대" onClick={()=>setZoom(z=>clamp(z+.15,.4,3))}><Plus size={15}/></IconButton><span/><IconButton label="화면에 맞춤" onClick={fitReadingViewport}><Maximize size={14}/></IconButton></div></>}
+          {page&&<>{editingId&&<div className="canvas-bottom-hint">입력 중에도 자동 저장돼요 · 편집 완료 <kbd>Ctrl ↵</kbd></div>}{tool==='brush'&&view!=='original'&&canEditCurrent&&<div className="brush-toolbar" role="toolbar" aria-label="덮개 브러시 도구"><label className="brush-color-pick" title="브러시 색"><input type="color" aria-label="브러시 색" value={brushColor} onChange={e=>{setBrushColor(e.target.value);setPipetteActive(false);}}/><span style={{background:brushColor}}/></label><button type="button" className={`brush-swatch ${brushColor.toLowerCase()==='#ffffff'?'active':''}`} title="흰색" aria-label="흰색" style={{background:'#ffffff'}} onClick={()=>{setBrushColor('#ffffff');setPipetteActive(false);}}/><button type="button" className={`brush-swatch ${brushColor.toLowerCase()==='#000000'?'active':''}`} title="검정" aria-label="검정" style={{background:'#000000'}} onClick={()=>{setBrushColor('#000000');setPipetteActive(false);}}/><button type="button" className={`brush-btn ${pipetteActive?'active':''}`} aria-pressed={pipetteActive} onClick={()=>setPipetteActive(v=>!v)} title="이미지에서 배경색 추출"><Pipette size={13}/><span>스포이드</span></button><label className="brush-size-control"><span>크기</span><input type="range" aria-label="브러시 크기" min={4} max={80} step={2} value={brushSize} onChange={e=>setBrushSize(Number(e.target.value))}/><em>{brushSize}px</em></label><button type="button" className="brush-btn" disabled={!page.coverStrokes?.length} onClick={clearCoverStrokes} title="이 페이지 브러시 모두 지우기"><Trash2 size={13}/><span>지우기</span></button><button type="button" className="brush-btn primary" onClick={chooseCanvasSelection}>완료</button></div>}<div className="zoom-control"><IconButton label="축소" onClick={()=>setZoom(z=>clamp(z-.15,.4,3))}><Minus size={15}/></IconButton><button className="zoom-number" title="화면에 맞춤" onClick={fitReadingViewport}>{Math.round(safeScale*100)}<span>%</span></button><IconButton label="확대" onClick={()=>setZoom(z=>clamp(z+.15,.4,3))}><Plus size={15}/></IconButton><span/><IconButton label="화면에 맞춤" onClick={fitReadingViewport}><Maximize size={14}/></IconButton></div></>}
         </div>
         <div className="canvas-page-navigation"><div className="page-navigation"><IconButton label="이전 페이지" disabled={!project.pages[pageIndex-1]||uploading||exporting} onClick={()=>navigatePage(-1)}><ChevronLeft size={14}/></IconButton><span>{page?String(pageIndex+1).padStart(2,"0"):"00"}<em> / {String(project.pages.length).padStart(2,"0")}</em></span><IconButton label="다음 페이지" disabled={!project.pages[pageIndex+1]||uploading||exporting} onClick={()=>navigatePage(1)}><ChevronRight size={14}/></IconButton></div></div>
         </>}
@@ -544,8 +654,24 @@ export default function Studio(){
               {pageReviewState(page)==='CANDIDATE_READY'&&<button type="button" disabled={!canEditCurrent||issues.some(issue=>issue.kind!=='engine')} onClick={()=>updatePage(approvePageCandidate,page.name+' · 사용자가 원문·번역·식자 검수 완료')}>원문·번역·식자 확인 후 검수 완료</button>}
             </details>}
             {page&&textInventoryJobId&&<StudioTextInventory key={textInventoryJobId} jobId={textInventoryJobId} image={page.image}/>}
+            {page&&selected&&<section className="inspector-section dialogue-section" aria-label="선택한 대사 내용">
+              <div className="section-title"><h3><span>대사 내용</span><span className="tiny-caps" aria-hidden="true">DIALOGUE</span></h3><span className="dialogue-index">#{String(page.blocks.findIndex(b=>b.id===selected.id)+1).padStart(2,"0")}</span></div>
+              <div className="dialogue-field">
+                <div className="dialogue-field-header"><span className="field-label">원문 (OCR)</span>{selected.source&&<IconButton label="원문 복사" onClick={()=>void navigator.clipboard?.writeText(selected.source).then(()=>notify('원문을 복사했어요.')).catch(()=>notify('원문을 복사하지 못했어요.',true))}><Copy size={12}/></IconButton>}</div>
+                <p className={`dialogue-source-box ${selected.source?'':'is-empty'}`}>{selected.source||'직접 추가한 텍스트 영역이에요.'}</p>
+              </div>
+              <div className="dialogue-field">
+                <label className="field-label" htmlFor="inspector-translation">번역문</label>
+                <textarea id="inspector-translation" className="dialogue-textarea" rows={3} disabled={!canEditCurrent} placeholder="번역문을 입력하세요" value={selected.text}
+                  onFocus={()=>{if(!page||!selected||!canEditCurrent)return;const target=createTextEditTarget(project,page.id,selected.id);if(target)inspectorTextRef.current={projectId:project.id,target,changed:false};}}
+                  onChange={e=>{if(!page||!selected||!canEditCurrent)return;const value=e.target.value;if(inspectorTextRef.current?.target.block.id===selected.id){inspectorTextRef.current.changed=value!==inspectorTextRef.current.target.block.text;commitProject(project.id,p=>({...p,pages:p.pages.map(pg=>pg.id===page.id&&canEditPage(pg)?{...pg,status:'review',reviewed:false,error:undefined,blocks:pg.blocks.map(b=>b.id===selected.id?{...b,text:value}:b)}:pg)}),undefined,'preserve');}else{patchBlock({text:value},`${page.name} · 번역문 수정`);}}}
+                  onBlur={commitInspectorText}/>
+              </div>
+            </section>}
             <section className="inspector-section typography-section" data-expanded={typographyOpen}><div className="section-title typography-title"><h3><button type="button" className="typography-disclosure" aria-label={typographyOpen?"글꼴 스타일 접기":"글꼴 스타일 펼치기"} aria-expanded={typographyOpen} aria-controls="typography-controls" onClick={()=>setTypographyOpen(open=>!open)}><ChevronDown size={14} aria-hidden="true"/><span>글꼴 스타일</span><span className="tiny-caps" aria-hidden="true">TYPOGRAPHY</span></button></h3>{selected&&<IconButton label="선택한 텍스트 삭제" disabled={!canEditCurrent} onClick={()=>{updatePage(p=>({...p,blocks:p.blocks.filter(b=>b.id!==selected.id),reviewed:false}),`${page.name} · 텍스트 삭제`);setSelectedId(null);}}><Trash2 size={14}/></IconButton>}</div><fieldset id="typography-controls" className="style-fieldset" hidden={!typographyOpen} disabled={!selected||!canEditCurrent}><label className="field-label" htmlFor="font-select">글꼴</label><select id="font-select" className="form-select font-select" value={selected?.font||"sans"} onChange={e=>patchBlock({font:e.target.value})}>{Object.entries(FONT_NAMES).map(([k,v])=><option value={k} key={k}>{v}</option>)}</select><div className="field-grid"><div><label className="field-label" htmlFor="font-size">크기</label><div className="number-field"><Type size={13}/><input id="font-size" aria-label="글자 크기" type="number" min={10} max={160} value={selected?.size||32} onChange={e=>patchBlock({size:clamp(Number(e.target.value)||10,10,160)})}/><span>px</span></div></div><div><label className="field-label" htmlFor="font-weight">굵기</label><select id="font-weight" className="form-select" value={selected?.weight||600} onChange={e=>patchBlock({weight:Number(e.target.value)})}><option value={400}>Regular</option><option value={500}>Medium</option><option value={600}>Semi Bold</option><option value={700}>Bold</option><option value={800}>Extra Bold</option></select></div></div>
+              <div className="writing-mode-row"><span className="field-label">글쓰기 방향</span><div className="writing-mode-toggle" role="group" aria-label="글쓰기 방향"><button type="button" aria-pressed={selected?.writingMode!=="vertical-rl"} className={selected?.writingMode!=="vertical-rl"?"active":""} onClick={()=>patchBlock({writingMode:undefined},`${page?.name||'페이지'} · 가로쓰기 전환`)}>가로쓰기</button><button type="button" aria-pressed={selected?.writingMode==="vertical-rl"} className={selected?.writingMode==="vertical-rl"?"active":""} onClick={()=>patchBlock({writingMode:"vertical-rl"},`${page?.name||'페이지'} · 세로쓰기 전환`)}>세로쓰기</button></div></div>
               <div className="field-grid alignment-color"><div><label className="field-label">정렬</label><div className="alignment-control">{(["left","center","right"] as const).map((a,i)=>{const Icon=[AlignLeft,AlignCenter,AlignRight][i];return <button key={a} title={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-label={["왼쪽 정렬","가운데 정렬","오른쪽 정렬"][i]} aria-pressed={selected?.align===a} className={selected?.align===a?"active":""} onClick={()=>patchBlock({align:a})}><Icon size={15}/></button>;})}</div></div><div><label className="field-label" htmlFor="text-color">색상</label><div className="color-field"><input id="text-color" type="color" value={selected?.color||"#202020"} onChange={e=>patchBlock({color:e.target.value})}/><span>{(selected?.color||"#202020").slice(1).toUpperCase()}</span><ChevronDown size={11}/></div></div></div>
+              <div className="field-grid stroke-controls"><div><label className="field-label" htmlFor="stroke-width">외곽선 두께</label><div className="number-field"><input id="stroke-width" aria-label="외곽선 두께" type="number" min={0} max={8} step={.5} value={selected?.strokeWidth??0} onChange={e=>patchStroke(Number(e.target.value))}/><span>px</span></div></div><div><label className="field-label" htmlFor="stroke-color">외곽선 색</label><div className={`color-field ${!(selected?.strokeWidth&&selected.strokeWidth>0)?'is-disabled':''}`}><input id="stroke-color" type="color" disabled={!(selected?.strokeWidth&&selected.strokeWidth>0)} value={selected?.strokeColor||(selected?.color?.toLowerCase()==='#ffffff'?'#000000':'#ffffff')} onChange={e=>patchStroke(selected?.strokeWidth||1.5,e.target.value)}/><span>{(selected?.strokeColor||(selected?.color?.toLowerCase()==='#ffffff'?'#000000':'#ffffff')).slice(1).toUpperCase()}</span><ChevronDown size={11}/></div></div></div>
               <div className="line-height-label"><label className="field-label" htmlFor="line-height">줄 간격</label><span>{(selected?.lineHeight||1.4).toFixed(2)}</span></div><input id="line-height" className="range-input" type="range" min={1} max={2.5} step={.05} value={selected?.lineHeight||1.4} onChange={e=>patchBlock({lineHeight:Number(e.target.value)})}/><div className="range-labels"><span>촘촘하게</span><span>여유롭게</span></div>
               <button className="fit-button" disabled={!selected||!canEditCurrent} onClick={()=>void fitSelected()}><WandSparkles size={14}/>말풍선에 글자 맞춤<ArrowUpRight size={13}/></button><label className="checkbox-row"><input type="checkbox" checked={selected?.fill||false} onChange={e=>patchBlock({fill:e.target.checked})}/>텍스트 영역을 흰색으로 채우기</label>
             </fieldset></section><fieldset disabled={!selected||!canEditCurrent} className="style-fieldset"><section className="inspector-section apply-section" aria-label="스타일 적용 범위"><button type="button" className="apply-style" onClick={()=>applyStyle('page')}><Copy size={13}/><span>이 페이지에 스타일 적용</span></button><button type="button" className="apply-style" onClick={()=>applyStyle('all')}><Layers size={13}/><span>모든 페이지에 스타일 적용</span></button>{selected&&!project.sample&&<button type="button" className="apply-style" disabled={!canStoreContext} onClick={openContextDialog}><Type size={13}/><span>인명·용어 표기 저장</span></button>}</section></fieldset>
@@ -567,6 +693,6 @@ export default function Studio(){
 
     {modal==="download"&&<Dialog title="이야기를 가져가세요" eyebrow="READY WHEN YOU ARE" busy={exporting} onClose={()=>!exporting&&setModal(null)}><p className="dialog-description">식자한 이미지부터 이어서 작업할 프로젝트까지.</p><div className="export-options">{[{id:"png",icon:FileImage,title:"현재 페이지 · PNG",description:page?`${page.name} · 원본 해상도 ${page.width} × ${page.height}`:"선택한 페이지"},{id:"zip",icon:FileArchive,title:"모든 페이지 · ZIP",description:`처리 오류·진행 중 페이지를 제외한 ${project.pages.filter(canExportPage).length}페이지`},{id:"project",icon:FolderOpen,title:"프로젝트 · TRIO",description:"이미지·번역문·스타일·처리 기록을 함께 보관"}].map(o=><label key={o.id} className={`export-option ${exportFormat===o.id?"active":""}`}><input type="radio" disabled={exporting||!exportAvailability(o.id as ExportFormat,project,page).allowed} name="export-format" value={o.id} checked={exportFormat===o.id} onChange={()=>setExportFormat(o.id as ExportFormat)}/><o.icon size={23}/><span><strong>{o.title}</strong><small>{o.description}</small></span><span className="radio-dot"/></label>)}</div>{exportFormat!=="project"&&<div className="export-notice"><Info size={15}/><p>캔버스에 보이는 번역문과 스타일로 이미지를 만들어요.{project.sample&&" 편집 체험용 샘플이에요."}{!project.sample&&" 원문 제거는 연결한 엔진의 복원 결과를 사용해요."}</p></div>}{!exportState.allowed&&<p className="connection-error" role="status">{exportState.reason} 프로젝트 TRIO로 현재 작업을 백업할 수 있어요.</p>}<button className="button primary full-width" disabled={!canExport||!exportState.allowed} onClick={exportResult}>{exporting?<LoaderCircle size={16} className="spin"/>:<ArrowDownToLine size={16}/>} {exporting?"파일을 만드는 중…":"다운로드"}</button></Dialog>}
 
-    {modal==="shortcuts"&&<Dialog title="손에 익으면, 더 가볍게" eyebrow="KEYBOARD SHORTCUTS" onClose={()=>setModal(null)}><div className="shortcut-list">{[["선택 도구","V"],["텍스트 추가","T"],["OCR 영역 보기","O"],["이전 · 다음 페이지","←  →"],["되돌리기","Ctrl / ⌘ + Z"],["다시 실행","Ctrl / ⌘ + Shift + Z"],["다운로드 열기","Ctrl / ⌘ + S"],["텍스트 편집 완료","Ctrl / ⌘ + Enter"],["선택 해제 · 편집 취소","Esc"]].map(([label,key])=><div key={label}><span>{label}</span><kbd>{key}</kbd></div>)}</div><div className="dialog-footnote"><MousePointer2 size={14}/>번역문을 더블클릭하면 이미지 위에서 바로 수정할 수 있어요.</div></Dialog>}
+    {modal==="shortcuts"&&<Dialog title="손에 익으면, 더 가볍게" eyebrow="KEYBOARD SHORTCUTS" onClose={()=>setModal(null)}><div className="shortcut-list">{[["선택 도구","V"],["덮개 브러시","B"],["텍스트 추가","T"],["OCR 영역 보기","O"],["이전 · 다음 페이지","←  →"],["되돌리기","Ctrl / ⌘ + Z"],["다시 실행","Ctrl / ⌘ + Shift + Z"],["다운로드 열기","Ctrl / ⌘ + S"],["텍스트 편집 완료","Ctrl / ⌘ + Enter"],["선택 해제 · 편집 취소","Esc"]].map(([label,key])=><div key={label}><span>{label}</span><kbd>{key}</kbd></div>)}</div><div className="dialog-footnote"><MousePointer2 size={14}/>번역문을 더블클릭하면 이미지 위에서 바로 수정할 수 있어요.</div></Dialog>}
   </main>;
 }

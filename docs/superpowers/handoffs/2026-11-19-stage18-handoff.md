@@ -1,6 +1,20 @@
 # Stage18 종료 인계
 
-2026-11-19 KST. 보존 로드맵의 마지막 단계인 Stage18에서 종료한다. S18-01 변경 기록과 S18-02 비용·사용량 비교를 구현하고 기존 Stage16의 저장 원장에 연결했다. 전체 V2 회귀가 실패해 변경 판정은 `ROLLBACK`이며 이전 버전 지문을 보존한다. 이 판정은 파일 교체나 서비스 배포를 실행하지 않는다. 실제 새 원고·예산·사람 검토·비용 절감은 미확정이다. [변경 판단](../../validation/stage17-18-20261119/change-decision.log) · [비용 비교](../../validation/stage17-18-20261119/usage-comparison.log) · [전체 보고서](../../validation/2026-11-19-v2-stage17-18.md)
+2026-11-19 KST 재평가. **Stage17은 개발 3/3(100%)·출하 `BLOCKED`, Stage18은 개발 2/2(100%)·현재 후보 `HOLD`다.** 공식 20개 절은 00~18과 11M이며 18이 마지막이다. 현재 브랜치는 `codex/mangohana-v2-sites-20261111`, HEAD는 `bb40e16c00de0fed5f06530cf13648dd8a0b49db`다. 이번에 대조한 저장 로그의 제품·테스트 소스 401개가 현재 파일과 일치한다. [출하·변경 재평가와 실제 검증 준비표](../../validation/2026-11-19-v2-stage17-18-release-reassessment.md)
+
+최신 Windows TAP은 전체 V2 **1,340/1,340**, 지정 5개 파일 **40/40**, Stage16 보호 검사 **193/193**(고유 이름 130개)였다. 릴리스 점검표에 최신 회귀를 반영하면 13개 중 통과 4, 추가 검토 3, 미실행 6이다. 실기기·운영 인증/보안·자원·성능·복구·실제 사용자 저장/복원·품질·승인은 남아 있다. Stage18의 당시 기록 재생은 `ROLLBACK`, 같은 후보에 최신 회귀를 연결한 읽기 전용 판정은 `HOLD`다. 새 원고·예산·검토 확정이 빠져 이전 정상 지문을 유지한다. 합성 전후 각 4건·1 USD, 실제 비용과 절감액은 `null`이다. [최신 실행 원장](../../validation/stage17-windows-regression-20261119/quiet-results.json) · [당시 판정](../../validation/stage17-18-20261119/change-decision.log)
+
+## 다음 세션의 첫 작업
+
+1. 사용자가 제공할 **미사용 작품·원본/문맥의 노출 이력, 사용권, 독립 정답 봉인 지문**을 작품을 열기 전에 대조한다. Stage16 실제 개시와 최종 인수는 모두 `BLOCKED`이며 실제 개시 지문은 없다. [실제 인수 계약](../../validation/2026-11-19-v2-stage16-final-acceptance.md)
+2. 운영자가 실제 두 페이지·네 조건 경로의 실행/조회/정산, RAM·VRAM·디스크·소유 프로세스 계측과 반환 준비를 증명한다. 현재 운영 worker에는 `RUNTIME_PIPELINE_UNIMPLEMENTED` 경계가 있다. 사용자는 실제 owner/page/revision, A/B × 기존/개선의 모델·버전·폰트·입력, 허용 단계, 페이지·배치 상한 및 fallback 최대 1회의 범위를 승인해야 한다. 시험·품질 평가 승인과 최종 출하 승인을 따로 받는다. [운영 경로](../../../packages/operations/src/runtime-startup.ts) · [두 페이지 시험 조건](../../validation/2026-11-18-v2-stage15-integration.md)
+3. 별도 실제 실행 승인이 갖춰지면 당시 잠금·승인·작업 목록을 읽기 전용 개시 판정기로 확인하고 실행 전에 개시 지문을 보관한다. 그 뒤 같은 실행 ID의 시작·결과·정산·반환, 서로 독립인 평가자 2명의 블라인드 의미/자연스러움 원응답·인증, 작품별 짝비교를 확인한다. 불명 결과는 같은 실행 ID를 조회한다. Windows 조사는 새 실패 로그가 들어온 경우에 해당 시도의 첫 미관측 경계에서 재개한다.
+
+누락 조건과 제출 주체·시점은 [재평가 보고](../../validation/2026-11-19-v2-stage17-18-release-reassessment.md)에 있다. 이번 확인에서 보호 파일 18/18, revision 14 승인 PNG, 별도 서명 결과와 기존 Permit 7개(실패 5·성공 2)가 일치했다. 다음 세션에 권장하는 스킬은 증거 대조에 Superpowers의 `verification-before-completion`, 인계 갱신에 Matt Pocock의 `handoff`다.
+
+## 개발 종료 당시의 기록
+
+S18-01 변경 기록과 S18-02 비용·사용량 비교를 구현하고 기존 Stage16의 저장 원장에 연결했다. 아래 표는 그 당시의 1,330/1,340 전체 회귀를 사용한 평가 이력이다. [당시 변경 판단](../../validation/stage17-18-20261119/change-decision.log) · [비용 비교](../../validation/stage17-18-20261119/usage-comparison.log) · [개발 종료 보고서](../../validation/2026-11-19-v2-stage17-18.md)
 
 | 원문 줄 | 요구와 이번에 확보한 근거 |
 |---|---|
@@ -19,11 +33,7 @@
 
 최종 변경 기록의 네 축은 소스 `PASS`, 실제 AI `NOT_RUN`, 실제 Chrome의 합성 편집 `PASS`, 사람 `NOT_RUN`이다. 전체 회귀는 별도로 `FAIL`이며 두 판정 CLI의 종료 코드는 각각 2다. 누락 plan 단독 검사의 예상 종료와 네이티브 식자 controller 6개의 정리 결과를 진단 출발점으로 남겼다. [원자료](../../validation/stage17-18-20261119/native-controller-evidence.json) · [단독 재현](../../validation/stage17-18-20261119/entry-witness.log)
 
-## 재개 프롬프트
-
-> MangoHana V2 Stage17에서 남은 첫 기술 작업은 Windows 합성 회귀의 네이티브 종료·기동 원인 확인이다. 최종 전체 TAP, 같은 다섯 파일의 단독 실행, 테스트 전용 controller 영수증부터 대조하고 추가 근거가 생긴 최초 실패 경계만 수정하라. 기존 종료·정리 조건을 유지하라. 실제 품질 검증을 진행할 때는 Stage16 최종 인수 보고와 원장에서 독립 미사용 작품·정답·이용 권한, 네 조건의 모델·처리 버전, 실행 범위와 비용 상한이 명시된 승인을 대조하라. 승인과 조건이 일치할 때만 개시 지문을 보관하고 해당 범위로 진행하라. 실행 후 원래 영수증·정산·독립 평가·짝비교를 순서대로 검증하라. 결과가 불명확하면 원래 작업 ID를 먼저 조회하라. Stage19·20을 맨 먼저 진행하라는 새 요청이 있다면, 해당 번호가 있는 별도의 공식 원문 버전과 지문부터 대조하라.
-
-작업 브랜치는 `codex/mangohana-v2-sites-20261111`, 기준 HEAD는 `4a87e02020a62b3a8925c6568925477e8b063b78`다. 로컬 변경은 미커밋 상태다. 이전 diff와 검사 기록은 다음 링크에서 추적할 수 있다. [Stage17 인계](2026-11-19-stage17-handoff.md) · [개발 슬라이스와 파일 범위](../plans/2026-11-19-mangohana-v2-stage17-18.md) · [Stage16 실제 인수 조건](../../validation/2026-11-19-v2-stage16-final-acceptance.md)
+당시 브랜치는 `codex/mangohana-v2-sites-20261111`, 기준 HEAD는 `4a87e02020a62b3a8925c6568925477e8b063b78`였고 구현 변경은 미커밋이었다. 여기서 인계했던 Windows 네이티브 종료·기동 조사의 결과는 아래에 있다. [Stage17 인계](2026-11-19-stage17-handoff.md) · [개발 슬라이스와 파일 범위](../plans/2026-11-19-mangohana-v2-stage17-18.md)
 
 ## 후속 작업 결과 — Stage17 Windows 회귀
 

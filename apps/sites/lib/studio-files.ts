@@ -1,5 +1,7 @@
-import { unzipSync, zipSync, strToU8 } from "fflate";
-import { canUseFinalImage, unchangedFinalCrops, wrapStudioText, FONTS, type StudioPage, type TextBlock } from "./studio-model";
+import { unzipSync, Zip, ZipPassThrough, strToU8 } from "fflate";
+import { canUseFinalImage, unchangedFinalCrops, wrapStudioText, wrapVerticalColumns, FONTS, type StudioPage, type TextBlock } from "./studio-model";
+const verticalGraphemes = new Intl.Segmenter("ko", { granularity: "grapheme" });
+const verticalRotateGlyph = /^[…⋯—―ー〜~()[\]{}「」『』【】（）\-–]+$/u;
 const LIMIT=8*1024*1024;
 export const MAX_PAGES=100;
 export async function extractImages(files:File[]):Promise<File[]> {
@@ -56,27 +58,55 @@ async function loadStudioFont(b:TextBlock) {
   if((b.font==="pretendard" && b.text.trim() && !faces?.some(face=>face.status==="loaded" && face.family.replace(/["']/g,"")==="Trio Pretendard")) ||
       (document.fonts.check&&!document.fonts.check(font,b.text)))throw new Error("식자 글꼴을 불러오지 못했어요.");
 }
-function studioLines(ctx:CanvasRenderingContext2D,b:TextBlock,pageWidth:number) {
+function studioLines(ctx:CanvasRenderingContext2D,b:TextBlock,pageWidth:number,pageHeight?:number) {
   const font=studioFont(b);
   ctx.font=font;
+  if(b.writingMode==="vertical-rl"){
+    const innerHeight=Math.max(1,b.h/100*(pageHeight??pageWidth)-12-2*(b.strokeWidth??0));
+    return {font,lines:wrapVerticalColumns(b.text,innerHeight,b.size*1.06).map(text=>({text,softSpace:""}))};
+  }
   const innerWidth=Math.max(1,b.w/100*pageWidth-12-2*(b.strokeWidth??0));
   return {font,lines:wrapStudioText(b.text,innerWidth,s=>ctx.measureText(s).width)};
 }
 
-export async function measureStudioLines(ctx:CanvasRenderingContext2D,b:TextBlock,pageWidth:number) {
+export async function measureStudioLines(ctx:CanvasRenderingContext2D,b:TextBlock,pageWidth:number,pageHeight?:number) {
   await loadStudioFont(b);
-  return studioLines(ctx,b,pageWidth);
+  return studioLines(ctx,b,pageWidth,pageHeight);
 }
 
-function manualLetteringPlan(ctx:CanvasRenderingContext2D,b:TextBlock,page:Pick<StudioPage,"width"|"height">,wrapped=studioLines(ctx,b,page.width)) {
+function manualLetteringPlan(ctx:CanvasRenderingContext2D,b:TextBlock,page:Pick<StudioPage,"width"|"height">,wrapped=studioLines(ctx,b,page.width,page.height)) {
   if(![b.x,b.y,b.w,b.h,b.size,b.weight,b.lineHeight].every(Number.isFinite)||b.x<0||b.y<0||b.w<=0||b.h<=0||b.x+b.w>100||b.y+b.h>100||b.size<10||b.lineHeight<=0)throw new Error("식자 위치·글자 크기를 검토해 주세요.");
   const x=b.x/100*page.width,y=b.y/100*page.height,w=b.w/100*page.width,h=b.h/100*page.height;
   const {font,lines}=wrapped;
-  ctx.textAlign=b.align;ctx.textBaseline="middle";
   const stroke=b.strokeWidth??0;
+  if(b.writingMode==="vertical-rl"){
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    const colStep=b.size*b.lineHeight, charStep=b.size*1.06;
+    const totalW=(lines.length-1)*colStep+b.size+2*stroke;
+    if(b.text.trim()&&totalW>w+1e-6)return null;
+    const firstColX=x+w/2+((lines.length-1)*colStep)/2;
+    const draws:Array<{text:string;xx:number;yy:number;rotate?:boolean}>=[];
+    for(const [ci,{text:colText}] of lines.entries()){
+      const colX=firstColX-ci*colStep;
+      const chars=[...verticalGraphemes.segment(colText)].map(s=>s.segment);
+      const colH=chars.length?(chars.length-1)*charStep+b.size+2*stroke:0;
+      if(chars.length&&colH>h+1e-6)return null;
+      const startY=b.align==="left"
+        ? y+6+stroke+b.size/2
+        : b.align==="right"
+          ? y+h-6-stroke-(chars.length-1)*charStep-b.size/2
+          : y+(h-(chars.length-1)*charStep)/2;
+      for(const [gi,ch] of chars.entries()){
+        if(!ch.trim())continue;
+        draws.push({text:ch,xx:colX,yy:startY+gi*charStep,rotate:verticalRotateGlyph.test(ch)});
+      }
+    }
+    return {b,x,y,w,h,font,draws,vertical:true as const};
+  }
+  ctx.textAlign=b.align;ctx.textBaseline="middle";
   const step=b.size*b.lineHeight,xx=b.align==="center"?x+w/2:b.align==="right"?x+w-6-stroke:x+6+stroke,start=y+(h-(lines.length-1)*step)/2;
   let lastBottom=-Infinity;
-  const draws=[];
+  const draws:Array<{text:string;xx:number;yy:number;rotate?:boolean}>=[];
   for (const [i,{text:visible,softSpace}] of lines.entries()) {
     const text=visible+softSpace,yy=start+i*step,m=ctx.measureText(text);
     // Hang a soft separator beyond the visible ink. It belongs to the
@@ -89,11 +119,11 @@ function manualLetteringPlan(ctx:CanvasRenderingContext2D,b:TextBlock,page:Pick<
     if(text.trim())lastBottom=bounds.bottom;
     draws.push({text,xx:drawX,yy});
   }
-  return {b,x,y,w,h,font,draws};
+  return {b,x,y,w,h,font,draws,vertical:false as const};
 }
 
 export async function measureManualPreview(ctx:CanvasRenderingContext2D,block:TextBlock,page:Pick<StudioPage,"width"|"height">) {
-  const wrapped=await measureStudioLines(ctx,block,page.width);
+  const wrapped=await measureStudioLines(ctx,block,page.width,page.height);
   return {lines:wrapped.lines,fits:manualLetteringPlan(ctx,block,page,wrapped)!==null};
 }
 
@@ -139,29 +169,86 @@ export async function renderPage(page:StudioPage):Promise<Blob> {
     ctx.clearRect(left,top,width,height);
     ctx.drawImage(final,left,top,width,height,left,top,width,height);
   }
-  for(const {b,x,y,w,h,font,draws} of plans){
+  for(const stroke of page.coverStrokes??[]){
+    if(!stroke.points.length)continue;
+    ctx.save();
+    ctx.strokeStyle=stroke.color;ctx.fillStyle=stroke.color;
+    ctx.lineWidth=stroke.size;ctx.lineCap="round";ctx.lineJoin="round";
+    if(stroke.points.length===1){
+      const p0=stroke.points[0]!;
+      ctx.beginPath();ctx.arc(p0.x/100*canvas.width,p0.y/100*canvas.height,stroke.size/2,0,Math.PI*2);ctx.fill();
+    }else{
+      ctx.beginPath();
+      const p0=stroke.points[0]!;
+      ctx.moveTo(p0.x/100*canvas.width,p0.y/100*canvas.height);
+      for(let i=1;i<stroke.points.length;i++){const pt=stroke.points[i]!;ctx.lineTo(pt.x/100*canvas.width,pt.y/100*canvas.height);}
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  for(const {b,x,y,w,h,font,draws,vertical} of plans){
     ctx.save();
     if(b.fill){ctx.fillStyle="#ffffff";ctx.fillRect(x,y,w,h);}
-    ctx.font=font;ctx.fillStyle=b.color;ctx.textAlign=b.align;ctx.textBaseline="middle";
+    ctx.font=font;ctx.fillStyle=b.color;ctx.textAlign=vertical?"center":b.align;ctx.textBaseline="middle";
     if(b.strokeWidth && b.strokeColor){ctx.lineWidth=2*b.strokeWidth;ctx.lineJoin="round";ctx.strokeStyle=b.strokeColor;}
-    for(const {text,xx,yy} of draws){
-      if(b.strokeWidth && b.strokeColor)ctx.strokeText(text,xx,yy);
-      ctx.fillText(text,xx,yy);
+    for(const {text,xx,yy,rotate} of draws){
+      if(rotate){
+        ctx.save();ctx.translate(xx,yy);ctx.rotate(Math.PI/2);
+        if(b.strokeWidth && b.strokeColor)ctx.strokeText(text,0,0);
+        ctx.fillText(text,0,0);
+        ctx.restore();
+      }else{
+        if(b.strokeWidth && b.strokeColor)ctx.strokeText(text,xx,yy);
+        ctx.fillText(text,xx,yy);
+      }
     }
     ctx.restore();
   }
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("이미지 생성에 실패했어요.")),"image/png"));
 }
 export function download(blob:Blob,name:string) {const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
+async function pushZipBlob(entry:ZipPassThrough,blob:Blob) {
+  if(typeof blob.stream==="function"){
+    const reader=blob.stream().getReader();
+    try{
+      for(;;){
+        const {done,value}=await reader.read();
+        if(done)break;
+        if(value?.byteLength)entry.push(value,false);
+      }
+    }finally{reader.releaseLock();}
+    entry.push(new Uint8Array(0),true);
+    return;
+  }
+  entry.push(new Uint8Array(await blob.arrayBuffer()),true);
+}
 export async function downloadPages(pages:StudioPage[],name:string) {
-  const files:Record<string,Uint8Array>={};
+  const chunks:ArrayBuffer[]=[];
+  let zipError:unknown;
+  let ended=false;
+  const archive=new Zip((error,data,final)=>{
+    if(error){zipError=error;return;}
+    if(data.byteLength){
+      const part:ArrayBuffer=data.buffer instanceof ArrayBuffer&&data.byteOffset===0&&data.byteLength===data.buffer.byteLength?data.buffer:data.slice().buffer;
+      chunks.push(part);
+    }
+    if(final)ended=true;
+  });
   for(const [index,page] of pages.entries()){
     const leaf=page.name.split(/[\\/]/).pop() ?? "";
     const stem=leaf.replace(/\.[^.]+$/,"").replace(/[<>:"|?*\x00-\x1f\x7f]/g,"_").replace(/[. ]+$/g,"") || "page";
     const number=String(index+1).padStart(3,"0");
     const blob=await renderPage(page);
-    files[number+"-"+stem+".png"]=new Uint8Array(await blob.arrayBuffer());
+    const entry=new ZipPassThrough(number+"-"+stem+".png");
+    archive.add(entry);
+    await pushZipBlob(entry,blob);
+    if(zipError)throw zipError;
   }
-  files["페이지목록.txt"]=strToU8("Trio 식자 결과\n"+pages.map(p=>`${p.name}: ${p.width} × ${p.height} · 텍스트 ${p.blocks.length}개`).join("\n"));
-  download(new Blob([new Uint8Array(zipSync(files,{level:0})).buffer],{type:"application/zip"}),name+"-결과.zip");
+  const indexEntry=new ZipPassThrough("페이지목록.txt");
+  archive.add(indexEntry);
+  indexEntry.push(strToU8("Trio 식자 결과\n"+pages.map(p=>`${p.name}: ${p.width} × ${p.height} · 텍스트 ${p.blocks.length}개`).join("\n")),true);
+  archive.end();
+  if(zipError)throw zipError;
+  if(!ended)throw new Error("ZIP 파일을 완성하지 못했어요.");
+  download(new Blob(chunks,{type:"application/zip"}),name+"-결과.zip");
 }

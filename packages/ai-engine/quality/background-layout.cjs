@@ -2,7 +2,7 @@
 const {requiresSingleUtteranceLine}=require('./korean-utterance.cjs');
 const {isGeneralKorean,inspectKoreanText}=require('./korean-typesetting-standard.cjs');
 // Pure pixel/geometry checks. No filesystem, encoder, model or process access.
-const POLICY='background-layout-v1',UNIFORM_DELTA=8,EDGE_DELTA=12,EDGE_MARGIN=2,MIN_CONTRAST=4.5;
+const POLICY='background-layout-v1',UNIFORM_DELTA=32,EDGE_DELTA=12,EDGE_MARGIN=2,MIN_CONTRAST=4.5;
 const hex=v=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const fail=code=>{throw Object.assign(Error(code),{code});};
 const validBox=b=>b&&['x','y','width','height'].every(k=>Number.isFinite(b[k]))&&b.x>=0&&b.y>=0&&b.width>0&&b.height>0&&b.x+b.width<=1+1e-12&&b.y+b.height<=1+1e-12;

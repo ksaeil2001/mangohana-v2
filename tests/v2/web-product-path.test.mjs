@@ -479,3 +479,40 @@ test('first-image capture uses the original batch job even after the live web vi
   assert.deepEqual([baseline, improved].map(env => env.f.state.onnxCalls), calls);
   t.diagnostic('SYNTHETIC_FIRST_CAPTURE=' + outputDirectory);
 });
+
+test('hybrid ONNX OCR with native CUDA translation routes OCR to product_onnx and translation to llama.cpp', async t => {
+  const env = await setup(t, null, { onnxModelsRoot: path.resolve('synthetic-models'), onnxTranslation: false });
+  const health = await (await fetch(env.endpoint + '/health')).json();
+  assert.equal(health.providerProfile, 'native');
+  const batch = await completed(env, (await submit(env)).id);
+  const job = batch.pages[0].job;
+  assert.equal(job.reviewState, 'CANDIDATE_READY', JSON.stringify(job));
+  assert.equal(job.usage.localModelRequests, 1);
+  assert.deepEqual(env.f.state.onnxCalls, ['ocr']);
+  assert.equal(env.f.state.statusCalls, 0);
+  assert.equal(env.f.state.modelRecords.length, 1);
+  const result = await (await fetch(env.endpoint + '/jobs/' + job.id + '/result', { headers: { cookie: env.cookie } })).json();
+  assert.equal(result.evidence.translation_transport, undefined);
+  assert.deepEqual(result.blocks.map(b => [b.id, b.source, b.text]), [['bubble-17', 'テスト', '합성 검사 응답']]);
+  const report = JSON.parse(await readFile(path.join(env.base, 'jobs', job.id, 'engine-report.json'), 'utf8'));
+  assert.equal(report.translations[0].engine, 'local_ai');
+  assert.equal(report.translationRequests[0].httpRequests, 1);
+  const notPartial = await fetch(env.endpoint + '/jobs/' + job.id + '/partial-draft', { headers: { cookie: env.cookie } });
+  assert.equal(notPartial.status, 409);
+});
+
+test('PARTIAL_TYPESETTING exposes cleaned image and translated draft blocks via /jobs/:id/partial-draft', async t => {
+  const env = await setup(t, f => { f.state.onnxFault = 'layout'; }, { onnxModelsRoot: path.resolve('synthetic-models') });
+  const job = (await completed(env, (await submit(env)).id)).pages[0].job;
+  assert.equal(job.reviewState, 'PARTIAL');
+  assert.equal(job.downloadAvailable, false);
+  const draftRes = await fetch(env.endpoint + '/jobs/' + job.id + '/partial-draft', { headers: { cookie: env.cookie } });
+  assert.equal(draftRes.status, 200);
+  const draft = await draftRes.json();
+  assert.equal(draft.version, 1);
+  assert.equal(draft.jobId, job.id);
+  assert.match(draft.clean_image, /^data:image\/png;base64,/);
+  assert.equal(draft.rejectedRegionId, 'bubble-17');
+  assert.deepEqual(draft.reasonCodes, ['HARD_LAYOUT_FAILED']);
+  assert.deepEqual(draft.blocks.map(b => [b.id, b.source, b.text]), [['bubble-17', 'テスト', '테스트']]);
+});

@@ -164,3 +164,26 @@ test('save and backup restoration preserve candidate associations and never bles
  assert.equal(model.canUseFinalImage({...project.pages[0],finalImageSignature:undefined}),false);
  assert.equal(model.canUseFinalImage({...project.pages[0],finalImage:undefined}),false);
 });
+
+test('streaming ZIP export preserves all 30 pages in order with exact PNG bytes',async()=>{
+ const oldDocument=globalThis.document,oldCreate=URL.createObjectURL,oldSetTimeout=globalThis.setTimeout;
+ let downloaded,clicks=0;
+ globalThis.document={body:{appendChild(){}},createElement(name){assert.equal(name,'a');return {click(){clicks++;},remove(){}};}};
+ URL.createObjectURL=blob=>{downloaded=blob;return 'blob:unit-test-30';};
+ globalThis.setTimeout=(callback,delay,...args)=>{const timer=oldSetTimeout(callback,delay,...args);if(delay===30000)timer.unref();return timer;};
+ try{
+  const pages=Array.from({length:30},(_,i)=>({...candidatePage(),id:`page-${i+1}`,name:`p-${i+1}.png`}));
+  await files.downloadPages(pages,'thirty');
+  assert.equal(clicks,1);assert.equal(downloaded.type,'application/zip');
+  const archive=unzipSync(new Uint8Array(await downloaded.arrayBuffer()));
+  assert.equal(Object.keys(archive).length,31);
+  for(let i=0;i<30;i++){
+   const name=`${String(i+1).padStart(3,'0')}-p-${i+1}.png`;
+   assert.deepEqual(Buffer.from(archive[name]),candidateBytes);
+  }
+  assert.ok(archive['페이지목록.txt']);
+ }finally{
+  if(oldDocument===undefined)delete globalThis.document;else globalThis.document=oldDocument;
+  URL.createObjectURL=oldCreate;globalThis.setTimeout=oldSetTimeout;
+ }
+});

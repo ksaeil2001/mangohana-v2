@@ -47,6 +47,8 @@ async function proxyEngine(request:Request,context:RouteContext):Promise<Respons
  const health=path.length===1&&path[0]==='health';
  const create=path.length===1&&path[0]==='jobs';
  const job=path.length===2&&path[0]==='jobs'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(path[1]);
+ const jobResult=path.length===3&&path[0]==='jobs'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(path[1])&&path[2]==='result';
+ const partialDraft=path.length===3&&path[0]==='jobs'&&IDENTIFIER.test(path[1])&&path[2]==='partial-draft';
  const textInventory=path.length===3&&path[0]==='jobs'&&IDENTIFIER.test(path[1])&&path[2]==='text-inventory';
  const batchCreate=path.length===1&&path[0]==='batches';
  const resolve=path.length===2&&path[0]==='batches'&&path[1]==='resolve';
@@ -73,7 +75,7 @@ async function proxyEngine(request:Request,context:RouteContext):Promise<Respons
  const layoutReadability=imagePage&&path.length===3&&path[2]==='layout-readability';
  const layoutRoi=imagePage&&path.length===4&&path[2]==='layout-roi'&&['validate','approve-roi','save','approve-layout'].includes(path[3]);
  const layoutRoute=layoutPage||layoutOperation||layoutReadability||layoutRoi;
- if(!health&&!create&&!job&&!textInventory&&!batchCreate&&!batch&&!resolve&&!priority&&!retry&&!cancel&&!projectContext&&!review&&!reviewApply&&!reviewPage&&!inspectPage&&!imageRoute&&!layoutRoute)return error(400,'지원하지 않는 엔진 경로예요.');
+ if(!health&&!create&&!job&&!jobResult&&!partialDraft&&!textInventory&&!batchCreate&&!batch&&!resolve&&!priority&&!retry&&!cancel&&!projectContext&&!review&&!reviewApply&&!reviewPage&&!inspectPage&&!imageRoute&&!layoutRoute)return error(400,'지원하지 않는 엔진 경로예요.');
  if(projectContext&&!['GET','POST'].includes(request.method))return error(405,'지원하지 않는 요청 방식이에요.','GET, POST');
  const method=projectContext?request.method:create||batchCreate||resolve||priority||retry||cancel||reviewApply||inspectPage||imagePreflight||imageApprove||imageOperation||layoutOperation||layoutRoi?'POST':'GET';
  if(request.method!==method)return error(405,'지원하지 않는 요청 방식이에요.',method);

@@ -248,6 +248,9 @@ export function createEngineServer({ store, contextStore, reviewStore, inspectIm
       const inventoryMatch = /^\/jobs\/([^/]+)\/text-inventory$/.exec(url.pathname);
       if (request.method === 'GET' && inventoryMatch && uuid.test(inventoryMatch[1]) && typeof store.getTextInventory === 'function')
         return json(response, 200, await store.getTextInventory(owner, inventoryMatch[1]));
+      const partialDraftMatch = /^\/jobs\/([^/]+)\/partial-draft$/.exec(url.pathname);
+      if (request.method === 'GET' && partialDraftMatch && uuid.test(partialDraftMatch[1]) && typeof store.getPartialDraft === 'function')
+        return json(response, 200, await store.getPartialDraft(owner, partialDraftMatch[1]));
       const match = /^\/jobs\/([^/]+)(\/result)?$/.exec(url.pathname);
       if (request.method === 'GET' && match && uuid.test(match[1])) {
         const job = await store.get(owner, match[1]);
